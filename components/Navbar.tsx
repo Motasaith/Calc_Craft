@@ -43,7 +43,7 @@ export default function Navbar() {
       className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
     >
       <div
-        className={`flex items-center justify-between h-14 px-2 pl-5 pr-2 rounded-full transition-all duration-300 max-w-3xl w-full hover:border-gray-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] ${
+        className={`flex items-center justify-between h-14 px-2 pl-5 pr-4 rounded-full transition-all duration-300 max-w-3xl w-full hover:border-gray-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] ${
           scrolled
             ? 'bg-white/95 backdrop-blur-xl border border-gray-200/80 shadow-[0_12px_24px_rgba(0,0,0,0.08),_0_2px_4px_rgba(0,0,0,0.02)]'
             : 'bg-white/85 backdrop-blur-md border border-gray-200/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]'
@@ -137,12 +137,12 @@ export default function Navbar() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center">
+        <div className="hidden lg:flex items-center mr-2">
           <Link
             href="#builder"
-            className="px-4.5 py-1.5 text-xs font-bold text-white bg-dark-800 rounded-full hover:bg-dark-700 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-md shadow-dark-800/10"
+            className="px-5 py-2 text-xs font-mono font-black text-white bg-[#222326] rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] hover:bg-[#2b2c30] hover:translate-y-[0.5px] hover:shadow-[0_3px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
           >
-            Start Building
+            START BUILDING
           </Link>
         </div>
 
@@ -198,10 +198,10 @@ export default function Navbar() {
               <div className="pt-4 flex flex-col">
                 <Link
                   href="#builder"
-                  className="px-4 py-2 text-xs font-bold text-white bg-dark-800 text-center rounded-full hover:bg-dark-700 transition-colors"
+                  className="px-4 py-2.5 text-xs font-mono font-black text-white bg-[#222326] text-center rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Start Building
+                  START BUILDING
                 </Link>
               </div>
             </div>
