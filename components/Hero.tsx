@@ -55,7 +55,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen pt-24 sm:pt-28 lg:pt-32 pb-12 overflow-hidden"
+      className="relative min-h-screen pt-20 sm:pt-24 lg:pt-24 pb-12 overflow-hidden"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -70,7 +70,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/10 to-white/40" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex justify-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-6 sm:pb-8 flex justify-center">
         <div className="text-center">
           {/* Content */}
           <div className="max-w-2xl mx-auto">
@@ -86,21 +86,23 @@ export default function Hero() {
             {/* Heading */}
             <h1
               ref={headingRef}
-              className="flex flex-col items-center gap-4 mb-8 text-4xl sm:text-6xl lg:text-8xl"
+              className="flex flex-col items-center gap-2 mb-8 text-4xl sm:text-6xl lg:text-8xl"
             >
               <DigitalText 
                 text="SMART" 
                 theme="minimal"
+                gap={3}
                 className="text-dark-900 [--char-height:3rem] sm:[--char-height:4.5rem] lg:[--char-height:5.5rem]"
                 animate={true}
               />
               <DigitalText 
                 text="CALCULATORS" 
                 theme="minimal"
+                gap={2}
                 className="text-dark-900 [--char-height:2.2rem] sm:[--char-height:3.2rem] lg:[--char-height:4rem]"
                 animate={true}
               />
-              <span className="block text-primary-600 font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase font-mono mt-2">
+              <span className="block text-primary-600 font-extrabold text-3xl sm:text-5xl lg:text-6xl tracking-widest uppercase font-mono mt-1">
                 4 EVERY
               </span>
               <span className="block relative inline-block text-dark-900 font-extrabold text-4xl sm:text-6xl lg:text-7xl tracking-widest uppercase font-mono">

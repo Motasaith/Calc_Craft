@@ -83,36 +83,36 @@ const CHARACTER_MAP: Record<string, SegmentName[]> = {
   ' ': [],
 }
 
-// 14-Segment SVG Polygons coordinates in a 80x120 viewport
+// 14-Segment SVG Polygons coordinates in a 72x120 viewport (shifted x by -8px for compact width)
 const SEGMENT_PATHS: Record<Exclude<SegmentName, 'DP'>, string> = {
   // Top horizontal
-  A: '14,10 66,10 60,16 20,16',
+  A: '6,10 58,10 52,16 12,16',
   // Top-right vertical
-  B: '70,14 70,56 64,52 64,20',
+  B: '62,14 62,56 56,52 56,20',
   // Bottom-right vertical
-  C: '70,64 70,106 64,100 64,70',
+  C: '62,64 62,106 56,100 56,70',
   // Bottom horizontal
-  D: '20,104 60,104 66,110 14,110',
+  D: '12,104 52,104 58,110 6,110',
   // Bottom-left vertical
-  E: '10,64 16,70 16,100 10,106',
+  E: '2,64 8,70 8,100 2,106',
   // Top-left vertical
-  F: '10,14 16,20 16,52 10,56',
+  F: '2,14 8,20 8,52 2,56',
   // Middle-left horizontal
-  G1: '14,60 18,56 36,56 38,60 36,64 18,64',
+  G1: '6,60 10,56 28,56 30,60 28,64 10,64',
   // Middle-right horizontal
-  G2: '42,60 44,56 62,56 66,60 62,64 44,64',
+  G2: '34,60 36,56 54,56 58,60 54,64 36,64',
   // Top vertical center
-  I: '40,14 43,17 43,52 40,55 37,52 37,17',
+  I: '32,14 35,17 35,52 32,55 29,52 29,17',
   // Bottom vertical center
-  L: '40,65 43,68 43,103 40,106 37,103 37,68',
+  L: '32,65 35,68 35,103 32,106 29,103 29,68',
   // Top-left diagonal
-  H: '19,19 22,17 38,52 35,55 32,55 17,22',
+  H: '11,19 14,17 30,52 27,55 24,55 9,22',
   // Top-right diagonal
-  J: '61,19 63,22 48,55 45,55 42,52 58,17',
+  J: '53,19 55,22 40,55 37,55 34,52 50,17',
   // Bottom-left diagonal
-  K: '19,101 17,98 32,65 35,65 38,68 22,103',
+  K: '11,101 9,98 24,65 27,65 30,68 14,103',
   // Bottom-right diagonal
-  M: '61,101 58,103 42,68 45,65 48,65 63,98',
+  M: '53,101 50,103 34,68 37,65 40,65 55,98',
 }
 
 export default function SegmentDisplay({
@@ -185,11 +185,11 @@ export default function SegmentDisplay({
       className={`inline-block select-none overflow-hidden transition-all duration-300 ${containerBg} ${displayBorder} ${padding} ${borderRadius}`}
       style={{
         height: size !== undefined ? `${size}px` : 'var(--char-height, 80px)',
-        aspectRatio: '2/3',
+        aspectRatio: '72/120',
       }}
     >
       <svg
-        viewBox="0 0 80 120"
+        viewBox="0 0 72 120"
         width="100%"
         height="100%"
         xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +215,7 @@ export default function SegmentDisplay({
 
         {/* Render Decimal Point */}
         <circle
-          cx={75}
+          cx={67}
           cy={107}
           r={4}
           fill={activeSegments.includes('DP') ? strokeActive : strokeInactive}
