@@ -55,7 +55,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center pt-20 overflow-hidden"
+      className="relative min-h-screen pt-24 sm:pt-28 lg:pt-32 pb-12 overflow-hidden"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -70,7 +70,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/10 to-white/40" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 flex items-center justify-center min-h-[calc(100vh-80px)]">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex justify-center">
         <div className="text-center">
           {/* Content */}
           <div className="max-w-2xl mx-auto">
