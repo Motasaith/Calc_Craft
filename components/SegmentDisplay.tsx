@@ -144,8 +144,11 @@ export default function SegmentDisplay({
     containerBg = 'bg-[#cad5c5] shadow-inner shadow-black/10'
     strokeActive = activeColor || '#1a1d1a'
     strokeInactive = inactiveColor || '#b8c3b3'
-    displayBorder = 'border-2 border-[#a3b19e] border-b-[#d5e0d1] border-r-[#d5e0d1]'
-    padding = 'p-1'
+    const isSmall = size !== undefined && size < 25
+    displayBorder = isSmall
+      ? 'border border-[#a3b19e] border-b-[#d5e0d1] border-r-[#d5e0d1]'
+      : 'border-2 border-[#a3b19e] border-b-[#d5e0d1] border-r-[#d5e0d1]'
+    padding = isSmall ? 'p-0.5' : 'p-1'
     borderRadius = 'rounded-sm'
   } else if (theme === 'led-red') {
     // Vintage glowing red LED

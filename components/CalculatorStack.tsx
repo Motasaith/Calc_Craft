@@ -479,6 +479,18 @@ function LoanCalculator() {
   const totalPayment = emi * N
   const totalInterest = totalPayment - P
 
+  const emiStr = Math.round(emi).toString()
+  const interestStr = Math.round(totalInterest).toString()
+
+  // Dynamically shrink digit size as string length increases to prevent wrapping or horizontal overflow
+  const getDigitSize = (valStr: string) => {
+    const len = valStr.length
+    if (len <= 5) return 24
+    if (len === 6) return 22
+    if (len === 7) return 18
+    return 15 // for 8 or more digits
+  }
+
   return (
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
@@ -498,9 +510,9 @@ function LoanCalculator() {
           <div className="relative bg-[#cbd8ca] border border-[#b0bdae] rounded px-1.5 py-1 w-full flex justify-center items-center h-8 select-none">
             <span className="absolute left-1 text-[8px] font-bold text-[#4c5c4a] font-mono">$</span>
             <DigitalText
-              text={Math.round(emi).toString()}
+              text={emiStr}
               theme="lcd"
-              size={17}
+              size={getDigitSize(emiStr)}
               gap={1}
               animate={false}
               activeColor="#1a2019"
@@ -515,9 +527,9 @@ function LoanCalculator() {
           <div className="relative bg-[#cbd8ca] border border-[#b0bdae] rounded px-1.5 py-1 w-full flex justify-center items-center h-8 select-none">
             <span className="absolute left-1 text-[8px] font-bold text-[#4c5c4a] font-mono">$</span>
             <DigitalText
-              text={Math.round(totalInterest).toString()}
+              text={interestStr}
               theme="lcd"
-              size={17}
+              size={getDigitSize(interestStr)}
               gap={1}
               animate={false}
               activeColor="#1a2019"

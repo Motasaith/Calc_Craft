@@ -68,7 +68,7 @@ export default function DigitalText({
 
   return (
     <div
-      className={`inline-flex flex-wrap items-center justify-center ${className}`}
+      className={`inline-flex flex-nowrap items-center justify-center ${className}`}
       style={{ gap: `${gap}px` }}
     >
       {processedChars.map((item, index) => {
