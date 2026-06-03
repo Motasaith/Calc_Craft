@@ -17,7 +17,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-[#090a0c] text-slate-300 py-12 md:py-16 font-sans relative overflow-hidden">
+    <footer className="bg-[#090a0c] text-slate-300 py-12 md:py-16 font-sans relative overflow-hidden" itemScope itemType="https://schema.org/WPFooter">
       
       {/* Background soft circular arc decoration */}
       <div className="absolute bottom-[-100px] left-[-100px] w-[350px] h-[350px] rounded-full border border-white/[0.02] pointer-events-none select-none" />
@@ -25,7 +25,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Main Card Chassis Box */}
-        <div className="bg-[#0d0e12] border border-white/[0.06] rounded-[32px] p-6 md:p-10 shadow-2xl relative">
+        <div className="bg-[#0d0e12] border border-white/[0.06] rounded-[32px] p-6 md:p-10 shadow-2xl relative" itemScope itemType="https://schema.org/Organization">
+          <meta itemProp="name" content="CalcCraft" />
+          <meta itemProp="url" content="https://calccraft.com" />
+          <meta itemProp="description" content="Your all-in-one calculator suite for math, finance, health, and everyday life." />
           
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
@@ -105,10 +108,10 @@ export default function Footer() {
                 </div>
 
                 {/* 3 Columns of Links */}
-                <div className="grid grid-cols-3 gap-6 md:gap-8 flex-grow">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-8 flex-grow">
                   
                   {/* Column 1: Calculators */}
-                  <div>
+                  <div className="col-span-2 sm:col-span-1">
                     <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                       <Calculator className="w-4.5 h-4.5 text-slate-400" />
                     </div>

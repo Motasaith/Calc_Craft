@@ -45,6 +45,10 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
   const [active, setActive] = useState(1) // Start with index 1 (Michael T.) centered
   const [windowWidth, setWindowWidth] = useState(1024)
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -56,17 +60,43 @@ export default function Testimonials() {
   const prev = () => setActive((a) => (a > 0 ? a - 1 : testimonials.length - 1))
   const next = () => setActive((a) => (a < testimonials.length - 1 ? a + 1 : 0))
 
-  const handleCardClick = (offset: number) => {
-    if (offset !== 0) {
-      setActive((a) => {
-        const len = testimonials.length
-        return (a + offset + len) % len
-      })
+  // Auto-play effect (pauses on hover)
+  useEffect(() => {
+    if (isPaused) return
+    const interval = setInterval(() => {
+      next()
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [isPaused, active])
+
+  // Touch Swipe Handlers for mobile navigation
+  const minSwipeDistance = 50
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > minSwipeDistance
+    const isRightSwipe = distance < -minSwipeDistance
+    if (isLeftSwipe) {
+      next()
+    } else if (isRightSwipe) {
+      prev()
     }
   }
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative">
+    <section 
+      ref={sectionRef} 
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
+    >
       
       {/* Decorative Dot Grid Top-Right */}
       <div className="absolute top-8 right-8 text-slate-200 pointer-events-none opacity-40 select-none hidden md:block">
@@ -107,11 +137,20 @@ export default function Testimonials() {
           <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
             What Our Users Say
           </h2>
-          <p className="text-sm text-slate-400 max-w-md mx-auto">Trusted by students, professionals, and everyday users.</p>
+          <p className="text-sm text-slate-400 max-w-md mx-auto">Trusted by students, professionals, and everyday users worldwide.</p>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative flex justify-center items-center w-full h-[360px] md:h-[400px] mt-6">
+        <div 
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          className="relative flex justify-center items-center w-full h-[360px] md:h-[400px] mt-6"
+          role="region"
+          aria-label="User testimonials carousel"
+          itemScope
+          itemType="https://schema.org/Review"
+        >
           
           {/* WATERMARK BACKGROUND LEFT (Keypad) */}
           <div className="absolute left-[-50px] 2xl:left-12 top-1/2 -translate-y-1/2 opacity-[0.25] pointer-events-none hidden lg:block select-none scale-90 2xl:scale-100 origin-left">
@@ -175,7 +214,7 @@ export default function Testimonials() {
           </div>
 
           {/* Cards Track */}
-          <div className="relative w-full max-w-[800px] h-[320px] sm:h-[340px] flex items-center justify-center overflow-visible">
+          <div className="relative w-full max-w-[800px] h-[300px] sm:h-[340px] flex items-center justify-center overflow-visible">
             {testimonials.map((t, idx) => {
               let offset = idx - active
               const len = testimonials.length
@@ -190,16 +229,20 @@ export default function Testimonials() {
               return (
                 <div
                   key={idx}
-                  onClick={() => handleCardClick(offset)}
+                  onClick={() => setActive(idx)}
+                  onMouseEnter={() => !isCenter && setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
                   style={{
-                    transform: `translate(calc(-50% + ${offset * (windowWidth < 640 ? 110 : 180)}px), -50%) scale(${isCenter ? 1 : 0.88})`,
-                    zIndex: isCenter ? 20 : 10,
-                    opacity: isCenter ? 1 : isVisible ? 0.75 : 0,
+                    transform: `translate(calc(-50% + ${offset * (windowWidth < 640 ? 110 : 180)}px), -50%) scale(${
+                      isCenter ? 1 : hoveredIdx === idx ? 0.93 : 0.88
+                    })`,
+                    zIndex: isCenter ? 20 : hoveredIdx === idx ? 25 : 10,
+                    opacity: isCenter ? 1 : isVisible ? (hoveredIdx === idx ? 0.95 : 0.75) : 0,
                     pointerEvents: isVisible ? 'auto' : 'none',
                   }}
                   className={`
-                    absolute left-1/2 top-1/2 bg-white border rounded-[28px] p-6 text-left flex flex-col justify-between transition-all duration-500 ease-out select-none flex-shrink-0
-                    w-[270px] h-[300px] sm:w-[320px] sm:h-[320px]
+                    absolute left-1/2 top-1/2 bg-white border rounded-[28px] p-5 sm:p-6 text-left flex flex-col justify-between transition-all duration-500 ease-out select-none flex-shrink-0
+                    w-[260px] h-[280px] sm:w-[320px] sm:h-[320px]
                     ${isCenter
                       ? 'border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.06)] cursor-default'
                       : 'border-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.03)] cursor-pointer hover:border-slate-300/80 hover:shadow-[0_12px_24px_rgba(0,0,0,0.04)]'
@@ -215,7 +258,7 @@ export default function Testimonials() {
                   <Quote className="w-7 h-7 text-slate-700 fill-slate-700/5 mb-2 mt-1" />
 
                   {/* Testimonial Text */}
-                  <p className="text-[12.5px] text-slate-500 leading-relaxed flex-grow flex items-center pr-1">
+                  <p className="text-[12px] sm:text-[12.5px] text-slate-500 leading-relaxed flex-grow flex items-center pr-1">
                     "{t.text}"
                   </p>
 

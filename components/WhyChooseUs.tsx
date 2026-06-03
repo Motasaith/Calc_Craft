@@ -62,7 +62,13 @@ export default function WhyChooseUs() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-28 bg-white">
+    <section 
+      ref={sectionRef} 
+      className="py-20 lg:py-28 bg-white"
+      aria-label="Why choose CalcCraft - Benefits and features"
+      itemScope
+      itemType="https://schema.org/ItemList"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left - Image */}
@@ -70,24 +76,27 @@ export default function WhyChooseUs() {
             <div className="relative rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3]">
               <Image
                 src="/why_choose_calccraft.png"
-                alt="Calculator workspace why choose us"
+                alt="CalcCraft calculator workspace showing free online math, finance, and health calculators for students and professionals"
                 fill
                 className="object-cover"
+                loading="lazy"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center justify-center">
+            <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center justify-center">
               <DigitalText 
                 text="50+" 
                 theme="minimal" 
-                className="text-dark-800 [--char-height:1.8rem] mb-2" 
+                className="text-dark-800 [--char-height:1.2rem] sm:[--char-height:1.8rem] mb-1 sm:mb-2" 
                 animate={true}
               />
-              <span className="text-xs text-dark-400 font-medium">Calculators</span>
+              <span className="text-[10px] sm:text-xs text-dark-400 font-medium">Calculators</span>
             </div>
           </div>
 
           {/* Right - Content */}
-          <div ref={rightRef}>
+          <div ref={rightRef} itemScope itemType="https://schema.org/Service">
+            <meta itemProp="name" content="CalcCraft Online Calculators" />
             <span className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3 block">
               Why Choose CalcCraft?
             </span>
@@ -96,15 +105,26 @@ export default function WhyChooseUs() {
               <br />
               Designed for You.
             </h2>
-            <div className="space-y-5">
-              {reasons.map((reason) => (
-                <div key={reason.text} className="flex gap-4">
+            <p className="text-dark-600 mb-6 leading-relaxed">
+              CalcCraft provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs. 
+              No signup required, instant results, and completely private — all calculations run locally in your browser.
+            </p>
+            <div className="space-y-5" role="list">
+              {reasons.map((reason, idx) => (
+                <div 
+                  key={reason.text} 
+                  className="flex gap-4"
+                  itemScope
+                  itemType="https://schema.org/ListItem"
+                  role="listitem"
+                >
+                  <meta itemProp="position" content={String(idx + 1)} />
                   <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                    <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-dark-800">{reason.text}</h4>
-                    <p className="text-sm text-dark-400 mt-0.5">{reason.sub}</p>
+                  <div itemProp="item" itemScope itemType="https://schema.org/Thing">
+                    <h4 className="font-semibold text-dark-800" itemProp="name">{reason.text}</h4>
+                    <p className="text-sm text-dark-400 mt-0.5" itemProp="description">{reason.sub}</p>
                   </div>
                 </div>
               ))}

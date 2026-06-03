@@ -51,11 +51,13 @@ export default function Hero() {
     <section
       ref={sectionRef}
       className="relative min-h-screen pt-20 sm:pt-24 lg:pt-24 pb-12 overflow-hidden"
+      aria-label="Hero section - Free online calculators"
     >
       {/* Background Image */}
       <div
         className="absolute inset-0 -z-10 bg-gray-100 bg-[url('/hero.png')] bg-contain bg-top bg-no-repeat"
-        aria-label="Calculator workspace background"
+        role="img"
+        aria-label="Calculator workspace background showing modern digital tools"
       />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-6 sm:pb-8 flex justify-center">
@@ -65,16 +67,18 @@ export default function Hero() {
             {/* Badge */}
             <div ref={badgeRef} className="inline-flex items-center gap-2 mb-6">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-semibold">
-                <Check className="w-3.5 h-3.5" />
+                <Check className="w-3.5 h-3.5" aria-hidden="true" />
                 100% Free
               </span>
               <span className="text-xs text-dark-400 font-medium">No Sign Up Required</span>
             </div>
 
-            {/* Heading */}
+            {/* Heading - H1 for SEO */}
             <h1
               ref={headingRef}
               className="flex flex-col items-center gap-2 mb-8 text-4xl sm:text-6xl lg:text-8xl"
+              itemScope
+              itemType="https://schema.org/WebPageElement"
             >
               <DigitalText
                 text="SMART"
@@ -99,14 +103,15 @@ export default function Hero() {
               </span>
             </h1>
 
-            {/* Subtitle */}
+            {/* Subtitle - Rich description for SEO/GEO */}
             <p
               ref={subRef}
               className="text-lg text-dark-600 leading-relaxed mb-8 max-w-lg mx-auto"
+              itemProp="description"
             >
               Fast, accurate and easy to use online calculators for math, finance,
               health, and everyday needs. Built for students, professionals, and
-              everyone in between.
+              everyone in between. No signup required — start calculating instantly.
             </p>
 
             {/* CTAs */}
@@ -114,13 +119,15 @@ export default function Hero() {
               <Link
                 href="#calculators"
                 className="group inline-flex items-center gap-2 px-7 py-3.5 bg-dark-800 text-white font-semibold rounded-full hover:bg-dark-700 transition-all shadow-xl shadow-dark-800/20 hover:shadow-dark-800/30 hover:-translate-y-0.5"
+                aria-label="Explore all free online calculators"
               >
                 Explore Calculators
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <Link
                 href="#"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/80 backdrop-blur-sm text-dark-800 font-semibold rounded-full border border-gray-200/80 hover:border-gray-300 hover:bg-white transition-all"
+                aria-label="Try the scientific calculator online"
               >
                 Try Scientific Calculator
               </Link>
@@ -142,9 +149,10 @@ export default function Hero() {
           <Link
             href="#calculators"
             className="group inline-flex items-center gap-2 px-6 py-3 bg-dark-800 text-white text-sm font-bold rounded-full hover:bg-dark-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all shadow-md"
+            aria-label="View all available calculators"
           >
             View All Calculators
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
       </div>

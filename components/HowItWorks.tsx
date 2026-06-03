@@ -67,7 +67,16 @@ export default function HowItWorks() {
   }
 
   return (
-    <section ref={sectionRef} className="py-8 bg-[#eae7d9] border-y border-white/40 shadow-[inset_0_8px_16px_#c2beb0,inset_0_-8px_16px_#ffffff] overflow-hidden font-sans">
+    <section 
+      ref={sectionRef} 
+      className="py-8 bg-[#eae7d9] border-y border-white/40 shadow-[inset_0_8px_16px_#c2beb0,inset_0_-8px_16px_#ffffff] overflow-hidden font-sans"
+      aria-label="How CalcCraft works - Three simple steps to use our calculators"
+      itemScope
+      itemType="https://schema.org/HowTo"
+    >
+      <meta itemProp="name" content="How to Use CalcCraft Calculators" />
+      <meta itemProp="description" content="Launch powerful calculators in three simple steps: Choose or Build, Theme & Brand, Embed & Integrate." />
+      <meta itemProp="totalTime" content="PT5M" />
       {/* Inline styles for custom board animations */}
       <style>{`
         @keyframes board-dash {
@@ -80,8 +89,49 @@ export default function HowItWorks() {
         }
       `}</style>
 
-      {/* Outer Device Chassis Wrapper (Full Width scroll container on mobile) */}
-      <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-400/40 scrollbar-track-transparent">
+      {/* Mobile Layout */}
+      <div className="lg:hidden px-4 sm:px-6 py-8">
+        <div className="text-center mb-8 select-none">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2 tracking-tight" itemProp="name">
+            How It Works
+          </h2>
+          <p className="text-sm text-slate-500" itemProp="description">Launch powerful calculators in three simple steps.</p>
+          <div className="w-12 h-[3px] bg-[#c0392b] rounded-full mx-auto mt-3 shadow-[0_0_6px_rgba(192,57,43,0.4)]" />
+        </div>
+
+        <div className="flex flex-col gap-6 max-w-md mx-auto">
+          {steps.map((step, i) => {
+            const Icon = step.icon
+            return (
+              <div
+                key={step.number}
+                ref={(el) => {
+                  if (el) stepsRef.current[i] = el
+                }}
+                className="relative p-5 rounded-3xl bg-[#eae7d9] border border-white/50 shadow-[6px_6px_12px_#c2beb0,-6px_-6px_12px_#ffffff] flex items-start gap-4"
+                itemScope
+                itemType="https://schema.org/HowToStep"
+                itemProp="step"
+              >
+                <meta itemProp="position" content={step.number} />
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#eae7d9] border border-white/80 shadow-[2px_2px_5px_#c2beb0,-2px_-2px_5px_#ffffff] flex items-center justify-center text-slate-800 text-sm font-black">
+                  {step.number}
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-base font-black text-slate-700 mb-1" itemProp="name">{step.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed" itemProp="text">{step.description}</p>
+                </div>
+                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eae7d9] border border-white/50 shadow-[3px_3px_6px_#c2beb0,-3px_-3px_6px_#ffffff] text-slate-700 flex items-center justify-center">
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Desktop Layout - Circuit Board */}
+      <div className="hidden lg:block w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-400/40 scrollbar-track-transparent">
         <div className="min-w-[1140px] max-w-[1300px] mx-auto px-8 flex flex-col justify-between relative">
           
           {/* Vent holes in top left of chassis */}
@@ -178,6 +228,9 @@ export default function HowItWorks() {
                       }}
                       onMouseEnter={() => setHoveredCard(i)}
                       onMouseLeave={() => setHoveredCard(null)}
+                      itemScope
+                      itemType="https://schema.org/HowToStep"
+                      itemProp="step"
                       className={`
                         relative w-[215px] h-[260px] p-5 rounded-3xl bg-[#eae7d9] border border-white/50 text-center flex flex-col items-center justify-between transition-all duration-300 select-none
                         ${isHovered
@@ -186,6 +239,7 @@ export default function HowItWorks() {
                         }
                       `}
                     >
+                      <meta itemProp="position" content={step.number} />
                       {/* Top Step Number Badge */}
                       <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#eae7d9] border border-white/80 shadow-[2px_2px_5px_#c2beb0,-2px_-2px_5px_#ffffff] flex items-center justify-center text-slate-800 text-xs font-black">
                         {step.number}
@@ -193,13 +247,13 @@ export default function HowItWorks() {
 
                       {/* Icon Wrapper */}
                       <div className="mt-4 flex items-center justify-center w-16 h-16 rounded-2xl bg-[#eae7d9] border border-white/50 shadow-[3px_3px_6px_#c2beb0,-3px_-3px_6px_#ffffff] text-slate-700">
-                        <Icon className="w-8 h-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]" />
+                        <Icon className="w-8 h-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]" aria-hidden="true" />
                       </div>
 
                       {/* Card Text Content */}
                       <div className="flex-grow flex flex-col justify-center my-3">
-                        <h3 className="text-sm font-black text-slate-700 mb-1">{step.title}</h3>
-                        <p className="text-[11px] text-slate-500 leading-relaxed max-w-[180px] mx-auto">
+                        <h3 className="text-sm font-black text-slate-700 mb-1" itemProp="name">{step.title}</h3>
+                        <p className="text-[11px] text-slate-500 leading-relaxed max-w-[180px] mx-auto" itemProp="text">
                           {step.description}
                         </p>
                       </div>

@@ -34,9 +34,22 @@ export default function CTA() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-20 bg-white font-sans">
+    <section 
+      ref={sectionRef} 
+      className="py-16 md:py-20 bg-white font-sans"
+      aria-label="Call to action - Start using CalcCraft calculators"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="cta-content relative overflow-hidden rounded-[36px] bg-dark-800 border border-dark-700/50 px-6 py-12 md:p-12 lg:p-16 text-left shadow-2xl animate-fade-in">
+        <div 
+          className="cta-content relative overflow-hidden rounded-[36px] bg-dark-800 border border-dark-700/50 px-6 py-12 md:p-12 lg:p-16 text-left shadow-2xl animate-fade-in"
+          itemScope
+          itemType="https://schema.org/SoftwareApplication"
+        >
+          <meta itemProp="name" content="CalcCraft" />
+          <meta itemProp="applicationCategory" content="CalculatorApplication" />
+          <meta itemProp="operatingSystem" content="Any" />
+          <meta itemProp="offers" content="Free" />
+          <meta itemProp="description" content="Free online calculators for math, finance, health, and more. Fast, accurate, and private." />
           
           {/* Decorative dot pattern inside card (Top Right) */}
           <div className="absolute top-6 right-6 text-white/[0.03] pointer-events-none select-none">
@@ -52,11 +65,11 @@ export default function CTA() {
             
             {/* LEFT COLUMN: Neumorphic realistic calculator */}
             <div className="lg:col-span-5 flex justify-center lg:justify-start">
-              <div className="w-[280px] bg-[#f1f4f6] border-[5px] border-slate-50 shadow-[0_15px_30px_rgba(0,0,0,0.3),_inset_-3px_-3px_7px_#ffffff,_inset_3px_3px_7px_rgba(0,0,0,0.1)] rounded-[32px] p-4 flex flex-col gap-3">
+              <div className="w-[240px] sm:w-[280px] bg-[#f1f4f6] border-[5px] border-slate-50 shadow-[0_15px_30px_rgba(0,0,0,0.3),_inset_-3px_-3px_7px_#ffffff,_inset_3px_3px_7px_rgba(0,0,0,0.1)] rounded-[32px] p-4 flex flex-col gap-3">
                 {/* LCD Display */}
                 <div className="w-full h-14 bg-[#b8c29b] border-2 border-slate-200/50 rounded-xl shadow-[inset_2px_3px_5px_rgba(0,0,0,0.25)] flex items-center justify-end px-4 select-none relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/5 pointer-events-none" />
-                  <span className="text-[#20271c] font-mono text-[14px] md:text-[15px] tracking-widest font-black uppercase text-right w-full">
+                  <span className="text-[#20271c] font-mono text-[13px] sm:text-[14px] md:text-[15px] tracking-widest font-black uppercase text-right w-full">
                     {"LET'S CALCULATE"}
                   </span>
                 </div>
@@ -103,20 +116,20 @@ export default function CTA() {
               </div>
 
               {/* Heading */}
-              <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
                 Ready to Make Calculations Effortless?
               </h2>
 
               {/* Subtitle */}
               <p className="text-slate-400 mb-8 text-sm sm:text-base leading-relaxed max-w-xl">
-                Join millions who trust CalcCraft for quick, accurate, and reliable calculations.
+                Join millions who trust <strong className="text-slate-300">CalcCraft</strong> for quick, accurate, and reliable <strong className="text-slate-300">free online calculators</strong>. No signup required.
               </p>
 
               {/* CTA Button */}
               <div className="mb-10">
                 <Link
                   href="#calculators"
-                  className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-dark-900 font-extrabold rounded-full hover:bg-slate-100 transition-all shadow-xl hover:-translate-y-0.5 active:scale-95"
+                  className="group inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-dark-900 font-extrabold rounded-full hover:bg-slate-100 transition-all shadow-xl hover:-translate-y-0.5 active:scale-95"
                 >
                   Start Calculating Now
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

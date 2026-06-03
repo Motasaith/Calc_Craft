@@ -80,7 +80,13 @@ export default function FAQ() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative">
+    <section 
+      ref={sectionRef} 
+      className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
+      aria-label="Frequently asked questions about CalcCraft calculators"
+      itemScope
+      itemType="https://schema.org/FAQPage"
+    >
       
       {/* Decorative Dot Grid Top-Right */}
       <div className="absolute top-8 right-8 text-slate-200 pointer-events-none opacity-40 select-none hidden md:block">
@@ -152,10 +158,13 @@ export default function FAQ() {
                 <div
                   key={i}
                   className="faq-item flex items-start gap-4 py-5 first:pt-0 last:pb-0"
+                  itemScope
+                  itemType="https://schema.org/Question"
+                  itemProp="mainEntity"
                 >
                   {/* Left Icon circle */}
                   <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200/50 flex items-center justify-center text-slate-600 flex-shrink-0 mt-0.5 animate-pulse-slow">
-                    <Icon className="w-4.5 h-4.5 stroke-[2]" />
+                    <Icon className="w-4.5 h-4.5 stroke-[2]" aria-hidden="true" />
                   </div>
 
                   {/* Question / Answer */}
@@ -163,16 +172,20 @@ export default function FAQ() {
                     <button
                       onClick={() => setOpen(open === i ? null : i)}
                       className="w-full text-left font-bold text-slate-800 text-sm md:text-base hover:text-slate-900 transition-colors flex justify-between items-center"
+                      aria-expanded={open === i}
                     >
-                      <span>{faq.q}</span>
+                      <span itemProp="name">{faq.q}</span>
                     </button>
                     
                     <div
                       className={`overflow-hidden transition-all duration-300 ${
                         open === i ? 'max-h-40 mt-3 opacity-100' : 'max-h-0 opacity-0'
                       }`}
+                      itemScope
+                      itemType="https://schema.org/Answer"
+                      itemProp="acceptedAnswer"
                     >
-                      <p className="text-xs md:text-sm text-slate-500 leading-relaxed pr-6">
+                      <p className="text-xs md:text-sm text-slate-500 leading-relaxed pr-6" itemProp="text">
                         {faq.a}
                       </p>
                     </div>
@@ -186,11 +199,12 @@ export default function FAQ() {
                         ? 'bg-slate-100 border-slate-300 text-slate-800'
                         : 'bg-white text-slate-400 hover:border-slate-300 hover:text-slate-800'
                     }`}
+                    aria-label={open === i ? 'Collapse answer' : 'Expand answer'}
                   >
                     {open === i ? (
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-4 h-4" aria-hidden="true" />
                     ) : (
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-4 h-4" aria-hidden="true" />
                     )}
                   </button>
                 </div>

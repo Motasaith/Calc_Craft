@@ -89,18 +89,23 @@ export default function PopularCalculators() {
       ref={sectionRef}
       id="calculators"
       className="py-20 lg:py-28 bg-gray-50/50"
+      aria-label="Popular free online calculators"
+      itemScope
+      itemType="https://schema.org/ItemList"
     >
+      <meta itemProp="name" content="Popular Calculators" />
+      <meta itemProp="description" content="Free online calculators for math, finance, health, and everyday life." />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl lg:text-4xl font-extrabold text-dark-900 mb-4">
             Popular Calculators
           </h2>
           <p className="text-dark-400 max-w-lg mx-auto">
-            Explore our most used calculators to save time and simplify your life.
+            Explore our most used <strong>free online calculators</strong> to save time and simplify your life.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
           {calculators.map((calc, i) => (
             <div
               key={calc.title}
@@ -108,17 +113,23 @@ export default function PopularCalculators() {
                 if (el) cardsRef.current[i] = el
               }}
               className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50 transition-all duration-300 cursor-pointer"
+              role="listitem"
+              itemScope
+              itemType="https://schema.org/SoftwareApplication"
             >
+              <meta itemProp="name" content={calc.title} />
+              <meta itemProp="applicationCategory" content="CalculatorApplication" />
+              <meta itemProp="description" content={calc.description} />
               <div
                 className={`w-12 h-12 rounded-xl ${calc.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
               >
-                <calc.icon className="w-6 h-6" />
+                <calc.icon className="w-6 h-6" aria-hidden="true" />
               </div>
-              <h3 className="text-lg font-bold text-dark-800 mb-1">{calc.title}</h3>
-              <p className="text-sm text-dark-400 mb-4">{calc.description}</p>
+              <h3 className="text-lg font-bold text-dark-800 mb-1" itemProp="name">{calc.title}</h3>
+              <p className="text-sm text-dark-400 mb-4" itemProp="description">{calc.description}</p>
               <div className="flex items-center text-sm font-semibold text-dark-700 group-hover:text-primary-600 transition-colors">
                 Try Now
-                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </div>
             </div>
           ))}
