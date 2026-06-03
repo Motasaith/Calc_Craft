@@ -3,9 +3,10 @@
 import { useRef, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Star, Check } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import gsap from 'gsap'
 import DigitalText from './DigitalText'
+import CalculatorStack from './CalculatorStack'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -13,7 +14,6 @@ export default function Hero() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const subRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
-  const trustRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
@@ -38,12 +38,6 @@ export default function Hero() {
         .fromTo(
           ctaRef.current,
           { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.5'
-        )
-        .fromTo(
-          trustRef.current,
-          { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.8 },
           '-=0.5'
         )
@@ -122,7 +116,7 @@ export default function Hero() {
             </p>
 
             {/* CTAs */}
-            <div ref={ctaRef} className="flex flex-wrap justify-center gap-4 mb-10">
+            <div ref={ctaRef} className="flex flex-wrap justify-center gap-4">
               <Link
                 href="#calculators"
                 className="group inline-flex items-center gap-2 px-7 py-3.5 bg-dark-800 text-white font-semibold rounded-full hover:bg-dark-700 transition-all shadow-xl shadow-dark-800/20 hover:shadow-dark-800/30 hover:-translate-y-0.5"
@@ -137,33 +131,13 @@ export default function Hero() {
                 Try Scientific Calculator
               </Link>
             </div>
-
-            {/* Trust */}
-            <div ref={trustRef} className="flex items-center justify-center gap-4 flex-wrap">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-primary-300 to-primary-500 flex items-center justify-center text-[10px] font-bold text-white"
-                  >
-                    {String.fromCharCode(64 + i)}
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 fill-amber-400 text-amber-400"
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-dark-500 font-medium">
-                Trusted by <span className="text-dark-800 font-semibold">1M+</span> users worldwide
-              </span>
-            </div>
           </div>
         </div>
+      </div>
+      
+      {/* Interactive Stack of Calculators - Direct child of section for full width */}
+      <div className="relative z-10 w-full flex justify-center -mt-2">
+        <CalculatorStack />
       </div>
     </section>
   )
