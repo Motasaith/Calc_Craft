@@ -11,9 +11,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 const reasons = [
   { text: 'Wide Range of Tools', sub: 'From basic math to finance and health, we\'ve got it all.' },
-  { text: 'Always Free', sub: 'All calculators are 100% free. No hidden fees.' },
-  { text: 'No Installation', sub: 'Use instantly in your browser. No downloads needed.' },
-  { text: 'Regular Updates', sub: 'We keep adding new tools and improving every day.' },
+  { text: 'Always Free', sub: 'All calculators are 100% free. No hidden subscriptions or fees.' },
+  { text: 'Fully Customizable', sub: 'Tweak styling, colors, layout choices, and options to fit your needs.' },
+  { text: 'Your Brand Logo', sub: 'Seamlessly integrate your company logo and corporate branding assets.' },
+  { text: 'Easy Website Embedding', sub: 'Embed any calculator widget onto your own website with a copy-paste snippet.' },
+  { text: 'Build From Scratch', sub: 'Create your own customized formulas and calculators from the ground up.' },
 ]
 
 export default function WhyChooseUs() {
@@ -67,8 +69,8 @@ export default function WhyChooseUs() {
           <div ref={leftRef} className="relative">
             <div className="relative rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3]">
               <Image
-                src="/hero.png"
-                alt="Calculator workspace"
+                src="/why_choose_calccraft.png"
+                alt="Calculator workspace why choose us"
                 fill
                 className="object-cover"
               />

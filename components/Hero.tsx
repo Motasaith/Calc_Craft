@@ -7,6 +7,7 @@ import { ArrowRight, Check } from 'lucide-react'
 import gsap from 'gsap'
 import DigitalText from './DigitalText'
 import CalculatorStack from './CalculatorStack'
+import Features from './Features'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -52,17 +53,10 @@ export default function Hero() {
       className="relative min-h-screen pt-20 sm:pt-24 lg:pt-24 pb-12 overflow-hidden"
     >
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/hero.png"
-          alt="Calculator workspace background"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={90}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/10 to-white/40" />
-      </div>
+      <div
+        className="absolute inset-0 -z-10 bg-gray-100 bg-[url('/hero.png')] bg-contain bg-top bg-no-repeat"
+        aria-label="Calculator workspace background"
+      />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-6 sm:pb-8 flex justify-center">
         <div className="text-center">
@@ -82,15 +76,15 @@ export default function Hero() {
               ref={headingRef}
               className="flex flex-col items-center gap-2 mb-8 text-4xl sm:text-6xl lg:text-8xl"
             >
-              <DigitalText 
-                text="SMART" 
+              <DigitalText
+                text="SMART"
                 theme="minimal"
                 gap={3}
                 className="text-dark-900 [--char-height:3rem] sm:[--char-height:4.5rem] lg:[--char-height:5.5rem]"
                 animate={true}
               />
-              <DigitalText 
-                text="CALCULATORS" 
+              <DigitalText
+                text="CALCULATORS"
                 theme="minimal"
                 gap={2}
                 className="text-dark-900 [--char-height:2.2rem] sm:[--char-height:3.2rem] lg:[--char-height:4rem]"
@@ -134,9 +128,14 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      
+
+      {/* Moving Features Ticker Band directly below Hero text/CTAs */}
+      <div className="w-full mt-10">
+        <Features />
+      </div>
+
       {/* Interactive Stack of Calculators - Direct child of section for full width */}
-      <div className="relative z-10 w-full flex justify-center -mt-2">
+      <div className="relative z-10 w-full flex justify-center mt-6">
         <CalculatorStack />
       </div>
     </section>
