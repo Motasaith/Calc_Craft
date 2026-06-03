@@ -135,8 +135,18 @@ export default function Hero() {
       </div>
 
       {/* Interactive Stack of Calculators - Direct child of section for full width */}
-      <div className="relative z-10 w-full flex justify-center mt-6">
+      <div className="relative z-10 w-full flex flex-col items-center justify-center mt-6">
         <CalculatorStack />
+        {/* View All Calculators Link Button */}
+        <div className="mt-8 z-20">
+          <Link
+            href="#calculators"
+            className="group inline-flex items-center gap-2 px-6 py-3 bg-dark-800 text-white text-sm font-bold rounded-full hover:bg-dark-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all shadow-md"
+          >
+            View All Calculators
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
       </div>
     </section>
   )

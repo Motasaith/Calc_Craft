@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import { ArrowRight, Calculator } from 'lucide-react'
+import { ArrowRight, Calculator, Zap, Shield, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -34,30 +34,132 @@ export default function CTA() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-28 bg-white">
+    <section ref={sectionRef} className="py-16 md:py-20 bg-white font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="cta-content relative overflow-hidden rounded-3xl bg-dark-800 px-8 py-16 lg:px-16 lg:py-20 text-center">
-          {/* Decorative circles */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-primary-500/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-48 h-48 bg-primary-500/10 rounded-full translate-x-1/3 translate-y-1/3" />
+        <div className="cta-content relative overflow-hidden rounded-[36px] bg-dark-800 border border-dark-700/50 px-6 py-12 md:p-12 lg:p-16 text-left shadow-2xl animate-fade-in">
+          
+          {/* Decorative dot pattern inside card (Top Right) */}
+          <div className="absolute top-6 right-6 text-white/[0.03] pointer-events-none select-none">
+            <svg width="100" height="100" fill="currentColor">
+              <pattern id="cta-dot-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="1.2" />
+              </pattern>
+              <rect width="100" height="100" fill="url(#cta-dot-grid)" />
+            </svg>
+          </div>
 
-          <div className="relative z-10 max-w-xl mx-auto">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-6">
-              <Calculator className="w-7 h-7 text-white" />
+          <div className="relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* LEFT COLUMN: Neumorphic realistic calculator */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-start">
+              <div className="w-[280px] bg-[#f1f4f6] border-[5px] border-slate-50 shadow-[0_15px_30px_rgba(0,0,0,0.3),_inset_-3px_-3px_7px_#ffffff,_inset_3px_3px_7px_rgba(0,0,0,0.1)] rounded-[32px] p-4 flex flex-col gap-3">
+                {/* LCD Display */}
+                <div className="w-full h-14 bg-[#b8c29b] border-2 border-slate-200/50 rounded-xl shadow-[inset_2px_3px_5px_rgba(0,0,0,0.25)] flex items-center justify-end px-4 select-none relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/5 pointer-events-none" />
+                  <span className="text-[#20271c] font-mono text-[14px] md:text-[15px] tracking-widest font-black uppercase text-right w-full">
+                    {"LET'S CALCULATE"}
+                  </span>
+                </div>
+
+                {/* Keypad */}
+                <div className="grid grid-cols-4 gap-2">
+                  {/* Row 1 */}
+                  {['MC', 'MR', 'M-', 'M+'].map((key) => (
+                    <div key={key} className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[10px] font-extrabold text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">{key}</div>
+                  ))}
+
+                  {/* Row 2 */}
+                  {['7', '8', '9'].map((key) => (
+                    <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
+                  ))}
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[13px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">÷</div>
+
+                  {/* Row 3 */}
+                  {['4', '5', '6'].map((key) => (
+                    <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
+                  ))}
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[12px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">×</div>
+
+                  {/* Row 4 */}
+                  {['1', '2', '3'].map((key) => (
+                    <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
+                  ))}
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[14px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">-</div>
+
+                  {/* Row 5 */}
+                  <div className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">0</div>
+                  <div className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">.</div>
+                  <div className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[11px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">+/-</div>
+                  <div className="h-9 rounded-lg bg-amber-500 border border-amber-600/30 flex items-center justify-center text-[13px] font-black text-white shadow-[0_1.5px_4px_rgba(245,158,11,0.3),_inset_0_-1.5px_0_#b45309] hover:brightness-105 active:scale-95 select-none">=</div>
+                </div>
+              </div>
             </div>
-            <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-4">
-              Ready to Make Calculations Effortless?
-            </h2>
-            <p className="text-dark-300 mb-8">
-              Join millions who trust CalcCraft for quick, accurate, and reliable calculations.
-            </p>
-            <Link
-              href="#"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-dark-800 font-bold rounded-full hover:bg-gray-100 transition-colors shadow-xl"
-            >
-              Start Calculating Now
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+
+            {/* RIGHT COLUMN: Text & CTAs */}
+            <div className="lg:col-span-7 flex flex-col justify-center text-left lg:pl-4">
+              {/* Top icon badge */}
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-inner select-none">
+                <Calculator className="w-6 h-6 text-white" />
+              </div>
+
+              {/* Heading */}
+              <h2 className="text-3xl lg:text-4xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+                Ready to Make Calculations Effortless?
+              </h2>
+
+              {/* Subtitle */}
+              <p className="text-slate-400 mb-8 text-sm sm:text-base leading-relaxed max-w-xl">
+                Join millions who trust CalcCraft for quick, accurate, and reliable calculations.
+              </p>
+
+              {/* CTA Button */}
+              <div className="mb-10">
+                <Link
+                  href="#calculators"
+                  className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-dark-900 font-extrabold rounded-full hover:bg-slate-100 transition-all shadow-xl hover:-translate-y-0.5 active:scale-95"
+                >
+                  Start Calculating Now
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+
+              {/* Three features under CTA */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-white/5 w-full">
+                {/* Feature 1 */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 flex-shrink-0 shadow-inner">
+                    <Zap className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="text-left select-none">
+                    <div className="font-extrabold text-white text-xs sm:text-sm">Fast & Accurate</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">Millisecond response</div>
+                  </div>
+                </div>
+                
+                {/* Feature 2 */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-500/10 border border-slate-500/20 flex items-center justify-center text-slate-400 flex-shrink-0 shadow-inner">
+                    <Shield className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="text-left select-none">
+                    <div className="font-extrabold text-white text-xs sm:text-sm">Safe & Private</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">Local processing</div>
+                  </div>
+                </div>
+
+                {/* Feature 3 */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-500/10 border border-slate-500/20 flex items-center justify-center text-slate-400 flex-shrink-0 shadow-inner">
+                    <Smartphone className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="text-left select-none">
+                    <div className="font-extrabold text-white text-xs sm:text-sm">Works on Any Device</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">Fully responsive</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
