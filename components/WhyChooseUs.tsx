@@ -75,7 +75,7 @@ export default function WhyChooseUs() {
           <div ref={leftRef} className="relative">
             <div className="relative rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3]">
               <Image
-                src="/why_choose_calc_craft.png"
+                src="/why_choose_calccraft.png"
                 alt="Calc_Craft calculator workspace showing free online math, finance, and health calculators for students and professionals"
                 fill
                 className="object-cover"

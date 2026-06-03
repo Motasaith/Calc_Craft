@@ -6,16 +6,18 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navLinks = [
-  { label: 'Calculators', href: '#calculators' },
+  { label: 'Calculators', href: '/calculators' },
+  { label: 'Visual Builder', href: '/builder' },
   {
     label: 'Categories',
-    href: '#',
+    href: '/calculators',
     children: [
-      { label: 'Math Calculators', href: '#' },
-      { label: 'Finance Calculators', href: '#' },
-      { label: 'Health Calculators', href: '#' },
-      { label: 'Date & Time', href: '#' },
-      { label: 'Conversion Tools', href: '#' },
+      { label: 'Math Calculators', href: '/calculators?category=math' },
+      { label: 'Finance Calculators', href: '/calculators?category=finance' },
+      { label: 'Health Calculators', href: '/calculators?category=health' },
+      { label: 'Date & Time', href: '/calculators?category=date-time' },
+      { label: 'Conversion Tools', href: '/calculators?category=conversion' },
+      { label: 'Everyday Tools', href: '/calculators?category=everyday' },
     ],
   },
   { label: 'Blog', href: '#' },
@@ -43,7 +45,7 @@ export default function Navbar() {
       className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
     >
       <div
-        className={`flex items-center justify-between h-14 px-2 pl-5 pr-4 rounded-full transition-all duration-300 max-w-3xl w-full hover:border-gray-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] ${
+        className={`flex items-center justify-between h-14 px-2 pl-5 pr-4 rounded-full transition-all duration-300 max-w-5xl w-full hover:border-gray-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] ${
           scrolled
             ? 'bg-white/95 backdrop-blur-xl border border-gray-200/80 shadow-[0_12px_24px_rgba(0,0,0,0.08),_0_2px_4px_rgba(0,0,0,0.02)]'
             : 'bg-white/85 backdrop-blur-md border border-gray-200/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]'
@@ -139,10 +141,10 @@ export default function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center mr-2">
           <Link
-            href="#builder"
+            href="/calculators"
             className="px-5 py-2 text-xs font-mono font-black text-white bg-[#222326] rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] hover:bg-[#2b2c30] hover:translate-y-[0.5px] hover:shadow-[0_3px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
           >
-            START BUILDING
+            EXPLORE CALCULATORS
           </Link>
         </div>
 
@@ -197,11 +199,11 @@ export default function Navbar() {
               )}
               <div className="pt-4 flex flex-col">
                 <Link
-                  href="#builder"
+                  href="/calculators"
                   className="px-4 py-2.5 text-xs font-mono font-black text-white bg-[#222326] text-center rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
                   onClick={() => setMobileOpen(false)}
                 >
-                  START BUILDING
+                  EXPLORE CALCULATORS
                 </Link>
               </div>
             </div>
