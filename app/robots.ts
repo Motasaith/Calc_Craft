@@ -37,7 +37,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://calccraft.com/sitemap.xml',
-    host: 'https://calccraft.com',
+    sitemap: 'https://calc_craft.com/sitemap.xml',
+    host: 'https://calc_craft.com',
   }
 }

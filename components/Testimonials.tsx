@@ -8,7 +8,7 @@ const testimonials = [
     name: 'Sarah J.',
     role: 'Student',
     avatar: 'SJ',
-    text: "CalcCraft is my go-to for quick calculations. It's fast, accurate, and super easy to use!",
+    text: "Calc_Craft is my go-to for quick calculations. It's fast, accurate, and super easy to use!",
     rating: 5,
   },
   {
@@ -29,7 +29,7 @@ const testimonials = [
     name: 'David R.',
     role: 'Teacher',
     avatar: 'DR',
-    text: 'I recommend CalcCraft to all my students. The variety of tools is incredible.',
+    text: 'I recommend Calc_Craft to all my students. The variety of tools is incredible.',
     rating: 5,
   },
   {

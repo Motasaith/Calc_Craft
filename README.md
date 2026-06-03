@@ -1,14 +1,14 @@
-# CalcCraft 🧮
+# Calc_Craft 🧮
 
-**CalcCraft** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **50+ free online calculators** for math, finance, health, and everyday life.
+**Calc_Craft** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **50+ free online calculators** for math, finance, health, and everyday life.
 
 ---
 
 ## 🌐 Live Website
 
-**URL**: [https://calccraft.com](https://calccraft.com)
+**URL**: [https://calc_craft.com](https://calc_craft.com)
 
-CalcCraft is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude).
+Calc_Craft is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude).
 
 ---
 
@@ -24,7 +24,7 @@ CalcCraft is a **statically exported Next.js application** optimized for search 
 - And many more...
 
 ### 2. Flat Digital Calculator Text Rendering Engine
-CalcCraft features a custom, high-fidelity SVG-based **14-segment digital text display system** that recreates the look and feel of physical LED/LCD calculator displays without relying on third-party fonts:
+Calc_Craft features a custom, high-fidelity SVG-based **14-segment digital text display system** that recreates the look and feel of physical LED/LCD calculator displays without relying on third-party fonts:
 - **Beveled SVG Polygons**: Hand-crafted coordinates for all 14 segments and a decimal point, providing clean and sharp edges at any scale.
 - **Physical Display Characteristics**: Simulates a physical screen with a subtle forward slant (`skewX(-8deg)`) and light-grey segment shadows (`rgba(0,0,0,0.06)`) for inactive background elements.
 - **Intellectual Decimal Parsing**: Automatically merges period (`.`) characters with their preceding digits into a single character cell, rendering decimals (e.g., `50+` or `12.5`) exactly like real hardware displays.
@@ -101,7 +101,7 @@ This project implements **comprehensive Search Engine Optimization (SEO)** and *
 ### Technical SEO
 
 #### 1. Metadata & Open Graph (`app/layout.tsx`)
-- **Title Template**: `"%s | CalcCraft — Free Online Calculators"`
+- **Title Template**: `"%s | Calc_Craft — Free Online Calculators"`
 - **Meta Description**: Optimized for keywords like "free online calculators", "BMI calculator", "loan calculator"
 - **Open Graph**: `og:title`, `og:description`, `og:type=website`, `og:image` (1200x630), `og:locale=en_US`
 - **Twitter Card**: `summary_large_image` with title, description, and image
@@ -201,7 +201,7 @@ Custom rules for search engines and AI bots:
 - **E-E-A-T signals**: Authoritative content, clear organization, trust signals
 
 #### Entity SEO
-- **Brand entity**: "CalcCraft" consistently referenced across all schemas
+- **Brand entity**: "Calc_Craft" consistently referenced across all schemas
 - **Product entities**: Each calculator defined as `SoftwareApplication`
 - **Organization entity**: Full business details in Organization schema
 - **WebSite entity**: Search action for Sitelinks Searchbox
@@ -313,6 +313,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ by the CalcCraft Team**
+**Made with ❤️ by the Calc_Craft Team**
 
 *Free online calculators for everyone, everywhere.*

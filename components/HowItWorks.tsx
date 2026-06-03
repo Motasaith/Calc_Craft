@@ -70,11 +70,11 @@ export default function HowItWorks() {
     <section 
       ref={sectionRef} 
       className="py-8 bg-[#eae7d9] border-y border-white/40 shadow-[inset_0_8px_16px_#c2beb0,inset_0_-8px_16px_#ffffff] overflow-hidden font-sans"
-      aria-label="How CalcCraft works - Three simple steps to use our calculators"
+      aria-label="How Calc_Craft works - Three simple steps to use our calculators"
       itemScope
       itemType="https://schema.org/HowTo"
     >
-      <meta itemProp="name" content="How to Use CalcCraft Calculators" />
+      <meta itemProp="name" content="How to Use Calc_Craft Calculators" />
       <meta itemProp="description" content="Launch powerful calculators in three simple steps: Choose or Build, Theme & Brand, Embed & Integrate." />
       <meta itemProp="totalTime" content="PT5M" />
       {/* Inline styles for custom board animations */}

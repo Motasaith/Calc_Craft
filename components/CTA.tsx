@@ -37,7 +37,7 @@ export default function CTA() {
     <section 
       ref={sectionRef} 
       className="py-16 md:py-20 bg-white font-sans"
-      aria-label="Call to action - Start using CalcCraft calculators"
+      aria-label="Call to action - Start using Calc_Craft calculators"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div 
@@ -45,7 +45,7 @@ export default function CTA() {
           itemScope
           itemType="https://schema.org/SoftwareApplication"
         >
-          <meta itemProp="name" content="CalcCraft" />
+          <meta itemProp="name" content="Calc_Craft" />
           <meta itemProp="applicationCategory" content="CalculatorApplication" />
           <meta itemProp="operatingSystem" content="Any" />
           <meta itemProp="offers" content="Free" />
@@ -122,7 +122,7 @@ export default function CTA() {
 
               {/* Subtitle */}
               <p className="text-slate-400 mb-8 text-sm sm:text-base leading-relaxed max-w-xl">
-                Join millions who trust <strong className="text-slate-300">CalcCraft</strong> for quick, accurate, and reliable <strong className="text-slate-300">free online calculators</strong>. No signup required.
+                Join millions who trust <strong className="text-slate-300">Calc_Craft</strong> for quick, accurate, and reliable <strong className="text-slate-300">free online calculators</strong>. No signup required.
               </p>
 
               {/* CTA Button */}

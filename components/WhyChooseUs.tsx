@@ -65,7 +65,7 @@ export default function WhyChooseUs() {
     <section 
       ref={sectionRef} 
       className="py-20 lg:py-28 bg-white"
-      aria-label="Why choose CalcCraft - Benefits and features"
+      aria-label="Why choose Calc_Craft - Benefits and features"
       itemScope
       itemType="https://schema.org/ItemList"
     >
@@ -75,8 +75,8 @@ export default function WhyChooseUs() {
           <div ref={leftRef} className="relative">
             <div className="relative rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3]">
               <Image
-                src="/why_choose_calccraft.png"
-                alt="CalcCraft calculator workspace showing free online math, finance, and health calculators for students and professionals"
+                src="/why_choose_calc_craft.png"
+                alt="Calc_Craft calculator workspace showing free online math, finance, and health calculators for students and professionals"
                 fill
                 className="object-cover"
                 loading="lazy"
@@ -96,9 +96,9 @@ export default function WhyChooseUs() {
 
           {/* Right - Content */}
           <div ref={rightRef} itemScope itemType="https://schema.org/Service">
-            <meta itemProp="name" content="CalcCraft Online Calculators" />
+            <meta itemProp="name" content="Calc_Craft Online Calculators" />
             <span className="text-xs font-bold tracking-widest text-primary-600 uppercase mb-3 block">
-              Why Choose CalcCraft?
+              Why Choose Calc_Craft?
             </span>
             <h2 className="text-3xl lg:text-4xl font-extrabold text-dark-900 mb-6">
               Built for Accuracy.
@@ -106,7 +106,7 @@ export default function WhyChooseUs() {
               Designed for You.
             </h2>
             <p className="text-dark-600 mb-6 leading-relaxed">
-              CalcCraft provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs. 
+              Calc_Craft provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs. 
               No signup required, instant results, and completely private — all calculations run locally in your browser.
             </p>
             <div className="space-y-5" role="list">

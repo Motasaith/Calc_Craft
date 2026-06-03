@@ -12,13 +12,13 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://calccraft.com'),
+  metadataBase: new URL('https://calc_craft.com'),
   title: {
-    default: 'CalcCraft - Free Online Calculators for Math, Finance & Health | 50+ Smart Tools',
-    template: '%s | CalcCraft',
+    default: 'Calc_Craft - Free Online Calculators for Math, Finance & Health | 50+ Smart Tools',
+    template: '%s | Calc_Craft',
   },
   description:
-    'CalcCraft offers 50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly. Try our BMI calculator, loan EMI calculator, scientific calculator, and more.',
+    'Calc_Craft offers 50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly. Try our BMI calculator, loan EMI calculator, scientific calculator, and more.',
   keywords: [
     'calculator',
     'online calculator',
@@ -70,9 +70,9 @@ export const metadata: Metadata = {
     'length converter',
     'data converter',
   ],
-  authors: [{ name: 'CalcCraft Team', url: 'https://calccraft.com/about' }],
-  creator: 'CalcCraft',
-  publisher: 'CalcCraft',
+  authors: [{ name: 'Calc_Craft Team', url: 'https://calc_craft.com/about' }],
+  creator: 'Calc_Craft',
+  publisher: 'Calc_Craft',
   robots: {
     index: true,
     follow: true,
@@ -86,39 +86,39 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://calccraft.com',
+    canonical: 'https://calc_craft.com',
     languages: {
-      'en-US': 'https://calccraft.com',
-      'en-GB': 'https://calccraft.com',
-      'en-CA': 'https://calccraft.com',
-      'en-AU': 'https://calccraft.com',
+      'en-US': 'https://calc_craft.com',
+      'en-GB': 'https://calc_craft.com',
+      'en-CA': 'https://calc_craft.com',
+      'en-AU': 'https://calc_craft.com',
     },
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://calccraft.com',
-    siteName: 'CalcCraft',
-    title: 'CalcCraft - Free Online Calculators for Math, Finance & Health',
+    url: 'https://calc_craft.com',
+    siteName: 'Calc_Craft',
+    title: 'Calc_Craft - Free Online Calculators for Math, Finance & Health',
     description:
       '50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly.',
     images: [
       {
-        url: 'https://calccraft.com/og-image.png',
+        url: 'https://calc_craft.com/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'CalcCraft - Smart Calculators for Every Calculation',
+        alt: 'Calc_Craft - Smart Calculators for Every Calculation',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@calccraft',
-    creator: '@calccraft',
-    title: 'CalcCraft - Free Online Calculators for Math, Finance & Health',
+    site: '@calc_craft',
+    creator: '@calc_craft',
+    title: 'Calc_Craft - Free Online Calculators for Math, Finance & Health',
     description:
       '50+ free online calculators. No signup required. Fast, accurate, and mobile-friendly.',
-    images: ['https://calccraft.com/twitter-image.png'],
+    images: ['https://calc_craft.com/twitter-image.png'],
   },
   verification: {
     google: 'your-google-verification-code',
@@ -134,19 +134,19 @@ export const metadata: Metadata = {
     email: false,
   },
   itunes: {
-    appId: 'calccraft',
-    appArgument: 'https://calccraft.com',
+    appId: 'calc_craft',
+    appArgument: 'https://calc_craft.com',
   },
   appleWebApp: {
     capable: true,
-    title: 'CalcCraft',
+    title: 'Calc_Craft',
     statusBarStyle: 'black-translucent',
   },
-  applicationName: 'CalcCraft',
-  manifest: 'https://calccraft.com/manifest.webmanifest',
-  archives: ['https://calccraft.com/blog'],
-  assets: ['https://calccraft.com'],
-  bookmarks: ['https://calccraft.com'],
+  applicationName: 'Calc_Craft',
+  manifest: 'https://calc_craft.com/manifest.webmanifest',
+  archives: ['https://calc_craft.com/blog'],
+  assets: ['https://calc_craft.com'],
+  bookmarks: ['https://calc_craft.com'],
   other: {
     'msapplication-TileColor': '#1a1a1f',
     'msapplication-config': '/browserconfig.xml',
@@ -159,20 +159,20 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'WebSite',
-      '@id': 'https://calccraft.com/#website',
-      url: 'https://calccraft.com',
-      name: 'CalcCraft',
+      '@id': 'https://calc_craft.com/#website',
+      url: 'https://calc_craft.com',
+      name: 'Calc_Craft',
       description:
         'Free online calculators for math, finance, health, and everyday needs. 50+ smart calculators with no signup required.',
       publisher: {
-        '@id': 'https://calccraft.com/#organization',
+        '@id': 'https://calc_craft.com/#organization',
       },
       potentialAction: [
         {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: 'https://calccraft.com/search?q={search_term_string}',
+            urlTemplate: 'https://calc_craft.com/search?q={search_term_string}',
           },
           'query-input': {
             '@type': 'PropertyValueSpecification',
@@ -185,86 +185,86 @@ const jsonLd = {
     },
     {
       '@type': 'Organization',
-      '@id': 'https://calccraft.com/#organization',
-      name: 'CalcCraft',
-      url: 'https://calccraft.com',
+      '@id': 'https://calc_craft.com/#organization',
+      name: 'Calc_Craft',
+      url: 'https://calc_craft.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://calccraft.com/logo.png',
+        url: 'https://calc_craft.com/logo.png',
         width: 512,
         height: 512,
-        caption: 'CalcCraft Logo',
+        caption: 'Calc_Craft Logo',
       },
       image: {
         '@type': 'ImageObject',
-        url: 'https://calccraft.com/og-image.png',
+        url: 'https://calc_craft.com/og-image.png',
         width: 1200,
         height: 630,
-        caption: 'CalcCraft - Smart Calculators for Every Calculation',
+        caption: 'Calc_Craft - Smart Calculators for Every Calculation',
       },
       sameAs: [
-        'https://twitter.com/calccraft',
-        'https://facebook.com/calccraft',
-        'https://instagram.com/calccraft',
-        'https://linkedin.com/company/calccraft',
-        'https://github.com/calccraft',
+        'https://twitter.com/calc_craft',
+        'https://facebook.com/calc_craft',
+        'https://instagram.com/calc_craft',
+        'https://linkedin.com/company/calc_craft',
+        'https://github.com/calc_craft',
       ],
       contactPoint: {
         '@type': 'ContactPoint',
         telephone: '+1-800-CALC-CRAFT',
         contactType: 'customer support',
-        email: 'support@calccraft.com',
+        email: 'support@calc_craft.com',
         availableLanguage: ['English'],
         areaServed: 'Worldwide',
       },
       foundingDate: '2024',
       slogan: 'Smart Calculators for Every Calculation',
       description:
-        'CalcCraft provides free, accurate online calculators for math, finance, health, and everyday calculations. Built for students, professionals, and everyone in between.',
+        'Calc_Craft provides free, accurate online calculators for math, finance, health, and everyday calculations. Built for students, professionals, and everyone in between.',
     },
     {
       '@type': 'WebPage',
-      '@id': 'https://calccraft.com/#webpage',
-      url: 'https://calccraft.com',
-      name: 'CalcCraft - Free Online Calculators for Math, Finance & Health',
+      '@id': 'https://calc_craft.com/#webpage',
+      url: 'https://calc_craft.com',
+      name: 'Calc_Craft - Free Online Calculators for Math, Finance & Health',
       isPartOf: {
-        '@id': 'https://calccraft.com/#website',
+        '@id': 'https://calc_craft.com/#website',
       },
       about: {
-        '@id': 'https://calccraft.com/#organization',
+        '@id': 'https://calc_craft.com/#organization',
       },
       primaryImageOfPage: {
         '@type': 'ImageObject',
-        url: 'https://calccraft.com/og-image.png',
+        url: 'https://calc_craft.com/og-image.png',
       },
       datePublished: '2024-01-01T00:00:00+00:00',
       dateModified: new Date().toISOString(),
       breadcrumb: {
-        '@id': 'https://calccraft.com/#breadcrumb',
+        '@id': 'https://calc_craft.com/#breadcrumb',
       },
       inLanguage: 'en-US',
       potentialAction: [
         {
           '@type': 'ReadAction',
-          target: ['https://calccraft.com'],
+          target: ['https://calc_craft.com'],
         },
       ],
     },
     {
       '@type': 'BreadcrumbList',
-      '@id': 'https://calccraft.com/#breadcrumb',
+      '@id': 'https://calc_craft.com/#breadcrumb',
       itemListElement: [
         {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://calccraft.com',
+          item: 'https://calc_craft.com',
         },
       ],
     },
     {
       '@type': 'SoftwareApplication',
-      name: 'CalcCraft',
+      name: 'Calc_Craft',
       applicationCategory: 'CalculatorApplication',
       operatingSystem: 'Any',
       offers: {
@@ -292,7 +292,7 @@ const jsonLd = {
       ],
       screenshot: {
         '@type': 'ImageObject',
-        url: 'https://calccraft.com/screenshot.png',
+        url: 'https://calc_craft.com/screenshot.png',
       },
     },
     {
@@ -300,15 +300,15 @@ const jsonLd = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'Are all calculators on CalcCraft really free to use?',
+          name: 'Are all calculators on Calc_Craft really free to use?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes! All calculators on CalcCraft are 100% free to use. No sign-up required, no hidden fees, and no usage limits. Simply choose a calculator and start calculating.',
+            text: 'Yes! All calculators on Calc_Craft are 100% free to use. No sign-up required, no hidden fees, and no usage limits. Simply choose a calculator and start calculating.',
           },
         },
         {
           '@type': 'Question',
-          name: 'Do I need to create an account to use CalcCraft calculators?',
+          name: 'Do I need to create an account to use Calc_Craft calculators?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'Not at all. You can use every calculator without creating an account. However, signing up lets you save favorites and access your history.',
@@ -316,15 +316,15 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
-          name: 'Can I use CalcCraft calculators on my phone?',
+          name: 'Can I use Calc_Craft calculators on my phone?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Absolutely. CalcCraft is fully responsive and works great on mobile, tablet, and desktop devices.',
+            text: 'Absolutely. Calc_Craft is fully responsive and works great on mobile, tablet, and desktop devices.',
           },
         },
         {
           '@type': 'Question',
-          name: 'Is my data safe when using CalcCraft calculators?',
+          name: 'Is my data safe when using Calc_Craft calculators?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'Yes. All calculations happen in your browser. We do not store or transmit your input data to any server.',
@@ -332,7 +332,7 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
-          name: 'How often are new calculators added to CalcCraft?',
+          name: 'How often are new calculators added to Calc_Craft?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'We add new calculators regularly based on user feedback and trending needs. Check back often or subscribe to our newsletter.',
@@ -340,7 +340,7 @@ const jsonLd = {
         },
         {
           '@type': 'Question',
-          name: 'Can I embed CalcCraft calculators on my website?',
+          name: 'Can I embed Calc_Craft calculators on my website?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: 'Yes! We offer embed codes for all calculators. You can also white-label them with your own branding.',

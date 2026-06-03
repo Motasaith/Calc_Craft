@@ -705,8 +705,6 @@ export default function CalculatorStack() {
       itemScope
       itemType="https://schema.org/ItemList"
     >
-      <meta itemProp="name" content="Popular Calculators" />
-      <meta itemProp="description" content="Interactive free online calculators including Basic, Scientific, BMI, and Loan EMI calculators." />
       {/* Decorative floating rings background */}
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full border border-dark-900/5 dark:border-white/5 bg-gradient-to-b from-primary-500/5 to-transparent blur-3xl" />

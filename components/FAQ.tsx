@@ -22,7 +22,7 @@ gsap.registerPlugin(ScrollTrigger)
 const faqs = [
   {
     q: 'Are all calculators really free to use?',
-    a: 'Yes! All calculators on CalcCraft are 100% free to use. No sign-up required, no hidden fees, and no usage limits. Simply choose a calculator and start calculating.',
+    a: 'Yes! All calculators on Calc_Craft are 100% free to use. No sign-up required, no hidden fees, and no usage limits. Simply choose a calculator and start calculating.',
     icon: Shield,
   },
   {
@@ -32,7 +32,7 @@ const faqs = [
   },
   {
     q: 'Can I use these calculators on my phone?',
-    a: 'Absolutely. CalcCraft is fully responsive and works great on mobile, tablet, and desktop devices.',
+    a: 'Absolutely. Calc_Craft is fully responsive and works great on mobile, tablet, and desktop devices.',
     icon: Smartphone,
   },
   {
@@ -83,7 +83,7 @@ export default function FAQ() {
     <section 
       ref={sectionRef} 
       className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
-      aria-label="Frequently asked questions about CalcCraft calculators"
+      aria-label="Frequently asked questions about Calc_Craft calculators"
       itemScope
       itemType="https://schema.org/FAQPage"
     >
@@ -220,7 +220,7 @@ export default function FAQ() {
             <span>Still have questions? We're here to help.</span>
           </div>
           <a
-            href="mailto:support@calccraft.com"
+            href="mailto:support@calc_craft.com"
             className="text-slate-700 hover:text-slate-900 font-extrabold flex items-center gap-1.5 text-xs md:text-sm transition-colors"
           >
             Contact support

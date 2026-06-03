@@ -50,7 +50,7 @@ export default function Navbar() {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group mr-2" aria-label="CalcCraft Home">
+        <Link href="/" className="flex items-center gap-2 group mr-2" aria-label="Calc_Craft Home">
           <div className="w-8 h-8 rounded-full bg-dark-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md shadow-dark-800/10">
             <Calculator className="w-4 h-4 text-white" />
           </div>
