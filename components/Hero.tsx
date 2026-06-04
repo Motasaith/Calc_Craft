@@ -55,21 +55,15 @@ export default function Hero() {
         className="relative pt-20 pb-6 sm:pt-24 sm:pb-8 md:pt-28 md:pb-10 lg:pt-32 lg:pb-12 overflow-hidden flex flex-col justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-[75vh] lg:min-h-[80vh]"
         aria-label="Hero section - Free online calculators"
       >
-        {/* Responsive Background Image — true 4-breakpoint <picture> */}
-        <picture className="absolute inset-0 -z-10 pointer-events-none select-none">
-          <source media="(max-width: 480px)" srcSet="/responsive_hero.png" />
-          <source media="(max-width: 768px)" srcSet="/responsive_hero.png" />
-          <source media="(max-width: 1024px)" srcSet="/hero.png" />
-          <source media="(min-width: 1025px)" srcSet="/hero.png" />
-          <Image
-            src="/hero.png"
-            alt="Calculator workspace background showing modern digital tools"
-            fill
-            priority
-            sizes="(max-width: 480px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
-            className="object-cover object-center"
-          />
-        </picture>
+        {/* Responsive Background Image — single Next/Image with object-position tweaks per breakpoint */}
+        <Image
+          src="/hero.png"
+          alt="Calculator workspace background showing modern digital tools"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-10 object-cover object-[center_30%] sm:object-center pointer-events-none select-none"
+        />
 
         {/* Subtle overlay for mobile text legibility */}
         <div className="absolute inset-0 -z-10 bg-white/15 sm:bg-white/5 pointer-events-none" aria-hidden="true" />
