@@ -50,7 +50,7 @@ export default function CalculatorPageClient({ slug }: { slug: string }) {
             <span className="text-dark-700 font-semibold">{calc.shortName}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-[1fr_280px] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 lg:gap-8">
             {/* Main Calculator Area */}
             <div>
               {/* Page Header */}

@@ -114,7 +114,7 @@ export default function CalculatorsPage() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl lg:text-5xl font-extrabold text-dark-900 mb-4"
+              className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark-900 mb-4"
             >
               All Calculators
             </motion.h1>

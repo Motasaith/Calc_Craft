@@ -250,71 +250,73 @@ export default function BuilderPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 bg-gray-50 flex flex-col">
+      <main className="min-h-screen pt-20 sm:pt-24 bg-gray-50 flex flex-col">
         {/* Editor Toolbar Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex flex-wrap gap-4 items-center justify-between shadow-sm sticky top-14 z-40">
-          <div className="flex items-center gap-3">
-            <Link 
+        <div className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap gap-3 sm:gap-4 items-center justify-between shadow-sm sticky top-14 z-40">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <Link
               href="/calculators"
-              className="p-2 hover:bg-gray-100 rounded-full text-dark-600 transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full text-dark-600 transition-colors shrink-0"
               title="Return to Directory"
             >
               <ChevronLeft className="w-5 h-5" />
             </Link>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <input 
-                  type="text" 
-                  value={calculator.name} 
+                <input
+                  type="text"
+                  value={calculator.name}
                   onChange={(e) => updateCalculator({ ...calculator, name: e.target.value })}
-                  className="text-lg font-bold text-dark-800 focus:outline-none focus:border-b focus:border-indigo-500 bg-transparent px-1 py-0.5 rounded"
+                  className="text-base sm:text-lg font-bold text-dark-800 focus:outline-none focus:border-b focus:border-indigo-500 bg-transparent px-1 py-0.5 rounded w-full min-w-0"
                   placeholder="Calculator Name"
                 />
-                <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse-slow" />
+                <Sparkles className="w-4 h-4 text-indigo-500 animate-pulse-slow shrink-0 hidden sm:block" />
               </div>
-              <p className="text-xs text-dark-400 font-mono">WordPress-style Page Builder</p>
+              <p className="text-[10px] sm:text-xs text-dark-400 font-mono truncate">WordPress-style Page Builder</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <button
               onClick={() => setPreviewOpen(true)}
-              className="px-4 py-2 text-xs font-mono font-black text-dark-700 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 flex items-center gap-1.5 active:scale-95 transition-all select-none"
+              className="px-2.5 sm:px-4 py-2 text-[10px] sm:text-xs font-mono font-black text-dark-700 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 flex items-center gap-1 sm:gap-1.5 active:scale-95 transition-all select-none"
             >
-              <Eye className="w-4 h-4" />
-              LIVE PREVIEW
+              <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline sm:inline">LIVE PREVIEW</span>
+              <span className="xs:hidden sm:hidden">PREVIEW</span>
             </button>
             <button
               onClick={() => setShareModalOpen(true)}
-              className="px-4 py-2 text-xs font-mono font-black text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 flex items-center gap-1.5 active:scale-95 transition-all select-none"
+              className="px-2.5 sm:px-4 py-2 text-[10px] sm:text-xs font-mono font-black text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 flex items-center gap-1 sm:gap-1.5 active:scale-95 transition-all select-none"
             >
-              <Share2 className="w-4 h-4" />
-              SHARE & EMBED
+              <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline sm:inline">SHARE & EMBED</span>
+              <span className="xs:hidden sm:hidden">SHARE</span>
             </button>
             <button
               onClick={handleSaveToDashboard}
-              className="px-5 py-2 text-xs font-mono font-black text-white bg-[#222326] rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] hover:bg-[#2b2c30] hover:translate-y-[0.5px] hover:shadow-[0_3px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none flex items-center gap-1.5"
+              className="px-3 sm:px-5 py-2 text-[10px] sm:text-xs font-mono font-black text-white bg-[#222326] rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] hover:bg-[#2b2c30] hover:translate-y-[0.5px] hover:shadow-[0_3px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none flex items-center gap-1 sm:gap-1.5"
             >
-              <Save className="w-4 h-4" />
-              SAVE CALCULATOR
+              <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span>SAVE</span>
             </button>
           </div>
         </div>
 
         {/* Builder Body Workspace */}
-        <div className="flex-1 grid lg:grid-cols-[260px_1fr_360px] h-auto lg:h-[calc(100vh-144px)] overflow-y-auto lg:overflow-hidden">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[260px_1fr_360px] h-auto lg:h-[calc(100vh-144px)] overflow-y-auto lg:overflow-hidden gap-3 md:gap-4">
           
           {/* LEFT SIDEBAR: Add Elements Toolbox */}
-          <div className="bg-white border-b lg:border-b-0 lg:border-r border-gray-200 p-5 lg:overflow-y-auto space-y-6 h-auto lg:h-full">
+          <div className="bg-white border-b lg:border-b-0 lg:border-r border-gray-200 p-4 sm:p-5 lg:overflow-y-auto space-y-5 sm:space-y-6 h-auto lg:h-full">
             <div>
               <h3 className="text-xs font-bold text-dark-800 uppercase tracking-widest font-mono mb-4 flex items-center gap-1.5">
                 <Plus className="w-3.5 h-3.5 text-indigo-500" />
                 Add Controls
               </h3>
-              <div className="grid gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
                 <button
                   onClick={() => addComponent('number')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <Type className="w-4 h-4" />
@@ -327,40 +329,40 @@ export default function BuilderPage() {
 
                 <button
                   onClick={() => addComponent('slider')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <Sliders className="w-4 h-4" />
                   </div>
                   <div>
                     <div>Range Slider</div>
-                    <div className="text-[10px] text-dark-400 font-normal">Horizontal range track</div>
+                    <div className="text-[10px] text-dark-400 font-normal hidden sm:block">Horizontal range track</div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => addComponent('select')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <List className="w-4 h-4" />
                   </div>
                   <div>
                     <div>Select Dropdown</div>
-                    <div className="text-[10px] text-dark-400 font-normal">Choose from list menu</div>
+                    <div className="text-[10px] text-dark-400 font-normal hidden sm:block">Choose from list menu</div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => addComponent('checkbox')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <CheckSquare className="w-4 h-4" />
                   </div>
                   <div>
                     <div>Switch Checkbox</div>
-                    <div className="text-[10px] text-dark-400 font-normal">Yes/No checkbox option</div>
+                    <div className="text-[10px] text-dark-400 font-normal hidden sm:block">Yes/No checkbox option</div>
                   </div>
                 </button>
               </div>
@@ -371,10 +373,10 @@ export default function BuilderPage() {
                 <Layout className="w-3.5 h-3.5 text-indigo-500" />
                 Layout Blocks
               </h3>
-              <div className="grid gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
                 <button
                   onClick={() => addComponent('header')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <Heading className="w-4 h-4" />
@@ -387,7 +389,7 @@ export default function BuilderPage() {
 
                 <button
                   onClick={() => addComponent('text')}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 text-left text-xs font-semibold text-dark-700 hover:text-indigo-600 transition-all group"
                 >
                   <div className="p-2 rounded-lg bg-indigo-50 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
                     <Type className="w-4 h-4 text-xs font-normal" />
@@ -402,8 +404,8 @@ export default function BuilderPage() {
           </div>
 
           {/* CENTER CANVAS: Visual Blueprint Layout */}
-          <div className="p-4 sm:p-8 lg:overflow-y-auto flex justify-center items-start bg-gray-50 h-auto lg:h-full">
-            <div className="w-full max-w-xl bg-white border-2 border-dashed border-gray-200 rounded-2xl p-6 min-h-[350px] shadow-sm space-y-4">
+          <div className="p-4 sm:p-6 md:p-8 lg:overflow-y-auto flex justify-center items-start bg-gray-50 h-auto lg:h-full">
+            <div className="w-full max-w-xl bg-white border-2 border-dashed border-gray-200 rounded-2xl p-4 sm:p-6 min-h-[350px] shadow-sm space-y-4">
               <div className="text-center pb-4 border-b border-gray-100">
                 <span className="text-[9px] uppercase tracking-widest font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold">
                   Blueprint Canvas
@@ -557,28 +559,30 @@ export default function BuilderPage() {
             <div className="grid grid-cols-2 border-b border-gray-200 sticky top-0 bg-white z-10">
               <button
                 onClick={() => setActiveTab('components')}
-                className={`py-3 text-xs font-mono font-bold border-b-2 transition-all ${
+                className={`py-3 text-[10px] sm:text-xs font-mono font-bold border-b-2 transition-all ${
                   activeTab === 'components'
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-dark-500 hover:text-dark-700'
                 }`}
               >
-                ELEMENT INSPECTOR
+                <span className="sm:hidden">INSPECTOR</span>
+                <span className="hidden sm:inline">ELEMENT INSPECTOR</span>
               </button>
               <button
                 onClick={() => setActiveTab('styles')}
-                className={`py-3 text-xs font-mono font-bold border-b-2 transition-all ${
+                className={`py-3 text-[10px] sm:text-xs font-mono font-bold border-b-2 transition-all ${
                   activeTab === 'styles'
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-dark-500 hover:text-dark-700'
                 }`}
               >
-                SETTINGS & FORMULAS
+                <span className="sm:hidden">SETTINGS</span>
+                <span className="hidden sm:inline">SETTINGS & FORMULAS</span>
               </button>
             </div>
 
             {/* Inspector Panels Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-5 sm:space-y-6">
               
               {/* ELEMENT TAB */}
               {activeTab === 'components' && (
@@ -1071,12 +1075,12 @@ export default function BuilderPage() {
       {/* --- PREVIEW CALCULATOR MODAL OVERLAY --- */}
       <AnimatePresence>
         {previewOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 shadow-2xl max-w-xl w-full border border-gray-100 flex flex-col max-h-[90vh] overflow-hidden"
+              className="bg-white rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl max-w-xl w-full border border-gray-100 flex flex-col max-h-[95vh] sm:max-h-[90vh] overflow-hidden"
             >
               <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
                 <div className="flex items-center gap-2">
@@ -1114,12 +1118,12 @@ export default function BuilderPage() {
       {/* --- SHARE & EMBED WIDGET MODAL --- */}
       <AnimatePresence>
         {shareModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 shadow-2xl max-w-2xl w-full border border-gray-100 flex flex-col max-h-[90vh] overflow-hidden"
+              className="bg-white rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl max-w-2xl w-full border border-gray-100 flex flex-col max-h-[95vh] sm:max-h-[90vh] overflow-hidden"
             >
               <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
                 <div className="flex items-center gap-2">

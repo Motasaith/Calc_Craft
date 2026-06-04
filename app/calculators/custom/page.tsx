@@ -75,7 +75,7 @@ export default function CustomCalculatorPage() {
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8 items-start">
             {/* Main Calculator Screen */}
             <div className="space-y-6">
               {loading ? (

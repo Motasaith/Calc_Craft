@@ -47,30 +47,30 @@ export default function CookiesPolicy() {
 
           <section className="mb-10">
             <h2 className="text-xl font-bold text-slate-800 mb-3">3. Types of Cookies We Use</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-slate-500 border border-slate-200 rounded-lg">
-                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full text-xs sm:text-sm text-left text-slate-500 border border-slate-200 rounded-lg min-w-[480px]">
+                <thead className="text-[10px] sm:text-xs text-slate-700 uppercase bg-slate-50">
                   <tr>
-                    <th className="px-4 py-3 border-b border-slate-200">Cookie Type</th>
-                    <th className="px-4 py-3 border-b border-slate-200">Purpose</th>
-                    <th className="px-4 py-3 border-b border-slate-200">Duration</th>
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-slate-200">Cookie Type</th>
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-slate-200">Purpose</th>
+                    <th className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-slate-200">Duration</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-slate-100">
-                    <td className="px-4 py-3 font-medium text-slate-700">Session</td>
-                    <td className="px-4 py-3">Maintain your session while using the site</td>
-                    <td className="px-4 py-3">Browser session</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium text-slate-700">Session</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3">Maintain your session while using the site</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">Browser session</td>
                   </tr>
                   <tr className="border-b border-slate-100">
-                    <td className="px-4 py-3 font-medium text-slate-700">Preferences</td>
-                    <td className="px-4 py-3">Remember your calculator settings</td>
-                    <td className="px-4 py-3">1 year</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium text-slate-700">Preferences</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3">Remember your calculator settings</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">1 year</td>
                   </tr>
                   <tr>
-                    <td className="px-4 py-3 font-medium text-slate-700">Analytics</td>
-                    <td className="px-4 py-3">Track anonymous usage statistics</td>
-                    <td className="px-4 py-3">2 years</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 font-medium text-slate-700">Analytics</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3">Track anonymous usage statistics</td>
+                    <td className="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">2 years</td>
                   </tr>
                 </tbody>
               </table>
