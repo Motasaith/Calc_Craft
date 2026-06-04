@@ -80,9 +80,9 @@ export default function FAQ() {
   }, [])
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
+    <section
+      ref={sectionRef}
+      className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
       aria-label="Frequently asked questions about Calc_Craft calculators"
       itemScope
       itemType="https://schema.org/FAQPage"
@@ -143,7 +143,7 @@ export default function FAQ() {
             <CircleHelp className="w-3.5 h-3.5 text-slate-500" />
             FAQ
           </div>
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
             Frequently Asked Questions
           </h2>
           <p className="text-sm text-slate-400 max-w-md mx-auto">Everything you need to know about our online calculators.</p>

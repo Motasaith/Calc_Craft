@@ -699,8 +699,8 @@ export default function CalculatorStack() {
   }
 
   return (
-    <section 
-      className="relative w-full py-16 flex flex-col items-center justify-center overflow-visible"
+    <section
+      className="relative w-full py-12 sm:py-14 md:py-16 flex flex-col items-center justify-center overflow-hidden"
       aria-label="Interactive calculator stack - Popular free online calculators"
       itemScope
       itemType="https://schema.org/ItemList"
@@ -712,8 +712,8 @@ export default function CalculatorStack() {
       </div>
 
       {/* Component Title & Instruction */}
-      <div className="text-center mb-14 px-4 z-10">
-        <h2 className="text-3xl lg:text-4xl font-extrabold text-dark-900 mb-4">
+      <div className="text-center mb-10 sm:mb-14 px-4 z-10">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-dark-900 mb-3 sm:mb-4">
           Popular Calculators
         </h2>
         <p className="text-dark-400 max-w-lg mx-auto mb-2 text-sm leading-relaxed">
@@ -728,11 +728,11 @@ export default function CalculatorStack() {
 
       {isMobile ? (
         // Mobile Horizontal Scroll Snap Layout
-        <div className="relative w-full max-w-full flex justify-center py-6 px-4">
+        <div className="relative w-full max-w-full flex justify-center py-6 px-2 sm:px-4">
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none px-[calc(50vw-150px)] py-4 w-full"
+            className="flex gap-3 sm:gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none px-[calc(50vw-140px)] sm:px-[calc(50vw-150px)] py-4 w-full"
             style={{ scrollBehavior: 'smooth' }}
           >
             {cards.map((card, i) => {
@@ -740,7 +740,7 @@ export default function CalculatorStack() {
               return (
                 <div
                   key={card.name}
-                  className="snap-center shrink-0 w-[280px] h-[410px] transition-all duration-300 relative"
+                  className="snap-center shrink-0 w-[260px] sm:w-[280px] h-[400px] sm:h-[410px] transition-all duration-300 relative"
                   style={{
                     transform: isActive ? 'scale(1.02)' : 'scale(0.92)',
                     opacity: isActive ? 1 : 0.5,
@@ -759,7 +759,7 @@ export default function CalculatorStack() {
                         const container = scrollContainerRef.current
                         if (container) {
                           container.scrollTo({
-                            left: i * 300,
+                            left: i * 290,
                             behavior: 'smooth',
                           })
                         }

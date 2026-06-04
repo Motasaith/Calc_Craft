@@ -9,6 +9,10 @@
   html {
     scroll-behavior: smooth;
   }
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
   body {
     font-family: 'Inter', system-ui, sans-serif;
     background-color: #fafafa;
@@ -21,6 +25,9 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
   }
   .glass {
     background: rgba(255, 255, 255, 0.7);

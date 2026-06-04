@@ -51,16 +51,16 @@ export default function Features() {
           {/* Set 1 */}
           <div className="flex items-center shrink-0" role="listitem">
             {tickerItems.map((item, idx) => (
-              <div key={`group1-${idx}`} className="flex items-center gap-3.5 mx-12" itemScope itemType="https://schema.org/ListItem">
+              <div key={`group1-${idx}`} className="flex items-center gap-2 sm:gap-3.5 mx-6 sm:mx-12" itemScope itemType="https://schema.org/ListItem">
                 <meta itemProp="position" content={String(idx + 1)} />
-                <item.icon className="w-6 h-6 text-neutral-400 shrink-0" aria-hidden="true" />
-                <span className="text-sm font-black uppercase tracking-widest text-neutral-600 font-mono" itemProp="name">
+                <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-400 shrink-0" aria-hidden="true" />
+                <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-neutral-600 font-mono" itemProp="name">
                   {item.title}
                 </span>
-                <span className="text-xs text-neutral-400 font-mono lowercase">
+                <span className="text-[10px] sm:text-xs text-neutral-400 font-mono lowercase hidden xs:inline">
                   ({item.sub})
                 </span>
-                <span className="text-neutral-200 font-extrabold ml-12 text-sm font-mono" aria-hidden="true">//</span>
+                <span className="text-neutral-200 font-extrabold ml-6 sm:ml-12 text-xs sm:text-sm font-mono" aria-hidden="true">//</span>
               </div>
             ))}
           </div>
@@ -68,15 +68,15 @@ export default function Features() {
           {/* Set 2 (Identical duplicate for seamless looping) */}
           <div className="flex items-center shrink-0" role="listitem">
             {tickerItems.map((item, idx) => (
-              <div key={`group2-${idx}`} className="flex items-center gap-3.5 mx-12">
-                <item.icon className="w-6 h-6 text-neutral-400 shrink-0" aria-hidden="true" />
-                <span className="text-sm font-black uppercase tracking-widest text-neutral-600 font-mono">
+              <div key={`group2-${idx}`} className="flex items-center gap-2 sm:gap-3.5 mx-6 sm:mx-12">
+                <item.icon className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-400 shrink-0" aria-hidden="true" />
+                <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-neutral-600 font-mono">
                   {item.title}
                 </span>
-                <span className="text-xs text-neutral-400 font-mono lowercase">
+                <span className="text-[10px] sm:text-xs text-neutral-400 font-mono lowercase hidden xs:inline">
                   ({item.sub})
                 </span>
-                <span className="text-neutral-200 font-extrabold ml-12 text-sm font-mono" aria-hidden="true">//</span>
+                <span className="text-neutral-200 font-extrabold ml-6 sm:ml-12 text-xs sm:text-sm font-mono" aria-hidden="true">//</span>
               </div>
             ))}
           </div>

@@ -91,11 +91,11 @@ export default function Testimonials() {
   }
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
+      className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
     >
       
       {/* Decorative Dot Grid Top-Right */}
@@ -134,7 +134,7 @@ export default function Testimonials() {
             <Quote className="w-3 h-3 text-slate-500 fill-slate-500/10" />
             User Testimonials
           </div>
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800 mb-2 tracking-tight">
             What Our Users Say
           </h2>
           <p className="text-sm text-slate-400 max-w-md mx-auto">Trusted by students, professionals, and everyday users worldwide.</p>

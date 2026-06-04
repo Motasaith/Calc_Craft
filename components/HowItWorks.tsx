@@ -67,9 +67,9 @@ export default function HowItWorks() {
   }
 
   return (
-    <section 
-      ref={sectionRef} 
-      className="py-8 bg-[#eae7d9] border-y border-white/40 shadow-[inset_0_8px_16px_#c2beb0,inset_0_-8px_16px_#ffffff] overflow-hidden font-sans"
+    <section
+      ref={sectionRef}
+      className="py-10 sm:py-12 md:py-14 bg-[#eae7d9] border-y border-white/40 shadow-[inset_0_8px_16px_#c2beb0,inset_0_-8px_16px_#ffffff] overflow-hidden font-sans"
       aria-label="How Calc_Craft works - Three simple steps to use our calculators"
       itemScope
       itemType="https://schema.org/HowTo"
