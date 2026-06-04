@@ -45,6 +45,7 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
   const [active, setActive] = useState(1) // Start with index 1 (Michael T.) centered
   const [windowWidth, setWindowWidth] = useState(1024)
+  const [mounted, setMounted] = useState(false)
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -52,6 +53,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
+    setMounted(true) // Signal that we're now on the client with real values
     const handleResize = () => setWindowWidth(window.innerWidth)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -233,7 +235,7 @@ export default function Testimonials() {
                   onMouseEnter={() => !isCenter && setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
                   style={{
-                    transform: `translate(calc(-50% + ${offset * (windowWidth < 640 ? 110 : 180)}px), -50%) scale(${
+                    transform: `translate(calc(-50% + ${offset * (mounted && windowWidth < 640 ? 110 : 180)}px), -50%) scale(${
                       isCenter ? 1 : hoveredIdx === idx ? 0.93 : 0.88
                     })`,
                     zIndex: isCenter ? 20 : hoveredIdx === idx ? 25 : 10,

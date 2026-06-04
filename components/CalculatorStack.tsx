@@ -6,7 +6,9 @@ import {
   Sparkles,
   Activity,
   DollarSign,
-  Delete
+  Delete,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import DigitalText from './DigitalText'
 
@@ -610,16 +612,20 @@ function LoanCalculator() {
 // MAIN COMPONENT: CALCULATOR STACK
 // ==========================================
 export default function CalculatorStack() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null) // Default focus null (all rest behind)
+  const [activeIndex, setActiveIndex] = useState<number | null>(0) // Start with first card active
   const [isMobile, setIsMobile] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(1024)
+  const [mounted, setMounted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Track responsive screen dimensions
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024)
+      setWindowWidth(window.innerWidth)
     }
     handleResize()
+    setMounted(true) // Signal that we're now on the client with real values
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
@@ -727,48 +733,81 @@ export default function CalculatorStack() {
       </div>
 
       {isMobile ? (
-        // Mobile Horizontal Scroll Snap Layout
-        <div className="relative w-full max-w-full flex justify-center py-6 px-2 sm:px-4">
-          <div
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            className="flex gap-3 sm:gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none px-[calc(50vw-140px)] sm:px-[calc(50vw-150px)] py-4 w-full"
-            style={{ scrollBehavior: 'smooth' }}
-          >
+        // Mobile Stacked-Overlay Carousel — mirrors Testimonials: center card in front, left/right peeking behind
+        <div className="relative w-full max-w-full flex flex-col items-center py-6 px-2 sm:px-4">
+          <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[420px] sm:h-[440px] flex items-center justify-center">
             {cards.map((card, i) => {
-              const isActive = activeIndex === i
+              const offset = i - (activeIndex ?? 0)
+              const isCenter = offset === 0
+              const isLeft = offset === -1
+              const isRight = offset === 1
+              const isVisible = isCenter || isLeft || isRight
+
+              // Translate offset to the side so the adjacent card peeks out from behind the center one.
+              // Until mounted, use the default (≥480px) offset so SSR + first client render are identical.
+              const translateX = offset * ((mounted && windowWidth < 480) ? 130 : 150)
+
               return (
                 <div
                   key={card.name}
-                  className="snap-center shrink-0 w-[260px] sm:w-[280px] h-[400px] sm:h-[410px] transition-all duration-300 relative"
+                  onClick={() => !isCenter && setActiveIndex(i)}
                   style={{
-                    transform: isActive ? 'scale(1.02)' : 'scale(0.92)',
-                    opacity: isActive ? 1 : 0.5,
-                    zIndex: isActive ? 30 : 10,
+                    transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${isCenter ? 1 : 0.88})`,
+                    zIndex: isCenter ? 30 : 10 + (Math.abs(offset) === 1 ? 1 : 0),
+                    opacity: isCenter ? 1 : isVisible ? 0.75 : 0,
+                    pointerEvents: isVisible ? 'auto' : 'none',
                   }}
+                  className={`
+                    absolute left-1/2 top-1/2 transition-all duration-500 ease-out select-none flex-shrink-0 cursor-pointer
+                    w-[260px] sm:w-[280px] h-[400px] sm:h-[410px]
+                  `}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${cards.length}: ${card.name}`}
                 >
-                  {/* Card Container wrapper */}
                   <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-xl">
                     {card.render}
                   </div>
-                  {/* Invisible block click to slide interaction */}
-                  {!isActive && (
-                    <div
-                      className="absolute inset-0 z-40 cursor-pointer"
-                      onClick={() => {
-                        const container = scrollContainerRef.current
-                        if (container) {
-                          container.scrollTo({
-                            left: i * 290,
-                            behavior: 'smooth',
-                          })
-                        }
-                      }}
-                    />
-                  )}
                 </div>
               )
             })}
+          </div>
+
+          {/* Prev / Next + Pagination dots — exactly like Testimonials */}
+          <div className="flex justify-center items-center gap-4 mt-6 relative z-20">
+            <button
+              onClick={() => setActiveIndex((a) => (a !== null && a > 0 ? a - 1 : cards.length - 1))}
+              className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all"
+              aria-label="Previous calculator"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex gap-2 items-center" role="tablist" aria-label="Calculator carousel indicators">
+              {cards.map((_, i) => {
+                const isActive = (activeIndex ?? 0) === i
+                return (
+                  <button
+                    key={i}
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-label={`Go to calculator ${i + 1}`}
+                    onClick={() => setActiveIndex(i)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      isActive ? 'bg-primary-600 w-5 shadow-[0_0_6px_rgba(2,132,199,0.4)]' : 'bg-slate-300 w-2 hover:bg-slate-400'
+                    }`}
+                  />
+                )
+              })}
+            </div>
+
+            <button
+              onClick={() => setActiveIndex((a) => (a !== null && a < cards.length - 1 ? a + 1 : 0))}
+              className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all"
+              aria-label="Next calculator"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       ) : (
