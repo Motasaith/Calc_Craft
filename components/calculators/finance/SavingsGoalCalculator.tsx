@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import React, { useEffect, useState } from 'react'
+import FormCalculatorShell, { ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import { evaluateBig, formatCurrency } from '@/lib/calc-engine'
 
 export default function SavingsGoalCalculator() {
   const [goal, setGoal] = useState(10000)
@@ -9,8 +10,23 @@ export default function SavingsGoalCalculator() {
   const [rate, setRate] = useState(5)
 
   const remaining = Math.max(goal - current, 0)
-  const r = rate / 12 / 100
-  const monthlyNeeded = r > 0 ? (remaining * r) / (Math.pow(1 + r, months) - 1) : remaining / months
+  const [monthlyNeeded, setMonthlyNeeded] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    if (remaining <= 0 || months <= 0) { setMonthlyNeeded(0); return }
+    const r = rate / 12 / 100
+    // Future value of annuity: FV = P * ((1+r)^n - 1) / r
+    // Solve for P: P = FV * r / ((1+r)^n - 1)
+    const expr = r > 0
+      ? `(${remaining} * ${r}) / ((1 + ${r})^(${months}) - 1)`
+      : `${remaining} / ${months}`
+    evaluateBig(expr).then((res) => {
+      if (cancelled) return
+      setMonthlyNeeded(res.ok ? res.value : remaining / months)
+    })
+    return () => { cancelled = true }
+  }, [remaining, months, rate])
 
   return (
     <FormCalculatorShell title="Savings Goal Calculator" badge="FINANCE">
@@ -20,8 +36,8 @@ export default function SavingsGoalCalculator() {
       <RetroSlider label="Annual Interest" value={rate} onChange={setRate} min={0} max={15} step={0.5} displayValue={`${rate}%`} id="sg-r" />
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <ResultDisplay label="Monthly Savings Needed" value={`$${Math.round(monthlyNeeded).toLocaleString()}`} large />
-        <ResultDisplay label="Remaining to Save" value={`$${remaining.toLocaleString()}`} />
+        <ResultDisplay label="Monthly Savings Needed" value={formatCurrency(monthlyNeeded)} large />
+        <ResultDisplay label="Remaining to Save" value={formatCurrency(remaining)} />
       </div>
     </FormCalculatorShell>
   )

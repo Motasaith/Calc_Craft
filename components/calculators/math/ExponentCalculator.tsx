@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { evaluate } from '@/lib/calc-engine'
 
 export default function ExponentCalculator() {
   const [base, setBase] = useState('')
@@ -10,14 +11,17 @@ export default function ExponentCalculator() {
   const [error, setError] = useState('')
 
   const calculate = () => {
-    setError(''); setResult(null)
-    const b = parseFloat(base), e = parseFloat(exp)
-    if (isNaN(b) || isNaN(e)) { setError('Enter valid numbers'); return }
-    if (b === 0 && e < 0) { setError('0 raised to negative power is undefined'); return }
-    if (b < 0 && !Number.isInteger(e)) { setError('Negative base with non-integer exponent gives complex result'); return }
-    const r = Math.pow(b, e)
-    if (!isFinite(r)) { setError('Result is too large'); return }
-    setResult(parseFloat(r.toPrecision(12)).toString())
+    ;(async () => {
+      setError(''); setResult(null)
+      const b = parseFloat(base), e = parseFloat(exp)
+      if (isNaN(b) || isNaN(e)) { setError('Enter valid numbers'); return }
+      if (b === 0 && e < 0) { setError('0 raised to negative power is undefined'); return }
+      if (b < 0 && !Number.isInteger(e)) { setError('Negative base with non-integer exponent gives complex result'); return }
+      const expr = `(${b})^(${e})`
+      const r = await evaluate(expr)
+      if (!r.ok) { setError(r.error); return }
+      setResult(r.formatted)
+    })()
   }
 
   return (

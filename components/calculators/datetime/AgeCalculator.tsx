@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateAge, calculateDateDifference } from '@/lib/calc-engine'
 
 export default function AgeCalculator() {
   const [dob, setDob] = useState('')
@@ -10,25 +11,17 @@ export default function AgeCalculator() {
   const d2 = toDate ? new Date(toDate) : new Date()
   const valid = d1 && !isNaN(d1.getTime()) && d2 && !isNaN(d2.getTime()) && d1 <= d2
 
-  let years = 0, months = 0, days = 0, totalDays = 0
-  if (valid) {
-    totalDays = Math.floor((d2.getTime() - d1.getTime()) / 86400000)
-    let y = d2.getFullYear() - d1.getFullYear()
-    let m = d2.getMonth() - d1.getMonth()
-    let d = d2.getDate() - d1.getDate()
-    if (d < 0) { m--; const prevMonth = new Date(d2.getFullYear(), d2.getMonth(), 0); d += prevMonth.getDate() }
-    if (m < 0) { y--; m += 12 }
-    years = y; months = m; days = d
-  }
+  const age = valid ? calculateAge(d1!, d2) : { years: 0, months: 0, days: 0, totalDays: 0 }
+  const totalWeeks = Math.floor(age.totalDays / 7)
+  const totalHours = age.totalDays * 24
 
-  const totalWeeks = Math.floor(totalDays / 7)
-  const totalHours = totalDays * 24
   const nextBirthday = (() => {
     if (!d1) return null
     const now = d2 || new Date()
     const next = new Date(now.getFullYear(), d1.getMonth(), d1.getDate())
     if (next <= now) next.setFullYear(next.getFullYear() + 1)
-    return Math.ceil((next.getTime() - now.getTime()) / 86400000)
+    const diff = calculateDateDifference(now, next)
+    return diff.totalDays
   })()
 
   return (
@@ -49,10 +42,10 @@ export default function AgeCalculator() {
 
       {valid && (
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <ResultDisplay label="Years" value={years.toString()} large />
-          <ResultDisplay label="Months" value={months.toString()} large />
-          <ResultDisplay label="Days" value={days.toString()} large />
-          <ResultDisplay label="Total Days" value={totalDays.toLocaleString()} />
+          <ResultDisplay label="Years" value={age.years.toString()} large />
+          <ResultDisplay label="Months" value={age.months.toString()} large />
+          <ResultDisplay label="Days" value={age.days.toString()} large />
+          <ResultDisplay label="Total Days" value={age.totalDays.toLocaleString()} />
           <ResultDisplay label="Total Weeks" value={totalWeeks.toLocaleString()} />
           <ResultDisplay label="Total Hours" value={totalHours.toLocaleString()} />
           {nextBirthday !== null && <div className="col-span-3"><ResultDisplay label="Days Until Next Birthday" value={nextBirthday.toString()} /></div>}

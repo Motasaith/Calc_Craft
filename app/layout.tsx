@@ -238,7 +238,7 @@ const jsonLd = {
         url: 'https://calc_craft.com/og-image.png',
       },
       datePublished: '2024-01-01T00:00:00+00:00',
-      dateModified: new Date().toISOString(),
+      dateModified: '2024-01-01T00:00:00+00:00',
       breadcrumb: {
         '@id': 'https://calc_craft.com/#breadcrumb',
       },
@@ -357,7 +357,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

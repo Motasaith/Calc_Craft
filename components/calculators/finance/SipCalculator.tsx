@@ -1,18 +1,28 @@
 'use client'
 
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import React, { useEffect, useState } from 'react'
+import FormCalculatorShell, { ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import { calculateSIP, formatCurrency } from '@/lib/calc-engine'
 
 export default function SipCalculator() {
   const [monthly, setMonthly] = useState(500)
   const [rate, setRate] = useState(12)
   const [years, setYears] = useState(10)
 
-  const n = years * 12
-  const r = rate / 12 / 100
-  const invested = monthly * n
-  const fv = r > 0 ? monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r) : invested
-  const wealth = fv - invested
+  const [invested, setInvested] = useState(0)
+  const [wealth, setWealth] = useState(0)
+  const [fv, setFv] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    calculateSIP(monthly, rate, years * 12).then((r) => {
+      if (cancelled) return
+      setInvested(r.invested)
+      setWealth(r.returns)
+      setFv(r.futureValue)
+    })
+    return () => { cancelled = true }
+  }, [monthly, rate, years])
 
   return (
     <FormCalculatorShell title="SIP Calculator" subtitle="Systematic Investment Plan" badge="FINANCE">
@@ -21,9 +31,9 @@ export default function SipCalculator() {
       <RetroSlider label="Time Period" value={years} onChange={setYears} min={1} max={40} step={1} displayValue={`${years} Years`} id="sip-y" />
 
       <div className="grid grid-cols-3 gap-2 mt-4">
-        <ResultDisplay label="Invested" value={`$${Math.round(invested).toLocaleString()}`} />
-        <ResultDisplay label="Returns" value={`$${Math.round(wealth).toLocaleString()}`} />
-        <ResultDisplay label="Total Value" value={`$${Math.round(fv).toLocaleString()}`} large />
+        <ResultDisplay label="Invested" value={formatCurrency(invested)} />
+        <ResultDisplay label="Returns" value={formatCurrency(wealth)} />
+        <ResultDisplay label="Total Value" value={formatCurrency(fv)} large />
       </div>
     </FormCalculatorShell>
   )

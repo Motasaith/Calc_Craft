@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateHeartRate } from '@/lib/calc-engine'
 
 export default function HeartRateCalculator() {
   const [age, setAge] = useState('')
@@ -8,8 +9,9 @@ export default function HeartRateCalculator() {
 
   const a = parseFloat(age), rhr = parseFloat(restHR)
   const valid = !isNaN(a) && a > 0 && a <= 120
-  const maxHR = valid ? 220 - a : 0
-  const hasRest = !isNaN(rhr) && rhr > 30 && rhr < maxHR
+  const hasRest = !isNaN(rhr) && rhr > 30
+  const r = valid ? calculateHeartRate(a, hasRest ? rhr : 0, 0) : { max: 0, target: 0 }
+  const maxHR = r.max
 
   const zones = [
     { name: 'Recovery', min: 50, max: 60, desc: 'Warm-up, cool-down' },

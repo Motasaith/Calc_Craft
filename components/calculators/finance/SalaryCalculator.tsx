@@ -1,18 +1,17 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateSalary, formatCurrency } from '@/lib/calc-engine'
 
 export default function SalaryCalculator() {
-  const [hourly, setHourly] = useState('')
-  const [hoursWeek, setHoursWeek] = useState('40')
+  const [hourly, setHourly] = React.useState('')
+  const [hoursWeek, setHoursWeek] = React.useState('40')
 
   const h = parseFloat(hourly), hw = parseFloat(hoursWeek)
   const valid = !isNaN(h) && !isNaN(hw) && h > 0 && hw > 0
-  const daily = valid ? h * (hw / 5) : 0
-  const weekly = valid ? h * hw : 0
-  const biweekly = weekly * 2
-  const monthly = valid ? (h * hw * 52) / 12 : 0
   const annual = valid ? h * hw * 52 : 0
+  const r = valid ? calculateSalary(annual, hw, 52) : { monthly: 0, weekly: 0, daily: 0, hourly: 0 }
+  const biweekly = r.weekly * 2
 
   return (
     <FormCalculatorShell title="Salary Calculator" subtitle="Convert between pay periods" badge="FINANCE">
@@ -22,11 +21,11 @@ export default function SalaryCalculator() {
       </div>
       {valid && (
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <ResultDisplay label="Daily" value={`$${daily.toFixed(2)}`} />
-          <ResultDisplay label="Weekly" value={`$${weekly.toFixed(2)}`} />
-          <ResultDisplay label="Bi-Weekly" value={`$${biweekly.toFixed(2)}`} />
-          <ResultDisplay label="Monthly" value={`$${monthly.toFixed(2)}`} />
-          <ResultDisplay label="Annual" value={`$${Math.round(annual).toLocaleString()}`} large />
+          <ResultDisplay label="Daily" value={formatCurrency(r.daily)} />
+          <ResultDisplay label="Weekly" value={formatCurrency(r.weekly)} />
+          <ResultDisplay label="Bi-Weekly" value={formatCurrency(biweekly)} />
+          <ResultDisplay label="Monthly" value={formatCurrency(r.monthly)} />
+          <ResultDisplay label="Annual" value={formatCurrency(annual)} large />
         </div>
       )}
     </FormCalculatorShell>

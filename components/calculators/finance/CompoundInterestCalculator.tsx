@@ -2,19 +2,21 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { calculateCompoundInterest, formatCurrency } from '@/lib/calc-engine'
 
 export default function CompoundInterestCalculator() {
   const [principal, setPrincipal] = useState('10000')
   const [rate, setRate] = useState('5')
   const [time, setTime] = useState('10')
   const [compound, setCompound] = useState('12')
-  const [result, setResult] = useState<{ total: string; interest: string } | null>(null)
+  const [result, setResult] = useState<{ amount: number; interest: number } | null>(null)
 
-  const calculate = () => {
-    const P = parseFloat(principal), r = parseFloat(rate) / 100, t = parseFloat(time), n = parseInt(compound)
-    if ([P, r, t, n].some(isNaN) || P <= 0 || r < 0 || t <= 0 || n <= 0) return
-    const A = P * Math.pow(1 + r / n, n * t)
-    setResult({ total: `$${Math.round(A).toLocaleString()}`, interest: `$${Math.round(A - P).toLocaleString()}` })
+  const calculate = async () => {
+    const P = parseFloat(principal), r = parseFloat(rate), t = parseFloat(time), n = parseInt(compound)
+    if ([P, r, t, n].some(isNaN) || P <= 0 || r < 0 || t <= 0 || n <= 0) {
+      setResult(null); return
+    }
+    setResult(await calculateCompoundInterest(P, r, t, n))
   }
 
   return (
@@ -29,8 +31,8 @@ export default function CompoundInterestCalculator() {
       <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
       {result && (
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <ResultDisplay label="Final Amount" value={result.total} large />
-          <ResultDisplay label="Interest Earned" value={result.interest} large />
+          <ResultDisplay label="Final Amount" value={formatCurrency(result.amount)} large />
+          <ResultDisplay label="Interest Earned" value={formatCurrency(result.interest)} large />
         </div>
       )}
     </FormCalculatorShell>

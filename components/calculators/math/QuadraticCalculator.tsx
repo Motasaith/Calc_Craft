@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { evaluate } from '@/lib/calc-engine'
 
 export default function QuadraticCalculator() {
   const [a, setA] = useState(''); const [b, setB] = useState(''); const [c, setC] = useState('')
@@ -9,35 +10,42 @@ export default function QuadraticCalculator() {
   const [error, setError] = useState('')
 
   const calculate = () => {
-    setError(''); setResult(null)
-    const av = parseFloat(a), bv = parseFloat(b), cv = parseFloat(c)
-    if ([av, bv, cv].some(isNaN)) { setError('Enter valid numbers'); return }
-    if (av === 0) { setError('Coefficient a cannot be 0 (not quadratic)'); return }
+    ;(async () => {
+      setError(''); setResult(null)
+      const av = parseFloat(a), bv = parseFloat(b), cv = parseFloat(c)
+      if ([av, bv, cv].some(isNaN)) { setError('Enter valid numbers'); return }
+      if (av === 0) { setError('Coefficient a cannot be 0 (not quadratic)'); return }
 
-    const disc = bv * bv - 4 * av * cv
-    const vx = -bv / (2 * av)
-    const vy = av * vx * vx + bv * vx + cv
+      try {
+        const discExpr = `(${bv})^2 - 4 * (${av}) * (${cv})`
+        const discRes = await evaluate(discExpr)
+        if (!discRes.ok) { setError(discRes.error); return }
+        const disc = discRes.value
 
-    let x1: string, x2: string
-    if (disc > 0) {
-      const sq = Math.sqrt(disc)
-      x1 = parseFloat(((-bv + sq) / (2 * av)).toFixed(8)).toString()
-      x2 = parseFloat(((-bv - sq) / (2 * av)).toFixed(8)).toString()
-    } else if (disc === 0) {
-      x1 = x2 = parseFloat(vx.toFixed(8)).toString()
-    } else {
-      const real = parseFloat((-bv / (2 * av)).toFixed(6))
-      const imag = parseFloat((Math.sqrt(-disc) / (2 * av)).toFixed(6))
-      x1 = `${real} + ${Math.abs(imag)}i`
-      x2 = `${real} - ${Math.abs(imag)}i`
-    }
+        const vxRes = await evaluate(`-(${bv}) / (2 * (${av}))`)
+        if (!vxRes.ok) { setError(vxRes.error); return }
+        const vx = vxRes.value
+        const vyRes = await evaluate(`(${av}) * (${vx})^2 + (${bv}) * (${vx}) + (${cv})`)
+        if (!vyRes.ok) { setError(vyRes.error); return }
+        const vy = vyRes.value
 
-    setResult({
-      disc,
-      x1,
-      x2,
-      vertex: `(${parseFloat(vx.toFixed(6))}, ${parseFloat(vy.toFixed(6))})`
-    })
+        const x1Expr = `(-(${bv}) + sqrt(${disc})) / (2 * (${av}))`
+        const x2Expr = `(-(${bv}) - sqrt(${disc})) / (2 * (${av}))`
+        const x1Res = await evaluate(x1Expr)
+        const x2Res = await evaluate(x2Expr)
+        if (!x1Res.ok || !x2Res.ok) {
+          setError(x1Res.ok ? (x2Res as { error: string }).error : (x1Res as { error: string }).error)
+          return
+        }
+
+        setResult({
+          disc,
+          x1: x1Res.formatted,
+          x2: x2Res.formatted,
+          vertex: `(${parseFloat(vx.toFixed(6))}, ${parseFloat(vy.toFixed(6))})`
+        })
+      } catch (err) { setError('Error') }
+    })()
   }
 
   return (

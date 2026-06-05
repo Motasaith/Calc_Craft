@@ -1,13 +1,15 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateBreakEven, formatCurrency } from '@/lib/calc-engine'
 
 export default function BreakEvenCalculator() {
-  const [fixed, setFixed] = useState(''); const [varCost, setVarCost] = useState(''); const [price, setPrice] = useState('')
+  const [fixed, setFixed] = React.useState(''); const [varCost, setVarCost] = React.useState(''); const [price, setPrice] = React.useState('')
 
   const f = parseFloat(fixed), v = parseFloat(varCost), p = parseFloat(price)
   const valid = !isNaN(f) && !isNaN(v) && !isNaN(p) && f > 0 && v >= 0 && p > v
-  const units = valid ? Math.ceil(f / (p - v)) : 0
+  const rawUnits = valid ? calculateBreakEven(f, p, v) : 0
+  const units = valid && isFinite(rawUnits) ? Math.ceil(rawUnits) : 0
   const revenue = valid ? units * p : 0
   const contribution = valid ? p - v : 0
 
@@ -24,8 +26,8 @@ export default function BreakEvenCalculator() {
       {valid && (
         <div className="mt-4 grid grid-cols-3 gap-2">
           <ResultDisplay label="Break-Even Units" value={units.toString()} large />
-          <ResultDisplay label="Break-Even Revenue" value={`$${revenue.toLocaleString()}`} />
-          <ResultDisplay label="Contribution/Unit" value={`$${contribution.toFixed(2)}`} />
+          <ResultDisplay label="Break-Even Revenue" value={formatCurrency(revenue)} />
+          <ResultDisplay label="Contribution/Unit" value={formatCurrency(contribution)} />
         </div>
       )}
     </FormCalculatorShell>

@@ -1,17 +1,20 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
+import { convertUnits } from '@/lib/calc-engine'
 
-const units: Record<string, number> = {
-  mg: 0.001, g: 1, kg: 1000, oz: 28.3495, lb: 453.592, st: 6350.29, ton_us: 907185, ton_metric: 1000000, ct: 0.2,
+const units = ['mg', 'g', 'kg', 'ton', 'oz', 'lb', 'st']
+const unitLabels: Record<string, string> = {
+  mg: 'mg (Milligram)', g: 'g (Gram)', kg: 'kg (Kilogram)',
+  ton: 't (Metric Ton)', oz: 'oz (Ounce)', lb: 'lb (Pound)', st: 'st (Stone)',
 }
 
 export default function WeightConverter() {
   const [value, setValue] = useState('1'); const [from, setFrom] = useState('kg'); const [to, setTo] = useState('lb')
   const v = parseFloat(value)
   const valid = !isNaN(v)
-  const result = valid ? (v * units[from]) / units[to] : 0
-  const options = Object.keys(units).map((u) => ({ value: u, label: u.replace('_', ' ') }))
+  const result = valid ? convertUnits(v, from, to, 'weight') : 0
+  const options = units.map((u) => ({ value: u, label: unitLabels[u] || u }))
 
   return (
     <FormCalculatorShell title="Weight Converter" badge="CONVERSION">
@@ -20,7 +23,7 @@ export default function WeightConverter() {
         <RetroSelect label="From" value={from} onChange={setFrom} options={options} id="wt-from" />
         <RetroSelect label="To" value={to} onChange={setTo} options={options} id="wt-to" />
       </div>
-      {valid && <div className="mt-4"><ResultDisplay label={`${value} ${from} =`} value={`${parseFloat(result.toPrecision(10))} ${to.replace('_', ' ')}`} large /></div>}
+      {valid && <div className="mt-4"><ResultDisplay label={`${value} ${from} =`} value={`${result} ${to}`} large /></div>}
     </FormCalculatorShell>
   )
 }

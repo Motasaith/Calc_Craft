@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateMacros } from '@/lib/calc-engine'
 
 export default function MacroCalculator() {
   const [calories, setCalories] = useState('')
@@ -9,7 +10,7 @@ export default function MacroCalculator() {
   const c = parseFloat(calories)
   const valid = !isNaN(c) && c > 0
 
-  // Macro ratios per goal
+  // Macro ratios per goal (carbs / protein / fat)
   const ratios: Record<string, { p: number; c_: number; f: number }> = {
     lose: { p: 40, c_: 30, f: 30 },
     maintain: { p: 30, c_: 40, f: 30 },
@@ -18,9 +19,7 @@ export default function MacroCalculator() {
   }
 
   const r = ratios[goal]
-  const protein = valid ? (c * r.p / 100) / 4 : 0
-  const carbs = valid ? (c * r.c_ / 100) / 4 : 0
-  const fat = valid ? (c * r.f / 100) / 9 : 0
+  const m = valid ? calculateMacros(c, { carbs: r.c_ / 100, protein: r.p / 100, fat: r.f / 100 }) : { carbs: 0, protein: 0, fat: 0 }
 
   return (
     <FormCalculatorShell title="Macronutrient Calculator" badge="HEALTH">
@@ -36,9 +35,9 @@ export default function MacroCalculator() {
       {valid && (
         <div className="mt-4">
           <div className="grid grid-cols-3 gap-2">
-            <ResultDisplay label={`Protein (${r.p}%)`} value={`${Math.round(protein)}g`} large />
-            <ResultDisplay label={`Carbs (${r.c_}%)`} value={`${Math.round(carbs)}g`} large />
-            <ResultDisplay label={`Fat (${r.f}%)`} value={`${Math.round(fat)}g`} large />
+            <ResultDisplay label={`Protein (${r.p}%)`} value={`${m.protein}g`} large />
+            <ResultDisplay label={`Carbs (${r.c_}%)`} value={`${m.carbs}g`} large />
+            <ResultDisplay label={`Fat (${r.f}%)`} value={`${m.fat}g`} large />
           </div>
           {/* Visual bar */}
           <div className="mt-3 h-4 rounded-full overflow-hidden bg-neutral-200 border border-neutral-300 flex">

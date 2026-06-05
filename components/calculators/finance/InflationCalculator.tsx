@@ -1,14 +1,27 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import React, { useEffect, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateInflation, formatCurrency } from '@/lib/calc-engine'
 
 export default function InflationCalculator() {
   const [amount, setAmount] = useState(''); const [rate, setRate] = useState(''); const [years, setYears] = useState('')
 
   const av = parseFloat(amount), rv = parseFloat(rate), yv = parseFloat(years)
   const valid = !isNaN(av) && !isNaN(rv) && !isNaN(yv) && av > 0 && rv > 0 && yv > 0
-  const future = valid ? av * Math.pow(1 + rv / 100, yv) : 0
-  const purchasing = valid ? av / Math.pow(1 + rv / 100, yv) : 0
+
+  const [future, setFuture] = useState(0)
+  const [purchasing, setPurchasing] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    if (!valid) { setFuture(0); setPurchasing(0); return }
+    calculateInflation(av, rv, yv).then((r) => {
+      if (cancelled) return
+      setFuture(r.futureValue)
+      setPurchasing(av - r.purchasingPowerLoss) // current value of future purchasing power
+    })
+    return () => { cancelled = true }
+  }, [av, rv, yv, valid])
 
   return (
     <FormCalculatorShell title="Inflation Calculator" badge="FINANCE">
@@ -19,8 +32,8 @@ export default function InflationCalculator() {
       </div>
       {valid && (
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <ResultDisplay label="Future Cost" value={`$${Math.round(future).toLocaleString()}`} large />
-          <ResultDisplay label="Purchasing Power" value={`$${Math.round(purchasing).toLocaleString()}`} large />
+          <ResultDisplay label="Future Cost" value={formatCurrency(future)} large />
+          <ResultDisplay label="Purchasing Power" value={formatCurrency(purchasing)} large />
         </div>
       )}
     </FormCalculatorShell>

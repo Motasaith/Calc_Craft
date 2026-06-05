@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { evaluate } from '@/lib/calc-engine'
 
 const shapes = [
   { value: 'rectangle', label: 'Rectangle' },
@@ -23,46 +24,52 @@ export default function AreaCalculator() {
   const g = (k: string) => parseFloat(vals[k] || '0')
 
   const calculate = () => {
-    setError(''); setResult(null)
-    let area = 0
-    switch (shape) {
-      case 'rectangle': {
-        const l = g('length'), w = g('width')
-        if (l <= 0 || w <= 0) { setError('Dimensions must be positive'); return }
-        area = l * w; break
-      }
-      case 'circle': {
-        const r = g('radius')
-        if (r <= 0) { setError('Radius must be positive'); return }
-        area = Math.PI * r * r; break
-      }
-      case 'triangle': {
-        const b = g('base'), h = g('height')
-        if (b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
-        area = 0.5 * b * h; break
-      }
-      case 'trapezoid': {
-        const a = g('sideA'), b = g('sideB'), h = g('height')
-        if (a <= 0 || b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
-        area = 0.5 * (a + b) * h; break
-      }
-      case 'ellipse': {
-        const a = g('semiA'), b = g('semiB')
-        if (a <= 0 || b <= 0) { setError('Dimensions must be positive'); return }
-        area = Math.PI * a * b; break
-      }
-      case 'parallelogram': {
-        const b = g('base'), h = g('height')
-        if (b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
-        area = b * h; break
-      }
-      case 'rhombus': {
-        const d1 = g('diag1'), d2 = g('diag2')
-        if (d1 <= 0 || d2 <= 0) { setError('Diagonals must be positive'); return }
-        area = 0.5 * d1 * d2; break
-      }
-    }
-    setResult(parseFloat(area.toFixed(6)).toString())
+    ;(async () => {
+      setError(''); setResult(null)
+      try {
+        let expr = '0'
+        switch (shape) {
+          case 'rectangle': {
+            const l = g('length'), w = g('width')
+            if (l <= 0 || w <= 0) { setError('Dimensions must be positive'); return }
+            expr = `${l} * ${w}`; break
+          }
+          case 'circle': {
+            const r = g('radius')
+            if (r <= 0) { setError('Radius must be positive'); return }
+            expr = `pi * (${r})^2`; break
+          }
+          case 'triangle': {
+            const b = g('base'), h = g('height')
+            if (b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
+            expr = `0.5 * (${b}) * (${h})`; break
+          }
+          case 'trapezoid': {
+            const a = g('sideA'), b = g('sideB'), h = g('height')
+            if (a <= 0 || b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
+            expr = `0.5 * (${a} + ${b}) * (${h})`; break
+          }
+          case 'ellipse': {
+            const a = g('semiA'), b = g('semiB')
+            if (a <= 0 || b <= 0) { setError('Dimensions must be positive'); return }
+            expr = `pi * (${a}) * (${b})`; break
+          }
+          case 'parallelogram': {
+            const b = g('base'), h = g('height')
+            if (b <= 0 || h <= 0) { setError('Dimensions must be positive'); return }
+            expr = `(${b}) * (${h})`; break
+          }
+          case 'rhombus': {
+            const d1 = g('diag1'), d2 = g('diag2')
+            if (d1 <= 0 || d2 <= 0) { setError('Diagonals must be positive'); return }
+            expr = `0.5 * (${d1}) * (${d2})`; break
+          }
+        }
+        const res = await evaluate(expr)
+        if (!res.ok) { setError(res.error); return }
+        setResult(res.formatted)
+      } catch (err) { setError('Error') }
+    })()
   }
 
   const renderInputs = () => {

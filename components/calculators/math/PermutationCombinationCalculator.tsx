@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function factorial(n: number): number { if (n <= 1) return 1; let r = 1; for (let i = 2; i <= n; i++) r *= i; return r }
+import { evaluate } from '@/lib/calc-engine'
 
 export default function PermutationCombinationCalculator() {
   const [n, setN] = useState(''); const [r, setR] = useState('')
@@ -12,24 +11,25 @@ export default function PermutationCombinationCalculator() {
   const [error, setError] = useState('')
 
   const calculate = () => {
-    setError(''); setResult(null)
-    const nv = parseInt(n), rv = parseInt(r)
-    if (isNaN(nv) || isNaN(rv)) { setError('Enter valid integers'); return }
-    if (nv < 0 || rv < 0) { setError('Values must be non-negative'); return }
-    if (rv > nv) { setError('r cannot be greater than n'); return }
-    if (nv > 170) { setError('n is too large (max 170)'); return }
+    ;(async () => {
+      setError(''); setResult(null)
+      const nv = parseInt(n), rv = parseInt(r)
+      if (isNaN(nv) || (mode !== 'fact' && isNaN(rv))) { setError('Enter valid integers'); return }
+      if (nv < 0 || (mode !== 'fact' && rv < 0)) { setError('Values must be non-negative'); return }
+      if (mode !== 'fact' && rv > nv) { setError('r cannot be greater than n'); return }
+      if (nv > 170) { setError('n is too large (max 170)'); return }
 
-    let res: number
-    if (mode === 'nPr') {
-      res = factorial(nv) / factorial(nv - rv)
-    } else if (mode === 'nCr') {
-      res = factorial(nv) / (factorial(rv) * factorial(nv - rv))
-    } else {
-      res = factorial(nv)
-    }
+      try {
+        let expr = ''
+        if (mode === 'nPr') expr = `factorial(${nv}) / factorial(${nv - rv})`
+        else if (mode === 'nCr') expr = `factorial(${nv}) / (factorial(${rv}) * factorial(${nv - rv}))`
+        else expr = `factorial(${nv})`
 
-    if (!isFinite(res)) { setError('Result is too large'); return }
-    setResult(res.toString())
+        const res = await evaluate(expr)
+        if (!res.ok) { setError(res.error); return }
+        setResult(res.formatted)
+      } catch (err) { setError('Error') }
+    })()
   }
 
   return (

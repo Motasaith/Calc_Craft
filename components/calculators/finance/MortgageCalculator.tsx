@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import React, { useState, useEffect } from 'react'
+import FormCalculatorShell, { ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import { calculateEMI, formatCurrency } from '@/lib/calc-engine'
 
 export default function MortgageCalculator() {
   const [home, setHome] = useState(300000)
@@ -8,11 +9,23 @@ export default function MortgageCalculator() {
   const [rate, setRate] = useState(6.5)
   const [years, setYears] = useState(30)
 
+  const [payment, setPayment] = useState(0)
+  const [total, setTotal] = useState(0)
+  const [interest, setInterest] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    const loanAmt = home * (1 - down / 100)
+    calculateEMI(loanAmt, rate, years * 12).then((r) => {
+      if (cancelled) return
+      setPayment(r.emi)
+      setTotal(r.totalPayment)
+      setInterest(r.totalInterest)
+    })
+    return () => { cancelled = true }
+  }, [home, down, rate, years])
+
   const loanAmt = home * (1 - down / 100)
-  const R = rate / 12 / 100, N = years * 12
-  const payment = R > 0 ? (loanAmt * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1) : loanAmt / N
-  const total = payment * N
-  const interest = total - loanAmt
 
   return (
     <FormCalculatorShell title="Mortgage Calculator" badge="FINANCE">
@@ -22,10 +35,10 @@ export default function MortgageCalculator() {
       <RetroSlider label="Loan Term" value={years} onChange={setYears} min={5} max={30} step={5} displayValue={`${years} Years`} id="mort-y" />
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <ResultDisplay label="Monthly Payment" value={`$${Math.round(payment).toLocaleString()}`} large />
-        <ResultDisplay label="Total Interest" value={`$${Math.round(interest).toLocaleString()}`} large />
-        <ResultDisplay label="Loan Amount" value={`$${Math.round(loanAmt).toLocaleString()}`} />
-        <ResultDisplay label="Total Cost" value={`$${Math.round(total).toLocaleString()}`} />
+        <ResultDisplay label="Monthly Payment" value={formatCurrency(payment)} large />
+        <ResultDisplay label="Total Interest" value={formatCurrency(interest)} large />
+        <ResultDisplay label="Loan Amount" value={formatCurrency(loanAmt)} />
+        <ResultDisplay label="Total Cost" value={formatCurrency(total)} />
       </div>
     </FormCalculatorShell>
   )

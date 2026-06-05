@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+import FormCalculatorShell, { ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateDueDate } from '@/lib/calc-engine'
 
 export default function PregnancyCalculator() {
   const [lmp, setLmp] = useState('')
@@ -8,14 +9,14 @@ export default function PregnancyCalculator() {
   const lmpDate = lmp ? new Date(lmp) : null
   const valid = lmpDate && !isNaN(lmpDate.getTime()) && lmpDate <= new Date()
 
-  // Naegele's rule: due date = LMP + 280 days
-  const dueDate = valid ? new Date(lmpDate.getTime() + 280 * 86400000) : null
+  const r = valid ? calculateDueDate(lmpDate) : null
+  const dueDate = r ? r.dueDate : null
   const today = new Date()
-  const daysPregnant = valid ? Math.floor((today.getTime() - lmpDate.getTime()) / 86400000) : 0
-  const weeksPregnant = Math.floor(daysPregnant / 7)
-  const daysExtra = daysPregnant % 7
-  const trimester = weeksPregnant < 13 ? 1 : weeksPregnant < 27 ? 2 : 3
+  const weeksPregnant = r ? r.weeksPregnant : 0
+  const trimester = r ? r.trimester : 1
   const daysRemaining = valid && dueDate ? Math.max(0, Math.floor((dueDate.getTime() - today.getTime()) / 86400000)) : 0
+  const daysPregnant = valid ? Math.floor((today.getTime() - lmpDate.getTime()) / 86400000) : 0
+  const daysExtra = daysPregnant % 7
 
   const firstTrimEnd = valid ? new Date(lmpDate.getTime() + 91 * 86400000) : null
   const secondTrimEnd = valid ? new Date(lmpDate.getTime() + 189 * 86400000) : null

@@ -1,16 +1,17 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroSelect, ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
+import { calculateWaterIntake } from '@/lib/calc-engine'
 
 export default function WaterIntakeCalculator() {
   const [weight, setWeight] = useState(70)
   const [activity, setActivity] = useState('moderate')
   const [climate, setClimate] = useState('temperate')
 
-  const baseML = weight * 33 // 33ml per kg baseline
-  const actMult = activity === 'sedentary' ? 1 : activity === 'light' ? 1.1 : activity === 'moderate' ? 1.2 : activity === 'intense' ? 1.4 : 1.5
-  const climMult = climate === 'cold' ? 0.9 : climate === 'temperate' ? 1 : 1.15
-  const total = baseML * actMult * climMult
+  // Map activity to exercise minutes per day for engine calculation
+  const exerciseMins = { sedentary: 0, light: 15, moderate: 30, intense: 60, athlete: 90 }[activity] || 0
+  const climateMult = climate === 'cold' ? 0.9 : climate === 'temperate' ? 1 : 1.15
+  const total = calculateWaterIntake(weight, exerciseMins) * climateMult
   const glasses = total / 250
 
   return (

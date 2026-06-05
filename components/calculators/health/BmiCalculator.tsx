@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton, StatusBar } from '../shared/FormCalculatorShell'
+import FormCalculatorShell, { RetroInput, ResultDisplay, StatusBar } from '../shared/FormCalculatorShell'
+import { calculateBMI } from '@/lib/calc-engine'
 
 export default function BmiCalculator() {
   const [unit, setUnit] = useState('metric')
@@ -10,11 +11,10 @@ export default function BmiCalculator() {
   const calculate = (): { bmi: number; category: string } | null => {
     if (unit === 'metric') {
       const w = parseFloat(weight), h = parseFloat(height)
-      // Real human range validation: tallest ever 272cm, heaviest 635kg, shortest adult ~54cm
       if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return null
-      if (h < 50 || h > 280) return null // unrealistic height
-      if (w < 2 || w > 650) return null // unrealistic weight
-      const bmi = w / ((h / 100) ** 2)
+      if (h < 50 || h > 280) return null
+      if (w < 2 || w > 650) return null
+      const bmi = calculateBMI(w, h)
       return { bmi, category: getCategory(bmi) }
     } else {
       const f = parseFloat(feet), i = parseFloat(inches || '0'), w = parseFloat(lbs)
@@ -22,7 +22,8 @@ export default function BmiCalculator() {
       const totalInches = f * 12 + (isNaN(i) ? 0 : i)
       if (totalInches < 20 || totalInches > 110) return null
       if (w < 5 || w > 1400) return null
-      const bmi = (w / (totalInches ** 2)) * 703
+      // Convert imperial to metric for the engine
+      const bmi = calculateBMI(w * 0.453592, totalInches * 2.54)
       return { bmi, category: getCategory(bmi) }
     }
   }

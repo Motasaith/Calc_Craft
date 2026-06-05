@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { hmsToSeconds, secondsToHMS } from '@/lib/calc-engine'
 
 export default function TimeCalculator() {
   const [h1, setH1] = useState(''); const [m1, setM1] = useState(''); const [s1, setS1] = useState('')
@@ -9,14 +10,11 @@ export default function TimeCalculator() {
   const [result, setResult] = useState<string | null>(null)
 
   const calculate = () => {
-    const t1 = (parseInt(h1 || '0') * 3600) + (parseInt(m1 || '0') * 60) + parseInt(s1 || '0')
-    const t2 = (parseInt(h2 || '0') * 3600) + (parseInt(m2 || '0') * 60) + parseInt(s2 || '0')
-    let total = op === '+' ? t1 + t2 : t1 - t2
-    const neg = total < 0; total = Math.abs(total)
-    const rh = Math.floor(total / 3600)
-    const rm = Math.floor((total % 3600) / 60)
-    const rs = total % 60
-    setResult(`${neg ? '−' : ''}${rh}h ${rm}m ${rs}s`)
+    const t1 = hmsToSeconds(Number(h1 || '0'), Number(m1 || '0'), Number(s1 || '0'))
+    const t2 = hmsToSeconds(Number(h2 || '0'), Number(m2 || '0'), Number(s2 || '0'))
+    const total = op === '+' ? t1 + t2 : t1 - t2
+    const hms = secondsToHMS(total)
+    setResult(`${hms.negative ? '−' : ''}${hms.hours}h ${hms.minutes}m ${hms.seconds}s`)
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { evaluate } from '@/lib/calc-engine'
 
 export default function LogarithmCalculator() {
   const [value, setValue] = useState('')
@@ -11,21 +12,26 @@ export default function LogarithmCalculator() {
   const [error, setError] = useState('')
 
   const calculate = () => {
-    setError(''); setResult(null)
-    const v = parseFloat(value)
-    if (isNaN(v) || v <= 0) { setError('Value must be a positive number'); return }
+    ;(async () => {
+      setError(''); setResult(null)
+      const v = parseFloat(value)
+      if (isNaN(v) || v <= 0) { setError('Value must be a positive number'); return }
 
-    let r: number
-    if (base === 'e') { r = Math.log(v) }
-    else if (base === '10') { r = Math.log10(v) }
-    else if (base === '2') { r = Math.log2(v) }
-    else {
-      const b = parseFloat(customBase)
-      if (isNaN(b) || b <= 0 || b === 1) { setError('Base must be positive and ≠ 1'); return }
-      r = Math.log(v) / Math.log(b)
-    }
-
-    setResult(parseFloat(r.toFixed(10)).toString())
+      try {
+        let expr = ''
+        if (base === 'e') expr = `log(${v})`
+        else if (base === '10') expr = `log10(${v})`
+        else if (base === '2') expr = `log2(${v})`
+        else {
+          const b = parseFloat(customBase)
+          if (isNaN(b) || b <= 0 || b === 1) { setError('Base must be positive and ≠ 1'); return }
+          expr = `log(${v}, ${b})`
+        }
+        const res = await evaluate(expr)
+        if (!res.ok) { setError(res.error); return }
+        setResult(res.formatted)
+      } catch (err) { setError('Error') }
+    })()
   }
 
   return (

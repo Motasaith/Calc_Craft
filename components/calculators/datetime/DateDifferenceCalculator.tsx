@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateDateDifference } from '@/lib/calc-engine'
 
 export default function DateDifferenceCalculator() {
   const [d1, setD1] = useState(''); const [d2, setD2] = useState('')
@@ -8,13 +9,13 @@ export default function DateDifferenceCalculator() {
   const date1 = d1 ? new Date(d1) : null, date2 = d2 ? new Date(d2) : null
   const valid = date1 && date2 && !isNaN(date1.getTime()) && !isNaN(date2.getTime())
 
-  const diff = valid ? Math.abs(date2.getTime() - date1.getTime()) : 0
-  const days = Math.floor(diff / 86400000)
-  const weeks = Math.floor(days / 7)
-  const months = valid ? Math.abs((date2.getFullYear() - date1.getFullYear()) * 12 + date2.getMonth() - date1.getMonth()) : 0
+  const diffObj = valid ? calculateDateDifference(date1!, date2!) : null
+  const days = diffObj ? diffObj.totalDays : 0
+  const weeks = diffObj ? diffObj.totalWeeks : 0
+  const months = diffObj ? diffObj.totalMonths : 0
   const years = valid ? Math.abs(date2.getFullYear() - date1.getFullYear()) : 0
-  const hours = days * 24
-  const minutes = hours * 60
+  const hours = diffObj ? diffObj.totalHours : 0
+  const minutes = diffObj ? diffObj.totalMinutes : 0
 
   return (
     <FormCalculatorShell title="Date Difference Calculator" badge="DATE & TIME">

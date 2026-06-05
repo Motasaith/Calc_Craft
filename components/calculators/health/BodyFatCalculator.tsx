@@ -1,20 +1,23 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
+import { calculateBodyFatNavy } from '@/lib/calc-engine'
 
 export default function BodyFatCalculator() {
   const [gender, setGender] = useState('male')
   const [waist, setWaist] = useState(''); const [neck, setNeck] = useState(''); const [height, setHeight] = useState(''); const [hip, setHip] = useState('')
 
-  // US Navy Method (requires cm)
   const w = parseFloat(waist), n = parseFloat(neck), h = parseFloat(height), hp = parseFloat(hip)
-
-  let bf: number | null = null
-  if (gender === 'male' && !isNaN(w) && !isNaN(n) && !isNaN(h) && w > n && h > 0) {
-    bf = 86.010 * Math.log10(w - n) - 70.041 * Math.log10(h) + 36.76
-  } else if (gender === 'female' && !isNaN(w) && !isNaN(n) && !isNaN(h) && !isNaN(hp) && (w + hp - n) > 0 && h > 0) {
-    bf = 163.205 * Math.log10(w + hp - n) - 97.684 * Math.log10(h) - 78.387
-  }
+  const sex = gender === 'male' ? 'male' : 'female' as 'male' | 'female'
+  const bf = (() => {
+    if (gender === 'male' && !isNaN(w) && !isNaN(n) && !isNaN(h) && w > n && h > 0) {
+      return calculateBodyFatNavy('male', h, w, n)
+    }
+    if (gender === 'female' && !isNaN(w) && !isNaN(n) && !isNaN(h) && !isNaN(hp) && (w + hp - n) > 0 && h > 0) {
+      return calculateBodyFatNavy('female', h, w, n, hp)
+    }
+    return 0
+  })()
 
   const getCategory = (bf: number, g: string) => {
     if (g === 'male') {
@@ -43,7 +46,7 @@ export default function BodyFatCalculator() {
       <RetroInput label="Height" value={height} onChange={setHeight} placeholder="175" id="bf-h" unit="cm" />
       {gender === 'female' && <RetroInput label="Hip" value={hip} onChange={setHip} placeholder="95" id="bf-hp" unit="cm" />}
 
-      {bf !== null && bf > 0 && bf < 60 && (
+      {bf > 0 && bf < 60 && (
         <div className="mt-4 grid grid-cols-2 gap-3">
           <ResultDisplay label="Body Fat %" value={`${bf.toFixed(1)}%`} large />
           <ResultDisplay label="Category" value={getCategory(bf, gender)} />

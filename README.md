@@ -1,6 +1,6 @@
 # Calc_Craft 🧮
 
-**Calc_Craft** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **50+ free online calculators** for math, finance, health, and everyday life.
+**Calc_Craft** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **50+ free online calculators** across **9 categories** — all powered by a single high-precision math engine.
 
 ---
 
@@ -12,16 +12,43 @@ Calc_Craft is a **statically exported Next.js application** optimized for search
 
 ---
 
+## ✨ What's New
+
+### 🧠 State-of-the-Art Calculation Engine ([lib/calc-engine.ts](lib/calc-engine.ts))
+Every numeric result on the site is produced by a single, centralized engine built on top of **mathjs (BigNumber, 64–128 digits of precision)**.
+
+- **`evaluate()` / `evaluateBig()`** — async expression evaluators with friendly error messages
+- **Domain-specific helpers** — `calculateEMI`, `calculateCompoundInterest`, `calculateSIP`, `calculateBMI`, `calculateBMR`, `calculateBodyFatNavy`, `calculateIdealWeight`, `calculateHeartRate`, `calculateWaterIntake`, `calculateMacros`, `calculateDueDate`, `calculateAge`, `calculateDateDifference`, `calculateROI`, `calculateInflation`, `calculateBreakEven`, `calculateProfitMargin`, `calculateTip`, `calculateSalary`, `calculateSavingsGoal`, `calculateSimpleInterest`, `calculateDiscount`
+- **Unit & currency conversion** — `convertUnits`, `convertTemperature`, `convertCooking`, `convertCurrency`
+- **Time helpers** — `hmsToSeconds`, `secondsToHMS`
+- **Statistics** — `mean`, `median`, `mode`, `stddev`, `variance`, `sum`, `range_`
+- **Formatting** — `formatNumber`, `formatCurrency`, `formatPercent`
+- **Lazy-loaded** — mathjs is dynamically imported on calculator pages only, keeping the landing-page bundle small
+- **Type-safe** — every helper returns either `EvalResult` (with `value` + `formatted`) or `EvalError`
+
+> **43 calculator components** share this single engine — no duplicated math, no float drift, no inconsistent rounding.
+
+### 🆕 New Categories
+- **Statistics** — descriptive stats (mean, median, mode, std dev, variance, range)
+- **Trigonometry** — sin / cos / tan / asin / acos / atan with DEG/RAD toggle
+- **Geometry** — area & volume of 13 shapes (rectangle, circle, triangle, trapezoid, ellipse, parallelogram, rhombus, cube, sphere, cylinder, cone, pyramid, prism)
+
+---
+
 ## 🚀 Key Features
 
-### 1. Free Online Calculators
-- **Basic Calculator** — Quick everyday math operations
-- **Scientific Calculator** — Advanced functions for students and professionals
-- **Percentage Calculator** — Calculate percentages with ease
-- **BMI Calculator** — Check your Body Mass Index in seconds
-- **Loan EMI Calculator** — Plan loans and EMIs with confidence
-- **Age Calculator** — Calculate age and time between dates
-- And many more...
+### 1. Free Online Calculators (50+ across 9 categories)
+| Category | Calculators |
+|---|---|
+| **Math** | Basic, Scientific, Percentage, Fraction, Exponent, Logarithm, Quadratic, GCD & LCM, Permutation & Combination, Ratio, Number Base Converter, Statistics, Volume, Area |
+| **Finance** | Loan EMI, Mortgage, Compound Interest, Simple Interest, SIP, ROI, Inflation, Discount, Profit Margin, Break-Even, Tip, Salary, Savings Goal, Currency |
+| **Health** | BMI, Body Fat, Calorie (BMR + TDEE), Ideal Weight, Heart Rate, Macro, Water Intake, Pregnancy |
+| **Conversion** | Length, Weight, Temperature, Speed, Energy, Data Storage, Cooking |
+| **Datetime** | Age, Date Difference, Time, Countdown |
+| **Everyday** | GPA, Password Generator, Random Number, Color Converter, Word Counter |
+| **Statistics** | Descriptive statistics (mean / median / mode / std dev / variance / range) |
+| **Trigonometry** | sin / cos / tan + inverses (DEG/RAD) |
+| **Geometry** | Area & Volume of 13 shapes |
 
 ### 2. Flat Digital Calculator Text Rendering Engine
 Calc_Craft features a custom, high-fidelity SVG-based **14-segment digital text display system** that recreates the look and feel of physical LED/LCD calculator displays without relying on third-party fonts:
@@ -48,6 +75,13 @@ The navigation menu has been fully upgraded to stand out cleanly from the Hero c
 - Horizontal snap-scroll for calculator cards on mobile
 - Adaptive typography and spacing across all devices
 
+### 5. Custom Calculator Builder
+A drag-and-drop builder lets users create and share their own calculators without writing code:
+- **Form fields** — number, text, select, slider
+- **Formula parser** — mathjs-based with shared engine helpers
+- **Export & share** — generate a shareable URL via the URL serializer
+- **Embed** — paste the calculator into any page via the `/embed` route
+
 ---
 
 ## 🛠️ Technology Stack
@@ -56,8 +90,9 @@ The navigation menu has been fully upgraded to stand out cleanly from the Hero c
 |------------|---------|
 | **Next.js 15** | React framework with App Router, static export, and built-in SEO optimizations |
 | **React 19** | UI library with concurrent features |
-| **TypeScript** | Type-safe development |
+| **TypeScript** | Type-safe development across the engine and UI |
 | **Tailwind CSS 3.4** | Utility-first CSS framework with custom color palette |
+| **mathjs (BigNumber)** | Core calculation engine — 64/128-digit precision |
 | **GSAP + ScrollTrigger** | High-performance scroll animations |
 | **Framer Motion** | React animations and gestures |
 | **Lucide React** | Modern icon library |
@@ -65,15 +100,13 @@ The navigation menu has been fully upgraded to stand out cleanly from the Hero c
 ---
 
 ## 📂 Project Structure
-
-```bash
-├── app/
-│   ├── globals.css         # Global stylesheets and animations
-│   ├── layout.tsx          # Root layout with metadata, JSON-LD, viewport
-│   ├── page.tsx            # Main page composition with skip-to-content
-│   ├── robots.ts           # Crawler directives for search engines and AI bots
-│   ├── sitemap.ts          # XML sitemap with priorities and change frequencies
-│   └── manifest.ts         # PWA manifest with calculator shortcuts
+├── manifest.ts         # PWA manifest with calculator shortcuts
+│   ├── builder/            # Custom calculator builder
+│   ├── calculators/        # Catalog + dynamic [slug] routes
+│   ├── cookies/            # Cookie policy
+│   ├── embed/              # Embeddable calculator iframe
+│   ├── privacy-policy/     # Privacy policy
+│   └── terms-of-use/       # Terms of use
 ├── components/
 │   ├── Navbar.tsx          # Animated floating header with semantic nav
 │   ├── Hero.tsx            # Landing section with ARIA labels and schema markup
@@ -83,6 +116,53 @@ The navigation menu has been fully upgraded to stand out cleanly from the Hero c
 │   ├── PopularCalculators.tsx # SoftwareApplication schema for each calculator
 │   ├── CalculatorStack.tsx # Interactive calculator stack with schema
 │   ├── Testimonials.tsx    # Review schema and accessible carousel
+│   ├── FAQ.tsx             # FAQPage schema with Question/Answer markup
+│   ├── CTA.tsx             # Call-to-action with SoftwareApplication schema
+│   ├── Footer.tsx          # Organization schema and semantic footer
+│   ├── SegmentDisplay.tsx  # SVG drawing component for 14-segment characters
+│   ├── DigitalText.tsx     # Decimal-parsing parser wrapper for strings
+│   └── calculators/
+│       ├── finance/        # 14 financial calculators (EMI, SIP, mortgage, …)
+│       ├── health/         # 8 health calculators (BMI, BMR, body fat, …)
+│       ├── conversion/     # 7 unit converters (length, weight, …)
+│       ├── datetime/       # 4 date/time calculators
+│       ├── math/           # 13 math calculators (algebra, stats, …)
+│       ├── everyday/       # 5 everyday utilities
+│       ├── statistics/     # Descriptive statistics
+│       ├── trigonometry/   # Trig with DEG/RAD
+│       ├── geometry/       # Area & volume
+│       └── shared/         # FormCalculatorShell, RetroInput, ResultDisplay, …
+├── hooks/
+│   └── useKeyboardInput.ts # Keyboard input hook (used by Basic & Scientific)
+├── lib/
+│   ├── calc-engine.ts      # ⭐ Central calculation engine (mathjs, BigNumber)
+│   ├── calculators.ts      # Catalog of every calculator (slug, category, …)
+│   ├── calculator-components.tsx # Lazy resolver: slug → React component
+│   ├── export-utils.ts     # Export calculated results to CSV / JSON
+│   ├── formula-parser.ts   # Custom-formula parser used by the builder
+│   └── url-serializer.ts   # Encode / decode calculator state in URLs
+├── test/
+│   └── engine.test.mjs     # 96 engine tests (run with `npx tsx`)
+└── public/                 # Static assets (hero, icons, etc.)
+```
+
+---
+
+## 🧪 Testing the Engine
+
+The engine ships with **96 unit tests** covering unit conversion, financial formulas, health formulas, statistics, and BigNumber precision:
+
+```bash
+npx tsx test/engine.test.mjs
+```
+
+Expected output:
+
+```
+96 passed, 0 failed out of 96 tests
+```
+
+A typical `npx tsc --noEmit` should also pass with **no output**. ├── Testimonials.tsx    # Review schema and accessible carousel
 │   ├── FAQ.tsx             # FAQPage schema with Question/Answer markup
 │   ├── CTA.tsx             # Call-to-action with SoftwareApplication schema
 │   ├── Footer.tsx          # Organization schema and semantic footer
@@ -165,7 +245,8 @@ Custom rules for search engines and AI bots:
 - `<section>` with `aria-label` on every component
 - `<nav>` with `aria-label` in `Navbar.tsx`
 - `<footer>` with `itemType="https://schema.org/WPFooter"`
-- Skip-to-content link for accessibility
+- SkLazy engine loading** — mathjs is only loaded on calculator pages, not the landing page
+- **ip-to-content link for accessibility
 
 #### Heading Hierarchy
 - Single `<h1>` per page (Hero section)
@@ -202,6 +283,16 @@ Custom rules for search engines and AI bots:
 
 #### Entity SEO
 - **Brand entity**: "Calc_Craft" consistently referenced across all schemas
+4. Run the engine test suite:
+   ```bash
+   npx tsx test/engine.test.mjs
+   ```
+
+5. Type-check the project:
+   ```bash
+   npx tsc --noEmit
+   ```
+
 - **Product entities**: Each calculator defined as `SoftwareApplication`
 - **Organization entity**: Full business details in Organization schema
 - **WebSite entity**: Search action for Sitelinks Searchbox
@@ -307,6 +398,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Next.js Team** for the amazing React framework
 - **Tailwind CSS Team** for the utility-first CSS framework
+- **mathjs Team** for the high-precision math library that powers the engine
 - **GSAP Team** for industry-standard animations
 - **Framer Motion Team** for React animation library
 - **Lucide** for the beautiful icon set

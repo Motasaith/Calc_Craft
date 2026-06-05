@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+import { evaluate } from '@/lib/calc-engine'
 
 const gradePoints: Record<string, number> = { 'A+': 4.0, A: 4.0, 'A-': 3.7, 'B+': 3.3, B: 3.0, 'B-': 2.7, 'C+': 2.3, C: 2.0, 'C-': 1.7, 'D+': 1.3, D: 1.0, 'D-': 0.7, F: 0.0 }
 const gradeOptions = Object.keys(gradePoints).map((g) => ({ value: g, label: `${g} (${gradePoints[g]})` }))
@@ -16,15 +17,23 @@ export default function GpaCalculator() {
   }
 
   const calculate = () => {
-    let totalPoints = 0, totalCredits = 0
-    for (const c of courses) {
-      const cr = parseFloat(c.credits)
-      if (isNaN(cr) || cr <= 0) continue
-      totalPoints += gradePoints[c.grade] * cr
-      totalCredits += cr
-    }
-    if (totalCredits === 0) return
-    setResult((totalPoints / totalCredits).toFixed(2))
+    ;(async () => {
+      const validCourses: { points: number; credits: number }[] = []
+      for (const c of courses) {
+        const cr = parseFloat(c.credits)
+        if (isNaN(cr) || cr <= 0) continue
+        validCourses.push({ points: gradePoints[c.grade], credits: cr })
+      }
+      if (validCourses.length === 0) return
+
+      const weightedSum = validCourses.map((c) => `(${c.points} * ${c.credits})`).join(' + ')
+      const totalCredits = validCourses.map((c) => c.credits).join(' + ')
+      const expr = `(${weightedSum}) / (${totalCredits})`
+
+      const res = await evaluate(expr)
+      if (!res.ok) return
+      setResult(parseFloat(res.value.toFixed(2)).toString())
+    })()
   }
 
   return (

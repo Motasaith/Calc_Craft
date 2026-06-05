@@ -1,10 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
+import { convertUnits } from '@/lib/calc-engine'
 
-const units: Record<string, number> = {
-  mm: 0.001, cm: 0.01, m: 1, km: 1000, in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344,
-  nmi: 1852, μm: 0.000001,
+const units = ['mm', 'cm', 'm', 'km', 'in', 'ft', 'yd', 'mi', 'nmi', 'μm']
+const unitLabels: Record<string, string> = {
+  mm: 'mm (Millimeter)', cm: 'cm (Centimeter)', m: 'm (Meter)', km: 'km (Kilometer)',
+  in: 'in (Inch)', ft: 'ft (Foot)', yd: 'yd (Yard)', mi: 'mi (Mile)',
+  nmi: 'nmi (Nautical Mile)', 'μm': 'μm (Micrometer)',
 }
 
 export default function LengthConverter() {
@@ -12,9 +15,9 @@ export default function LengthConverter() {
 
   const v = parseFloat(value)
   const valid = !isNaN(v)
-  const result = valid ? (v * units[from]) / units[to] : 0
+  const result = valid ? convertUnits(v, from, to, 'length') : 0
 
-  const options = Object.keys(units).map((u) => ({ value: u, label: u }))
+  const options = units.map((u) => ({ value: u, label: unitLabels[u] || u }))
 
   return (
     <FormCalculatorShell title="Length Converter" badge="CONVERSION">
@@ -23,7 +26,7 @@ export default function LengthConverter() {
         <RetroSelect label="From" value={from} onChange={setFrom} options={options} id="len-from" />
         <RetroSelect label="To" value={to} onChange={setTo} options={options} id="len-to" />
       </div>
-      {valid && <div className="mt-4"><ResultDisplay label={`${value} ${from} =`} value={`${parseFloat(result.toPrecision(10))} ${to}`} large /></div>}
+      {valid && <div className="mt-4"><ResultDisplay label={`${value} ${from} =`} value={`${result} ${to}`} large /></div>}
     </FormCalculatorShell>
   )
 }
