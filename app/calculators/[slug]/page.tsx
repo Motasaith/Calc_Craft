@@ -13,15 +13,34 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const calc = getCalculatorBySlug(slug)
   if (!calc) return { title: 'Calculator Not Found' }
 
+  const title = `${calc.name} - Free Online Calculator | Calc_Craft`
+  const description = `${calc.description} Fast, accurate, and 100% free. Runs entirely in your browser — no signup, no tracking, no ads.`
+
   return {
-    title: `${calc.name} - Free Online ${CATEGORY_LABELS[calc.category]} Calculator`,
-    description: calc.description,
-    keywords: calc.keywords,
+    title,
+    description,
+    keywords: [
+      calc.shortName.toLowerCase(),
+      `${calc.shortName.toLowerCase()} calculator`,
+      'free online calculator',
+      CATEGORY_LABELS[calc.category].toLowerCase(),
+      'no signup calculator',
+      'browser calculator',
+      ...calc.keywords,
+    ],
     openGraph: {
       title: `${calc.name} | Calc_Craft`,
-      description: calc.description,
+      description,
       type: 'website',
+      url: `https://calc_craft.com/calculators/${slug}`,
+      siteName: 'Calc_Craft',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${calc.name} | Calc_Craft`,
+      description,
+    },
+    alternates: { canonical: `https://calc_craft.com/calculators/${slug}` },
   }
 }
 

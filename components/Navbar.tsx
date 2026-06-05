@@ -20,9 +20,9 @@ const navLinks = [
       { label: 'Everyday Tools', href: '/calculators?category=everyday' },
     ],
   },
-  { label: 'Blog', href: '#' },
-  { label: 'About Us', href: '#' },
-  { label: 'Contact', href: '#' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export default function Navbar() {

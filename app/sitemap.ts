@@ -1,94 +1,47 @@
 import { MetadataRoute } from 'next'
+import { getAllSlugs } from '@/lib/calculators'
 
 export const dynamic = 'force-static'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://calc_craft.com'
+  const now = new Date()
+  const slugs = getAllSlugs()
 
   return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/calculators`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/calculators/basic`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/calculators/scientific`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/calculators/bmi`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/calculators/loan`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/calculators/percentage`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+    // Homepage
+    { url: baseUrl, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+    // Catalog
+    { url: `${baseUrl}/calculators`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    // Builder
+    { url: `${baseUrl}/builder`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    // Blog index
+    { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    // About
+    { url: `${baseUrl}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    // Contact
+    { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: 'yearly', priority: 0.6 },
+    // Blog posts
+    ...[
+      'how-to-build-custom-calculator-no-code',
+      'understanding-loan-emi-calculation',
+      'calculator-engines-mathjs-precision',
+    ].map((slug) => ({
+      url: `${baseUrl}/blog/${slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/calculators/age`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+    })),
+    // Individual calculators (auto-generated)
+    ...slugs.map((slug) => ({
+      url: `${baseUrl}/calculators/${slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/faq`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
+    })),
+    // Legal
+    { url: `${baseUrl}/privacy-policy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${baseUrl}/terms-of-use`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${baseUrl}/cookies`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
   ]
 }

@@ -14,11 +14,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://calc_craft.com'),
   title: {
-    default: 'Calc_Craft - Free Online Calculators for Math, Finance & Health | 50+ Smart Tools',
+    default: 'Calc_Craft - 50+ Free Calculators, Visual Builder & Embeddable Widgets | The Complete Calculator Platform',
     template: '%s | Calc_Craft',
   },
   description:
-    'Calc_Craft offers 50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly. Try our BMI calculator, loan EMI calculator, scientific calculator, and more.',
+    'Calc_Craft is a complete calculator platform: 50+ free online calculators (math, finance, health, conversion, statistics), a no-code visual builder to design your own, embeddable widgets for any website, and full white-labeling. Free forever, private by design — all math runs in your browser.',
   keywords: [
     'calculator',
     'online calculator',
@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     'embed calculator',
     'white label calculator',
     'calculator widget',
+    'no code calculator',
+    'visual builder',
+    'drag and drop calculator',
     'online math tools',
     'financial planning tools',
     'body mass index calculator',

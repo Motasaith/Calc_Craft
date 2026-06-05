@@ -116,12 +116,10 @@ export default function Hero() {
               {/* Subtitle - Rich description for SEO/GEO */}
               <p
                 ref={subRef}
-                className="text-base sm:text-lg text-dark-600 leading-relaxed mb-6 sm:mb-8 max-w-lg mx-auto px-2 sm:px-0"
+                className="text-base sm:text-lg text-dark-600 leading-relaxed mb-6 sm:mb-8 max-w-2xl mx-auto px-2 sm:px-0"
                 itemProp="description"
               >
-                Fast, accurate and easy to use online calculators for math, finance,
-                health, and everyday needs. Built for students, professionals, and
-                everyone in between. No signup required — start calculating instantly.
+                A complete <strong>calculator platform</strong>: 50+ ready-made calculators, a <strong>no-code visual builder</strong> to design your own, <strong>embeddable widgets</strong> for any website, and full <strong>white-labeling</strong> with your brand &amp; logo. Free forever, private by design — all math runs in your browser.
               </p>
 
               {/* CTAs */}

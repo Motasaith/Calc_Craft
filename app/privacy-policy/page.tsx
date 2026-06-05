@@ -1,116 +1,219 @@
 import type { Metadata } from 'next'
+import LegalPage from '@/components/legal/LegalPage'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'Calc_Craft Privacy Policy - Learn how we protect your data and privacy while using our free online calculators.',
+  title: 'Privacy Policy - How Calc_Craft Protects Your Data | Calc_Craft',
+  description:
+    'Read the Calc_Craft Privacy Policy. Learn how we protect your calculation data, what we collect (and don\'t), your GDPR and CCPA rights, and our zero-tracking approach.',
+  keywords: [
+    'calc_craft privacy policy',
+    'calculator privacy',
+    'GDPR',
+    'CCPA',
+    'data protection',
+    'no tracking calculator',
+    'browser calculations privacy',
+  ],
+  openGraph: {
+    title: 'Privacy Policy | Calc_Craft',
+    description: 'How Calc_Craft protects your data with browser-only calculations and zero server storage.',
+    type: 'article',
+  },
+  alternates: { canonical: 'https://calc_craft.com/privacy-policy' },
 }
 
-export default function PrivacyPolicy() {
+export default function PrivacyPolicyPage() {
   return (
-    <main className="min-h-screen bg-white font-sans">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        {/* Header */}
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-700 mb-4 shadow-sm">
-            Legal
-          </div>
-          <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-800 mb-4 tracking-tight">
-            Privacy Policy
-          </h1>
-          <p className="text-sm text-slate-400">
-            Last updated: June 3, 2026
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="prose prose-slate max-w-none">
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">1. Introduction</h2>
-            <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              Welcome to Calc_Craft. We respect your privacy and are committed to protecting your personal data. 
-              This Privacy Policy explains how we collect, use, store, and safeguard your information when you use our free online calculators.
+    <>
+      <Navbar />
+      <main id="main-content" role="main" aria-label="Privacy Policy" className="min-h-screen bg-white">
+        <LegalPage
+          title="Privacy Policy"
+          subtitle="How Calc_Craft protects your data and respects your privacy."
+          badge="Privacy"
+          icon="shield"
+          lastUpdated="June 5, 2026"
+          contactEmail="privacy@calc_craft.com"
+          intro="Calc_Craft is built on a zero-server-storage principle: every calculation you perform runs entirely in your browser, and we never see or store your inputs. This Privacy Policy explains exactly what data we do and don't collect, how we use it, and the rights you have over your information under GDPR, CCPA, and other major privacy frameworks."
+          sections={[
+        {
+          heading: 'Our Privacy-First Philosophy',
+          body: (
+            <>
+              <p>
+                Most "free" online calculators quietly harvest your inputs and ship them to analytics servers, advertising networks, or third-party data brokers. <strong>Calc_Craft was designed from day one to be different.</strong>
+              </p>
+              <p>
+                Every one of our 50+ calculators — and every calculator you build with our visual builder — executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
+              </p>
+              <p>
+                This isn't marketing — it's a fundamental architectural choice. The Calc_Craft calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.
+              </p>
+            </>
+          ),
+        },
+        {
+          heading: 'What We Do NOT Collect',
+          body: (
+            <>
+              <p>Let us be explicit. We do <strong>not</strong> collect:</p>
+              <ul>
+                <li>The numbers, formulas, or values you enter into any calculator</li>
+                <li>The results, outputs, or intermediate values produced by any calculation</li>
+                <li>The configurations, formulas, or field values of calculators you build with the visual builder</li>
+                <li>Your financial, health, or any other personal data you process through our tools</li>
+                <li>Biometric, genetic, or any special-category data under GDPR Article 9</li>
+                <li>Financial account numbers, credit card information, or payment data (we have no paid features)</li>
+                <li>Location data, IP addresses, or device fingerprints for advertising purposes</li>
+              </ul>
+              <p>
+                <strong>Custom calculators you build</strong> are stored in your browser's localStorage (a sandboxed key-value store on your device). They are never uploaded to our servers. If you clear your browser data, your custom calculators will be lost — which is why we provide a JSON export feature.
+              </p>
+            </>
+          ),
+        },
+        {
+          heading: 'What We Do Collect (And Why)',
+          body: (
+            <>
+              <p>We collect a minimal amount of anonymous usage data, aggregated in a way that cannot identify you personally. This data helps us understand which calculators are useful, where to invest engineering time, and how to improve the user experience.</p>
+              <p>The data we collect falls into these categories:</p>
+              <ul>
+                <li>
+                  <strong>Aggregated page-view counts:</strong> We use privacy-respecting analytics (Plausible or a self-hosted equivalent) to count how many people visit each calculator page. These counts are aggregated — we don't track individual sessions, we don't set cross-site identifiers, and we don't build user profiles.
+                </li>
+                <li>
+                  <strong>Aggregate calculator usage:</strong> We may count, in aggregate, how many times each calculator type is used per day. We do not see the actual values.
+                </li>
+                <li>
+                  <strong>Server logs (standard):</strong> Like every website, our hosting provider's servers generate standard access logs (timestamp, request path, HTTP status code) for operational and security purposes. These logs are retained for 30 days and contain no personal data.
+                </li>
+                <li>
+                  <strong>Newsletter email (optional):</strong> If you voluntarily subscribe to our newsletter, we store your email address to send you updates. You can unsubscribe with one click in any email.
+                </li>
+                <li>
+                  <strong>Contact form submissions (optional):</strong> If you contact us through our form, we receive the message and the email address you provide. We use this only to respond to you.
+                </li>
+              </ul>
+            </>
+          ),
+        },
+        {
+          heading: 'Cookies & Local Storage',
+          body: (
+            <>
+              <p>
+                Calc_Craft uses a minimal set of cookies and browser storage. For complete details, see our <a href="/cookies">Cookies Policy</a>. In summary:
+              </p>
+              <ul>
+                <li><strong>Strictly necessary localStorage:</strong> Stores your custom-built calculators and builder drafts. Essential to the service.</li>
+                <li><strong>No advertising cookies:</strong> We do not use Google Ads, Facebook Pixel, or any advertising trackers.</li>
+                <li><strong>No cross-site tracking:</strong> We do not share data with third parties for cross-site behavioral advertising.</li>
+              </ul>
+            </>
+          ),
+        },
+        {
+          heading: 'GDPR Rights (European Economic Area)',
+          body: (
+            <>
+              <p>If you are in the EEA, UK, or Switzerland, you have the following rights under the General Data Protection Regulation:</p>
+              <ul>
+                <li><strong>Right of access:</strong> Request a copy of the personal data we hold about you</li>
+                <li><strong>Right to rectification:</strong> Correct inaccurate personal data</li>
+                <li><strong>Right to erasure ("right to be forgotten"):</strong> Request deletion of your data</li>
+                <li><strong>Right to restrict processing:</strong> Limit how we use your data</li>
+                <li><strong>Right to data portability:</strong> Receive your data in a machine-readable format</li>
+                <li><strong>Right to object:</strong> Object to certain types of processing</li>
+                <li><strong>Right to withdraw consent:</strong> Withdraw consent at any time where processing is based on consent</li>
+                <li><strong>Right to lodge a complaint:</strong> Lodge a complaint with your local data protection authority</li>
+              </ul>
+              <p>
+                Because we don't collect most categories of data, most of these rights are moot — there's nothing to access, port, or delete. For the limited data we do hold (newsletter email, contact submissions), email <a href="mailto:privacy@calc_craft.com">privacy@calc_craft.com</a> and we will respond within 30 days.
+              </p>
+            </>
+          ),
+        },
+        {
+          heading: 'CCPA Rights (California)',
+          body: (
+            <>
+              <p>If you are a California resident, the California Consumer Privacy Act (CCPA) gives you the right to:</p>
+              <ul>
+                <li>Know what personal information we collect, use, share, or sell (we don't sell any)</li>
+                <li>Delete personal information we have collected</li>
+                <li>Opt out of the sale of personal information (N/A — we don't sell)</li>
+                <li>Non-discrimination for exercising your CCPA rights</li>
+              </ul>
+            </>
+          ),
+        },
+        {
+          heading: 'Children\'s Privacy (COPPA)',
+          body: (
+            <p>
+              Calc_Craft is designed to be safe for all ages, including children. We do not knowingly collect personal information from children under 13. Because calculations happen in the browser, no child-entered data is transmitted to our servers. If you believe we have inadvertently collected information from a child, please contact us so we can promptly address it.
             </p>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              By using Calc_Craft, you agree to the collection and use of information in accordance with this policy.
+          ),
+        },
+        {
+          heading: 'Data Security',
+          body: (
+            <>
+              <p>
+                Our entire site is served over HTTPS with TLS 1.3 encryption. We use modern security headers (HSTS, X-Frame-Options, Content-Security-Policy) to defend against common attacks. We engage in regular security reviews and keep dependencies updated.
+              </p>
+              <p>
+                However, no system is 100% secure. If you discover a security vulnerability, please report it responsibly to <a href="mailto:security@calc_craft.com">security@calc_craft.com</a>.
+              </p>
+            </>
+          ),
+        },
+        {
+          heading: 'Third-Party Services We Use',
+          body: (
+            <>
+              <p>We use a small set of carefully chosen third-party services, each governed by its own privacy policy:</p>
+              <ul>
+                <li><strong>Hosting & CDN:</strong> Vercel / Netlify / Cloudflare (or similar) — serves our static site at the edge</li>
+                <li><strong>Privacy-respecting analytics:</strong> Plausible Analytics or self-hosted — no cookies, no personal data, GDPR-compliant out of the box</li>
+                <li><strong>Email service:</strong> For newsletter delivery and contact form responses</li>
+                <li><strong>DNS provider:</strong> Standard DNS resolution</li>
+              </ul>
+              <p>We do not use Google Analytics, Facebook Pixel, or any advertising/tracking services.</p>
+            </>
+          ),
+        },
+        {
+          heading: 'International Data Transfers',
+          body: (
+            <p>
+              Calc_Craft is a global service. Our hosting and analytics providers may process aggregated, non-personal technical data in data centers around the world. Because the data we collect is anonymous and aggregated, no personal information crosses borders.
             </p>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">2. Information We Collect</h2>
-            <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              <strong className="text-slate-700">Calculation Data:</strong> All calculations are performed locally in your browser. 
-              We do not collect, store, or transmit your calculation inputs or results to our servers.
+          ),
+        },
+        {
+          heading: 'Changes to This Policy',
+          body: (
+            <p>
+              We may update this Privacy Policy from time to time. The "Last updated" date at the top of this page reflects when the most recent changes were made. Material changes will be announced via a banner on the site for at least 30 days. Your continued use of Calc_Craft after changes take effect constitutes acceptance of the updated policy.
             </p>
-            <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              <strong className="text-slate-700">Usage Data:</strong> We may collect anonymous usage statistics such as page views, 
-              calculator usage patterns, and device information to improve our services. This data does not identify you personally.
+          ),
+        },
+        {
+          heading: 'Contact Our Privacy Team',
+          body: (
+            <p>
+              For any privacy-related questions, data requests, or concerns, contact our Data Protection Officer at <a href="mailto:privacy@calc_craft.com">privacy@calc_craft.com</a>. We respond to all legitimate requests within 30 days.
             </p>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              <strong className="text-slate-700">Newsletter Subscriptions:</strong> If you subscribe to our newsletter, 
-              we collect your email address solely for the purpose of sending updates and tips.
-            </p>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">3. How We Use Your Information</h2>
-            <ul className="space-y-2 text-sm text-slate-500 leading-relaxed list-disc list-inside">
-              <li>To provide and maintain our calculator services</li>
-              <li>To improve and optimize website performance</li>
-              <li>To send newsletters and updates (only if subscribed)</li>
-              <li>To analyze usage trends and enhance user experience</li>
-              <li>To detect and prevent technical issues</li>
-            </ul>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">4. Data Security</h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              We implement appropriate security measures to protect your information. However, no method of transmission over 
-              the internet is 100% secure. While we strive to protect your data, we cannot guarantee absolute security.
-            </p>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">5. Third-Party Services</h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              We may use third-party analytics services to understand how visitors interact with our website. 
-              These services may collect anonymous usage data subject to their own privacy policies.
-            </p>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">6. Cookies</h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              Calc_Craft uses cookies to enhance your browsing experience. For detailed information about our cookie usage, 
-              please refer to our <a href="/cookies" className="text-slate-700 font-semibold hover:underline">Cookies Policy</a>.
-            </p>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">7. Your Rights</h2>
-            <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              You have the right to:
-            </p>
-            <ul className="space-y-2 text-sm text-slate-500 leading-relaxed list-disc list-inside">
-              <li>Access the personal data we hold about you</li>
-              <li>Request correction of inaccurate data</li>
-              <li>Request deletion of your data</li>
-              <li>Opt-out of newsletter communications at any time</li>
-              <li>Request a copy of your data in a portable format</li>
-            </ul>
-          </section>
-
-          <section className="mb-10">
-            <h2 className="text-xl font-bold text-slate-800 mb-3">8. Contact Us</h2>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              If you have any questions about this Privacy Policy, please contact us at{' '}
-              <a href="mailto:support@calc_craft.com" className="text-slate-700 font-semibold hover:underline">
-                support@calc_craft.com
-              </a>.
-            </p>
-          </section>
-        </div>
-      </div>
-    </main>
+          ),
+        },
+      ]}
+    />
+      </main>
+      <Footer />
+    </>
   )
 }

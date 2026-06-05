@@ -7,6 +7,7 @@ import { getCalculatorBySlug, getCalculatorsByCategory, CATEGORY_LABELS, CATEGOR
 import { getCalculatorComponent } from '@/lib/calculator-components'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import CalculatorSEOContent from '@/components/CalculatorSEOContent'
 
 export default function CalculatorPageClient({ slug }: { slug: string }) {
   const calc = getCalculatorBySlug(slug)
@@ -73,6 +74,9 @@ export default function CalculatorPageClient({ slug }: { slug: string }) {
               <div className="mb-8">
                 <CalculatorComponent />
               </div>
+
+              {/* Rich SEO content block */}
+              <CalculatorSEOContent calc={calc} />
             </div>
 
             {/* Sidebar — Related Calculators */}

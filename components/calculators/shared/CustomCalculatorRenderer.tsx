@@ -297,6 +297,11 @@ export default function CustomCalculatorRenderer({ config, isPreview = false }: 
 
   const s = themeStyles[activeTheme]
 
+  // Layout classes — controls how inputs are arranged in the body
+  const layoutClass = config.layout === 'grid'
+    ? 'grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4'
+    : 'space-y-4'
+
   // Setup custom theme variable injection if custom style is selected
   const customVariables = activeTheme === 'custom' ? {
     '--custom-bg': custom.background,
@@ -347,6 +352,7 @@ export default function CustomCalculatorRenderer({ config, isPreview = false }: 
 
       {/* Calculator Body */}
       <div className={s.body}>
+        <div className={layoutClass}>
         {config.components.map((c) => {
           if (c.type === 'header') {
             return (
@@ -476,6 +482,7 @@ export default function CustomCalculatorRenderer({ config, isPreview = false }: 
             </div>
           )
         })}
+        </div>
 
         {/* Dynamic Outputs (Results Displays) */}
         <div className="grid gap-3 pt-4 border-t border-neutral-300/30" style={activeTheme === 'custom' ? { borderTopColor: 'rgba(0,0,0,0.08)' } : {}}>

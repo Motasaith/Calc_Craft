@@ -201,7 +201,7 @@ export default function Footer() {
         >
           <meta itemProp="name" content="Calc_Craft" />
           <meta itemProp="url" content="https://calc_craft.com" />
-          <meta itemProp="description" content="Your all-in-one calculator suite for math, finance, health, and everyday life." />
+          <meta itemProp="description" content="A complete calculator platform: 50+ ready-made calculators, a no-code visual builder, embeddable widgets, and full white-labeling. Free forever, private by design." />
 
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
@@ -220,7 +220,7 @@ export default function Footer() {
 
               {/* Brand Description */}
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
-                Your all-in-one calculator suite for math, finance, health, and everyday life.
+                A complete calculator platform: 50+ ready-made calculators, a no-code visual builder, embeddable widgets, and full white-labeling. Free forever, private by design.
               </p>
 
               {/* Social Icons row with tooltips */}
@@ -313,25 +313,25 @@ export default function Footer() {
                     </h4>
                     <ul className="space-y-2.5">
                       {[
-                        'All Calculators',
-                        'Math Calculators',
-                        'Finance Calculators',
-                        'Health Calculators',
+                        { label: 'All Calculators', href: '/calculators' },
+                        { label: 'Math Calculators', href: '/calculators?category=math' },
+                        { label: 'Finance Calculators', href: '/calculators?category=finance' },
+                        { label: 'Health Calculators', href: '/calculators?category=health' },
                       ].map((link) => (
-                        <li key={link}>
+                        <li key={link.label}>
                           <Link
-                            href="#"
+                            href={link.href}
                             className="flex items-start gap-1 text-[11px] sm:text-xs text-slate-400 hover:text-white transition-all duration-200 group"
-                            onMouseEnter={() => setHoveredLink(link)}
+                            onMouseEnter={() => setHoveredLink(link.label)}
                             onMouseLeave={() => setHoveredLink(null)}
                           >
                             <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 transition-all duration-200 ${
-                              hoveredLink === link ? 'text-white translate-x-0.5' : 'text-slate-600'
+                              hoveredLink === link.label ? 'text-white translate-x-0.5' : 'text-slate-600'
                             }`} />
                             <span className="relative">
-                              {link}
+                              {link.label}
                               <span className={`absolute bottom-0 left-0 h-[1px] bg-white/40 transition-all duration-300 ${
-                                hoveredLink === link ? 'w-full' : 'w-0'
+                                hoveredLink === link.label ? 'w-full' : 'w-0'
                               }`} />
                             </span>
                           </Link>
@@ -349,21 +349,26 @@ export default function Footer() {
                       Company
                     </h4>
                     <ul className="space-y-2.5">
-                      {['About Us', 'Blog', 'Contact', 'Careers'].map((link) => (
-                        <li key={link}>
+                      {[
+                        { label: 'About Us', href: '/about' },
+                        { label: 'Blog', href: '/blog' },
+                        { label: 'Contact', href: '/contact' },
+                        { label: 'Builder', href: '/builder' },
+                      ].map((link) => (
+                        <li key={link.label}>
                           <Link
-                            href="#"
+                            href={link.href}
                             className="flex items-start gap-1 text-[11px] sm:text-xs text-slate-400 hover:text-white transition-all duration-200 group"
-                            onMouseEnter={() => setHoveredLink(link)}
+                            onMouseEnter={() => setHoveredLink(link.label)}
                             onMouseLeave={() => setHoveredLink(null)}
                           >
                             <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 transition-all duration-200 ${
-                              hoveredLink === link ? 'text-white translate-x-0.5' : 'text-slate-600'
+                              hoveredLink === link.label ? 'text-white translate-x-0.5' : 'text-slate-600'
                             }`} />
                             <span className="relative">
-                              {link}
+                              {link.label}
                               <span className={`absolute bottom-0 left-0 h-[1px] bg-white/40 transition-all duration-300 ${
-                                hoveredLink === link ? 'w-full' : 'w-0'
+                                hoveredLink === link.label ? 'w-full' : 'w-0'
                               }`} />
                             </span>
                           </Link>
