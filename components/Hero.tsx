@@ -125,7 +125,7 @@ export default function Hero() {
               {/* CTAs */}
               <div ref={ctaRef} className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
                 <Link
-                  href="#calculators"
+                  href="/calculators"
                   className="group inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-dark-800 text-white font-semibold rounded-full hover:bg-dark-700 transition-all shadow-xl shadow-dark-800/20 hover:shadow-dark-800/30 hover:-translate-y-0.5 text-sm sm:text-base"
                   aria-label="Explore all free online calculators"
                 >
@@ -133,7 +133,7 @@ export default function Hero() {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
                 <Link
-                  href="#"
+                  href="/calculators/scientific"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-white/80 backdrop-blur-sm text-dark-800 font-semibold rounded-full border border-gray-200/80 hover:border-gray-300 hover:bg-white transition-all text-sm sm:text-base"
                   aria-label="Try the scientific calculator online"
                 >
