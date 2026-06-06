@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -22,7 +22,6 @@ const navLinks = [
   },
   { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
 ]
 
 export default function Navbar() {
@@ -45,20 +44,31 @@ export default function Navbar() {
       className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
     >
       <div
-        className={`flex items-center justify-between h-14 px-2 pl-5 pr-4 rounded-full transition-all duration-300 max-w-5xl w-full hover:border-gray-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] ${
+        className={`flex items-center justify-between h-14 px-2 pl-3 pr-2 rounded-2xl transition-all duration-300 max-w-5xl w-full hover:border-dark-800/30 ${
           scrolled
-            ? 'bg-white/95 backdrop-blur-xl border border-gray-200/80 shadow-[0_12px_24px_rgba(0,0,0,0.08),_0_2px_4px_rgba(0,0,0,0.02)]'
-            : 'bg-white/85 backdrop-blur-md border border-gray-200/50 shadow-[0_4px_20px_rgba(0,0,0,0.03)]'
+            ? 'bg-[#eae7df]/95 backdrop-blur-xl border border-dark-800/20 shadow-[0_12px_28px_rgba(26,32,25,0.12),_0_2px_4px_rgba(0,0,0,0.04)]'
+            : 'bg-[#eae7df]/85 backdrop-blur-md border border-dark-800/15 shadow-[0_6px_22px_rgba(26,32,25,0.08)]'
         }`}
       >
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group mr-2" aria-label="Calc_Craft Home">
-          <div className="w-8 h-8 rounded-full bg-dark-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md shadow-dark-800/10">
+        {/* Logo — matches retro calculator shell style */}
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 group mr-2"
+          aria-label="Calc_Craft Home"
+        >
+          <div className="relative w-9 h-9 rounded-lg bg-dark-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md shadow-dark-800/20 ring-1 ring-dark-900/20">
             <Calculator className="w-4 h-4 text-white" />
+            {/* tiny LED indicator dot */}
+            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(16,185,129,0.6)]" />
           </div>
-          <span className="text-sm font-extrabold text-dark-800 tracking-wider uppercase font-mono">
-            CALC_CRAFT
-          </span>
+          <div className="flex flex-col leading-none">
+            <span className="text-[13px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
+              CALC<span className="text-primary-600">_</span>CRAFT
+            </span>
+            <span className="text-[8px] font-mono text-dark-500 uppercase tracking-[0.18em] mt-0.5">
+              v2.0 // ONLINE
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
@@ -75,10 +85,10 @@ export default function Navbar() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <button className="relative z-10 flex items-center gap-0.5 px-3 py-1.5 text-xs font-semibold text-dark-600 hover:text-dark-900 transition-colors rounded-full">
+                <button className="relative z-10 flex items-center gap-0.5 px-3 py-1.5 text-[11px] font-bold font-mono uppercase tracking-wider text-dark-700 hover:text-dark-900 transition-colors rounded-lg">
                   {link.label}
                   <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    className={`w-3 h-3 transition-transform duration-200 ${
                       dropdownOpen ? 'rotate-180' : ''
                     }`}
                   />
@@ -90,13 +100,13 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15, ease: 'easeOut' }}
-                      className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 overflow-hidden z-30 origin-top-left"
+                      className="absolute top-full left-0 mt-2 w-60 bg-[#eae7df] rounded-xl shadow-xl border border-dark-800/15 py-2 overflow-hidden z-30 origin-top-left"
                     >
                       {link.children.map((child) => (
                         <Link
                           key={child.label}
                           href={child.href}
-                          className="block px-4 py-2 text-xs font-medium text-dark-600 hover:text-dark-900 hover:bg-gray-50 transition-colors"
+                          className="block px-4 py-2 text-[11px] font-mono font-semibold text-dark-700 hover:text-dark-900 hover:bg-[#dad6cd] transition-colors"
                         >
                           {child.label}
                         </Link>
@@ -108,7 +118,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href={link.href}
-                className="block relative z-10 px-3 py-1.5 text-xs font-semibold text-dark-600 hover:text-dark-900 transition-colors rounded-full"
+                className="block relative z-10 px-3 py-1.5 text-[11px] font-bold font-mono uppercase tracking-wider text-dark-700 hover:text-dark-900 transition-colors rounded-lg"
               >
                 {link.label}
               </Link>
@@ -124,7 +134,7 @@ export default function Navbar() {
                   {isHovered && (
                     <motion.div
                       layoutId="nav-hover-pill"
-                      className="absolute inset-0 bg-gray-100/80 rounded-full -z-0"
+                      className="absolute inset-0 bg-[#dad6cd] rounded-lg -z-0"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -138,19 +148,21 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center mr-2">
+        {/* Desktop CTA — retro calculator key style */}
+        <div className="hidden lg:flex items-center">
           <Link
             href="/calculators"
-            className="px-5 py-2 text-xs font-mono font-black text-white bg-[#222326] rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] hover:bg-[#2b2c30] hover:translate-y-[0.5px] hover:shadow-[0_3px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
+            className="group relative inline-flex items-center justify-center gap-2 h-10 px-4 bg-[#dfaa44] text-dark-900 text-[11px] font-extrabold font-mono uppercase tracking-wider rounded-lg border border-[#be8b32] shadow-[0_2px_0_#be8b32] hover:bg-[#e5b44e] hover:translate-y-px hover:shadow-[0_1px_0_#be8b32] active:translate-y-[2px] active:shadow-none transition-all"
+            aria-label="Explore all free online calculators"
           >
-            EXPLORE CALCULATORS
+            <span>= EXPLORE</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="lg:hidden p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="lg:hidden p-2 rounded-lg hover:bg-[#dad6cd] transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -158,7 +170,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — matches retro theme */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -166,20 +178,20 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="lg:hidden fixed top-20 left-4 right-4 bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden z-40"
+            className="lg:hidden fixed top-20 left-4 right-4 bg-[#eae7df] rounded-2xl border border-dark-800/20 shadow-xl overflow-hidden z-40"
           >
             <div className="px-4 py-4 space-y-1">
               {navLinks.map((link) =>
                 link.children ? (
                   <div key={link.label} className="space-y-1">
-                    <div className="px-3 py-1.5 text-xs font-bold text-dark-800 uppercase tracking-wider font-mono">
-                      {link.label}
+                    <div className="px-3 py-1.5 text-[9px] font-bold text-dark-500 uppercase tracking-[0.18em] font-mono">
+                      // {link.label}
                     </div>
                     {link.children.map((child) => (
                       <Link
                         key={child.label}
                         href={child.href}
-                        className="block px-6 py-2 text-xs font-semibold text-dark-600 hover:text-dark-900"
+                        className="block px-6 py-2 text-[11px] font-mono font-semibold text-dark-700 hover:text-dark-900"
                         onClick={() => setMobileOpen(false)}
                       >
                         {child.label}
@@ -190,7 +202,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="block px-3 py-2 text-xs font-semibold text-dark-700 hover:text-dark-900 rounded-lg hover:bg-gray-50"
+                    className="block px-3 py-2 text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 hover:text-dark-900 rounded-lg hover:bg-[#dad6cd]"
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.label}
@@ -200,10 +212,12 @@ export default function Navbar() {
               <div className="pt-4 flex flex-col">
                 <Link
                   href="/calculators"
-                  className="px-4 py-2.5 text-xs font-mono font-black text-white bg-[#222326] text-center rounded-lg border-t border-[#4a4b4f] shadow-[0_3.5px_0_#0a0b0d] active:translate-y-[3.5px] active:shadow-[0_0px_0_#0a0b0d] transition-all duration-75 select-none"
+                  className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[11px] font-extrabold font-mono uppercase tracking-wider text-dark-900 bg-[#dfaa44] rounded-lg border border-[#be8b32] shadow-[0_2px_0_#be8b32] active:translate-y-[2px] active:shadow-none transition-all"
                   onClick={() => setMobileOpen(false)}
+                  aria-label="Explore all free online calculators"
                 >
-                  EXPLORE CALCULATORS
+                  <span>= EXPLORE CALCULATORS</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                 </Link>
               </div>
             </div>
