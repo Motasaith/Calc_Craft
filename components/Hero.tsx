@@ -58,7 +58,7 @@ export default function Hero() {
         {/* Responsive Background Image — single Next/Image with object-position tweaks per breakpoint */}
         <Image
           src="/hero.png"
-          alt="Calculator workspace background showing modern digital tools"
+          alt="Home of Calculators — free online calculator platform with 50+ tools for math, finance, health, and everyday calculations"
           fill
           priority
           sizes="100vw"

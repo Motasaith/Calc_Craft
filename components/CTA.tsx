@@ -140,7 +140,7 @@ export default function CTA() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-white/5 w-full">
                 {/* Feature 1 */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 flex-shrink-0 shadow-inner">
+                  <div className="w-10 h-10 rounded-full bg-slate-500/10 border border-slate-500/20 flex items-center justify-center text-slate-400 flex-shrink-0 shadow-inner">
                     <Zap className="w-4.5 h-4.5" />
                   </div>
                   <div className="text-left select-none">

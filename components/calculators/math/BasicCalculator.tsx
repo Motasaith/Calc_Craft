@@ -126,11 +126,6 @@ export default function BasicCalculator() {
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC RETRO</span>
-          <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          </div>
         </div>
 
         {/* Display */}

@@ -3,9 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   Calculator,
-  Facebook,
-  Instagram,
-  Linkedin,
   Mail,
   ArrowRight,
   Building,
@@ -17,6 +14,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { BRAND } from '@/lib/brand'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -30,7 +28,6 @@ export default function Footer() {
   const [calcDisplay, setCalcDisplay] = useState('0')
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  const [hoveredSocial, setHoveredSocial] = useState<number | null>(null)
   const [hoveredLink, setHoveredLink] = useState<string | null>(null)
 
   // Scroll-triggered entrance animations
@@ -147,12 +144,6 @@ export default function Footer() {
     }
   }
 
-  const socials = [
-    { Icon: Facebook, href: '#', label: 'Facebook', color: 'hover:bg-blue-600/20 hover:text-blue-400 hover:border-blue-500/30' },
-    { Icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-pink-600/20 hover:text-pink-400 hover:border-pink-500/30' },
-    { Icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:bg-blue-700/20 hover:text-blue-500 hover:border-blue-600/30' },
-  ]
-
   const calcButtons = ['7', '8', '9', '+', '4', '5', '6', '-', '1', '2', '3', '×', 'C', '0', '=', '÷']
 
   return (
@@ -211,9 +202,7 @@ export default function Footer() {
 
               {/* Brand Heading */}
               <Link href="/" className="flex items-center gap-2.5 mb-4 group select-none">
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:border-white/30 group-hover:bg-white/10 transition-all duration-300 group-hover:scale-105">
-                  <Calculator className="w-5 h-5 text-white group-hover:rotate-12 transition-transform duration-300" />
-                </div>
+                <Image src="/logo.png" alt="" width={56} height={56} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" />
                 <span className="text-lg font-bold text-white tracking-tight group-hover:text-slate-200 transition-colors">
                   {BRAND.name}
                 </span>
@@ -223,31 +212,6 @@ export default function Footer() {
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
                 {BRAND.shortDescription}
               </p>
-
-              {/* Social Icons row with tooltips */}
-              <div className="flex gap-3 mb-8">
-                {socials.map(({ Icon, href, label, color }, i) => (
-                  <div key={i} className="relative">
-                    <Link
-                      href={href}
-                      className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 transition-all duration-300 shadow-sm ${color}`}
-                      onMouseEnter={() => setHoveredSocial(i)}
-                      onMouseLeave={() => setHoveredSocial(null)}
-                      aria-label={`Follow ${BRAND.name} on ${label}`}
-                    >
-                      <Icon className="w-4 h-4" />
-                    </Link>
-                    {/* Tooltip */}
-                    <div
-                      className={`absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-md text-[10px] font-bold text-white whitespace-nowrap transition-all duration-200 pointer-events-none ${
-                        hoveredSocial === i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
-                      }`}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
 
               {/* Newsletter Block */}
               <div className="border-t border-white/5 pt-6">
@@ -387,21 +351,26 @@ export default function Footer() {
                       Support
                     </h4>
                     <ul className="space-y-2.5">
-                      {['Help Center', 'FAQs', 'Privacy Policy', 'Terms of Use'].map((link) => (
-                        <li key={link}>
+                      {[
+                        { label: 'Help Center', href: '/calculators' },
+                        { label: 'FAQs', href: '/#faq' },
+                        { label: 'Privacy Policy', href: '/privacy-policy' },
+                        { label: 'Terms of Use', href: '/terms-of-use' },
+                      ].map(({ label, href }) => (
+                        <li key={label}>
                           <Link
-                            href="#"
+                            href={href}
                             className="flex items-start gap-1 text-[11px] sm:text-xs text-slate-400 hover:text-white transition-all duration-200 group"
-                            onMouseEnter={() => setHoveredLink(link)}
+                            onMouseEnter={() => setHoveredLink(label)}
                             onMouseLeave={() => setHoveredLink(null)}
                           >
                             <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 mt-0.5 transition-all duration-200 ${
-                              hoveredLink === link ? 'text-white translate-x-0.5' : 'text-slate-600'
+                              hoveredLink === label ? 'text-white translate-x-0.5' : 'text-slate-600'
                             }`} />
                             <span className="relative">
-                              {link}
+                              {label}
                               <span className={`absolute bottom-0 left-0 h-[1px] bg-white/40 transition-all duration-300 ${
-                                hoveredLink === link ? 'w-full' : 'w-0'
+                                hoveredLink === label ? 'w-full' : 'w-0'
                               }`} />
                             </span>
                           </Link>

@@ -34,11 +34,6 @@ export default function FormCalculatorShell({ title, subtitle, badge, children }
                 {badge}
               </span>
             )}
-            <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-              <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-              <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-              <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            </div>
           </div>
         </div>
 

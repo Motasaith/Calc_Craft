@@ -16,188 +16,10 @@ import { useKeyboardInput, createStandardKeyMap } from '@/hooks/useKeyboardInput
 import { calculateBMI, calculateEMI, formatCurrency } from '@/lib/calc-engine'
 import Link from 'next/link'
 import { CalculatorEntry, CATEGORY_LABELS } from '@/lib/calculators'
+import CompoundInterestCalculator from './calculators/finance/CompoundInterestCalculator'
 
 // ==========================================
-// CALCULATOR 1: RETRO BASIC CALCULATOR
-// ==========================================
-function BasicCalculator() {
-  const [display, setDisplay] = useState('0')
-  const [prevVal, setPrevVal] = useState<string | null>(null)
-  const [operation, setOperation] = useState<string | null>(null)
-  const [shouldReset, setShouldReset] = useState(false)
-
-  const handleNum = (num: string) => {
-    if (display === '0' || shouldReset) {
-      setDisplay(num)
-      setShouldReset(false)
-    } else {
-      if (display.length < 12) {
-        setDisplay(display + num)
-      }
-    }
-  }
-
-  const handleDot = () => {
-    if (shouldReset) {
-      setDisplay('0.')
-      setShouldReset(false)
-      return
-    }
-    if (!display.includes('.')) {
-      setDisplay(display + '.')
-    }
-  }
-
-  const handleOp = (op: string) => {
-    if (prevVal && operation && !shouldReset) {
-      calculate()
-    }
-    setPrevVal(display)
-    setOperation(op)
-    setShouldReset(true)
-  }
-
-  const calculate = () => {
-    if (!prevVal || !operation) return
-    const current = parseFloat(display)
-    const previous = parseFloat(prevVal)
-    let result = 0
-
-    switch (operation) {
-      case '+': result = previous + current; break
-      case '-': result = previous - current; break
-      case '*': result = previous * current; break
-      case '/':
-        if (current === 0) { setDisplay('ERROR'); setShouldReset(true); setPrevVal(null); setOperation(null); return }
-        result = previous / current
-        break
-      default: return
-    }
-
-    let resultStr = result.toString()
-    if (resultStr.length > 12) {
-      if (Math.abs(result) < 1e-10) resultStr = '0'
-      else if (resultStr.includes('.')) resultStr = parseFloat(result.toFixed(8)).toString()
-      else resultStr = result.toExponential(4)
-    }
-
-    setDisplay(resultStr)
-    setPrevVal(null)
-    setOperation(null)
-    setShouldReset(true)
-  }
-
-  const clear = () => {
-    setDisplay('0')
-    setPrevVal(null)
-    setOperation(null)
-    setShouldReset(false)
-  }
-
-  const handleDelete = () => {
-    if (shouldReset) return
-    if (display.length > 1) {
-      setDisplay(display.slice(0, -1))
-    } else {
-      setDisplay('0')
-    }
-  }
-
-  const toggleSign = () => {
-    if (display !== '0' && display !== 'ERROR') {
-      setDisplay((parseFloat(display) * -1).toString())
-    }
-  }
-
-  const handlePercent = () => {
-    const val = parseFloat(display)
-    if (!isNaN(val)) {
-      setDisplay((val / 100).toString())
-      setShouldReset(true)
-    }
-  }
-
-  // Keyboard support
-  const keyMap = useMemo(
-    () => createStandardKeyMap({
-      onNumber: handleNum,
-      onOperator: handleOp,
-      onEquals: calculate,
-      onClear: clear,
-      onDelete: handleDelete,
-      onDot: handleDot,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [display, prevVal, operation, shouldReset]
-  )
-  useKeyboardInput(keyMap)
-
-  return (
-    <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
-      {/* Brand Header */}
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC RETRO</span>
-        <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-        </div>
-      </div>
-
-      {/* Screen Display */}
-      <div className="relative mb-5 bg-[#cbd8ca] border-2 border-[#b0bdae] p-2.5 rounded shadow-inner flex flex-col items-end justify-center h-16 overflow-hidden select-none">
-        <div className="absolute left-2 top-1 text-[8px] font-bold text-[#4c5c4a] font-mono">
-          {prevVal && `${prevVal} ${operation || ''}`}
-        </div>
-        <div className="text-[10px] text-[#4c5c4a] font-mono font-bold absolute right-2 top-1">
-          {operation ? `[${operation}]` : ''}
-        </div>
-        <DigitalText
-          text={display}
-          theme="lcd"
-          size={38}
-          gap={1.5}
-          animate={false}
-          activeColor="#1a2019"
-          inactiveColor="#b8c6b6"
-        />
-      </div>
-
-      {/* Button Grid */}
-      <div className="grid grid-cols-4 gap-2 flex-grow">
-        <button onClick={clear} className="h-10 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-transform">AC</button>
-        <button onClick={handleDelete} className="h-10 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-transform flex items-center justify-center">
-          <Delete className="w-4 h-4" />
-        </button>
-        <button onClick={handlePercent} className="h-10 text-xs font-bold bg-neutral-300 text-neutral-900 rounded shadow border border-neutral-400 active:scale-95 transition-transform">%</button>
-        <button onClick={() => handleOp('/')} className="h-10 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 transition-transform">/</button>
-
-        <button onClick={() => handleNum('7')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">7</button>
-        <button onClick={() => handleNum('8')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">8</button>
-        <button onClick={() => handleNum('9')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">9</button>
-        <button onClick={() => handleOp('*')} className="h-10 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 transition-transform">*</button>
-
-        <button onClick={() => handleNum('4')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">4</button>
-        <button onClick={() => handleNum('5')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">5</button>
-        <button onClick={() => handleNum('6')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">6</button>
-        <button onClick={() => handleOp('-')} className="h-10 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 transition-transform">-</button>
-
-        <button onClick={() => handleNum('1')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">1</button>
-        <button onClick={() => handleNum('2')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">2</button>
-        <button onClick={() => handleNum('3')} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">3</button>
-        <button onClick={() => handleOp('+')} className="h-10 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 transition-transform">+</button>
-
-        <button onClick={toggleSign} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">+/-</button>
-        <button onClick={() => handleNum('0')} className="h-10 col-span-1 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">0</button>
-        <button onClick={handleDot} className="h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 transition-transform">.</button>
-        <button onClick={calculate} className="h-10 text-sm font-extrabold bg-[#dfaa44] text-neutral-900 rounded shadow border border-[#be8b32] active:scale-95 transition-transform">=</button>
-      </div>
-    </div>
-  )
-}
-
-// ==========================================
-// CALCULATOR 2: RETRO SCIENTIFIC CALCULATOR
+// CALCULATOR 1: RETRO SCIENTIFIC CALCULATOR
 // ==========================================
 function ScientificCalculator() {
   const [expr, setExpr] = useState('')
@@ -416,11 +238,6 @@ function ScientificCalculator() {
           >
             {angleMode}
           </button>
-          <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          </div>
         </div>
       </div>
 
@@ -565,20 +382,20 @@ function BMICalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-3">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
-          <Activity className="w-3.5 h-3.5 text-neutral-600" />
+        <span className="text-xs font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
+          <Activity className="w-4 h-4 text-neutral-600" />
           HoC FITNESS
         </span>
-        <span className="text-[8px] uppercase px-1.5 py-0.5 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">BMI</span>
+        <span className="text-[10px] uppercase px-2 py-1 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">BMI</span>
       </div>
 
       {/* Unit Toggle */}
       <div className="flex gap-1 mb-3 bg-neutral-200 p-1 rounded border border-neutral-300">
         <button onClick={() => setUnit('metric')}
-          className={`flex-1 py-1 text-[9px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
         >Metric (kg/cm)</button>
         <button onClick={() => setUnit('imperial')}
-          className={`flex-1 py-1 text-[9px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
         >Imperial (lbs/ft)</button>
       </div>
 
@@ -586,42 +403,42 @@ function BMICalculator() {
       {unit === 'metric' ? (
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Weight (kg)</label>
+            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Weight (kg)</label>
             <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 70"
               min="2" max="650" step="0.1"
-              className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 2–650 kg</p>
+              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
           </div>
           <div>
-            <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Height (cm)</label>
+            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Height (cm)</label>
             <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g. 170"
               min="50" max="280" step="0.1"
-              className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 50–280 cm</p>
+              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Feet</label>
+            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Feet</label>
             <input type="number" value={feet} onChange={(e) => setFeet(e.target.value)} placeholder="e.g. 5"
               min="1" max="8" step="1"
-              className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 1–8 ft</p>
+              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
           </div>
           <div>
-            <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Inches</label>
+            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Inches</label>
             <input type="number" value={inches} onChange={(e) => setInches(e.target.value)} placeholder="e.g. 10"
               min="0" max="11" step="1"
-              className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 0–11 in</p>
+              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 0–11 in</p>
           </div>
           <div className="col-span-2">
-            <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Weight (lbs)</label>
+            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Weight (lbs)</label>
             <input type="number" value={lbs} onChange={(e) => setLbs(e.target.value)} placeholder="e.g. 160"
               min="5" max="1400" step="0.1"
-              className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 5–1400 lbs</p>
+              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
           </div>
         </div>
       )}
@@ -629,19 +446,19 @@ function BMICalculator() {
       {/* Result */}
       {result && (
         <>
-          <div className="mb-2 bg-[#cbd8ca] border-2 border-[#b0bdae] rounded p-2 shadow-inner flex flex-col items-center">
-            <span className="text-[8px] font-bold text-[#4c5c4a] font-mono uppercase">Your BMI</span>
+          <div className="mb-3 bg-[#cbd8ca] border-2 border-[#b0bdae] rounded p-3 shadow-inner flex flex-col items-center">
+            <span className="text-[11px] font-bold text-[#4c5c4a] font-mono uppercase mb-1">Your BMI</span>
             <div className="flex items-center">
-              <DigitalText text={result.bmi.toFixed(1)} theme="lcd" size={28} gap={1.5} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
-              <span className="text-[9px] font-bold text-[#4c5c4a] font-mono ml-1">kg/m²</span>
+              <DigitalText text={result.bmi.toFixed(1)} theme="lcd" size={32} gap={2} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
+              <span className="text-sm font-bold text-[#4c5c4a] font-mono ml-1.5">kg/m²</span>
             </div>
-            <span className="text-[9px] font-mono font-bold text-[#1a2019]">{result.category}</span>
+            <span className="text-sm font-mono font-bold text-[#1a2019] mt-1">{result.category}</span>
           </div>
-          <div className="grid grid-cols-4 gap-1">
-            <div className={`text-[7px] font-bold text-center py-1 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>UNDER</div>
-            <div className={`text-[7px] font-bold text-center py-1 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>NORMAL</div>
-            <div className={`text-[7px] font-bold text-center py-1 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OVER</div>
-            <div className={`text-[7px] font-bold text-center py-1 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OBESE</div>
+          <div className="grid grid-cols-4 gap-1.5">
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>UNDER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>NORMAL</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OVER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OBESE</div>
           </div>
         </>
       )}
@@ -763,11 +580,6 @@ function CalculatorPreviewCard({ entry }: { entry: CalculatorEntry }) {
         <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono uppercase">
           {CATEGORY_LABELS[entry.category]}
         </span>
-        <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-        </div>
       </div>
 
       {/* Content */}
@@ -807,6 +619,7 @@ export default function CalculatorStack() {
   const [windowWidth, setWindowWidth] = useState(1024)
   const [mounted, setMounted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const touchStartX = useRef<number | null>(null)
 
   // Track responsive screen dimensions
   useEffect(() => {
@@ -844,10 +657,10 @@ export default function CalculatorStack() {
 
   // Cards layout configurations
   const cards = [
-    { name: 'Basic Calculator', render: <BasicCalculator /> },
     { name: 'Scientific Calculator', render: <ScientificCalculator /> },
     { name: 'BMI Calculator', render: <BMICalculator /> },
     { name: 'Loan EMI Calculator', render: <LoanCalculator /> },
+    { name: 'Compound Interest', render: <CompoundInterestCalculator /> },
   ]
 
   // Math configurations for fanning out cards (Desktop)
@@ -924,7 +737,20 @@ export default function CalculatorStack() {
 
       {isMobile ? (
         // Mobile Stacked-Overlay Carousel — mirrors Testimonials: center card in front, left/right peeking behind
-        <div className="relative w-full max-w-full flex flex-col items-center py-6 px-2 sm:px-4">
+        <div className="relative w-full max-w-full flex flex-col items-center py-6 px-2 sm:px-4"
+          onTouchStart={(e) => { touchStartX.current = e.changedTouches[0].screenX }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null) return
+            const diff = touchStartX.current - e.changedTouches[0].screenX
+            const threshold = 50
+            if (diff > threshold) {
+              setActiveIndex((a) => (a !== null && a < cards.length - 1 ? a + 1 : 0))
+            } else if (diff < -threshold) {
+              setActiveIndex((a) => (a !== null && a > 0 ? a - 1 : cards.length - 1))
+            }
+            touchStartX.current = null
+          }}
+        >
           <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[500px] sm:h-[520px] flex items-center justify-center">
             {cards.map((card, i) => {
               const offset = i - (activeIndex ?? 0)

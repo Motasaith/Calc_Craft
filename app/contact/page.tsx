@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Send, MapPin, Clock, Globe, CheckCircle2, Github, Twitter, Linkedin, Sparkles, Calculator, Briefcase, Shield, ArrowRight } from 'lucide-react'
+import { Mail, Send, MapPin, Clock, Globe, CheckCircle2, Sparkles, Calculator, Briefcase, Shield, ArrowRight } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
@@ -38,9 +38,23 @@ export default function ContactPage() {
       return
     }
     setSubmitting(true)
-    await new Promise((r) => setTimeout(r, 1200))
-    setSubmitting(false)
-    setSubmitted(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setSubmitted(true)
+      } else {
+        setError(data.error || 'Something went wrong. Please try again.')
+      }
+    } catch {
+      setError('Network error. Please check your connection and try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -208,21 +222,6 @@ export default function ContactPage() {
                   <li className="flex items-start gap-2"><Globe className="w-3.5 h-3.5 mt-0.5 text-primary-300 shrink-0" /> Global team, GMT-8 to GMT+1</li>
                   <li className="flex items-start gap-2"><MapPin className="w-3.5 h-3.5 mt-0.5 text-primary-300 shrink-0" /> 100% remote, no physical office</li>
                 </ul>
-              </div>
-
-              <div className="p-5 bg-white border border-neutral-200 rounded-2xl">
-                <h3 className="text-sm font-extrabold text-dark-900 mb-2">Follow us</h3>
-                <div className="flex gap-2">
-                  <a href="#" className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-dark-700 transition-colors" aria-label="GitHub">
-                    <Github className="w-4 h-4" />
-                  </a>
-                  <a href="#" className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-dark-700 transition-colors" aria-label="Twitter">
-                    <Twitter className="w-4 h-4" />
-                  </a>
-                  <a href="#" className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-dark-700 transition-colors" aria-label="LinkedIn">
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                </div>
               </div>
 
               <div className="p-5 bg-primary-50 border border-primary-100 rounded-2xl">

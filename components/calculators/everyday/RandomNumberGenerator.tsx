@@ -23,11 +23,6 @@ export default function RandomNumberGenerator() {
       <div className="flex flex-col bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
         <div className="flex justify-between items-center mb-4">
           <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC RNG</span>
-          <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-            <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
-          </div>
         </div>
 
         {/* Display */}

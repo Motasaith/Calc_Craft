@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Calculator, ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 
@@ -57,11 +58,7 @@ export default function Navbar() {
           className="flex items-center gap-2.5 group mr-2"
           aria-label={`${BRAND.name} Home`}
         >
-          <div className="relative w-9 h-9 rounded-lg bg-dark-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md shadow-dark-800/20 ring-1 ring-dark-900/20">
-            <Calculator className="w-4 h-4 text-white" />
-            {/* tiny LED indicator dot */}
-            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(16,185,129,0.6)]" />
-          </div>
+          <Image src="/logo.png" alt="" width={48} height={48} className="object-contain rounded-lg group-hover:scale-105 transition-transform shadow-md" priority />
           <div className="flex flex-col leading-none">
             <span className="text-[11px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
               Home<span className="text-primary-600"> of </span>Calculators
