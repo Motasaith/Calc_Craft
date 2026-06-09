@@ -9,10 +9,13 @@ import {
   Delete,
   ChevronLeft,
   ChevronRight,
+  Calculator,
 } from 'lucide-react'
 import DigitalText from './DigitalText'
 import { useKeyboardInput, createStandardKeyMap } from '@/hooks/useKeyboardInput'
 import { calculateBMI, calculateEMI, formatCurrency } from '@/lib/calc-engine'
+import Link from 'next/link'
+import { CalculatorEntry, CATEGORY_LABELS } from '@/lib/calculators'
 
 // ==========================================
 // CALCULATOR 1: RETRO BASIC CALCULATOR

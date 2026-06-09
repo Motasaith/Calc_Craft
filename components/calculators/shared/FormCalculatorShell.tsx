@@ -235,44 +235,6 @@ export function RetroSlider({
   )
 }
 
-/** Dropdown select matching retro theme */
-export function RetroSelect({
-  label,
-  value,
-  onChange,
-  options,
-  id,
-}: {
-  label: string
-  value: string
-  onChange: (val: string) => void
-  options: { label: string; value: string }[]
-  id?: string
-}) {
-  return (
-    <div className="mb-3">
-      <label htmlFor={id} className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
-        {label}
-      </label>
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full h-10 px-3 pr-9 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-400 transition-all shadow-inner appearance-none cursor-pointer"
-        >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-neutral-500 font-mono pointer-events-none">▾</span>
-      </div>
-    </div>
-  )
-}
-
 /** Status indicator bar */
 export function StatusBar({ items }: { items: { label: string; active: boolean }[] }) {
   return (
