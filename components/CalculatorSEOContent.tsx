@@ -59,7 +59,7 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
     intro: `${calc.name} is a free, browser-based tool for ${cat.description}. Whether you're a ${calc.keywords[0] || 'user'} or just need a quick answer, this calculator handles the math for you — accurately, privately, and instantly. All calculations run in your browser; we never see your inputs.`,
     whatIs: {
       heading: `What is the ${calc.name}?`,
-      body: `${calc.name} ${calc.description.toLowerCase()} It is part of Calc_Craft's ${cat.heading} suite — ${cat.description}. The calculator is designed for ${cat.useCase}, but anyone can use it. No signup, no ads, no tracking. Just accurate math, computed locally in your browser using a BigNumber-precision math engine.`,
+      body: `${calc.name} ${calc.description.toLowerCase()} It is part of Home of Calculators's ${cat.heading} suite — ${cat.description}. The calculator is designed for ${cat.useCase}, but anyone can use it. No signup, no ads, no tracking. Just accurate math, computed locally in your browser using a BigNumber-precision math engine.`,
     },
     howTo: {
       heading: `How to use the ${calc.name}`,
@@ -77,12 +77,12 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
       'Need a different calculator? Try our visual builder to create your own.',
     ],
     faq: [
-      { q: `Is the ${calc.shortName} accurate?`, a: `Yes. Calc_Craft uses a BigNumber-precision math engine (64-128 decimal digits) to ensure calculations are accurate. We run 96+ automated tests covering unit conversion, financial formulas, health formulas, and more. For critical decisions (financial, medical, legal), we still recommend consulting a qualified professional.` },
-      { q: `Is the ${calc.name} free?`, a: `Yes. Every calculator on Calc_Craft is 100% free, with no signup, no ads, and no hidden fees. The entire platform is free forever.` },
+      { q: `Is the ${calc.shortName} accurate?`, a: `Yes. Home of Calculators uses a BigNumber-precision math engine (64-128 decimal digits) to ensure calculations are accurate. We run 96+ automated tests covering unit conversion, financial formulas, health formulas, and more. For critical decisions (financial, medical, legal), we still recommend consulting a qualified professional.` },
+      { q: `Is the ${calc.name} free?`, a: `Yes. Every calculator on Home of Calculators is 100% free, with no signup, no ads, and no hidden fees. The entire platform is free forever.` },
       { q: `Do you store the values I enter?`, a: `No. All calculations happen in your browser. We never see, store, or transmit your inputs to any server. Your data stays on your device.` },
-      { q: `Can I use the ${calc.shortName} on my phone?`, a: `Yes. Calc_Craft is fully responsive and works on any device — phone, tablet, laptop, or desktop. The interface adapts to your screen size.` },
-      { q: `Can I embed this calculator on my own website?`, a: `Yes. Click the "Share" button to get an iframe embed code. The embedded calculator will look like any other Calc_Craft widget. You can also build a fully customized version using our visual builder.` },
-      { q: `Can I build my own custom calculator?`, a: `Absolutely. Calc_Craft's visual builder lets you add fields, write formulas, choose a theme, and brand the result with your own logo — all without writing code.` },
+      { q: `Can I use the ${calc.shortName} on my phone?`, a: `Yes. Home of Calculators is fully responsive and works on any device — phone, tablet, laptop, or desktop. The interface adapts to your screen size.` },
+      { q: `Can I embed this calculator on my own website?`, a: `Yes. Click the "Share" button to get an iframe embed code. The embedded calculator will look like any other Home of Calculators widget. You can also build a fully customized version using our visual builder.` },
+      { q: `Can I build my own custom calculator?`, a: `Absolutely. Home of Calculators's visual builder lets you add fields, write formulas, choose a theme, and brand the result with your own logo — all without writing code.` },
     ],
   }
 }
@@ -169,7 +169,7 @@ export default function CalculatorSEOContent({ calc }: { calc: { name: string; s
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="w-4 h-4 text-primary-300" />
-              <h3 className="text-base font-extrabold">Why Calc_Craft</h3>
+              <h3 className="text-base font-extrabold">Why Home of Calculators</h3>
             </div>
             <ul className="space-y-2">
               {[

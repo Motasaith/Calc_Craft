@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Calculator, ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { BRAND } from '@/lib/brand'
 
 const navLinks = [
   { label: 'Calculators', href: '/calculators' },
@@ -44,17 +45,17 @@ export default function Navbar() {
       className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
     >
       <div
-        className={`flex items-center justify-between h-14 px-2 pl-3 pr-2 rounded-2xl transition-all duration-300 max-w-5xl w-full hover:border-dark-800/30 ${
+        className={`flex items-center justify-between h-14 px-2 pl-3 pr-2 rounded-2xl transition-all duration-300 max-w-5xl w-full hover:border-dark-800/30 shadow-[0_6px_0_rgba(26,32,25,0.9),0_8px_16px_rgba(26,32,25,0.15)] ${
           scrolled
-            ? 'bg-[#eae7df]/95 backdrop-blur-xl border border-dark-800/20 shadow-[0_12px_28px_rgba(26,32,25,0.12),_0_2px_4px_rgba(0,0,0,0.04)]'
-            : 'bg-[#eae7df]/85 backdrop-blur-md border border-dark-800/15 shadow-[0_6px_22px_rgba(26,32,25,0.08)]'
+            ? 'bg-[#eae7df]/95 backdrop-blur-xl border border-dark-800/20'
+            : 'bg-[#eae7df]/85 backdrop-blur-md border border-dark-800/15'
         }`}
       >
         {/* Logo — matches retro calculator shell style */}
         <Link
           href="/"
           className="flex items-center gap-2.5 group mr-2"
-          aria-label="Calc_Craft Home"
+          aria-label={`${BRAND.name} Home`}
         >
           <div className="relative w-9 h-9 rounded-lg bg-dark-800 flex items-center justify-center group-hover:scale-105 transition-transform shadow-md shadow-dark-800/20 ring-1 ring-dark-900/20">
             <Calculator className="w-4 h-4 text-white" />
@@ -62,11 +63,11 @@ export default function Navbar() {
             <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(16,185,129,0.6)]" />
           </div>
           <div className="flex flex-col leading-none">
-            <span className="text-[13px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
-              CALC<span className="text-primary-600">_</span>CRAFT
+            <span className="text-[11px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
+              Home<span className="text-primary-600"> of </span>Calculators
             </span>
-            <span className="text-[8px] font-mono text-dark-500 uppercase tracking-[0.18em] mt-0.5">
-              v2.0 // ONLINE
+            <span className="text-[7px] font-mono text-dark-500 uppercase tracking-[0.18em] mt-0.5">
+              {BRAND.tagline}
             </span>
           </div>
         </Link>

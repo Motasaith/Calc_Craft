@@ -45,7 +45,7 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'library',
     q: 'Do I need an account to use a calculator?',
-    a: "No. Calc_Craft never requires an account for using calculators. You can open any calculator and start using it immediately. The only place an account would be relevant is if you build your own custom calculators — those are stored in your browser's localStorage and don't require a server account.",
+    a: "No. Home of Calculators never requires an account for using calculators. You can open any calculator and start using it immediately. The only place an account would be relevant is if you build your own custom calculators — those are stored in your browser's localStorage and don't require a server account.",
   },
 
   // ─── VISUAL BUILDER ───
@@ -69,8 +69,8 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   // ─── EMBED ───
   {
     capability: 'embed',
-    q: 'How do I embed a Calc_Craft calculator on my own website?',
-    a: "Click the Share button on any calculator (or on a custom one you built) to get an iframe embed snippet. The snippet is a single <iframe> tag you can drop into any HTML page, blog post, Shopify store, Notion page, or anywhere else that supports iframes. You can configure the width, height, and the calculator will look and behave exactly as it does on calc_craft.com.",
+    q: 'How do I embed a Home of Calculators calculator on my own website?',
+    a: "Click the Share button on any calculator (or on a custom one you built) to get an iframe embed snippet. The snippet is a single <iframe> tag you can drop into any HTML page, blog post, Shopify store, Notion page, or anywhere else that supports iframes. You can configure the width, height, and the calculator will look and behave exactly as it does on homeofcalculators.com.",
     link: { label: 'See an embedded example', href: '/calculators/bmi' },
   },
   {
@@ -88,12 +88,12 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'whitelabel',
     q: 'How does white-labeling work? Can I make the calculator look like my own brand?',
-    a: 'Yes. In the visual builder, open the Settings tab and either pick one of 6 preset themes (Retro, Dark, Modern, Pastel, Cyberpunk) or design your own with custom colors for primary, secondary, background, and text. You can also upload your own logo (PNG, JPG, or SVG) and set a brand name that displays in the calculator header. The result is a widget that looks and feels like it came from your company — not from Calc_Craft.',
+    a: 'Yes. In the visual builder, open the Settings tab and either pick one of 6 preset themes (Retro, Dark, Modern, Pastel, Cyberpunk) or design your own with custom colors for primary, secondary, background, and text. You can also upload your own logo (PNG, JPG, or SVG) and set a brand name that displays in the calculator header. The result is a widget that looks and feels like it came from your company — not from Home of Calculators.',
   },
   {
     capability: 'whitelabel',
-    q: 'Will Calc_Craft branding appear on my embedded calculator?',
-    a: "By default, embedded Calc_Craft widgets are unbranded and feel native to the host site — there's no 'Powered by Calc_Craft' badge on individual calculators. The full Calc_Craft footer branding only appears if you use the free embed; you can fully remove it by hosting the embed via your own setup (instructions in the Share dialog).",
+    q: 'Will Home of Calculators branding appear on my embedded calculator?',
+    a: "By default, embedded Home of Calculators widgets are unbranded and feel native to the host site — there's no 'Powered by Home of Calculators' badge on individual calculators. The full Home of Calculators footer branding only appears if you use the free embed; you can fully remove it by hosting the embed via your own setup (instructions in the Share dialog).",
   },
 
   // ─── JSON ───
@@ -111,8 +111,8 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   // ─── PRIVACY ───
   {
     capability: 'privacy',
-    q: 'Is Calc_Craft really free? How do you make money?',
-    a: 'Yes, 100% free — no paywalls, no premium tiers, no in-app purchases, no ads. Calc_Craft is independently funded by its founders. We deliberately avoid the surveillance-ad business model that most "free" calculator sites use, which is why we can offer a fully private, ad-free experience.',
+    q: 'Is Home of Calculators really free? How do you make money?',
+    a: 'Yes, 100% free — no paywalls, no premium tiers, no in-app purchases, no ads. Home of Calculators is independently funded by its founders. We deliberately avoid the surveillance-ad business model that most "free" calculator sites use, which is why we can offer a fully private, ad-free experience.',
   },
   {
     capability: 'privacy',
@@ -122,7 +122,7 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   },
   {
     capability: 'privacy',
-    q: 'Is Calc_Craft GDPR and CCPA compliant?',
+    q: 'Is Home of Calculators GDPR and CCPA compliant?',
     a: "Yes. We don't collect personal data from calculator inputs, we don't use advertising trackers, and we don't share data with third parties for behavioral advertising. Our privacy-respecting analytics is GDPR-compliant out of the box. For full details on your rights as an EU/EEA/UK/Swiss or California resident, see our Privacy Policy.",
   },
 ]
@@ -168,7 +168,7 @@ export default function FAQ() {
     <section
       ref={sectionRef}
       className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white overflow-hidden font-sans relative"
-      aria-label="Frequently asked questions about the Calc_Craft platform"
+      aria-label="Frequently asked questions about the Home of Calculators platform"
       itemScope
       itemType="https://schema.org/FAQPage"
     >
@@ -202,7 +202,7 @@ export default function FAQ() {
             Questions about the full platform
           </h2>
           <p className="text-sm text-slate-500 max-w-xl mx-auto">
-            Not just "how do I calculate X" — the real questions: how to build, embed, brand, back up, and trust Calc_Craft.
+            Not just "how do I calculate X" — the real questions: how to build, embed, brand, back up, and trust Home of Calculators.
           </p>
         </div>
 

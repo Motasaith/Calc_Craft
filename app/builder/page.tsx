@@ -1586,7 +1586,7 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
           />
         </Field>
 
-        <Field label="Brand Label" hint="e.g. CALC_CRAFT">
+        <Field label="Brand Label" hint="e.g. HOME OF CALCULATORS">
           <input
             type="text"
             value={calculator.brandName || ''}

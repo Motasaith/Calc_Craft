@@ -29,7 +29,7 @@ export default function Features() {
   return (
     <section 
       className="py-10 bg-white border-y border-neutral-100 overflow-hidden select-none z-20"
-      aria-label="Key features and benefits of Calc_Craft calculators"
+      aria-label="Key features and benefits of Home of Calculators calculators"
       itemScope
       itemType="https://schema.org/ItemList"
     >

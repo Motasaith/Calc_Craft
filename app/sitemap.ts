@@ -4,7 +4,7 @@ import { getAllSlugs } from '@/lib/calculators'
 export const dynamic = 'force-static'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://calc_craft.com'
+  const baseUrl = 'https://homeofcalculators.com'
   const now = new Date()
   const slugs = getAllSlugs()
 

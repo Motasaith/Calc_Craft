@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import Link from 'next/link'
+import { BRAND } from '@/lib/brand'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -199,9 +200,9 @@ export default function Footer() {
           itemScope
           itemType="https://schema.org/Organization"
         >
-          <meta itemProp="name" content="Calc_Craft" />
-          <meta itemProp="url" content="https://calc_craft.com" />
-          <meta itemProp="description" content="A complete calculator platform: 50+ ready-made calculators, a no-code visual builder, embeddable widgets, and full white-labeling. Free forever, private by design." />
+          <meta itemProp="name" content={BRAND.name} />
+          <meta itemProp="url" content={BRAND.url} />
+          <meta itemProp="description" content={BRAND.shortDescription} />
 
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
@@ -213,14 +214,14 @@ export default function Footer() {
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:border-white/30 group-hover:bg-white/10 transition-all duration-300 group-hover:scale-105">
                   <Calculator className="w-5 h-5 text-white group-hover:rotate-12 transition-transform duration-300" />
                 </div>
-                <span className="text-xl font-bold text-white tracking-tight group-hover:text-slate-200 transition-colors">
-                  Calc_Craft
+                <span className="text-lg font-bold text-white tracking-tight group-hover:text-slate-200 transition-colors">
+                  {BRAND.name}
                 </span>
               </Link>
 
               {/* Brand Description */}
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
-                A complete calculator platform: 50+ ready-made calculators, a no-code visual builder, embeddable widgets, and full white-labeling. Free forever, private by design.
+                {BRAND.shortDescription}
               </p>
 
               {/* Social Icons row with tooltips */}
@@ -232,7 +233,7 @@ export default function Footer() {
                       className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 transition-all duration-300 shadow-sm ${color}`}
                       onMouseEnter={() => setHoveredSocial(i)}
                       onMouseLeave={() => setHoveredSocial(null)}
-                      aria-label={`Follow Calc_Craft on ${label}`}
+                      aria-label={`Follow ${BRAND.name} on ${label}`}
                     >
                       <Icon className="w-4 h-4" />
                     </Link>
@@ -457,7 +458,7 @@ export default function Footer() {
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <p className="text-xs text-slate-500 select-none">
-                © {new Date().getFullYear()} Calc_Craft. All rights reserved.
+                {BRAND.copyright(new Date().getFullYear())}
               </p>
             </div>
 

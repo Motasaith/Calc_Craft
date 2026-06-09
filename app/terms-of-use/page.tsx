@@ -4,16 +4,16 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Terms of Use - Calc_Craft Calculator Service Agreement | Calc_Craft',
+  title: 'Terms of Use - Home of Calculators Calculator Service Agreement | Home of Calculators',
   description:
-    'Read the Calc_Craft Terms of Use. Understand your rights and responsibilities when using our free online calculators, the visual builder, and embeddable widgets.',
-  keywords: ['calc_craft terms', 'calculator terms of use', 'user agreement', 'service terms'],
+    'Read the Home of Calculators Terms of Use. Understand your rights and responsibilities when using our free online calculators, the visual builder, and embeddable widgets.',
+  keywords: ['homeofcalculators terms', 'calculator terms of use', 'user agreement', 'service terms'],
   openGraph: {
-    title: 'Terms of Use | Calc_Craft',
-    description: 'Service agreement governing your use of Calc_Craft calculators and tools.',
+    title: 'Terms of Use | Home of Calculators',
+    description: 'Service agreement governing your use of Home of Calculators calculators and tools.',
     type: 'article',
   },
-  alternates: { canonical: 'https://calc_craft.com/terms-of-use' },
+  alternates: { canonical: 'https://homeofcalculators.com/terms-of-use' },
 }
 
 export default function TermsOfUsePage() {
@@ -23,35 +23,35 @@ export default function TermsOfUsePage() {
       <main id="main-content" role="main" aria-label="Terms of Use" className="min-h-screen bg-white">
         <LegalPage
           title="Terms of Use"
-          subtitle="The agreement that governs your use of Calc_Craft."
+          subtitle="The agreement that governs your use of Home of Calculators."
           badge="Legal"
           icon="file"
           lastUpdated="June 5, 2026"
-          contactEmail="legal@calc_craft.com"
-          intro="These Terms of Use form a binding agreement between you and Calc_Craft. They cover the calculators we provide, the visual builder you can use to create your own, the embeddable widgets you can place on your own site, and the relationship between us. Please read them carefully — by using Calc_Craft, you accept these terms."
+          contactEmail="legal@homeofcalculators.com"
+          intro="These Terms of Use form a binding agreement between you and Home of Calculators. They cover the calculators we provide, the visual builder you can use to create your own, the embeddable widgets you can place on your own site, and the relationship between us. Please read them carefully — by using Home of Calculators, you accept these terms."
           sections={[
         {
           heading: '1. Acceptance of These Terms',
           body: (
             <>
               <p>
-                By accessing or using Calc_Craft at calc_craft.com (the "Site") or any calculator, widget, or service we provide (collectively, the "Service"), you agree to be bound by these Terms of Use, our <a href="/privacy-policy">Privacy Policy</a>, and our <a href="/cookies">Cookies Policy</a>. If you do not agree, please do not use the Service.
+                By accessing or using Home of Calculators at homeofcalculators.com (the "Site") or any calculator, widget, or service we provide (collectively, the "Service"), you agree to be bound by these Terms of Use, our <a href="/privacy-policy">Privacy Policy</a>, and our <a href="/cookies">Cookies Policy</a>. If you do not agree, please do not use the Service.
               </p>
               <p>
-                You must be at least 13 years old to use Calc_Craft. If you are under 18, you represent that you have your parent or guardian's permission to use the Service.
+                You must be at least 13 years old to use Home of Calculators. If you are under 18, you represent that you have your parent or guardian's permission to use the Service.
               </p>
             </>
           ),
         },
         {
-          heading: '2. What Calc_Craft Provides',
+          heading: '2. What Home of Calculators Provides',
           body: (
             <>
-              <p>Calc_Craft provides a free, browser-based calculator platform consisting of:</p>
+              <p>Home of Calculators provides a free, browser-based calculator platform consisting of:</p>
               <ul>
                 <li><strong>50+ ready-made calculators</strong> across math, finance, health, conversion, datetime, and everyday categories</li>
                 <li><strong>A visual calculator builder</strong> — a drag-and-drop, no-code tool for creating custom calculators with your own fields, formulas, themes, and branding</li>
-                <li><strong>Embeddable widgets</strong> — iframe snippets that let you place any Calc_Craft calculator (or a custom one you build) on your own website</li>
+                <li><strong>Embeddable widgets</strong> — iframe snippets that let you place any Home of Calculators calculator (or a custom one you build) on your own website</li>
                 <li><strong>White-labeling features</strong> — your own logo, brand colors, and domain-friendly output for embedded widgets</li>
                 <li><strong>JSON import/export</strong> — for backing up, sharing, or version-controlling your custom calculator configurations</li>
               </ul>
@@ -65,7 +65,7 @@ export default function TermsOfUsePage() {
           heading: '3. Your Responsibilities',
           body: (
             <>
-              <p>When using Calc_Craft, you agree to:</p>
+              <p>When using Home of Calculators, you agree to:</p>
               <ul>
                 <li>Use the Service for lawful purposes only</li>
                 <li>Not use the Service to harass, harm, defame, or discriminate against others</li>
@@ -83,13 +83,13 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                Calc_Craft uses a high-precision math engine (mathjs with BigNumber arithmetic, 64-128 digits of precision) to ensure that calculations are accurate. Our engine is tested with 96+ unit tests covering unit conversion, financial formulas, health formulas, statistics, and more.
+                Home of Calculators uses a high-precision math engine (mathjs with BigNumber arithmetic, 64-128 digits of precision) to ensure that calculations are accurate. Our engine is tested with 96+ unit tests covering unit conversion, financial formulas, health formulas, statistics, and more.
               </p>
               <p>
                 <strong>However</strong>, the Service is provided "as is" and "as available" without warranties of any kind, express or implied. While we strive for accuracy, we make no guarantees about the correctness, reliability, or suitability of any calculation for any particular purpose.
               </p>
               <p>
-                <strong>Always consult a qualified professional</strong> for decisions where calculation errors could cause material harm. Calc_Craft is an educational and informational tool — it is not a substitute for advice from a licensed financial advisor, doctor, lawyer, or other professional.
+                <strong>Always consult a qualified professional</strong> for decisions where calculation errors could cause material harm. Home of Calculators is an educational and informational tool — it is not a substitute for advice from a licensed financial advisor, doctor, lawyer, or other professional.
               </p>
             </>
           ),
@@ -99,7 +99,7 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                Calc_Craft provides iframe-based embed codes that allow you to place calculators on your own website. When you embed a Calc_Craft widget:
+                Home of Calculators provides iframe-based embed codes that allow you to place calculators on your own website. When you embed a Home of Calculators widget:
               </p>
               <ul>
                 <li>You are responsible for the page where the widget is embedded</li>
@@ -134,13 +134,13 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                <strong>Our intellectual property.</strong> The Calc_Craft name, logo, design, code, calculator engine, marketing copy, and all related materials are owned by Calc_Craft and protected by copyright, trademark, and other intellectual property laws. You may not copy, reproduce, distribute, modify, or create derivative works without our written permission, except as explicitly permitted below.
+                <strong>Our intellectual property.</strong> The Home of Calculators name, logo, design, code, calculator engine, marketing copy, and all related materials are owned by Home of Calculators and protected by copyright, trademark, and other intellectual property laws. You may not copy, reproduce, distribute, modify, or create derivative works without our written permission, except as explicitly permitted below.
               </p>
               <p>
                 <strong>Calculator engines and content.</strong> The math formulas underlying our ready-made calculators are widely-known mathematical facts and are not protected by copyright. You are free to use these formulas in your own projects.
               </p>
               <p>
-                <strong>Trademark.</strong> "Calc_Craft" and our logo are our trademarks. You may not use them to suggest endorsement of your product without our permission. You <strong>may</strong> embed our widgets on your website, which may display our branding — this is permitted as part of the embed feature.
+                <strong>Trademark.</strong> "Home of Calculators" and our logo are our trademarks. You may not use them to suggest endorsement of your product without our permission. You <strong>may</strong> embed our widgets on your website, which may display our branding — this is permitted as part of the embed feature.
               </p>
             </>
           ),
@@ -150,7 +150,7 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                To the maximum extent permitted by law, Calc_Craft and its operators, contributors, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:
+                To the maximum extent permitted by law, Home of Calculators and its operators, contributors, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to:
               </p>
               <ul>
                 <li>Loss of profits, revenue, data, or business opportunities</li>
@@ -168,7 +168,7 @@ export default function TermsOfUsePage() {
           heading: '9. Indemnification',
           body: (
             <p>
-              You agree to indemnify and hold harmless Calc_Craft, its operators, and affiliates from any claims, damages, or expenses (including reasonable legal fees) arising from your use of the Service, your violation of these Terms, or your violation of any third-party rights.
+              You agree to indemnify and hold harmless Home of Calculators, its operators, and affiliates from any claims, damages, or expenses (including reasonable legal fees) arising from your use of the Service, your violation of these Terms, or your violation of any third-party rights.
             </p>
           ),
         },
@@ -177,7 +177,7 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                We strive to keep Calc_Craft running smoothly, but we do not guarantee uninterrupted access. We may need to modify, suspend, or discontinue the Service (or any part of it) at any time, with or without notice, for maintenance, updates, legal reasons, or other causes.
+                We strive to keep Home of Calculators running smoothly, but we do not guarantee uninterrupted access. We may need to modify, suspend, or discontinue the Service (or any part of it) at any time, with or without notice, for maintenance, updates, legal reasons, or other causes.
               </p>
               <p>
                 We may also update these Terms of Use from time to time. Material changes will be announced with a banner on the Site for at least 30 days before they take effect. Your continued use after changes take effect constitutes acceptance of the new Terms.
@@ -190,7 +190,7 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                You may stop using Calc_Craft at any time. If you wish, you can clear your browser's localStorage to remove all your custom-calculator data.
+                You may stop using Home of Calculators at any time. If you wish, you can clear your browser's localStorage to remove all your custom-calculator data.
               </p>
               <p>
                 We reserve the right to suspend or terminate your access to the Service if you violate these Terms or engage in activity that harms the Service or other users. Where reasonable, we will provide advance notice and an opportunity to cure.
@@ -203,10 +203,10 @@ export default function TermsOfUsePage() {
           body: (
             <>
               <p>
-                These Terms are governed by the laws of the jurisdiction in which Calc_Craft is established, without regard to conflict-of-law principles.
+                These Terms are governed by the laws of the jurisdiction in which Home of Calculators is established, without regard to conflict-of-law principles.
               </p>
               <p>
-                We encourage you to contact us first at <a href="mailto:legal@calc_craft.com">legal@calc_craft.com</a> to resolve any dispute informally. If informal resolution fails, disputes will be resolved through binding arbitration in accordance with applicable arbitration rules, except where prohibited by law.
+                We encourage you to contact us first at <a href="mailto:legal@homeofcalculators.com">legal@homeofcalculators.com</a> to resolve any dispute informally. If informal resolution fails, disputes will be resolved through binding arbitration in accordance with applicable arbitration rules, except where prohibited by law.
               </p>
             </>
           ),
@@ -215,7 +215,7 @@ export default function TermsOfUsePage() {
           heading: '13. Contact',
           body: (
             <p>
-              For questions about these Terms, contact us at <a href="mailto:legal@calc_craft.com">legal@calc_craft.com</a>.
+              For questions about these Terms, contact us at <a href="mailto:legal@homeofcalculators.com">legal@homeofcalculators.com</a>.
             </p>
           ),
         },

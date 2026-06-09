@@ -4,8 +4,8 @@ export const dynamic = 'force-static'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Calc_Craft - Smart Calculators for Every Calculation',
-    short_name: 'Calc_Craft',
+    name: 'Home of Calculators - Smart Calculators for Every Calculation',
+    short_name: 'Home of Calculators',
     description:
       'Fast, accurate and free online calculators for math, finance, health, and everyday needs. 50+ calculators, no signup required.',
     start_url: '/',

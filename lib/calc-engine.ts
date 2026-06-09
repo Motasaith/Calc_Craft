@@ -1,5 +1,5 @@
 /**
- * Calc_Craft Calculation Engine
+ * Home of Calculators Calculation Engine
  * -----------------------------
  * A state-of-the-art math engine built on top of mathjs, configured for:
  *  - High precision (BigNumber) by default — no float-rounding surprises

@@ -8,16 +8,16 @@ import Footer from '@/components/Footer'
 import Link from 'next/link'
 
 const REASONS = [
-  { icon: Calculator, title: 'Question about a calculator', email: 'support@calc_craft.com', desc: 'Found a bug, an inaccurate result, or a feature request? Use this.' },
-  { icon: Briefcase, title: 'Partnership & business', email: 'partnerships@calc_craft.com', desc: 'Press, integrations, custom work, or large-scale licensing inquiries.' },
-  { icon: Shield, title: 'Privacy & legal', email: 'privacy@calc_craft.com', desc: 'Data requests, GDPR/CCPA inquiries, terms clarification.' },
+  { icon: Calculator, title: 'Question about a calculator', email: 'support@homeofcalculators.com', desc: 'Found a bug, an inaccurate result, or a feature request? Use this.' },
+  { icon: Briefcase, title: 'Partnership & business', email: 'partnerships@homeofcalculators.com', desc: 'Press, integrations, custom work, or large-scale licensing inquiries.' },
+  { icon: Shield, title: 'Privacy & legal', email: 'privacy@homeofcalculators.com', desc: 'Data requests, GDPR/CCPA inquiries, terms clarification.' },
 ]
 
 const FAQ = [
   { q: 'How fast will I get a response?', a: 'Most support emails are answered within 24-48 hours, Monday through Friday.' },
   { q: 'Do you offer phone support?', a: 'No — we keep costs low by handling support over email. This lets us keep the entire platform free.' },
   { q: 'Can I suggest a new calculator?', a: 'Absolutely. Use the suggestion form below or email us. We add new calculators monthly based on user feedback.' },
-  { q: 'Is there a bug bounty program?', a: 'Not formally, but we reward responsible disclosure of security issues. Email security@calc_craft.com.' },
+  { q: 'Is there a bug bounty program?', a: 'Not formally, but we reward responsible disclosure of security issues. Email security@homeofcalculators.com.' },
 ]
 
 export default function ContactPage() {
@@ -46,7 +46,7 @@ export default function ContactPage() {
   return (
     <>
       <Navbar />
-      <main id="main-content" role="main" aria-label="Contact Calc_Craft" className="min-h-screen bg-white">
+      <main id="main-content" role="main" aria-label="Contact Home of Calculators" className="min-h-screen bg-white">
         {/* ───────── HERO ───────── */}
         <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 overflow-hidden bg-gradient-to-b from-white via-neutral-50/40 to-white">
           <div className="absolute inset-0 -z-10 pointer-events-none">

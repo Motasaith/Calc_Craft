@@ -17,7 +17,7 @@ const ARTICLES: Record<string, {
 }> = {
   'how-to-build-custom-calculator-no-code': {
     title: 'How to Build a Custom Calculator in 5 Minutes (No Code Required)',
-    excerpt: 'A step-by-step walkthrough of Calc_Craft\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
+    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
     category: 'Tutorial',
     date: 'June 4, 2026',
     readTime: '6 min read',
@@ -27,7 +27,7 @@ const ARTICLES: Record<string, {
         heading: 'Why build a custom calculator?',
         paragraphs: [
           'Every niche has its own calculations. A mortgage broker needs an affordability calculator. A fitness coach needs a macro split estimator. A SaaS founder needs an ROI calculator. Off-the-shelf tools rarely fit — they\'re either too generic, too expensive, or come with ads and tracking.',
-          'Calc_Craft\'s visual builder lets you skip the engineering and ship a branded, embeddable calculator in minutes. No JavaScript, no servers, no build pipeline.',
+          'Home of Calculators\'s visual builder lets you skip the engineering and ship a branded, embeddable calculator in minutes. No JavaScript, no servers, no build pipeline.',
         ],
       },
       {
@@ -144,7 +144,7 @@ const ARTICLES: Record<string, {
         heading: 'The fix: BigNumber arithmetic',
         paragraphs: [
           'Libraries like mathjs, decimal.js, and bignumber.js solve the problem by storing numbers as strings of decimal digits and doing the math digit-by-digit. They\'re slower than native floating-point, but they\'re exact.',
-          'Calc_Craft uses mathjs\'s BigNumber mode configured to 64 digits of precision for general calculations and 128 digits for financial ones. That\'s vastly more than any real-world calculation needs — 128 decimal digits could represent the number of atoms in the universe many times over — but it ensures that no rounding error ever creeps into a result.',
+          'Home of Calculators uses mathjs\'s BigNumber mode configured to 64 digits of precision for general calculations and 128 digits for financial ones. That\'s vastly more than any real-world calculation needs — 128 decimal digits could represent the number of atoms in the universe many times over — but it ensures that no rounding error ever creeps into a result.',
         ],
       },
       {
@@ -171,16 +171,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const article = ARTICLES[slug]
   if (!article) return { title: 'Article Not Found' }
   return {
-    title: `${article.title} | Calc_Craft Blog`,
+    title: `${article.title} | Home of Calculators Blog`,
     description: article.excerpt,
-    keywords: [article.category, 'calc_craft blog', 'calculator tutorial', article.relatedCategory],
+    keywords: [article.category, 'homeofcalculators blog', 'calculator tutorial', article.relatedCategory],
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: 'article',
       publishedTime: article.date,
     },
-    alternates: { canonical: `https://calc_craft.com/blog/${slug}` },
+    alternates: { canonical: `https://homeofcalculators.com/blog/${slug}` },
   }
 }
 
@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <main id="main-content" role="main" aria-label={article.title} className="min-h-screen bg-white">
         <article className="pt-24 pb-16" itemScope itemType="https://schema.org/BlogPosting">
           <meta itemProp="datePublished" content={article.date} />
-          <meta itemProp="author" content="Calc_Craft Team" />
+          <meta itemProp="author" content="Home of Calculators Team" />
 
           {/* Header */}
           <header className="relative pb-10 overflow-hidden">

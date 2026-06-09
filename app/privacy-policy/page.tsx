@@ -4,11 +4,11 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - How Calc_Craft Protects Your Data | Calc_Craft',
+  title: 'Privacy Policy - How Home of Calculators Protects Your Data | Home of Calculators',
   description:
-    'Read the Calc_Craft Privacy Policy. Learn how we protect your calculation data, what we collect (and don\'t), your GDPR and CCPA rights, and our zero-tracking approach.',
+    'Read the Home of Calculators Privacy Policy. Learn how we protect your calculation data, what we collect (and don\'t), your GDPR and CCPA rights, and our zero-tracking approach.',
   keywords: [
-    'calc_craft privacy policy',
+    'homeofcalculators privacy policy',
     'calculator privacy',
     'GDPR',
     'CCPA',
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     'browser calculations privacy',
   ],
   openGraph: {
-    title: 'Privacy Policy | Calc_Craft',
-    description: 'How Calc_Craft protects your data with browser-only calculations and zero server storage.',
+    title: 'Privacy Policy | Home of Calculators',
+    description: 'How Home of Calculators protects your data with browser-only calculations and zero server storage.',
     type: 'article',
   },
-  alternates: { canonical: 'https://calc_craft.com/privacy-policy' },
+  alternates: { canonical: 'https://homeofcalculators.com/privacy-policy' },
 }
 
 export default function PrivacyPolicyPage() {
@@ -31,25 +31,25 @@ export default function PrivacyPolicyPage() {
       <main id="main-content" role="main" aria-label="Privacy Policy" className="min-h-screen bg-white">
         <LegalPage
           title="Privacy Policy"
-          subtitle="How Calc_Craft protects your data and respects your privacy."
+          subtitle="How Home of Calculators protects your data and respects your privacy."
           badge="Privacy"
           icon="shield"
           lastUpdated="June 5, 2026"
-          contactEmail="privacy@calc_craft.com"
-          intro="Calc_Craft is built on a zero-server-storage principle: every calculation you perform runs entirely in your browser, and we never see or store your inputs. This Privacy Policy explains exactly what data we do and don't collect, how we use it, and the rights you have over your information under GDPR, CCPA, and other major privacy frameworks."
+          contactEmail="privacy@homeofcalculators.com"
+          intro="Home of Calculators is built on a zero-server-storage principle: every calculation you perform runs entirely in your browser, and we never see or store your inputs. This Privacy Policy explains exactly what data we do and don't collect, how we use it, and the rights you have over your information under GDPR, CCPA, and other major privacy frameworks."
           sections={[
         {
           heading: 'Our Privacy-First Philosophy',
           body: (
             <>
               <p>
-                Most "free" online calculators quietly harvest your inputs and ship them to analytics servers, advertising networks, or third-party data brokers. <strong>Calc_Craft was designed from day one to be different.</strong>
+                Most "free" online calculators quietly harvest your inputs and ship them to analytics servers, advertising networks, or third-party data brokers. <strong>Home of Calculators was designed from day one to be different.</strong>
               </p>
               <p>
                 Every one of our 50+ calculators — and every calculator you build with our visual builder — executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
               </p>
               <p>
-                This isn't marketing — it's a fundamental architectural choice. The Calc_Craft calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.
+                This isn't marketing — it's a fundamental architectural choice. The Home of Calculators calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.
               </p>
             </>
           ),
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
           body: (
             <>
               <p>
-                Calc_Craft uses a minimal set of cookies and browser storage. For complete details, see our <a href="/cookies">Cookies Policy</a>. In summary:
+                Home of Calculators uses a minimal set of cookies and browser storage. For complete details, see our <a href="/cookies">Cookies Policy</a>. In summary:
               </p>
               <ul>
                 <li><strong>Strictly necessary localStorage:</strong> Stores your custom-built calculators and builder drafts. Essential to the service.</li>
@@ -131,7 +131,7 @@ export default function PrivacyPolicyPage() {
                 <li><strong>Right to lodge a complaint:</strong> Lodge a complaint with your local data protection authority</li>
               </ul>
               <p>
-                Because we don't collect most categories of data, most of these rights are moot — there's nothing to access, port, or delete. For the limited data we do hold (newsletter email, contact submissions), email <a href="mailto:privacy@calc_craft.com">privacy@calc_craft.com</a> and we will respond within 30 days.
+                Because we don't collect most categories of data, most of these rights are moot — there's nothing to access, port, or delete. For the limited data we do hold (newsletter email, contact submissions), email <a href="mailto:privacy@homeofcalculators.com">privacy@homeofcalculators.com</a> and we will respond within 30 days.
               </p>
             </>
           ),
@@ -154,7 +154,7 @@ export default function PrivacyPolicyPage() {
           heading: 'Children\'s Privacy (COPPA)',
           body: (
             <p>
-              Calc_Craft is designed to be safe for all ages, including children. We do not knowingly collect personal information from children under 13. Because calculations happen in the browser, no child-entered data is transmitted to our servers. If you believe we have inadvertently collected information from a child, please contact us so we can promptly address it.
+              Home of Calculators is designed to be safe for all ages, including children. We do not knowingly collect personal information from children under 13. Because calculations happen in the browser, no child-entered data is transmitted to our servers. If you believe we have inadvertently collected information from a child, please contact us so we can promptly address it.
             </p>
           ),
         },
@@ -166,7 +166,7 @@ export default function PrivacyPolicyPage() {
                 Our entire site is served over HTTPS with TLS 1.3 encryption. We use modern security headers (HSTS, X-Frame-Options, Content-Security-Policy) to defend against common attacks. We engage in regular security reviews and keep dependencies updated.
               </p>
               <p>
-                However, no system is 100% secure. If you discover a security vulnerability, please report it responsibly to <a href="mailto:security@calc_craft.com">security@calc_craft.com</a>.
+                However, no system is 100% secure. If you discover a security vulnerability, please report it responsibly to <a href="mailto:security@homeofcalculators.com">security@homeofcalculators.com</a>.
               </p>
             </>
           ),
@@ -190,7 +190,7 @@ export default function PrivacyPolicyPage() {
           heading: 'International Data Transfers',
           body: (
             <p>
-              Calc_Craft is a global service. Our hosting and analytics providers may process aggregated, non-personal technical data in data centers around the world. Because the data we collect is anonymous and aggregated, no personal information crosses borders.
+              Home of Calculators is a global service. Our hosting and analytics providers may process aggregated, non-personal technical data in data centers around the world. Because the data we collect is anonymous and aggregated, no personal information crosses borders.
             </p>
           ),
         },
@@ -198,7 +198,7 @@ export default function PrivacyPolicyPage() {
           heading: 'Changes to This Policy',
           body: (
             <p>
-              We may update this Privacy Policy from time to time. The "Last updated" date at the top of this page reflects when the most recent changes were made. Material changes will be announced via a banner on the site for at least 30 days. Your continued use of Calc_Craft after changes take effect constitutes acceptance of the updated policy.
+              We may update this Privacy Policy from time to time. The "Last updated" date at the top of this page reflects when the most recent changes were made. Material changes will be announced via a banner on the site for at least 30 days. Your continued use of Home of Calculators after changes take effect constitutes acceptance of the updated policy.
             </p>
           ),
         },
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
           heading: 'Contact Our Privacy Team',
           body: (
             <p>
-              For any privacy-related questions, data requests, or concerns, contact our Data Protection Officer at <a href="mailto:privacy@calc_craft.com">privacy@calc_craft.com</a>. We respond to all legitimate requests within 30 days.
+              For any privacy-related questions, data requests, or concerns, contact our Data Protection Officer at <a href="mailto:privacy@homeofcalculators.com">privacy@homeofcalculators.com</a>. We respond to all legitimate requests within 30 days.
             </p>
           ),
         },

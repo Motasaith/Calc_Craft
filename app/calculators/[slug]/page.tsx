@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const calc = getCalculatorBySlug(slug)
   if (!calc) return { title: 'Calculator Not Found' }
 
-  const title = `${calc.name} - Free Online Calculator | Calc_Craft`
+  const title = `${calc.name} - Free Online Calculator | Home of Calculators`
   const description = `${calc.description} Fast, accurate, and 100% free. Runs entirely in your browser — no signup, no tracking, no ads.`
 
   return {
@@ -29,18 +29,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ...calc.keywords,
     ],
     openGraph: {
-      title: `${calc.name} | Calc_Craft`,
+      title: `${calc.name} | Home of Calculators`,
       description,
       type: 'website',
-      url: `https://calc_craft.com/calculators/${slug}`,
-      siteName: 'Calc_Craft',
+      url: `https://homeofcalculators.com/calculators/${slug}`,
+      siteName: 'Home of Calculators',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${calc.name} | Calc_Craft`,
+      title: `${calc.name} | Home of Calculators`,
       description,
     },
-    alternates: { canonical: `https://calc_craft.com/calculators/${slug}` },
+    alternates: { canonical: `https://homeofcalculators.com/calculators/${slug}` },
   }
 }
 

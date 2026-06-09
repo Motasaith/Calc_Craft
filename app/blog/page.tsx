@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Calc_Craft Blog - Calculator Tips, Tutorials & Industry Insights | Calc_Craft',
+  title: 'Home of Calculators Blog - Calculator Tips, Tutorials & Industry Insights | Home of Calculators',
   description:
     'In-depth guides on using calculators for finance, health, math, and everyday life. Plus tutorials on building custom calculators with our visual builder and embedding them anywhere.',
   keywords: [
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     'embed calculator',
   ],
   openGraph: {
-    title: 'Calc_Craft Blog | Calc_Craft',
+    title: 'Home of Calculators Blog | Home of Calculators',
     description: 'Tips, tutorials, and industry insights on calculators and custom calculator development.',
     type: 'website',
   },
-  alternates: { canonical: 'https://calc_craft.com/blog' },
+  alternates: { canonical: 'https://homeofcalculators.com/blog' },
 }
 
 interface Article {
@@ -39,7 +39,7 @@ const ARTICLES: Article[] = [
   {
     slug: 'how-to-build-custom-calculator-no-code',
     title: 'How to Build a Custom Calculator in 5 Minutes (No Code Required)',
-    excerpt: 'A step-by-step walkthrough of Calc_Craft\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
+    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
     category: 'Tutorial',
     date: 'June 4, 2026',
     readTime: '6 min read',
@@ -73,7 +73,7 @@ export default function BlogPage() {
   return (
     <>
       <Navbar />
-      <main id="main-content" role="main" aria-label="Calc_Craft Blog" className="min-h-screen bg-white">
+      <main id="main-content" role="main" aria-label="Home of Calculators Blog" className="min-h-screen bg-white">
         {/* ───────── HERO ───────── */}
         <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 overflow-hidden bg-gradient-to-b from-white via-neutral-50/40 to-white">
           <div className="absolute inset-0 -z-10 pointer-events-none">

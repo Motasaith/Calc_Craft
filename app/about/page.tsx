@@ -18,11 +18,11 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'About Calc_Craft - Our Mission, Story & the Team Behind Free Calculators | Calc_Craft',
+  title: 'About Home of Calculators - Our Mission, Story & the Team Behind Free Calculators | Home of Calculators',
   description:
-    'Learn about Calc_Craft: a free, privacy-first calculator platform that gives you 50+ ready-made calculators, a no-code visual builder, and embeddable widgets for any website.',
+    'Learn about Home of Calculators: a free, privacy-first calculator platform that gives you 50+ ready-made calculators, a no-code visual builder, and embeddable widgets for any website.',
   keywords: [
-    'about calc_craft',
+    'about homeofcalculators',
     'calculator platform',
     'visual calculator builder',
     'embed calculators',
@@ -30,11 +30,11 @@ export const metadata: Metadata = {
     'mission statement',
   ],
   openGraph: {
-    title: 'About Calc_Craft | Calc_Craft',
+    title: 'About Home of Calculators | Home of Calculators',
     description: 'Our mission, story, and the team building the world\'s most flexible calculator platform.',
     type: 'website',
   },
-  alternates: { canonical: 'https://calc_craft.com/about' },
+  alternates: { canonical: 'https://homeofcalculators.com/about' },
 }
 
 const stats = [
@@ -63,16 +63,16 @@ const values = [
   {
     icon: Code2,
     title: 'Open and extensible',
-    body: 'The visual builder means anyone can extend Calc_Craft. If you need a calculator we haven\'t built, build it yourself in minutes.',
+    body: 'The visual builder means anyone can extend Home of Calculators. If you need a calculator we haven\'t built, build it yourself in minutes.',
   },
 ]
 
 const capabilities = [
   { icon: Calculator, title: '50+ ready-made calculators', body: 'Math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools — all free, all browser-based.' },
   { icon: Wrench, title: 'Visual calculator builder', body: 'A WordPress-style drag-and-drop editor. Add fields, write formulas, pick a theme. Your custom calculator is live in minutes.' },
-  { icon: Globe, title: 'Embed on any website', body: 'One-line iframe snippets. Drop a Calc_Craft calculator into your blog, your Shopify store, or your internal docs.' },
+  { icon: Globe, title: 'Embed on any website', body: 'One-line iframe snippets. Drop a Home of Calculators calculator into your blog, your Shopify store, or your internal docs.' },
   { icon: Code2, title: 'JSON import / export', body: 'Back up, version, or share your custom calculator configurations as plain JSON files.' },
-  { icon: Sparkles, title: 'White-label theming', body: 'Custom colors, your own logo, brand name on the widget. Make any Calc_Craft calculator look like it came from your brand.' },
+  { icon: Sparkles, title: 'White-label theming', body: 'Custom colors, your own logo, brand name on the widget. Make any Home of Calculators calculator look like it came from your brand.' },
   { icon: Shield, title: 'Privacy by design', body: 'Every calculation runs in your browser. We never see your inputs. GDPR-friendly, CCPA-friendly, no third-party tracking.' },
 ]
 
@@ -80,7 +80,7 @@ const timeline = [
   {
     year: '2024',
     title: 'The spark',
-    body: 'A frustrated developer realizes that every "free online calculator" website either shows ads, harvests inputs, or lacks the one specific calculator they need. The idea for Calc_Craft is born.',
+    body: 'A frustrated developer realizes that every "free online calculator" website either shows ads, harvests inputs, or lacks the one specific calculator they need. The idea for Home of Calculators is born.',
   },
   {
     year: '2024',
@@ -95,7 +95,7 @@ const timeline = [
   {
     year: '2025',
     title: 'Embeddable widgets',
-    body: 'One-line iframe embeds let any website display a Calc_Craft calculator. White-labeling, custom themes, and JSON export turn the platform into a real toolkit.',
+    body: 'One-line iframe embeds let any website display a Home of Calculators calculator. White-labeling, custom themes, and JSON export turn the platform into a real toolkit.',
   },
   {
     year: '2026',
@@ -105,17 +105,17 @@ const timeline = [
 ]
 
 const team = [
-  { name: 'The Engineering Team', role: 'Architecture & Engine', bio: 'Maintains the math engine, frontend, and infrastructure that keep Calc_Craft running smoothly across the globe.' },
-  { name: 'The Design Team', role: 'UX & Visual Design', bio: 'Crafts the interface, the 14-segment digital displays, and the retro-modern aesthetic that makes Calc_Craft feel alive.' },
+  { name: 'The Engineering Team', role: 'Architecture & Engine', bio: 'Maintains the math engine, frontend, and infrastructure that keep Home of Calculators running smoothly across the globe.' },
+  { name: 'The Design Team', role: 'UX & Visual Design', bio: 'Crafts the interface, the 14-segment digital displays, and the retro-modern aesthetic that makes Home of Calculators feel alive.' },
   { name: 'The Content Team', role: 'Calculators & Documentation', bio: 'Builds each of the 50+ calculators, writes the help docs, and ensures every formula is verified for accuracy.' },
-  { name: 'The Community', role: 'You', bio: 'Thousands of users, builders, and embedders who test new calculators, share feedback, and shape what Calc_Craft becomes next.' },
+  { name: 'The Community', role: 'You', bio: 'Thousands of users, builders, and embedders who test new calculators, share feedback, and shape what Home of Calculators becomes next.' },
 ]
 
 export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main id="main-content" role="main" aria-label="About Calc_Craft" className="min-h-screen bg-white">
+      <main id="main-content" role="main" aria-label="About Home of Calculators" className="min-h-screen bg-white">
         {/* ───────── HERO ───────── */}
         <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-14 overflow-hidden bg-gradient-to-b from-white via-neutral-50/40 to-white">
           <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -137,7 +137,7 @@ export default function AboutPage() {
               </span>
             </h1>
             <p className="text-base sm:text-lg text-dark-500 max-w-2xl mx-auto leading-relaxed">
-              Calc_Craft started as a frustration and became a platform. Today it powers 50+ free calculators, a no-code visual builder, and embeddable widgets used by thousands of people every day.
+              Home of Calculators started as a frustration and became a platform. Today it powers 50+ free calculators, a no-code visual builder, and embeddable widgets used by thousands of people every day.
             </p>
           </div>
         </section>
@@ -154,7 +154,7 @@ export default function AboutPage() {
                   Make calculation accessible, accurate, and owned by the user.
                 </h2>
                 <p className="text-base text-dark-600 leading-relaxed mb-4">
-                  Most online calculators treat you as the product — your inputs are logged, your behavior is tracked, and the page is cluttered with ads. Calc_Craft takes the opposite approach: <strong>no tracking, no ads, no paywalls</strong>. Just accurate math, done in your browser.
+                  Most online calculators treat you as the product — your inputs are logged, your behavior is tracked, and the page is cluttered with ads. Home of Calculators takes the opposite approach: <strong>no tracking, no ads, no paywalls</strong>. Just accurate math, done in your browser.
                 </p>
                 <p className="text-base text-dark-600 leading-relaxed mb-6">
                   And because not every calculation fits a pre-built template, we built a <strong>visual calculator builder</strong> — the same WordPress-style editor, but for calculators. Need a niche mortgage formula? A custom workout-calorie estimator? A/B test ROI? You can build it in minutes, embed it on your site, and even white-label it with your own brand.
@@ -190,7 +190,7 @@ export default function AboutPage() {
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-dark-900 mb-3 tracking-tight">A complete calculator platform</h2>
               <p className="text-base text-dark-500 max-w-2xl mx-auto">
-                Calc_Craft is more than a list of calculators. It's a full toolkit for building, sharing, embedding, and branding them.
+                Home of Calculators is more than a list of calculators. It's a full toolkit for building, sharing, embedding, and branding them.
               </p>
             </div>
 
@@ -220,7 +220,7 @@ export default function AboutPage() {
                 <Heart className="w-3 h-3" /> Our Values
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3 tracking-tight">What we believe</h2>
-              <p className="text-base text-white/70 max-w-2xl mx-auto">Four principles that guide every decision we make about Calc_Craft.</p>
+              <p className="text-base text-white/70 max-w-2xl mx-auto">Four principles that guide every decision we make about Home of Calculators.</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               {values.map((v) => (
@@ -273,7 +273,7 @@ export default function AboutPage() {
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-neutral-200 text-[10px] font-bold font-mono uppercase tracking-wider mb-3 text-dark-700">
                 <Users className="w-3 h-3 text-primary-600" /> The Crew
               </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-dark-900 mb-3 tracking-tight">Who builds Calc_Craft</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-dark-900 mb-3 tracking-tight">Who builds Home of Calculators</h2>
               <p className="text-base text-dark-500 max-w-xl mx-auto">A small, distributed team united by the belief that good tools should be free.</p>
             </div>
 
@@ -298,11 +298,11 @@ export default function AboutPage() {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-8 tracking-tight text-center">Common questions</h2>
             <div className="space-y-3">
               {[
-                { q: 'Is Calc_Craft really 100% free?', a: 'Yes. No paywalls. No premium tiers. No in-app purchases. The entire platform is free to use, forever.' },
+                { q: 'Is Home of Calculators really 100% free?', a: 'Yes. No paywalls. No premium tiers. No in-app purchases. The entire platform is free to use, forever.' },
                 { q: 'Do you see the values I enter into calculators?', a: 'No. All calculations run locally in your browser using JavaScript. We never see or store your inputs.' },
-                { q: 'Can I embed a Calc_Craft calculator on my own website?', a: 'Yes. Open any calculator (or one you build), click Share → Embed, and copy the iframe snippet. It works on any website that allows iframes.' },
+                { q: 'Can I embed a Home of Calculators calculator on my own website?', a: 'Yes. Open any calculator (or one you build), click Share → Embed, and copy the iframe snippet. It works on any website that allows iframes.' },
                 { q: 'Can I build a completely custom calculator?', a: 'Yes. Our visual builder lets you add fields, write formulas, choose a theme, and add your own logo. The result is a calculator you can share or embed.' },
-                { q: 'How do you make money if everything is free?', a: 'Calc_Craft is independently operated and supported by its founders. We keep costs low with efficient static hosting and avoid the surveillance-ad business model.' },
+                { q: 'How do you make money if everything is free?', a: 'Home of Calculators is independently operated and supported by its founders. We keep costs low with efficient static hosting and avoid the surveillance-ad business model.' },
               ].map((qa, i) => (
                 <details key={i} className="group p-4 sm:p-5 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-all" itemScope itemType="https://schema.org/Question">
                   <summary className="flex items-center justify-between cursor-pointer list-none">

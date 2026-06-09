@@ -39,7 +39,7 @@ module.exports = {
         'float': 'float 6s ease-in-out infinite',
         'float-delayed': 'float 6s ease-in-out 3s infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'marquee': 'marquee 35s linear infinite',
+        'marquee': 'marquee 20s linear infinite',
       },
       keyframes: {
         float: {

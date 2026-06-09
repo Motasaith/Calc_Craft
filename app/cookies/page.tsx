@@ -4,11 +4,11 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Cookies Policy - How Calc_Craft Uses Cookies | Calc_Craft',
+  title: 'Cookies Policy - How Home of Calculators Uses Cookies | Home of Calculators',
   description:
-    'Learn how Calc_Craft uses cookies and browser storage. Minimal, privacy-respecting, GDPR-compliant. No advertising cookies, no third-party tracking.',
+    'Learn how Home of Calculators uses cookies and browser storage. Minimal, privacy-respecting, GDPR-compliant. No advertising cookies, no third-party tracking.',
   keywords: [
-    'calc_craft cookies',
+    'homeofcalculators cookies',
     'cookie policy',
     'browser storage',
     'localStorage',
@@ -16,11 +16,11 @@ export const metadata: Metadata = {
     'privacy-respecting analytics',
   ],
   openGraph: {
-    title: 'Cookies Policy | Calc_Craft',
+    title: 'Cookies Policy | Home of Calculators',
     description: 'Minimal, privacy-respecting cookie usage — no advertising, no third-party tracking.',
     type: 'article',
   },
-  alternates: { canonical: 'https://calc_craft.com/cookies' },
+  alternates: { canonical: 'https://homeofcalculators.com/cookies' },
 }
 
 export default function CookiesPage() {
@@ -30,12 +30,12 @@ export default function CookiesPage() {
       <main id="main-content" role="main" aria-label="Cookies Policy" className="min-h-screen bg-white">
         <LegalPage
           title="Cookies Policy"
-          subtitle="A minimal, honest list of everything Calc_Craft stores in your browser."
+          subtitle="A minimal, honest list of everything Home of Calculators stores in your browser."
           badge="Cookies"
           icon="cookie"
           lastUpdated="June 5, 2026"
-          contactEmail="privacy@calc_craft.com"
-          intro="Most websites bury their cookie usage in legal jargon. We won't. Here's the complete list of what Calc_Craft stores on your device, why, and how to control it — in plain English."
+          contactEmail="privacy@homeofcalculators.com"
+          intro="Most websites bury their cookie usage in legal jargon. We won't. Here's the complete list of what Home of Calculators stores on your device, why, and how to control it — in plain English."
           sections={[
         {
           heading: '1. What Are Cookies?',
@@ -49,7 +49,7 @@ export default function CookiesPage() {
           heading: '2. The Short Version',
           body: (
             <>
-              <p>Calc_Craft uses cookies and browser storage for <strong>only three things</strong>:</p>
+              <p>Home of Calculators uses cookies and browser storage for <strong>only three things</strong>:</p>
               <ul>
                 <li>Saving your custom-built calculators and builder drafts (so they don't disappear when you close the tab)</li>
                 <li>Anonymous, aggregated analytics — counting page views, no individual tracking</li>
@@ -65,7 +65,7 @@ export default function CookiesPage() {
           heading: '3. Detailed Cookie & Storage Inventory',
           body: (
             <>
-              <p>Here is every cookie and storage entry Calc_Craft uses:</p>
+              <p>Here is every cookie and storage entry Home of Calculators uses:</p>
               <div className="overflow-x-auto -mx-2 my-4">
                 <table className="w-full text-xs sm:text-sm border-collapse">
                   <thead>
@@ -109,7 +109,7 @@ export default function CookiesPage() {
           body: (
             <>
               <p>
-                Most "free" websites make money by showing you ads, and ad networks use cookies to track you across the web. Calc_Craft doesn't take that approach. The Service is funded by us because we believe everyone deserves access to accurate calculation tools without surveillance.
+                Most "free" websites make money by showing you ads, and ad networks use cookies to track you across the web. Home of Calculators doesn't take that approach. The Service is funded by us because we believe everyone deserves access to accurate calculation tools without surveillance.
               </p>
               <p>
                 This means no retargeting ads following you around the internet, no "personalized" ad targeting, and no sharing of your browsing data with advertising partners. It's a deliberate trade-off: a smaller business model in exchange for a more respectful user experience.
@@ -121,7 +121,7 @@ export default function CookiesPage() {
           heading: '5. Third-Party Services That May Set Cookies',
           body: (
             <>
-              <p>Calc_Craft itself sets only the entries listed above. However, we use a small number of third-party services that may set their own cookies when you interact with them:</p>
+              <p>Home of Calculators itself sets only the entries listed above. However, we use a small number of third-party services that may set their own cookies when you interact with them:</p>
               <ul>
                 <li>
                   <strong>Embedded YouTube/Vimeo videos</strong> (if present on blog posts or tutorials): Sets cookies when you play the video. We always try to use privacy-enhanced embeds where available.
@@ -131,7 +131,7 @@ export default function CookiesPage() {
                 </li>
               </ul>
               <p>
-                These are exceptions, not the rule. The vast majority of your interaction with Calc_Craft involves no third-party cookies.
+                These are exceptions, not the rule. The vast majority of your interaction with Home of Calculators involves no third-party cookies.
               </p>
             </>
           ),
@@ -149,14 +149,14 @@ export default function CookiesPage() {
                   <strong>Private/Incognito mode:</strong> Cookies and storage set during a private browsing session are automatically deleted when you close the window.
                 </li>
                 <li>
-                  <strong>Do Not Track (DNT):</strong> Calc_Craft honors DNT signals — when DNT is enabled in your browser, we disable all non-essential analytics.
+                  <strong>Do Not Track (DNT):</strong> Home of Calculators honors DNT signals — when DNT is enabled in your browser, we disable all non-essential analytics.
                 </li>
                 <li>
-                  <strong>Per-site controls:</strong> Most browsers let you block specific sites from setting cookies while allowing others. You can use this to block third-party services on calc_craft.com while still using our core functionality.
+                  <strong>Per-site controls:</strong> Most browsers let you block specific sites from setting cookies while allowing others. You can use this to block third-party services on homeofcalculators.com while still using our core functionality.
                 </li>
               </ul>
               <p>
-                <strong>Note:</strong> If you block the storage entries that Calc_Craft uses for app functionality, your custom calculators and builder drafts will not be saved. The site will still work — you just won't have persistence.
+                <strong>Note:</strong> If you block the storage entries that Home of Calculators uses for app functionality, your custom calculators and builder drafts will not be saved. The site will still work — you just won't have persistence.
               </p>
             </>
           ),
@@ -175,7 +175,7 @@ export default function CookiesPage() {
                 Our privacy-respecting analytics (Plausible) does not use cookies and does not require consent under GDPR.
               </p>
               <p>
-                This is why you don't see a "We use cookies!" popup on Calc_Craft — there are no non-essential cookies to consent to.
+                This is why you don't see a "We use cookies!" popup on Home of Calculators — there are no non-essential cookies to consent to.
               </p>
             </>
           ),
@@ -192,7 +192,7 @@ export default function CookiesPage() {
           heading: '9. Contact',
           body: (
             <p>
-              Questions about cookies or storage? Email <a href="mailto:privacy@calc_craft.com">privacy@calc_craft.com</a>.
+              Questions about cookies or storage? Email <a href="mailto:privacy@homeofcalculators.com">privacy@homeofcalculators.com</a>.
             </p>
           ),
         },

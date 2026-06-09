@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 
 // Each testimonial maps to a real platform capability so visitors can
-// see — at a glance — the breadth of things Calc_Craft actually does.
+// see — at a glance — the breadth of things Home of Calculators actually does.
 type CapabilityKey =
   | 'library'
   | 'builder'
@@ -42,7 +42,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'library',
     capabilityLabel: '50+ Calculators',
-    text: "Calc_Craft has every calculator I need for my coursework — statistics, fractions, even the obscure formula sheet. It's the only tab I keep open during finals.",
+    text: "Home of Calculators has every calculator I need for my coursework — statistics, fractions, even the obscure formula sheet. It's the only tab I keep open during finals.",
   },
   {
     name: 'Marcus T.',
@@ -87,7 +87,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'privacy',
     capabilityLabel: 'Private by Design',
-    text: "I'm a security researcher. The fact that Calc_Craft runs every calculation in the browser — no server logging, no tracking — is genuinely rare. I trust it with sensitive financial planning.",
+    text: "I'm a security researcher. The fact that Home of Calculators runs every calculation in the browser — no server logging, no tracking — is genuinely rare. I trust it with sensitive financial planning.",
   },
   {
     name: 'Lara B.',
@@ -96,7 +96,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'library',
     capabilityLabel: '50+ Calculators',
-    text: 'I write about personal finance and embed Calc_Craft widgets in my blog posts. Readers get instant calculations inside the article — engagement is way up compared to static screenshots.',
+    text: 'I write about personal finance and embed Home of Calculators widgets in my blog posts. Readers get instant calculations inside the article — engagement is way up compared to static screenshots.',
   },
   {
     name: 'Yusuf H.',
@@ -176,7 +176,7 @@ export default function Testimonials() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-white via-neutral-50/40 to-white overflow-hidden font-sans relative"
-      aria-label="User reviews covering all Calc_Craft capabilities"
+      aria-label="User reviews covering all Home of Calculators capabilities"
       itemScope
       itemType="https://schema.org/Review"
     >

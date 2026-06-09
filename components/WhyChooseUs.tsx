@@ -65,7 +65,7 @@ export default function WhyChooseUs() {
     <section
       ref={sectionRef}
       className="py-12 sm:py-16 md:py-20 lg:py-28 bg-white"
-      aria-label="Why choose Calc_Craft - Benefits and features"
+      aria-label="Why choose Home of Calculators - Benefits and features"
       itemScope
       itemType="https://schema.org/ItemList"
     >
@@ -76,7 +76,7 @@ export default function WhyChooseUs() {
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3] sm:aspect-[4/3]">
               <Image
                 src="/why_choose_calccraft.png"
-                alt="Calc_Craft calculator workspace showing free online math, finance, and health calculators for students and professionals"
+                alt="Home of Calculators calculator workspace showing free online math, finance, and health calculators for students and professionals"
                 fill
                 className="object-cover"
                 loading="lazy"
@@ -96,9 +96,9 @@ export default function WhyChooseUs() {
 
           {/* Right - Content */}
           <div ref={rightRef} itemScope itemType="https://schema.org/Service" className="order-2 lg:order-2 w-full">
-            <meta itemProp="name" content="Calc_Craft Online Calculators" />
+            <meta itemProp="name" content="Home of Calculators Online Calculators" />
             <span className="text-[11px] sm:text-xs font-bold tracking-widest text-primary-600 uppercase mb-3 block">
-              Why Choose Calc_Craft?
+              Why Choose Home of Calculators?
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-extrabold text-dark-900 mb-5 sm:mb-6 leading-tight">
               Built for Accuracy.
@@ -106,7 +106,7 @@ export default function WhyChooseUs() {
               Designed for You.
             </h2>
             <p className="text-sm sm:text-base text-dark-600 mb-5 sm:mb-6 leading-relaxed">
-              Calc_Craft provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs.
+              Home of Calculators provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs.
               No signup required, instant results, and completely private — all calculations run locally in your browser.
             </p>
             <div className="space-y-4 sm:space-y-5" role="list">

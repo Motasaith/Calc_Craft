@@ -136,7 +136,7 @@ function BasicCalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-3">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">CALC-CRAFT RETRO</span>
+        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC RETRO</span>
         <div className="w-10 h-3 bg-neutral-400 rounded-sm border border-neutral-500 shadow-inner flex justify-around items-center">
           <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
           <div className="w-1 h-1 bg-neutral-700/80 rounded-full" />
@@ -408,7 +408,7 @@ function ScientificCalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-2 py-2.5 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-2">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">CALC-CRAFT SCIENTIFIC</span>
+        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC SCIENTIFIC</span>
         <div className="flex gap-1 items-center">
           <button
             onClick={() => setAngleMode(angleMode === 'DEG' ? 'RAD' : 'DEG')}
@@ -567,7 +567,7 @@ function BMICalculator() {
       <div className="flex justify-between items-center mb-3">
         <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
           <Activity className="w-3.5 h-3.5 text-neutral-600" />
-          CALC-CRAFT FITNESS
+          HoC FITNESS
         </span>
         <span className="text-[8px] uppercase px-1.5 py-0.5 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">BMI</span>
       </div>
@@ -682,7 +682,7 @@ function LoanCalculator() {
       <div className="flex justify-between items-center mb-3">
         <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
           <DollarSign className="w-3.5 h-3.5 text-neutral-600" />
-          CALC-CRAFT PLANNER
+          HoC PLANNER
         </span>
         <span className="text-[8px] uppercase px-1.5 py-0.5 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">EMI</span>
       </div>

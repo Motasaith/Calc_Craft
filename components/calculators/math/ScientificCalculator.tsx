@@ -513,7 +513,7 @@ export default function ScientificCalculator() {
       <div className="flex flex-col bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
         {/* Header */}
         <div className="flex justify-between items-center mb-3">
-          <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">CALC-CRAFT SCIENTIFIC</span>
+          <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC SCIENTIFIC</span>
           <div className="flex gap-1 items-center">
             <button
               onClick={() => setAngleMode(angleMode === 'DEG' ? 'RAD' : 'DEG')}
