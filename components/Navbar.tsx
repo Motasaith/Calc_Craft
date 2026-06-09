@@ -8,12 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 
 const navLinks = [
-  { label: 'Calculators', href: '/calculators' },
-  { label: 'Visual Builder', href: '/builder' },
   {
-    label: 'Categories',
+    label: 'Calculators',
     href: '/calculators',
     children: [
+      { label: 'All Calculators', href: '/calculators' },
       { label: 'Math Calculators', href: '/calculators?category=math' },
       { label: 'Finance Calculators', href: '/calculators?category=finance' },
       { label: 'Health Calculators', href: '/calculators?category=health' },
@@ -22,8 +21,10 @@ const navLinks = [
       { label: 'Everyday Tools', href: '/calculators?category=everyday' },
     ],
   },
+  { label: 'Visual Builder', href: '/builder' },
   { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ]
 
 export default function Navbar() {
@@ -182,9 +183,13 @@ export default function Navbar() {
               {navLinks.map((link) =>
                 link.children ? (
                   <div key={link.label} className="space-y-1">
-                    <div className="px-3 py-1.5 text-[9px] font-bold text-dark-500 uppercase tracking-[0.18em] font-mono">
-                      // {link.label}
-                    </div>
+                    <Link
+                      href={link.href}
+                      className="block px-3 py-2 text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 hover:text-dark-900 rounded-lg hover:bg-[#dad6cd]"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
                     {link.children.map((child) => (
                       <Link
                         key={child.label}
