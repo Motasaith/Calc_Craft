@@ -10,7 +10,6 @@ import {
   ChevronRight,
   ShieldCheck,
   ArrowUp,
-  CheckCircle,
   Sparkles,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -23,8 +22,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null)
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
   const [calcDisplay, setCalcDisplay] = useState('0')
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -105,17 +102,6 @@ export default function Footer() {
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email.includes('@') && email.includes('.')) {
-      setSubscribed(true)
-      setTimeout(() => {
-        setSubscribed(false)
-        setEmail('')
-      }, 4000)
-    }
   }
 
   // Mini calculator logic
@@ -213,40 +199,22 @@ export default function Footer() {
                 {BRAND.shortDescription}
               </p>
 
-              {/* Newsletter Block */}
+              {/* Support Block */}
               <div className="border-t border-white/5 pt-6">
                 <div className="flex items-center gap-2 text-white font-extrabold text-xs sm:text-sm mb-2 select-none">
                   <Mail className="w-4 h-4 text-slate-400" />
-                  Stay Connected
+                  Get in Touch
                 </div>
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                  Get tips, updates, and new tools straight to your inbox.
+                  Questions, feedback, or partnership ideas? We reply within 24-48 hours.
                 </p>
-
-                {subscribed ? (
-                  <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold animate-fade-in">
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Thanks for subscribing!</span>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubscribe} className="flex max-w-md w-full bg-white/5 border border-white/10 rounded-full overflow-hidden p-1.5 focus-within:border-white/25 focus-within:bg-white/[0.07] transition-all duration-300">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="bg-transparent border-0 flex-grow px-4 py-2 text-xs sm:text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-0"
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="w-9 h-9 rounded-full bg-white text-dark-900 flex items-center justify-center hover:bg-slate-100 active:scale-95 transition-all shadow-md group"
-                      aria-label="Subscribe to newsletter"
-                    >
-                      <ArrowRight className="w-4 h-4 text-dark-900 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
-                  </form>
-                )}
+                <a
+                  href="mailto:support@homeofcalculators.com"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-primary-400 hover:text-primary-300 transition-colors"
+                >
+                  support@homeofcalculators.com
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
               </div>
 
             </div>

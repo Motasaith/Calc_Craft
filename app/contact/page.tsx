@@ -44,11 +44,11 @@ export default function ContactPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      const data = await res.json()
-      if (data.success) {
+      const data = await res.json().catch(() => ({ success: false, error: 'Unexpected server response.' }))
+      if (res.ok && data.success) {
         setSubmitted(true)
       } else {
-        setError(data.error || 'Something went wrong. Please try again.')
+        setError(data.error || `Something went wrong (status ${res.status}). Please try again.`)
       }
     } catch {
       setError('Network error. Please check your connection and try again.')

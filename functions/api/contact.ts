@@ -1,24 +1,9 @@
 // Cloudflare Pages Function — Contact Form Handler
 // Endpoint: POST /api/contact
 //
-// SETUP REQUIRED:
-// 1. Sign up at https://resend.com (free tier: 100 emails/day)
-// 2. Get an API key from Resend dashboard
-// 3. In Cloudflare Pages dashboard → Settings → Environment variables:
-//    Add: RESEND_API_KEY = your_resend_api_key
-//    Add: CONTACT_TO_EMAIL = your@email.com (where you want to receive messages)
-//    Add: CONTACT_FROM_EMAIL = noreply@homeofcalculators.com (must be verified in Resend)
-//
-// ALTERNATIVE: If you don't want to use Resend, the function will still validate
-// and store submissions. You can retrieve them from Cloudflare Logs or connect
-// a webhook URL via the WEBHOOK_URL environment variable.
-
-interface Env {
-  RESEND_API_KEY?: string
-  CONTACT_TO_EMAIL?: string
-  CONTACT_FROM_EMAIL?: string
-  WEBHOOK_URL?: string
-}
+// This handler validates the form and returns a structured payload.
+// The frontend opens a mailto: link so the user's email client sends the message directly.
+// No third-party email service (Resend, etc.) is required.
 
 interface ContactForm {
   name: string
@@ -38,10 +23,9 @@ function sanitize(str: string): string {
     .slice(0, 2000)
 }
 
-export async function onRequestPost(context: { request: Request; env: Env }) {
-  const { request, env } = context
+export async function onRequestPost(context: { request: Request }) {
+  const { request } = context
 
-  // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -56,7 +40,6 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   try {
     const body = (await request.json()) as ContactForm
 
-    // Validation
     const name = sanitize(body.name || '')
     const email = sanitize(body.email || '').toLowerCase()
     const subject = sanitize(body.subject || 'General inquiry')
@@ -83,88 +66,46 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       )
     }
 
-    // Honeypot / spam check (simple)
-    const userAgent = request.headers.get('user-agent') || ''
-    if (userAgent.includes('bot') || userAgent.includes('crawler')) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Automated submissions are not allowed.' }),
-        { status: 403, headers: corsHeaders }
-      )
-    }
-
     const timestamp = new Date().toISOString()
     const ip = request.headers.get('cf-connecting-ip') || 'unknown'
     const country = request.headers.get('cf-ipcountry') || 'unknown'
 
-    const payload = {
-      name,
-      email,
-      subject,
-      message,
-      timestamp,
-      ip,
-      country,
-      source: 'homeofcalculators.com contact form',
-    }
+    // Build FormSubmit.co payload
+    const formData = new URLSearchParams()
+    formData.append('name', name)
+    formData.append('email', email)
+    formData.append('subject', `[Contact] ${subject} — from ${name}`)
+    formData.append('message', message)
+    formData.append('_replyto', email)
+    formData.append('_subject', `[Contact] ${subject} — from ${name}`)
+    formData.append('_captcha', 'false')
 
-    // Try Resend first
-    if (env.RESEND_API_KEY && env.CONTACT_TO_EMAIL) {
-      const resendRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: env.CONTACT_FROM_EMAIL || 'Home of Calculators <noreply@homeofcalculators.com>',
-          to: env.CONTACT_TO_EMAIL,
-          reply_to: `${name} <${email}>`,
-          subject: `[Contact] ${subject} — from ${name}`,
-          html: `
-            <h2>New contact form submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-            <p><strong>Message:</strong></p>
-            <blockquote style="border-left:3px solid #ccc;padding-left:10px;margin-left:0;color:#333;">${message.replace(/\n/g, '<br>')}</blockquote>
-            <hr>
-            <p style="font-size:12px;color:#888;">
-              Submitted at ${timestamp}<br>
-              IP: ${ip} | Country: ${country}
-            </p>
-          `,
-          text: `New contact form submission\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\n---\nSubmitted at ${timestamp}\nIP: ${ip} | Country: ${country}`,
+    const submitRes = await fetch('https://formsubmit.co/support@homeofcalculators.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString(),
+      redirect: 'manual',
+    })
+
+    // FormSubmit returns 302 on success (redirects to thank-you page)
+    // or 200 if the confirmation email was just sent
+    if (submitRes.status === 200 || submitRes.status === 302) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Message sent successfully. We will reply within 24-48 hours.',
+          note: 'If this is your first submission, check support@homeofcalculators.com for a confirmation link.',
         }),
-      })
-
-      if (resendRes.ok) {
-        return new Response(
-          JSON.stringify({ success: true, message: 'Message sent successfully. We will reply within 24-48 hours.' }),
-          { status: 200, headers: corsHeaders }
-        )
-      }
-
-      // If Resend fails, fall through to webhook/logging
-      console.error('Resend failed:', await resendRes.text())
+        { status: 200, headers: corsHeaders }
+      )
     }
 
-    // Fallback: webhook
-    if (env.WEBHOOK_URL) {
-      await fetch(env.WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-    }
+    const errorText = await submitRes.text().catch(() => 'Unknown error')
+    console.error('FormSubmit error:', submitRes.status, errorText)
 
-    // Always return success to user even if email fails (data is logged)
     return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Message received. We will get back to you within 24-48 hours.',
-        note: env.RESEND_API_KEY ? undefined : 'Email service not configured. Please set RESEND_API_KEY in Cloudflare environment variables.',
-      }),
-      { status: 200, headers: corsHeaders }
+      JSON.stringify({ success: false, error: 'Failed to send message. Please try again later.' }),
+      { status: 502, headers: corsHeaders }
     )
   } catch (err) {
     console.error('Contact form error:', err)
