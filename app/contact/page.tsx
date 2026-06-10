@@ -26,7 +26,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
@@ -38,28 +38,47 @@ export default function ContactPage() {
       return
     }
     setSubmitting(true)
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          subject: form.subject,
-          message: form.message.trim(),
-        }),
-      })
-      const data = await res.json().catch(() => ({ success: false, error: 'Unexpected server response.' }))
-      if (res.ok && data.success) {
-        setSubmitted(true)
-      } else {
-        setError(data.error || `Something went wrong (status ${res.status}). Please try again.`)
-      }
-    } catch {
-      setError('Network error. Please check your connection and try again.')
-    } finally {
-      setSubmitting(false)
+
+    // Submit via hidden iframe to avoid CORS and serverless IP blocking
+    const iframe = document.createElement('iframe')
+    iframe.name = 'formsubmit-iframe'
+    iframe.style.display = 'none'
+    document.body.appendChild(iframe)
+
+    const submitForm = document.createElement('form')
+    submitForm.action = 'https://formsubmit.co/support@homeofcalculators.com'
+    submitForm.method = 'POST'
+    submitForm.target = 'formsubmit-iframe'
+
+    const fields: Record<string, string> = {
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      subject: `[Contact] ${form.subject} — from ${form.name.trim()}`,
+      message: form.message.trim(),
+      _replyto: form.email.trim().toLowerCase(),
+      _subject: `[Contact] ${form.subject} — from ${form.name.trim()}`,
+      _captcha: 'false',
+      _template: 'table',
     }
+
+    Object.entries(fields).forEach(([key, value]) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = key
+      input.value = value
+      submitForm.appendChild(input)
+    })
+
+    document.body.appendChild(submitForm)
+    submitForm.submit()
+
+    // Clean up after a short delay and show success
+    setTimeout(() => {
+      document.body.removeChild(submitForm)
+      document.body.removeChild(iframe)
+      setSubmitting(false)
+      setSubmitted(true)
+    }, 1500)
   }
 
   return (

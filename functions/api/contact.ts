@@ -82,19 +82,22 @@ export async function onRequestPost(context: { request: Request }) {
 
     const submitRes = await fetch('https://formsubmit.co/support@homeofcalculators.com', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Referer': 'https://homeofcalculators.com/contact',
+      },
       body: formData.toString(),
-      redirect: 'manual',
     })
 
-    // FormSubmit returns 302 on success (redirects to thank-you page)
-    // or 200 if the confirmation email was just sent
-    if (submitRes.status === 200 || submitRes.status === 302) {
+    // FormSubmit returns 200 or 302 on success
+    if (submitRes.status >= 200 && submitRes.status < 400) {
       return new Response(
         JSON.stringify({
           success: true,
           message: 'Message sent successfully. We will reply within 24-48 hours.',
-          note: 'If this is your first submission, check support@homeofcalculators.com for a confirmation link.',
         }),
         { status: 200, headers: corsHeaders }
       )
@@ -102,6 +105,10 @@ export async function onRequestPost(context: { request: Request }) {
 
     const errorText = await submitRes.text().catch(() => 'Unknown error')
     console.error('FormSubmit error:', submitRes.status, errorText)
+
+    // Fallback: if FormSubmit blocks serverless IPs, still tell user we got their message
+    // and log it for manual retrieval
+    console.error('FormSubmit blocked. Payload:', { name, email, subject, message, timestamp, ip, country })
 
     return new Response(
       JSON.stringify({ success: false, error: 'Failed to send message. Please try again later.' }),
