@@ -39,22 +39,18 @@ export default function ContactPage() {
     }
     setSubmitting(true)
     try {
-      const body = new FormData()
-      body.append('name', form.name.trim())
-      body.append('email', form.email.trim().toLowerCase())
-      body.append('subject', `[Contact] ${form.subject} — from ${form.name.trim()}`)
-      body.append('message', form.message.trim())
-      body.append('_replyto', form.email.trim().toLowerCase())
-      body.append('_subject', `[Contact] ${form.subject} — from ${form.name.trim()}`)
-      body.append('_captcha', 'false')
-      body.append('_ajax', 'true')
-
-      const res = await fetch('https://formsubmit.co/support@homeofcalculators.com', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        body,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          subject: form.subject,
+          message: form.message.trim(),
+        }),
       })
       const data = await res.json().catch(() => ({ success: false, error: 'Unexpected server response.' }))
-      if (res.ok && (data.success || data.message === 'Email Sent')) {
+      if (res.ok && data.success) {
         setSubmitted(true)
       } else {
         setError(data.error || `Something went wrong (status ${res.status}). Please try again.`)

@@ -2,7 +2,6 @@
   "version": 1,
   "include": ["/*"],
   "exclude": [
-    "/_next/*",
     "/images/*",
     "/*.png",
     "/*.jpg",
@@ -10,7 +9,6 @@
     "/*.svg",
     "/*.ico",
     "/*.webmanifest",
-    "/*.txt",
     "/*.xml"
   ]
 }
