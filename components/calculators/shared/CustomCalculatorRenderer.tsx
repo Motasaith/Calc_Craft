@@ -54,9 +54,20 @@ export interface CustomFormulaConfig {
 interface RendererProps {
   config: CustomCalculatorConfig
   isPreview?: boolean
+  selectedId?: string | null
+  onSelectComponent?: (id: string) => void
+  selectedFormulaId?: string | null
+  onSelectFormula?: (id: string) => void
 }
 
-export default function CustomCalculatorRenderer({ config, isPreview = false }: RendererProps) {
+export default function CustomCalculatorRenderer({
+  config,
+  isPreview = false,
+  selectedId = null,
+  onSelectComponent,
+  selectedFormulaId = null,
+  onSelectFormula,
+}: RendererProps) {
   // Initialize state from component defaults
   const [values, setValues] = useState<Record<string, string>>({})
 
@@ -354,156 +365,213 @@ export default function CustomCalculatorRenderer({ config, isPreview = false }: 
       <div className={s.body}>
         <div className={layoutClass}>
         {config.components.map((c) => {
+          const isSelected = selectedId === c.id;
+          const handleElementClick = onSelectComponent 
+            ? (e: React.MouseEvent) => {
+                e.stopPropagation();
+                onSelectComponent(c.id);
+              }
+            : undefined;
+
+          let elementContent = null;
+
           if (c.type === 'header') {
-            return (
+            elementContent = (
               <div 
-                key={c.id} 
                 className={s.headerComp}
                 style={activeTheme === 'custom' ? { borderBottomColor: 'rgba(0,0,0,0.08)', color: 'var(--custom-text)' } : {}}
               >
                 {c.label}
               </div>
-            )
-          }
-
-          if (c.type === 'text') {
-            return (
-              <p key={c.id} className={s.textComp}>
+            );
+          } else if (c.type === 'text') {
+            elementContent = (
+              <p className={s.textComp}>
                 {c.label}
               </p>
-            )
-          }
-
-          const currentVal = values[c.name] ?? ''
-
-          return (
-            <div key={c.id} className="mb-4">
-              <div className="flex justify-between items-center mb-1">
-                <label className={s.label}>{c.label}</label>
-                {c.helpText && (
-                  <span className="text-[9px] opacity-60 font-mono italic">{c.helpText}</span>
-                )}
-              </div>
-
-              {c.type === 'number' && (
-                <div className="relative">
-                  <input
-                    type="number"
-                    min={c.min}
-                    max={c.max}
-                    step={c.step}
-                    placeholder={c.placeholder}
-                    value={currentVal}
-                    onChange={(e) => handleValueChange(c.name, e.target.value)}
-                    className={s.input}
-                    style={activeTheme === 'custom' ? { 
-                      backgroundColor: 'rgba(255,255,255,0.7)', 
-                      borderColor: 'rgba(0,0,0,0.15)',
-                      color: 'var(--custom-text)',
-                    } : {}}
-                  />
-                  {c.unit && (
-                    <span 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-60 font-mono"
-                      style={activeTheme === 'custom' ? { color: 'var(--custom-text)' } : {}}
-                    >
-                      {c.unit}
-                    </span>
+            );
+          } else {
+            const currentVal = values[c.name] ?? '';
+            elementContent = (
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-1">
+                  <label className={s.label}>{c.label}</label>
+                  {c.helpText && (
+                    <span className="text-[9px] opacity-60 font-mono italic">{c.helpText}</span>
                   )}
                 </div>
-              )}
 
-              {c.type === 'slider' && (
-                <div className="space-y-1.5 py-1">
-                  <div className="flex justify-between text-xs font-mono font-bold opacity-80">
-                    <span>Range: {c.min} - {c.max}</span>
-                    <span className="text-sm font-black underline decoration-dotted">
-                      {currentVal || c.min} {c.unit}
-                    </span>
-                  </div>
-                  <div 
-                    className={s.sliderTrack}
-                    style={activeTheme === 'custom' ? { backgroundColor: 'rgba(0,0,0,0.1)' } : {}}
-                  >
+                {c.type === 'number' && (
+                  <div className="relative">
                     <input
-                      type="range"
-                      min={c.min ?? 0}
-                      max={c.max ?? 100}
-                      step={c.step ?? 1}
-                      value={currentVal || c.min || 0}
+                      type="number"
+                      min={c.min}
+                      max={c.max}
+                      step={c.step}
+                      placeholder={c.placeholder}
+                      value={currentVal}
                       onChange={(e) => handleValueChange(c.name, e.target.value)}
-                      className="absolute inset-x-0 w-full accent-current bg-transparent opacity-100 appearance-none h-1 cursor-pointer"
-                      style={activeTheme === 'custom' ? { color: 'var(--custom-primary)' } : {}}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {c.type === 'select' && (
-                <div className="relative">
-                  <select
-                    value={currentVal}
-                    onChange={(e) => handleValueChange(c.name, e.target.value)}
-                    className={s.select}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'right 14px center',
-                      ...(activeTheme === 'custom' ? {
-                        backgroundColor: 'rgba(255,255,255,0.7)',
+                      className={s.input}
+                      style={activeTheme === 'custom' ? { 
+                        backgroundColor: 'rgba(255,255,255,0.7)', 
                         borderColor: 'rgba(0,0,0,0.15)',
                         color: 'var(--custom-text)',
-                      } : {})
-                    }}
-                  >
-                    <option value="" disabled className="text-gray-400">Select option...</option>
-                    {c.options?.map((o) => (
-                      <option key={o.value} value={o.value} className="text-black">{o.label}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+                      } : {}}
+                    />
+                    {c.unit && (
+                      <span 
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-60 font-mono"
+                        style={activeTheme === 'custom' ? { color: 'var(--custom-text)' } : {}}
+                      >
+                        {c.unit}
+                      </span>
+                    )}
+                  </div>
+                )}
 
-              {c.type === 'checkbox' && (
-                <label className="flex items-center gap-3 cursor-pointer py-1.5 select-none">
-                  <input
-                    type="checkbox"
-                    checked={currentVal === 'true'}
-                    onChange={(e) => handleValueChange(c.name, String(e.target.checked))}
-                    className={s.checkbox}
-                    style={activeTheme === 'custom' ? { 
-                      borderColor: 'rgba(0,0,0,0.2)',
-                      backgroundColor: 'rgba(255,255,255,0.7)',
-                    } : {}}
-                  />
-                  <span className="text-xs font-semibold opacity-90">{c.placeholder || 'Enable Option'}</span>
-                </label>
-              )}
-            </div>
-          )
+                {c.type === 'slider' && (
+                  <div className="space-y-1.5 py-1">
+                    <div className="flex justify-between text-xs font-mono font-bold opacity-80">
+                      <span>Range: {c.min} - {c.max}</span>
+                      <span className="text-sm font-black underline decoration-dotted">
+                        {currentVal || c.min} {c.unit}
+                      </span>
+                    </div>
+                    <div 
+                      className={s.sliderTrack}
+                      style={activeTheme === 'custom' ? { backgroundColor: 'rgba(0,0,0,0.1)' } : {}}
+                    >
+                      <input
+                        type="range"
+                        min={c.min ?? 0}
+                        max={c.max ?? 100}
+                        step={c.step ?? 1}
+                        value={currentVal || c.min || 0}
+                        onChange={(e) => handleValueChange(c.name, e.target.value)}
+                        className="absolute inset-x-0 w-full accent-current bg-transparent opacity-100 appearance-none h-1 cursor-pointer"
+                        style={activeTheme === 'custom' ? { color: 'var(--custom-primary)' } : {}}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {c.type === 'select' && (
+                  <div className="relative">
+                    <select
+                      value={currentVal}
+                      onChange={(e) => handleValueChange(c.name, e.target.value)}
+                      className={s.select}
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 14px center',
+                        ...(activeTheme === 'custom' ? {
+                          backgroundColor: 'rgba(255,255,255,0.7)',
+                          borderColor: 'rgba(0,0,0,0.15)',
+                          color: 'var(--custom-text)',
+                        } : {})
+                      }}
+                    >
+                      <option value="" disabled className="text-gray-400">Select option...</option>
+                      {c.options?.map((o) => (
+                        <option key={o.value} value={o.value} className="text-black">{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {c.type === 'checkbox' && (
+                  <label className="flex items-center gap-3 cursor-pointer py-1.5 select-none">
+                    <input
+                      type="checkbox"
+                      checked={currentVal === 'true'}
+                      onChange={(e) => handleValueChange(c.name, String(e.target.checked))}
+                      className={s.checkbox}
+                      style={activeTheme === 'custom' ? { 
+                        borderColor: 'rgba(0,0,0,0.2)',
+                        backgroundColor: 'rgba(255,255,255,0.7)',
+                      } : {}}
+                    />
+                    <span className="text-xs font-semibold opacity-90">{c.placeholder || 'Enable Option'}</span>
+                  </label>
+                )}
+              </div>
+            );
+          }
+
+          if (onSelectComponent) {
+            return (
+              <div 
+                key={c.id} 
+                onClick={handleElementClick}
+                className={`group/editor relative p-2 rounded-xl transition-all border-2 cursor-pointer ${
+                  isSelected 
+                    ? 'border-indigo-500 bg-indigo-50/10 shadow-[0_0_8px_rgba(99,102,241,0.15)] ring-2 ring-indigo-500/20' 
+                    : 'border-transparent hover:border-indigo-300 hover:bg-neutral-50/30'
+                }`}
+              >
+                <div className="absolute top-1 right-2 opacity-0 group-hover/editor:opacity-100 bg-indigo-500 text-white text-[8px] font-mono px-1 py-0.5 rounded font-bold pointer-events-none transition-opacity z-10">
+                  {c.name}
+                </div>
+                {elementContent}
+              </div>
+            );
+          }
+
+          return <React.Fragment key={c.id}>{elementContent}</React.Fragment>;
         })}
         </div>
 
         {/* Dynamic Outputs (Results Displays) */}
         <div className="grid gap-3 pt-4 border-t border-neutral-300/30" style={activeTheme === 'custom' ? { borderTopColor: 'rgba(0,0,0,0.08)' } : {}}>
-          {results.map((r) => (
-            <div 
-              key={r.id} 
-              className={s.lcdDisplay}
-              style={activeTheme === 'custom' ? { 
-                backgroundColor: 'var(--custom-lcd-bg)', 
-                borderColor: 'rgba(0,0,0,0.08)',
-                color: 'var(--custom-lcd-text)'
-              } : {}}
-            >
-              <div className={s.lcdTitle}>{r.label}</div>
-              <div className={s.lcdValue}>
-                {r.prefix}
-                {r.value}
-                {r.suffix && <span className="text-xs font-bold ml-1.5 opacity-80">{r.suffix}</span>}
+          {results.map((r) => {
+            const isSelected = selectedFormulaId === r.id;
+            const handleFormulaClick = onSelectFormula 
+              ? (e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  onSelectFormula(r.id);
+                }
+              : undefined;
+
+            const formulaContent = (
+              <div 
+                className={s.lcdDisplay}
+                style={activeTheme === 'custom' ? { 
+                  backgroundColor: 'var(--custom-lcd-bg)', 
+                  borderColor: 'rgba(0,0,0,0.08)',
+                  color: 'var(--custom-lcd-text)'
+                } : {}}
+              >
+                <div className={s.lcdTitle}>{r.label}</div>
+                <div className={s.lcdValue}>
+                  {r.prefix}
+                  {r.value}
+                  {r.suffix && <span className="text-xs font-bold ml-1.5 opacity-80">{r.suffix}</span>}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+
+            if (onSelectFormula) {
+              return (
+                <div
+                  key={r.id}
+                  onClick={handleFormulaClick}
+                  className={`group/editor relative p-1 rounded-2xl transition-all border-2 cursor-pointer ${
+                    isSelected 
+                      ? 'border-yellow-400 bg-yellow-400/5 ring-2 ring-yellow-400/20' 
+                      : 'border-transparent hover:border-yellow-300'
+                  }`}
+                >
+                  <div className="absolute top-2 right-3 opacity-0 group-hover/editor:opacity-100 bg-yellow-500 text-white text-[8px] font-mono px-1 py-0.5 rounded font-bold pointer-events-none transition-opacity z-10">
+                    formula
+                  </div>
+                  {formulaContent}
+                </div>
+              );
+            }
+
+            return <React.Fragment key={r.id}>{formulaContent}</React.Fragment>;
+          })}
         </div>
 
         {/* Action Controls & Data Exports */}

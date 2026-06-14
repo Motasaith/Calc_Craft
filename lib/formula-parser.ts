@@ -305,3 +305,24 @@ export function evaluateFormula(formula: string, variables: Record<string, numbe
     return 0;
   }
 }
+
+/**
+ * Checks if a formula is mathematically valid.
+ * Returns an object indicating success or the specific error message.
+ */
+export function checkFormula(formula: string, availableVars: string[]): { isValid: boolean; error?: string } {
+  if (!formula.trim()) return { isValid: true };
+  try {
+    const lexer = new Lexer(formula);
+    const tokens = lexer.tokenize();
+    const mockVars: Record<string, number> = {};
+    availableVars.forEach((v) => {
+      mockVars[v] = 1;
+    });
+    const parser = new Parser(tokens, mockVars);
+    parser.parse();
+    return { isValid: true };
+  } catch (err: any) {
+    return { isValid: false, error: err.message || 'Syntax error' };
+  }
+}

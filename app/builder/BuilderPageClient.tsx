@@ -18,6 +18,7 @@ import CustomCalculatorRenderer, {
   CustomCalculatorConfig, CustomComponentConfig, CustomFormulaConfig, CustomThemeType
 } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { serializeConfig, deserializeConfig } from '@/lib/url-serializer'
+import { checkFormula, evaluateFormula } from '@/lib/formula-parser'
 
 // =====================================================================
 // TEMPLATES — pre-built calculators to help users start quickly
@@ -67,30 +68,6 @@ const TEMPLATES: { id: string; label: string; description: string; emoji: string
     },
   },
   {
-    id: 'tip',
-    label: 'Tip Calculator',
-    description: 'Calculate tip and split the bill between people.',
-    emoji: '🍽️',
-    config: {
-      id: '',
-      name: 'Tip Calculator',
-      description: 'Calculate tip amount and per-person share.',
-      brandName: 'DINING',
-      theme: 'pastel',
-      layout: 'stacked',
-      components: [
-        { id: 'bill', name: 'bill', type: 'number', label: 'Bill Amount', placeholder: 'e.g. 50', defaultValue: '50', unit: '$', helpText: 'Total bill before tip' },
-        { id: 'pct', name: 'pct', type: 'slider', label: 'Tip Percentage', defaultValue: '18', min: 0, max: 50, step: 1, unit: '%', helpText: 'Standard tip in your region' },
-        { id: 'people', name: 'people', type: 'number', label: 'Number of People', placeholder: 'e.g. 4', defaultValue: '4', unit: '', helpText: 'How many people are splitting?' },
-      ],
-      formulas: [
-        { id: 'tip', label: 'Tip Amount', formula: 'bill * (pct / 100)', decimalPlaces: 2, prefix: '$', suffix: '' },
-        { id: 'total', label: 'Total Bill', formula: 'bill + (bill * (pct / 100))', decimalPlaces: 2, prefix: '$', suffix: '' },
-        { id: 'per', label: 'Per Person', formula: '(bill + (bill * (pct / 100))) / people', decimalPlaces: 2, prefix: '$', suffix: '' },
-      ],
-    },
-  },
-  {
     id: 'discount',
     label: 'Discount Calculator',
     description: 'Sale price and savings from a discount percentage.',
@@ -110,6 +87,51 @@ const TEMPLATES: { id: string; label: string; description: string; emoji: string
         { id: 'save', label: 'You Save', formula: 'price * (pct / 100)', decimalPlaces: 2, prefix: '$', suffix: '' },
         { id: 'final', label: 'Final Price', formula: 'price - (price * (pct / 100))', decimalPlaces: 2, prefix: '$', suffix: '' },
         { id: 'factor', label: 'Multiplier', formula: '1 - (pct / 100)', decimalPlaces: 3, prefix: '×', suffix: '' },
+      ],
+    },
+  },
+  {
+    id: 'roi',
+    label: 'ROI Calculator',
+    description: 'Return on Investment percentage and total gain.',
+    emoji: '💼',
+    config: {
+      id: '',
+      name: 'ROI Calculator',
+      description: 'Calculate your Return on Investment percentage and absolute profit gain.',
+      brandName: 'FINANCE',
+      theme: 'modern',
+      layout: 'stacked',
+      components: [
+        { id: 'inv', name: 'inv', type: 'number', label: 'Amount Invested', placeholder: 'e.g. 10000', defaultValue: '10000', unit: '$', helpText: 'Initial capital or investment cost' },
+        { id: 'ret', name: 'ret', type: 'number', label: 'Amount Returned', placeholder: 'e.g. 15000', defaultValue: '15000', unit: '$', helpText: 'Final value or cash received back' },
+      ],
+      formulas: [
+        { id: 'roi_pct', label: 'Return on Investment', formula: '((ret - inv) / inv) * 100', decimalPlaces: 2, prefix: '', suffix: '%' },
+        { id: 'roi_gain', label: 'Net Profit Gain', formula: 'ret - inv', decimalPlaces: 2, prefix: '$', suffix: '' },
+      ],
+    },
+  },
+  {
+    id: 'mortgage',
+    label: 'Mortgage Calculator',
+    description: 'Calculate monthly home loan payment and total interest.',
+    emoji: '🏠',
+    config: {
+      id: '',
+      name: 'Mortgage Payment Calculator',
+      description: 'Estimate your monthly mortgage payments and total loan cost.',
+      brandName: 'MORTGAGE',
+      theme: 'pastel',
+      layout: 'stacked',
+      components: [
+        { id: 'p', name: 'principal', type: 'number', label: 'Loan Principal', placeholder: 'e.g. 300000', defaultValue: '300000', unit: '$', helpText: 'Total principal loan amount' },
+        { id: 'r', name: 'rate', type: 'number', label: 'Interest Rate (Annual)', placeholder: 'e.g. 5.5', defaultValue: '5.5', unit: '%', helpText: 'Yearly interest rate' },
+        { id: 't', name: 'years', type: 'number', label: 'Loan Term', placeholder: 'e.g. 30', defaultValue: '30', unit: 'yr', helpText: 'Duration of the mortgage in years' },
+      ],
+      formulas: [
+        { id: 'm_pmt', label: 'Monthly Payment', formula: 'principal * (rate / 1200) * pow(1 + (rate / 1200), years * 12) / (pow(1 + (rate / 1200), years * 12) - 1)', decimalPlaces: 2, prefix: '$', suffix: '' },
+        { id: 'm_total', label: 'Total Principal + Interest', formula: '(principal * (rate / 1200) * pow(1 + (rate / 1200), years * 12) / (pow(1 + (rate / 1200), years * 12) - 1)) * years * 12', decimalPlaces: 2, prefix: '$', suffix: '' },
       ],
     },
   },
@@ -136,28 +158,6 @@ const TEMPLATES: { id: string; label: string; description: string; emoji: string
       ],
     },
   },
-  {
-    id: 'circle',
-    label: 'Circle Geometry',
-    description: 'Area and circumference from radius.',
-    emoji: '⭕',
-    config: {
-      id: '',
-      name: 'Circle Calculator',
-      description: 'Calculate area and circumference of a circle.',
-      brandName: 'GEOMETRY',
-      theme: 'cyberpunk',
-      layout: 'stacked',
-      components: [
-        { id: 'r', name: 'radius', type: 'number', label: 'Radius', placeholder: 'e.g. 5', defaultValue: '5', unit: 'cm', helpText: 'Distance from center to edge' },
-      ],
-      formulas: [
-        { id: 'area', label: 'Area', formula: 'pi * radius * radius', decimalPlaces: 4, prefix: '', suffix: ' cm²' },
-        { id: 'circ', label: 'Circumference', formula: '2 * pi * radius', decimalPlaces: 4, prefix: '', suffix: ' cm' },
-        { id: 'diam', label: 'Diameter', formula: '2 * radius', decimalPlaces: 4, prefix: '', suffix: ' cm' },
-      ],
-    },
-  },
 ]
 
 // =====================================================================
@@ -181,12 +181,23 @@ const FORMULA_CONSTANTS: { name: string; value: string; description: string }[] 
   { name: 'e', value: '2.71828…', description: "Euler's number" },
 ]
 
+const THEME_SWATCHES: Record<string, { label: string; primary: string; bg: string; text: string; lcd: string; border: string }> = {
+  retro: { label: 'Retro LCD', primary: '#dfaa44', bg: '#eae7df', text: '#2d2d2a', lcd: '#cbd8ca', border: '#dad6cd' },
+  dark: { label: 'Neon Dark', primary: '#a855f7', bg: '#12131a', text: '#d8b4fe', lcd: '#0f1016', border: '#3b0764' },
+  modern: { label: 'Clean Modern', primary: '#4f46e5', bg: '#ffffff', text: '#1f2937', lcd: '#eef2ff', border: '#e5e7eb' },
+  pastel: { label: 'Warm Pastel', primary: '#e2a893', bg: '#fcfaf5', text: '#4a4336', lcd: '#e2ebe6', border: '#e9e4d5' },
+  cyberpunk: { label: 'Cyberpunk', primary: '#facc15', bg: '#050505', text: '#facc15', lcd: '#000000', border: '#facc15' },
+  custom: { label: 'Custom Brand', primary: '#3b82f6', bg: '#f8fafc', text: '#0f172a', lcd: '#f1f5f9', border: '#cbd5e1' }
+}
+
 export default function BuilderPageClient() {
   // ---- Core state ----
   const [calculator, setCalculator] = useState<CustomCalculatorConfig>(TEMPLATES[0].config)
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
   const [selectedFormulaId, setSelectedFormulaId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'components' | 'settings'>('components')
+  const [canvasMode, setCanvasMode] = useState<'visual' | 'blueprint' | 'split'>('split')
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
 
   // ---- Modals ----
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -372,6 +383,31 @@ export default function BuilderPageClient() {
     if (targetIdx < 0 || targetIdx >= updatedComps.length) return
     ;[updatedComps[index], updatedComps[targetIdx]] = [updatedComps[targetIdx], updatedComps[index]]
     updateCalculator({ ...calculator, components: updatedComps })
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIdx(index)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', String(index))
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    if (draggedIdx === null || draggedIdx === index) return
+
+    const updatedComps = [...calculator.components]
+    const draggedItem = updatedComps[draggedIdx]
+    
+    updatedComps.splice(draggedIdx, 1)
+    updatedComps.splice(index, 0, draggedItem)
+    
+    setDraggedIdx(index)
+    setCalculator({ ...calculator, components: updatedComps })
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null)
+    updateCalculator(calculator)
   }
 
   const updateComponentField = (id: string, field: keyof CustomComponentConfig, value: any) => {
@@ -613,6 +649,24 @@ export default function BuilderPageClient() {
               </button>
             </div>
 
+            {/* Import / Export JSON */}
+            <div className="flex items-center bg-neutral-100 rounded-lg p-0.5">
+              <button
+                onClick={handleExportJSON}
+                className="p-1.5 hover:bg-white text-dark-600 rounded transition-all"
+                title="Export JSON backup"
+              >
+                <Download className="w-3.5 h-3.5" />
+              </button>
+              <label
+                className="p-1.5 hover:bg-white text-dark-600 rounded transition-all cursor-pointer"
+                title="Import JSON backup"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <input type="file" accept="application/json" onChange={handleImportJSON} className="hidden" />
+              </label>
+            </div>
+
             {/* Templates */}
             <button
               onClick={() => setTemplatesOpen(true)}
@@ -668,28 +722,117 @@ export default function BuilderPageClient() {
             <button
               onClick={() => setHelpOpen(true)}
               className="p-1.5 hover:bg-neutral-100 text-dark-500 rounded-lg transition-colors"
-              title="How to use the builder"
+              title="How to use"
             >
               <HelpCircle className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* ─────────────────── BUILDER BODY ─────────────────── */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr_360px] h-auto lg:h-[calc(100vh-128px)] overflow-y-auto lg:overflow-hidden">
+        {/* ─────────────────── WORKSPACE ─────────────────── */}
+        <div className="flex-1 flex overflow-hidden h-[calc(100vh-10rem)] relative">
+            {/* Left Column (Toolbox & Document Outline) - Desktop */}
+            <div className="hidden lg:flex w-72 bg-white border-r border-neutral-200 flex-col h-full overflow-y-auto p-4 shrink-0 gap-6">
+              <ToolboxPanel
+                onAdd={addComponent}
+                onShowTemplates={() => setTemplatesOpen(true)}
+                onShowHelp={() => setHelpOpen(true)}
+              />
+              
+              {/* Document Outline Tree */}
+              <div className="border-t border-neutral-100 pt-4">
+                <h3 className="text-xs font-bold text-dark-800 uppercase tracking-widest font-mono mb-3 flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-indigo-500" />
+                  Document Outline
+                </h3>
+                {calculator.components.length === 0 && calculator.formulas.length === 0 ? (
+                  <p className="text-[10px] text-dark-400 font-mono italic">No elements added yet.</p>
+                ) : (
+                  <div className="space-y-1">
+                    {calculator.components.map((c) => {
+                      const isSelected = selectedComponentId === c.id;
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => {
+                            setSelectedComponentId(c.id);
+                            setSelectedFormulaId(null);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                            isSelected
+                              ? 'bg-indigo-50 text-indigo-750 font-bold'
+                              : 'text-dark-600 hover:bg-neutral-50 hover:text-dark-900'
+                          }`}
+                        >
+                          <span className="text-xs truncate">{c.label || '(Unnamed Block)'}</span>
+                          <span className="text-[9px] font-mono opacity-60 ml-2">[{c.type}]</span>
+                        </button>
+                      );
+                    })}
+                    {calculator.formulas.map((f) => {
+                      const isSelected = selectedFormulaId === f.id;
+                      return (
+                        <button
+                          key={f.id}
+                          onClick={() => {
+                            setSelectedFormulaId(f.id);
+                            setSelectedComponentId(null);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left transition-all ${
+                            isSelected
+                              ? 'bg-yellow-50 text-yellow-800 font-bold'
+                              : 'text-dark-600 hover:bg-neutral-50 hover:text-dark-900'
+                          }`}
+                        >
+                          <span className="text-xs truncate">{f.label || '(Unnamed Formula)'}</span>
+                          <span className="text-[9px] font-mono text-yellow-600 ml-2">[formula]</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
 
-          {/* ─── LEFT SIDEBAR: Toolbox ─── */}
-          <div className="hidden lg:block bg-white border-b lg:border-b-0 lg:border-r border-neutral-200 p-4 lg:overflow-y-auto h-auto lg:h-full">
-            <ToolboxPanel
-              onAdd={addComponent}
-              onShowTemplates={() => setTemplatesOpen(true)}
-              onShowHelp={() => setHelpOpen(true)}
-            />
-          </div>
+            {/* ─── CENTER CANVAS ─── */}
+            <div className="p-3 sm:p-5 lg:p-6 lg:overflow-y-auto flex justify-center items-start bg-gradient-to-br from-neutral-50 to-white min-h-[500px] lg:h-full flex-1">
+            <div className={`w-full space-y-4 transition-all duration-300 ${canvasMode === 'split' ? 'max-w-5xl' : 'max-w-2xl'}`}>
+              
+              {/* Canvas Mode Selection Bar */}
+              {calculator.components.length > 0 && (
+                <div className="flex items-center justify-between bg-white border border-neutral-200/80 rounded-xl p-1 shadow-sm shrink-0">
+                  <div className="flex gap-1 flex-1">
+                    <button
+                      onClick={() => setCanvasMode('split')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                        canvasMode === 'split' ? 'bg-indigo-600 text-white shadow' : 'text-dark-600 hover:bg-neutral-50'
+                      }`}
+                    >
+                      <Layout className="w-3.5 h-3.5" />
+                      <span>Split View</span>
+                    </button>
+                    <button
+                      onClick={() => setCanvasMode('visual')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                        canvasMode === 'visual' ? 'bg-indigo-600 text-white shadow' : 'text-dark-600 hover:bg-neutral-50'
+                      }`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Visual Editor</span>
+                    </button>
+                    <button
+                      onClick={() => setCanvasMode('blueprint')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                        canvasMode === 'blueprint' ? 'bg-indigo-600 text-white shadow' : 'text-dark-600 hover:bg-neutral-50'
+                      }`}
+                    >
+                      <Sliders className="w-3.5 h-3.5" />
+                      <span>Logical Blocks</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
-          {/* ─── CENTER CANVAS ─── */}
-          <div className="p-3 sm:p-5 lg:p-8 lg:overflow-y-auto flex justify-center items-start bg-gradient-to-br from-neutral-50 to-white min-h-[500px] lg:h-full">
-            <div className="w-full max-w-2xl space-y-3">
               {/* Empty-state tutorial card (only when canvas is empty) */}
               {calculator.components.length === 0 && (
                 <motion.div
@@ -707,7 +850,7 @@ export default function BuilderPageClient() {
                   <div className="flex flex-wrap justify-center gap-2">
                     <button
                       onClick={() => setTemplatesOpen(true)}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 active:scale-95"
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 active:scale-95 animate-pulse"
                     >
                       <Wand2 className="w-3.5 h-3.5" />
                       Browse Templates
@@ -723,166 +866,428 @@ export default function BuilderPageClient() {
                 </motion.div>
               )}
 
+              {/* Render based on mode */}
               {calculator.components.length > 0 && (
-                <div className="bg-white border-2 border-dashed border-neutral-200 rounded-2xl p-4 sm:p-6 shadow-sm">
-                  <div className="text-center pb-3 border-b border-neutral-100">
-                    <span className="text-[9px] uppercase tracking-widest font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold">
-                      Blueprint Canvas
-                    </span>
-                    <h2 className="text-base font-bold text-dark-900 mt-2">{calculator.name || 'My Custom Calculator'}</h2>
-                    <p className="text-xs text-dark-400 mt-0.5">{calculator.description || 'Custom Description...'}</p>
-                  </div>
-
-                  <div className="space-y-2.5 mt-4">
-                    <AnimatePresence mode="popLayout">
-                      {calculator.components.map((c, idx) => {
-                        const isSelected = selectedComponentId === c.id
-                        return (
-                          <motion.div
-                            key={c.id}
-                            layout
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                          >
-                            <div
-                              onClick={() => { setSelectedComponentId(c.id); setSelectedFormulaId(null) }}
-                              className={`p-3 sm:p-4 rounded-xl border-2 transition-all cursor-pointer relative group ${
-                                isSelected
-                                  ? 'border-indigo-500 bg-indigo-50/30 shadow-md'
-                                  : 'border-neutral-100 hover:border-neutral-200 bg-white'
-                              }`}
-                            >
-                              <div className="flex justify-between items-start mb-2">
-                                <div className="flex-1 min-w-0">
-                                  <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded mr-1.5 font-bold">
-                                    {c.type}
-                                  </span>
-                                  <span className="text-xs font-bold text-dark-800">{c.label}</span>
-                                </div>
-                                <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'up') }} disabled={idx === 0} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move up">
-                                    <ArrowUp className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'down') }} disabled={idx === calculator.components.length - 1} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move down">
-                                    <ArrowDown className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button onClick={(e) => { e.stopPropagation(); duplicateComponent(c.id) }} className="p-1 hover:bg-blue-50 text-blue-500 rounded" title="Duplicate">
-                                    <Layers className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button onClick={(e) => { e.stopPropagation(); deleteComponent(c.id) }} className="p-1 hover:bg-red-50 text-red-500 rounded" title="Delete">
-                                    <Trash className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Per-type preview */}
-                              {c.type === 'number' && (
-                                <div className="relative border border-neutral-200 bg-neutral-50 h-9 px-3 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
-                                  <span className="truncate">{c.placeholder || 'Placeholder text...'}</span>
-                                  {c.unit && <span className="font-bold shrink-0 ml-2 opacity-80">{c.unit}</span>}
-                                </div>
-                              )}
-                              {c.type === 'slider' && (
-                                <div className="space-y-1.5 py-1">
-                                  <div className="flex justify-between text-[10px] font-mono text-neutral-500">
-                                    <span>Range: {c.min} - {c.max}</span>
-                                    <span>Default: {c.defaultValue} {c.unit}</span>
-                                  </div>
-                                  <div className="w-full h-2 bg-neutral-200 rounded-full" />
-                                </div>
-                              )}
-                              {c.type === 'select' && (
-                                <div className="border border-neutral-200 bg-neutral-50 h-9 px-3 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
-                                  <span className="truncate">Default: {c.defaultValue || 'None'}</span>
-                                  <span className="text-[10px] opacity-70 shrink-0 ml-2">({c.options?.length || 0} opts)</span>
-                                </div>
-                              )}
-                              {c.type === 'checkbox' && (
-                                <div className="flex items-center gap-2 text-xs text-neutral-500 font-mono">
-                                  <div className="w-4 h-4 border border-neutral-300 rounded bg-neutral-50" />
-                                  <span>{c.placeholder || 'Yes/No Checkbox'}</span>
-                                </div>
-                              )}
-                              {c.type === 'header' && (
-                                <div className="border-b border-neutral-200 pb-1 text-xs font-mono font-bold text-neutral-600 uppercase">
-                                  --- {c.label || 'Section Title'} ---
-                                </div>
-                              )}
-                              {c.type === 'text' && (
-                                <p className="text-[11px] text-neutral-500 font-mono leading-relaxed">
-                                  {c.label || 'Explanatory text block...'}
-                                </p>
-                              )}
-
-                              {c.type !== 'header' && c.type !== 'text' && (
-                                <div className="text-[8px] font-mono text-dark-400 mt-2 text-right">
-                                  var: <span className="font-black text-indigo-500 bg-indigo-50 px-1 rounded">{c.name}</span>
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              )}
-
-              {/* Formulas list */}
-              {calculator.formulas.length > 0 && (
-                <div className="bg-gradient-to-br from-dark-900 to-black rounded-2xl p-4 sm:p-5 shadow-xl">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[9px] uppercase tracking-widest font-mono text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded font-bold">
-                      Formula Outputs
-                    </span>
-                    <span className="text-[10px] font-mono text-neutral-400">
-                      {calculator.formulas.length} formula{calculator.formulas.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    {calculator.formulas.map((f) => {
-                      const isSelected = selectedFormulaId === f.id
-                      return (
-                        <button
-                          key={f.id}
-                          onClick={() => { setSelectedFormulaId(f.id); setSelectedComponentId(null) }}
-                          className={`w-full p-3 rounded-xl font-mono text-xs border-2 text-left transition-all ${
-                            isSelected
-                              ? 'border-yellow-400 bg-yellow-400/5'
-                              : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
-                          }`}
-                        >
-                          <div className="flex justify-between items-center gap-2">
-                            <div className="min-w-0 flex-1">
-                              <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{f.label}</div>
-                              <div className="text-yellow-300 font-bold text-xs mt-0.5 truncate">
-                                {f.prefix || ''}<span className="text-white">[Result]</span>{f.suffix || ''}
-                              </div>
-                            </div>
-                            <div className="text-right shrink-0">
-                              <div className="text-[9px] text-neutral-500">formula</div>
-                              <div className="text-yellow-400 font-bold bg-yellow-400/10 px-1.5 py-0.5 rounded mt-0.5 text-[10px] truncate max-w-[180px]">{f.formula}</div>
-                            </div>
+                <>
+                  {canvasMode === 'split' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-start">
+                      {/* Left Column: Blueprint & Formulas */}
+                      <div className="space-y-4">
+                        {/* Blueprint Outline */}
+                        <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
+                          <div className="text-center pb-3 border-b border-neutral-100 flex justify-between items-center">
+                            <span className="text-[9px] uppercase tracking-widest font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold">
+                              Blueprint Outline
+                            </span>
+                            <span className="text-[9px] font-mono text-dark-400 hidden sm:inline">
+                              Drag to Reorder
+                            </span>
                           </div>
+
+                          <div className="space-y-2.5 mt-4">
+                            <AnimatePresence mode="popLayout">
+                              {calculator.components.map((c, idx) => {
+                                const isSelected = selectedComponentId === c.id
+                                return (
+                                  <motion.div
+                                    key={c.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                  >
+                                    <div
+                                      onClick={() => { setSelectedComponentId(c.id); setSelectedFormulaId(null) }}
+                                      draggable
+                                      onDragStart={(e) => handleDragStart(e, idx)}
+                                      onDragOver={(e) => handleDragOver(e, idx)}
+                                      onDragEnd={handleDragEnd}
+                                      className={`p-3 rounded-xl border-2 transition-all cursor-grab active:cursor-grabbing relative group ${
+                                        draggedIdx === idx
+                                          ? 'opacity-40 border-dashed border-indigo-400 bg-neutral-100 scale-[0.97]'
+                                          : isSelected
+                                          ? 'border-indigo-500 bg-indigo-50/30 shadow-md ring-2 ring-indigo-500/10'
+                                          : 'border-neutral-100 hover:border-neutral-200 bg-white'
+                                      }`}
+                                    >
+                                      <div className="flex justify-between items-start mb-2">
+                                        <div className="flex-1 min-w-0">
+                                          <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded mr-1.5 font-bold">
+                                            {c.type}
+                                          </span>
+                                          <span className="text-xs font-bold text-dark-800">{c.label}</span>
+                                        </div>
+                                        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'up') }} disabled={idx === 0} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move up">
+                                            <ArrowUp className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'down') }} disabled={idx === calculator.components.length - 1} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move down">
+                                            <ArrowDown className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={(e) => { e.stopPropagation(); duplicateComponent(c.id) }} className="p-1 hover:bg-blue-50 text-blue-500 rounded" title="Duplicate">
+                                            <Layers className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button onClick={(e) => { e.stopPropagation(); deleteComponent(c.id) }} className="p-1 hover:bg-red-50 text-red-500 rounded" title="Delete">
+                                            <Trash className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                      {/* Per-type preview */}
+                                      {c.type === 'number' && (
+                                        <div className="relative border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
+                                          <span className="truncate">{c.placeholder || 'Placeholder...'}</span>
+                                          {c.unit && <span className="font-bold shrink-0 ml-2 opacity-80">{c.unit}</span>}
+                                        </div>
+                                      )}
+                                      {c.type === 'slider' && (
+                                        <div className="space-y-1 py-0.5">
+                                          <div className="flex justify-between text-[9px] font-mono text-neutral-500">
+                                            <span>Range: {c.min} - {c.max}</span>
+                                            <span>Default: {c.defaultValue} {c.unit}</span>
+                                          </div>
+                                          <div className="w-full h-1.5 bg-neutral-200 rounded-full" />
+                                        </div>
+                                      )}
+                                      {c.type === 'select' && (
+                                        <div className="border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
+                                          <span className="truncate">Default: {c.defaultValue || 'None'}</span>
+                                          <span className="text-[9px] opacity-70 shrink-0 ml-2">({c.options?.length || 0} options)</span>
+                                        </div>
+                                      )}
+                                      {c.type === 'checkbox' && (
+                                        <div className="flex items-center gap-2 text-xs text-neutral-500 font-mono">
+                                          <div className="w-3.5 h-3.5 border border-neutral-300 rounded bg-neutral-50" />
+                                          <span>{c.placeholder || 'Checkbox toggle'}</span>
+                                        </div>
+                                      )}
+                                      {c.type === 'header' && (
+                                        <div className="border-b border-neutral-200 pb-0.5 text-xs font-mono font-bold text-neutral-600 uppercase">
+                                          --- {c.label || 'Section Header'} ---
+                                        </div>
+                                      )}
+                                      {c.type === 'text' && (
+                                        <p className="text-[10px] text-neutral-500 font-mono leading-relaxed truncate">
+                                          {c.label || 'Explanatory text block...'}
+                                        </p>
+                                      )}
+
+                                      {c.type !== 'header' && c.type !== 'text' && (
+                                        <div className="text-[8px] font-mono text-dark-400 mt-1.5 text-right select-none">
+                                          var: <span className="font-black text-indigo-500 bg-indigo-50 px-1 rounded">{c.name}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </motion.div>
+                                )
+                              })}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+
+                        {/* Formulas List */}
+                        <div className="bg-gradient-to-br from-dark-900 to-black rounded-2xl p-4 sm:p-5 shadow-xl">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-[9px] uppercase tracking-widest font-mono text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded font-bold">
+                              Formula Outputs
+                            </span>
+                            <span className="text-[10px] font-mono text-neutral-400">
+                              {calculator.formulas.length} formula{calculator.formulas.length !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            {calculator.formulas.map((f) => {
+                              const isSelected = selectedFormulaId === f.id
+                              return (
+                                <button
+                                  type="button"
+                                  key={f.id}
+                                  onClick={() => { setSelectedFormulaId(f.id); setSelectedComponentId(null) }}
+                                  className={`w-full p-3 rounded-xl font-mono text-xs border-2 text-left transition-all ${
+                                    isSelected
+                                      ? 'border-yellow-400 bg-yellow-400/5'
+                                      : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
+                                  }`}
+                                >
+                                  <div className="flex justify-between items-center gap-2">
+                                    <div className="min-w-0 flex-1">
+                                      <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{f.label}</div>
+                                      <div className="text-yellow-300 font-bold text-xs mt-0.5 truncate">
+                                        {f.prefix || ''}<span className="text-white">[Result]</span>{f.suffix || ''}
+                                      </div>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                      <div className="text-[9px] text-neutral-500 font-mono">formula</div>
+                                      <div className="text-yellow-400 font-bold bg-yellow-400/10 px-1.5 py-0.5 rounded mt-0.5 text-[9px] truncate max-w-[140px]">{f.formula}</div>
+                                    </div>
+                                  </div>
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        {calculator.formulas.length === 0 && (
+                          <button
+                            onClick={addFormula}
+                            className="w-full p-6 bg-gradient-to-br from-dark-900 to-black text-white rounded-2xl border-2 border-dashed border-yellow-400/30 hover:border-yellow-400/60 transition-all group"
+                          >
+                            <Plus className="w-6 h-6 mx-auto mb-2 text-yellow-400 group-hover:scale-110 transition-transform" />
+                            <div className="text-sm font-bold">Add a Formula</div>
+                            <div className="text-[10px] text-neutral-400 mt-1">Use the variables above to compute a result</div>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Right Column: Dynamic Live Preview */}
+                      <div className="sticky top-32 space-y-3">
+                        <div className="bg-neutral-100/50 border border-neutral-200 p-2 rounded-xl text-center text-[10px] font-mono font-bold text-dark-500 uppercase tracking-wider select-none">
+                          Interactive WYSIWYG Preview
+                        </div>
+                        <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full">
+                          <CustomCalculatorRenderer
+                            config={calculator}
+                            selectedId={selectedComponentId}
+                            onSelectComponent={(id) => {
+                              setSelectedComponentId(id)
+                              setSelectedFormulaId(null)
+                            }}
+                            selectedFormulaId={selectedFormulaId}
+                            onSelectFormula={(id) => {
+                              setSelectedFormulaId(id)
+                              setSelectedComponentId(null)
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {canvasMode === 'visual' && (
+                    <div className="space-y-4 w-full">
+                      <div className="bg-neutral-100/50 border border-neutral-200 p-2.5 rounded-xl text-center text-[10px] font-mono font-bold text-dark-500 uppercase tracking-wider select-none">
+                        Visual Editor — Click elements to edit settings
+                      </div>
+                      <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full">
+                        <CustomCalculatorRenderer
+                          config={calculator}
+                          selectedId={selectedComponentId}
+                          onSelectComponent={(id) => {
+                            setSelectedComponentId(id)
+                            setSelectedFormulaId(null)
+                          }}
+                          selectedFormulaId={selectedFormulaId}
+                          onSelectFormula={(id) => {
+                            setSelectedFormulaId(id)
+                            setSelectedComponentId(null)
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {canvasMode === 'blueprint' && (
+                    <div className="space-y-4">
+                      {/* Blueprint List */}
+                      <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
+                        <div className="text-center pb-3 border-b border-neutral-100 flex justify-between items-center">
+                          <span className="text-[9px] uppercase tracking-widest font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded font-bold">
+                            Blueprint Outline
+                          </span>
+                          <span className="text-[9px] font-mono text-dark-400 hidden sm:inline">
+                            Drag to Reorder
+                          </span>
+                        </div>
+
+                        <div className="space-y-2.5 mt-4">
+                          <AnimatePresence mode="popLayout">
+                            {calculator.components.map((c, idx) => {
+                              const isSelected = selectedComponentId === c.id
+                              return (
+                                <motion.div
+                                  key={c.id}
+                                  layout
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, scale: 0.95 }}
+                                >
+                                  <div
+                                    onClick={() => { setSelectedComponentId(c.id); setSelectedFormulaId(null) }}
+                                    draggable
+                                    onDragStart={(e) => handleDragStart(e, idx)}
+                                    onDragOver={(e) => handleDragOver(e, idx)}
+                                    onDragEnd={handleDragEnd}
+                                    className={`p-3 rounded-xl border-2 transition-all cursor-grab active:cursor-grabbing relative group ${
+                                      draggedIdx === idx
+                                        ? 'opacity-40 border-dashed border-indigo-400 bg-neutral-100 scale-[0.97]'
+                                        : isSelected
+                                        ? 'border-indigo-500 bg-indigo-50/30 shadow-md ring-2 ring-indigo-500/10'
+                                        : 'border-neutral-100 hover:border-neutral-200 bg-white'
+                                    }`}
+                                  >
+                                    <div className="flex justify-between items-start mb-2">
+                                      <div className="flex-1 min-w-0">
+                                        <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded mr-1.5 font-bold">
+                                          {c.type}
+                                        </span>
+                                        <span className="text-xs font-bold text-dark-800">{c.label}</span>
+                                      </div>
+                                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'up') }} disabled={idx === 0} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move up">
+                                          <ArrowUp className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'down') }} disabled={idx === calculator.components.length - 1} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move down">
+                                          <ArrowDown className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); duplicateComponent(c.id) }} className="p-1 hover:bg-blue-50 text-blue-500 rounded" title="Duplicate">
+                                          <Layers className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); deleteComponent(c.id) }} className="p-1 hover:bg-red-50 text-red-500 rounded" title="Delete">
+                                          <Trash className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    {/* Per-type preview */}
+                                    {c.type === 'number' && (
+                                      <div className="relative border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
+                                        <span className="truncate">{c.placeholder || 'Placeholder...'}</span>
+                                        {c.unit && <span className="font-bold shrink-0 ml-2 opacity-80">{c.unit}</span>}
+                                      </div>
+                                    )}
+                                    {c.type === 'slider' && (
+                                      <div className="space-y-1 py-0.5">
+                                        <div className="flex justify-between text-[9px] font-mono text-neutral-500">
+                                          <span>Range: {c.min} - {c.max}</span>
+                                          <span>Default: {c.defaultValue} {c.unit}</span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-neutral-200 rounded-full" />
+                                      </div>
+                                    )}
+                                    {c.type === 'select' && (
+                                      <div className="border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
+                                        <span className="truncate">Default: {c.defaultValue || 'None'}</span>
+                                        <span className="text-[9px] opacity-70 shrink-0 ml-2">({c.options?.length || 0} options)</span>
+                                      </div>
+                                    )}
+                                    {c.type === 'checkbox' && (
+                                      <div className="flex items-center gap-2 text-xs text-neutral-500 font-mono">
+                                        <div className="w-3.5 h-3.5 border border-neutral-300 rounded bg-neutral-50" />
+                                        <span>{c.placeholder || 'Checkbox toggle'}</span>
+                                      </div>
+                                    )}
+                                    {c.type === 'header' && (
+                                      <div className="border-b border-neutral-200 pb-0.5 text-xs font-mono font-bold text-neutral-600 uppercase">
+                                        --- {c.label || 'Section Header'} ---
+                                      </div>
+                                    )}
+                                    {c.type === 'text' && (
+                                      <p className="text-[10px] text-neutral-500 font-mono leading-relaxed truncate">
+                                        {c.label || 'Explanatory text block...'}
+                                      </p>
+                                    )}
+
+                                    {c.type !== 'header' && c.type !== 'text' && (
+                                      <div className="text-[8px] font-mono text-dark-400 mt-1.5 text-right select-none">
+                                        var: <span className="font-black text-indigo-500 bg-indigo-50 px-1 rounded">{c.name}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )
+                            })}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+
+                      {/* Formulas List */}
+                      <div className="bg-gradient-to-br from-dark-900 to-black rounded-2xl p-4 sm:p-5 shadow-xl">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[9px] uppercase tracking-widest font-mono text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded font-bold">
+                            Formula Outputs
+                          </span>
+                          <span className="text-[10px] font-mono text-neutral-400">
+                            {calculator.formulas.length} formula{calculator.formulas.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {calculator.formulas.map((f) => {
+                            const isSelected = selectedFormulaId === f.id
+                            return (
+                              <button
+                                type="button"
+                                key={f.id}
+                                onClick={() => { setSelectedFormulaId(f.id); setSelectedComponentId(null) }}
+                                className={`w-full p-3 rounded-xl font-mono text-xs border-2 text-left transition-all ${
+                                  isSelected
+                                    ? 'border-yellow-400 bg-yellow-400/5'
+                                    : 'border-neutral-800 bg-neutral-900/60 hover:border-neutral-700'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center gap-2">
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">{f.label}</div>
+                                    <div className="text-yellow-300 font-bold text-xs mt-0.5 truncate">
+                                      {f.prefix || ''}<span className="text-white">[Result]</span>{f.suffix || ''}
+                                    </div>
+                                  </div>
+                                  <div className="text-right shrink-0">
+                                    <div className="text-[9px] text-neutral-500 font-mono">formula</div>
+                                    <div className="text-yellow-400 font-bold bg-yellow-400/10 px-1.5 py-0.5 rounded mt-0.5 text-[9px] truncate max-w-[140px]">{f.formula}</div>
+                                  </div>
+                                </div>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      {calculator.formulas.length === 0 && (
+                        <button
+                          onClick={addFormula}
+                          className="w-full p-6 bg-gradient-to-br from-dark-900 to-black text-white rounded-2xl border-2 border-dashed border-yellow-400/30 hover:border-yellow-400/60 transition-all group"
+                        >
+                          <Plus className="w-6 h-6 mx-auto mb-2 text-yellow-400 group-hover:scale-110 transition-transform" />
+                          <div className="text-sm font-bold">Add a Formula</div>
+                          <div className="text-[10px] text-neutral-400 mt-1">Use the variables above to compute a result</div>
                         </button>
-                      )
-                    })}
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Bottom Quick Controls (Undo/Redo & Shortcuts) */}
+              {calculator.components.length > 0 && (
+                <div className="flex items-center justify-between bg-white border border-neutral-200/80 rounded-2xl p-4 shadow-sm mt-5 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={undo}
+                      disabled={historyIndex <= 0}
+                      className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-30 disabled:hover:bg-neutral-100 text-dark-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                      title="Undo (Ctrl+Z)"
+                    >
+                      <Undo2 className="w-3.5 h-3.5" />
+                      <span>Undo</span>
+                      <kbd className="hidden sm:inline-block px-1 bg-white border border-neutral-300 rounded text-[9px] font-mono font-bold text-dark-500">Ctrl+Z</kbd>
+                    </button>
+                    <button
+                      onClick={redo}
+                      disabled={historyIndex >= history.length - 1}
+                      className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-30 disabled:hover:bg-neutral-100 text-dark-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                      title="Redo (Ctrl+Y)"
+                    >
+                      <Redo2 className="w-3.5 h-3.5" />
+                      <span>Redo</span>
+                      <kbd className="hidden sm:inline-block px-1 bg-white border border-neutral-300 rounded text-[9px] font-mono font-bold text-dark-500">Ctrl+Y</kbd>
+                    </button>
+                  </div>
+                  <div className="text-[10px] text-dark-500 font-mono hidden sm:block">
+                    Shortcuts: <kbd className="px-1.5 py-0.5 bg-neutral-100 rounded">Ctrl+Z</kbd> / <kbd className="px-1.5 py-0.5 bg-neutral-100 rounded">Ctrl+Y</kbd>
                   </div>
                 </div>
               )}
 
-              {/* Add formula CTA when none */}
-              {calculator.components.length > 0 && calculator.formulas.length === 0 && (
-                <button
-                  onClick={addFormula}
-                  className="w-full p-6 bg-gradient-to-br from-dark-900 to-black text-white rounded-2xl border-2 border-dashed border-yellow-400/30 hover:border-yellow-400/60 transition-all group"
-                >
-                  <Plus className="w-6 h-6 mx-auto mb-2 text-yellow-400 group-hover:scale-110 transition-transform" />
-                  <div className="text-sm font-bold">Add a Formula</div>
-                  <div className="text-[10px] text-neutral-400 mt-1">Use the variables above to compute a result</div>
-                </button>
-              )}
             </div>
           </div>
 
@@ -1370,11 +1775,39 @@ function InspectorPanel({
 // =====================================================================
 function ElementInspector({
   selectedComponent, selectedFormula,
+  calculator,
   availableVariables, formulaFunctions, formulaConstants,
   updateComponentField, updateFormulaField,
   deleteComponent, deleteFormula, addFormula,
   insertIntoFormula,
 }: any) {
+  // Variables map using defaults for evaluation preview
+  const defaultVarsMap = useMemo(() => {
+    const map: Record<string, number> = {}
+    calculator?.components.forEach((c: any) => {
+      if (c.type === 'header' || c.type === 'text') return
+      const raw = String(c.defaultValue ?? '0')
+      if (c.type === 'checkbox') {
+        map[c.name] = raw === 'true' ? 1 : 0
+      } else {
+        const val = parseFloat(raw)
+        map[c.name] = isNaN(val) ? 0 : val
+      }
+    })
+    return map
+  }, [calculator?.components])
+
+  const validation = useMemo(() => {
+    if (!selectedFormula) return { isValid: true }
+    return checkFormula(selectedFormula.formula, availableVariables.map((v: any) => v.name))
+  }, [selectedFormula?.formula, availableVariables])
+
+  const previewValue = useMemo(() => {
+    if (!selectedFormula || !validation.isValid) return null
+    const val = evaluateFormula(selectedFormula.formula, defaultVarsMap)
+    return isNaN(val) || !isFinite(val) ? 0 : val
+  }, [selectedFormula?.formula, defaultVarsMap, validation.isValid])
+
   if (selectedComponent) {
     return (
       <div className="space-y-4">
@@ -1531,10 +1964,34 @@ function ElementInspector({
             value={selectedFormula.formula}
             onChange={(e) => updateFormulaField(selectedFormula.id, 'formula', e.target.value)}
             rows={3}
-            className="w-full p-2.5 bg-neutral-900 text-emerald-300 border border-neutral-200 rounded-lg font-mono text-xs font-bold focus:outline-none focus:border-indigo-500"
+            className={`w-full p-2.5 bg-neutral-900 border rounded-lg font-mono text-xs font-bold focus:outline-none focus:border-indigo-500 ${
+              validation.isValid ? 'text-emerald-300 border-neutral-800' : 'text-rose-300 border-rose-500/80 focus:border-rose-500'
+            }`}
             placeholder="e.g. x + y"
           />
         </Field>
+
+        {/* Real-time Validation & Evaluation Preview */}
+        <div className="space-y-2 mt-1">
+          {!validation.isValid && (
+            <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-[10px] text-rose-600 font-mono flex items-start gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <span className="font-bold">Syntax Error:</span> {validation.error}
+              </div>
+            </div>
+          )}
+          {validation.isValid && selectedFormula.formula.trim() && (
+            <div className="p-2.5 bg-indigo-50/60 border border-indigo-100 rounded-xl text-[10px] text-indigo-700 font-mono flex justify-between items-center">
+              <span>Sample Output (using defaults):</span>
+              <span className="font-bold text-xs bg-white px-2 py-0.5 rounded border border-indigo-100 shadow-sm text-indigo-650 shrink-0">
+                {selectedFormula.prefix || ''}
+                {previewValue !== null ? previewValue.toFixed(selectedFormula.decimalPlaces) : '0'}
+                {selectedFormula.suffix || ''}
+              </span>
+            </div>
+          )}
+        </div>
 
         <div className="grid grid-cols-3 gap-1.5">
           <Field label="Prefix"><input type="text" value={selectedFormula.prefix || ''} onChange={(e) => updateFormulaField(selectedFormula.id, 'prefix', e.target.value)} className="w-full h-9 px-2 bg-white border border-neutral-200 rounded-lg text-xs font-mono" placeholder="$" /></Field>
@@ -1638,17 +2095,37 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
       <section className="space-y-3">
         <h4 className="text-xs font-extrabold text-indigo-600 font-mono uppercase tracking-wider">Theme</h4>
         <div className="grid grid-cols-2 gap-2">
-          {['retro', 'dark', 'modern', 'pastel', 'cyberpunk', 'custom'].map((themeName) => (
-            <button
-              key={themeName}
-              onClick={() => updateCalculator({ ...calculator, theme: themeName as CustomThemeType })}
-              className={`py-2 px-3 text-[10px] font-mono uppercase font-bold border-2 rounded-lg text-center transition-all ${
-                calculator.theme === themeName ? 'border-indigo-600 bg-indigo-50 text-indigo-600' : 'border-neutral-200 text-dark-500 hover:bg-neutral-50'
-              }`}
-            >
-              {themeName}
-            </button>
-          ))}
+          {Object.entries(THEME_SWATCHES).map(([themeName, swatch]) => {
+            const isSelected = calculator.theme === themeName
+            return (
+              <button
+                key={themeName}
+                type="button"
+                onClick={() => updateCalculator({ ...calculator, theme: themeName as CustomThemeType })}
+                className={`p-2 rounded-xl border-2 text-left transition-all relative ${
+                  isSelected ? 'border-indigo-600 bg-indigo-50/20 shadow-sm' : 'border-neutral-200 hover:border-neutral-300 bg-white'
+                }`}
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[10px] font-bold text-dark-800 tracking-tight">{swatch.label}</span>
+                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 shrink-0" />}
+                </div>
+                {/* Visual Swatch */}
+                <div className="h-5 rounded-md border border-neutral-200 overflow-hidden grid grid-cols-[1fr_8px]" style={{ backgroundColor: swatch.bg }}>
+                  <div className="p-0.5 flex flex-col justify-between h-full">
+                    {/* LCD bar */}
+                    <div className="h-1 rounded-sm border" style={{ backgroundColor: swatch.lcd, borderColor: swatch.border }} />
+                    {/* Sample Text */}
+                    <div className="text-[5px] font-mono leading-none tracking-tight font-black" style={{ color: swatch.text }}>
+                      12345
+                    </div>
+                  </div>
+                  {/* Primary Color bar */}
+                  <div className="h-full w-full" style={{ backgroundColor: swatch.primary }} />
+                </div>
+              </button>
+            )
+          })}
         </div>
         {calculator.theme === 'custom' && (
           <div className="bg-neutral-50 border border-neutral-100 rounded-xl p-3 space-y-2">
