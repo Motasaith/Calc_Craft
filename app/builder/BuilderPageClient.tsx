@@ -687,6 +687,19 @@ export default function BuilderPageClient() {
               <span className="hidden sm:inline">TEMPLATES</span>
             </button>
 
+            {/* Calculator Settings */}
+            <button
+              onClick={() => {
+                setActiveTab('settings')
+                setRightDrawerOpen(true)
+              }}
+              className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-bold text-dark-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 flex items-center gap-1 active:scale-95 transition-all"
+              title="Calculator global settings"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Calculator Settings</span>
+            </button>
+
             {/* Mobile: open left drawer */}
             <button
               onClick={() => setLeftDrawerOpen(true)}
@@ -1739,7 +1752,7 @@ function InspectorPanel({
             activeTab === 'settings' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-dark-500 hover:text-dark-700'
           }`}
         >
-          SETTINGS
+          CALCULATOR SETTINGS
         </button>
       </div>
 
