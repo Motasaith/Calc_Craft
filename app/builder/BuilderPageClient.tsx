@@ -15,7 +15,7 @@ import {
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CustomCalculatorRenderer, {
-  CustomCalculatorConfig, CustomComponentConfig, CustomFormulaConfig, CustomThemeType
+  CustomCalculatorConfig, CustomComponentConfig, CustomFormulaConfig, CustomThemeType, LabelTypographyConfig
 } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { serializeConfig, deserializeConfig } from '@/lib/url-serializer'
 import { checkFormula, evaluateFormula } from '@/lib/formula-parser'
@@ -1794,6 +1794,67 @@ function InspectorPanel({
 }
 
 // =====================================================================
+// TYPOGRAPHY SETTINGS CONTROL PANEL
+// =====================================================================
+function TypographySettings({
+  value,
+  onChange
+}: {
+  value?: LabelTypographyConfig
+  onChange: (val: LabelTypographyConfig) => void
+}) {
+  const fontSize = value?.fontSize || 'default'
+  const fontWeight = value?.fontWeight || 'default'
+  const fontStyle = value?.fontStyle || 'default'
+
+  return (
+    <div className="space-y-2.5 pt-3 border-t border-neutral-200">
+      <span className="block text-[10px] font-extrabold uppercase text-dark-800 font-mono tracking-wider">Label Typography</span>
+      <div className="grid grid-cols-3 gap-2">
+        <div>
+          <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Size</label>
+          <select
+            value={fontSize}
+            onChange={(e) => onChange({ ...value, fontSize: e.target.value as any })}
+            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500"
+          >
+            <option value="default">Default</option>
+            <option value="sm">Small</option>
+            <option value="md">Medium</option>
+            <option value="lg">Large</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Weight</label>
+          <select
+            value={fontWeight}
+            onChange={(e) => onChange({ ...value, fontWeight: e.target.value as any })}
+            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500"
+          >
+            <option value="default">Default</option>
+            <option value="normal">Normal</option>
+            <option value="semibold">Semibold</option>
+            <option value="bold">Bold</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Style</label>
+          <select
+            value={fontStyle}
+            onChange={(e) => onChange({ ...value, fontStyle: e.target.value as any })}
+            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500"
+          >
+            <option value="default">Default</option>
+            <option value="normal">Normal</option>
+            <option value="italic">Italic</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// =====================================================================
 // ELEMENT INSPECTOR
 // =====================================================================
 function ElementInspector({
@@ -1957,6 +2018,11 @@ function ElementInspector({
           </div>
         )}
 
+        <TypographySettings
+          value={selectedComponent.labelTypography}
+          onChange={(val) => updateComponentField(selectedComponent.id, 'labelTypography', val)}
+        />
+
         {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
           <button onClick={() => deleteComponent(selectedComponent.id)} className="w-full mt-2 px-3 h-9 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
             <Trash className="w-3.5 h-3.5" /> Delete Field
@@ -2021,6 +2087,11 @@ function ElementInspector({
           <Field label="Suffix"><input type="text" value={selectedFormula.suffix || ''} onChange={(e) => updateFormulaField(selectedFormula.id, 'suffix', e.target.value)} className="w-full h-9 px-2 bg-white border border-neutral-200 rounded-lg text-xs font-mono" placeholder="%" /></Field>
           <Field label="Decimals"><input type="number" min={0} max={10} value={selectedFormula.decimalPlaces} onChange={(e) => updateFormulaField(selectedFormula.id, 'decimalPlaces', parseInt(e.target.value) || 0)} className="w-full h-9 px-2 bg-white border border-neutral-200 rounded-lg text-xs font-mono" /></Field>
         </div>
+
+        <TypographySettings
+          value={selectedFormula.labelTypography}
+          onChange={(val) => updateFormulaField(selectedFormula.id, 'labelTypography', val)}
+        />
 
         <button onClick={() => deleteFormula(selectedFormula.id)} className="w-full px-3 h-9 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
           <Trash className="w-3.5 h-3.5" /> Delete Formula
@@ -2113,6 +2184,11 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
             </button>
           </div>
         </Field>
+
+        <TypographySettings
+          value={calculator.labelTypography}
+          onChange={(val) => updateCalculator({ ...calculator, labelTypography: val })}
+        />
       </section>
 
       <section className="space-y-3">

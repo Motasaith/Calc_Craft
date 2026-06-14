@@ -7,6 +7,12 @@ import { exportToCSV, exportToPDF } from '@/lib/export-utils'
 
 export type CustomThemeType = 'retro' | 'dark' | 'modern' | 'pastel' | 'cyberpunk' | 'custom'
 
+export interface LabelTypographyConfig {
+  fontSize?: 'default' | 'sm' | 'md' | 'lg'
+  fontWeight?: 'default' | 'normal' | 'semibold' | 'bold'
+  fontStyle?: 'default' | 'normal' | 'italic'
+}
+
 export interface CustomCalculatorConfig {
   id: string
   name: string
@@ -25,6 +31,7 @@ export interface CustomCalculatorConfig {
   layout?: 'stacked' | 'grid'
   components: CustomComponentConfig[]
   formulas: CustomFormulaConfig[]
+  labelTypography?: LabelTypographyConfig
 }
 
 export interface CustomComponentConfig {
@@ -40,6 +47,7 @@ export interface CustomComponentConfig {
   unit?: string
   options?: { value: string; label: string }[]
   helpText?: string
+  labelTypography?: LabelTypographyConfig
 }
 
 export interface CustomFormulaConfig {
@@ -49,6 +57,45 @@ export interface CustomFormulaConfig {
   decimalPlaces: number
   prefix?: string
   suffix?: string
+  labelTypography?: LabelTypographyConfig
+}
+
+function getLabelTypographyStyle(
+  elementTypo?: LabelTypographyConfig,
+  globalTypo?: LabelTypographyConfig
+): React.CSSProperties {
+  const size = elementTypo?.fontSize && elementTypo.fontSize !== 'default'
+    ? elementTypo.fontSize
+    : globalTypo?.fontSize && globalTypo.fontSize !== 'default'
+    ? globalTypo.fontSize
+    : 'default';
+
+  const weight = elementTypo?.fontWeight && elementTypo.fontWeight !== 'default'
+    ? elementTypo.fontWeight
+    : globalTypo?.fontWeight && globalTypo.fontWeight !== 'default'
+    ? globalTypo.fontWeight
+    : 'default';
+
+  const style = elementTypo?.fontStyle && elementTypo.fontStyle !== 'default'
+    ? elementTypo.fontStyle
+    : globalTypo?.fontStyle && globalTypo.fontStyle !== 'default'
+    ? globalTypo.fontStyle
+    : 'default';
+
+  const styles: React.CSSProperties = {};
+
+  if (size === 'sm') styles.fontSize = '11px';
+  else if (size === 'md') styles.fontSize = '14px';
+  else if (size === 'lg') styles.fontSize = '16px';
+
+  if (weight === 'normal') styles.fontWeight = '400';
+  else if (weight === 'semibold') styles.fontWeight = '600';
+  else if (weight === 'bold') styles.fontWeight = '800';
+
+  if (style === 'normal') styles.fontStyle = 'normal';
+  else if (style === 'italic') styles.fontStyle = 'italic';
+
+  return styles;
 }
 
 interface RendererProps {
@@ -124,6 +171,7 @@ export default function CustomCalculatorRenderer({
         value: formattedVal,
         prefix: f.prefix || '',
         suffix: f.suffix || '',
+        labelTypography: f.labelTypography,
       }
     })
   }, [config.formulas, variablesMap])
@@ -379,14 +427,20 @@ export default function CustomCalculatorRenderer({
             elementContent = (
               <div 
                 className={s.headerComp}
-                style={activeTheme === 'custom' ? { borderBottomColor: 'rgba(0,0,0,0.08)', color: 'var(--custom-text)' } : {}}
+                style={{
+                  ...(activeTheme === 'custom' ? { borderBottomColor: 'rgba(0,0,0,0.08)', color: 'var(--custom-text)' } : {}),
+                  ...getLabelTypographyStyle(c.labelTypography, config.labelTypography)
+                }}
               >
                 {c.label}
               </div>
             );
           } else if (c.type === 'text') {
             elementContent = (
-              <p className={s.textComp}>
+              <p 
+                className={s.textComp}
+                style={getLabelTypographyStyle(c.labelTypography, config.labelTypography)}
+              >
                 {c.label}
               </p>
             );
@@ -395,7 +449,12 @@ export default function CustomCalculatorRenderer({
             elementContent = (
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-1">
-                  <label className={s.label}>{c.label}</label>
+                  <label 
+                    className={s.label}
+                    style={getLabelTypographyStyle(c.labelTypography, config.labelTypography)}
+                  >
+                    {c.label}
+                  </label>
                   {c.helpText && (
                     <span className="text-[9px] opacity-60 font-mono italic">{c.helpText}</span>
                   )}
@@ -542,7 +601,12 @@ export default function CustomCalculatorRenderer({
                   color: 'var(--custom-lcd-text)'
                 } : {}}
               >
-                <div className={s.lcdTitle}>{r.label}</div>
+                <div 
+                  className={s.lcdTitle}
+                  style={getLabelTypographyStyle(r.labelTypography, config.labelTypography)}
+                >
+                  {r.label}
+                </div>
                 <div className={s.lcdValue}>
                   {r.prefix}
                   {r.value}
