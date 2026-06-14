@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!calc) return { title: 'Calculator Not Found' }
 
   const title = `${calc.name} - Free Online Calculator | Home of Calculators`
-  const description = `${calc.description} Fast, accurate, and 100% free. Runs entirely in your browser — no signup, no tracking, no ads.`
+  const description = `${calc.description} Fast, accurate, and 100% free. Runs entirely in your browser (no signup, no tracking, no ads).`
 
   return {
     title,

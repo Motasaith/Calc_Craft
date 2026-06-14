@@ -17,7 +17,7 @@ const ARTICLES: Record<string, {
 }> = {
   'how-to-build-custom-calculator-no-code': {
     title: 'How to Build a Custom Calculator in 5 Minutes (No Code Required)',
-    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
+    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder, from a blank canvas to an embeddable, white-labeled calculator on your website.',
     category: 'Tutorial',
     date: 'June 4, 2026',
     readTime: '6 min read',
@@ -26,7 +26,7 @@ const ARTICLES: Record<string, {
       {
         heading: 'Why build a custom calculator?',
         paragraphs: [
-          'Every niche has its own calculations. A mortgage broker needs an affordability calculator. A fitness coach needs a macro split estimator. A SaaS founder needs an ROI calculator. Off-the-shelf tools rarely fit — they\'re either too generic, too expensive, or come with ads and tracking.',
+          'Every niche has its own calculations. A mortgage broker needs an affordability calculator. A fitness coach needs a macro split estimator. A SaaS founder needs an ROI calculator. Off-the-shelf tools rarely fit; they\'re either too generic, too expensive, or come with ads and tracking.',
           'Home of Calculators\'s visual builder lets you skip the engineering and ship a branded, embeddable calculator in minutes. No JavaScript, no servers, no build pipeline.',
         ],
       },
@@ -34,7 +34,7 @@ const ARTICLES: Record<string, {
         heading: 'Step 1: Open the builder',
         paragraphs: [
           'Navigate to /builder. You\'ll see a three-panel workspace: the toolbox on the left (Number, Slider, Select, Checkbox), the canvas in the middle, and the inspector on the right (settings for the selected element).',
-          'Or skip the blank canvas: click TEMPLATES in the top bar and pick a starting point — BMI, Tip Calculator, Compound Interest, Discount, and more.',
+          'Or skip the blank canvas: click TEMPLATES in the top bar and pick a starting point (BMI, Tip Calculator, Compound Interest, Discount, and more).',
         ],
       },
       {
@@ -72,7 +72,7 @@ const ARTICLES: Record<string, {
   },
   'understanding-loan-emi-calculation': {
     title: 'Understanding Loan EMI Calculations: The Math Behind the Monthly Payment',
-    excerpt: 'EMI isn\'t magic — it\'s a precise amortization formula. Here\'s the derivation, what it means, and how to use it to compare loan offers.',
+    excerpt: 'EMI isn\'t magic; it\'s a precise amortization formula. Here\'s the derivation, what it means, and how to use it to compare loan offers.',
     category: 'Finance',
     date: 'May 28, 2026',
     readTime: '8 min read',
@@ -89,20 +89,20 @@ const ARTICLES: Record<string, {
         heading: 'The EMI formula',
         paragraphs: [
           'The monthly EMI is calculated using the formula: EMI = P × r × (1 + r)ⁿ / ((1 + r)ⁿ - 1), where P is the principal, r is the monthly interest rate (annual rate ÷ 12 ÷ 100), and n is the total number of monthly payments (years × 12).',
-          'This is sometimes called the "annuity formula" because it\'s the same math used to calculate any fixed periodic payment — pensions, insurance premiums, even car leases.',
+          'This is sometimes called the "annuity formula" because it\'s the same math used to calculate any fixed periodic payment (pensions, insurance premiums, even car leases).',
         ],
       },
       {
         heading: 'A worked example',
         paragraphs: [
           'Suppose you borrow $100,000 at 8% annual interest for 20 years (240 months). r = 0.08 / 12 = 0.00667. Plugging in: EMI = 100,000 × 0.00667 × (1.00667)²⁴⁰ / ((1.00667)²⁴⁰ - 1) ≈ $836.88.',
-          'Over 20 years, you\'ll pay $200,852 — almost double the original loan — with $100,852 going entirely to interest.',
+          'Over 20 years, you\'ll pay $200,852 (almost double the original loan) with $100,852 going entirely to interest.',
         ],
       },
       {
         heading: 'Why a longer loan costs more',
         paragraphs: [
-          'Stretching the same $100,000 loan to 30 years drops the EMI to about $733.76 — but you\'ll pay $264,154 in total, with $164,154 of that being interest.',
+          'Stretching the same $100,000 loan to 30 years drops the EMI to about $733.76, but you\'ll pay $264,154 in total, with $164,154 of that being interest.',
           'The lower monthly payment feels good, but the total cost is 31% higher. Always compare loans on total cost, not just monthly payment.',
         ],
       },
@@ -119,7 +119,7 @@ const ARTICLES: Record<string, {
     ],
   },
   'calculator-engines-mathjs-precision': {
-    title: 'Why Floating-Point Math Lies to You — and How BigNumber Arithmetic Saves the Day',
+    title: 'Why Floating-Point Math Lies to You, and How BigNumber Arithmetic Saves the Day',
     excerpt: 'JavaScript\'s default Number type silently loses precision at 16 digits. Here\'s why that matters for finance, science, and even everyday calculations.',
     category: 'Engineering',
     date: 'May 21, 2026',
@@ -129,14 +129,14 @@ const ARTICLES: Record<string, {
       {
         heading: 'The classic gotcha: 0.1 + 0.2',
         paragraphs: [
-          'Open any JavaScript console and type 0.1 + 0.2. The answer is 0.30000000000000004 — not 0.3. This isn\'t a bug. It\'s how floating-point arithmetic works on every modern computer, in every language.',
+          'Open any JavaScript console and type 0.1 + 0.2. The answer is 0.30000000000000004, not 0.3. This isn\'t a bug. It\'s how floating-point arithmetic works on every modern computer, in every language.',
           'The reason: computers store numbers in binary, and 0.1 has no exact binary representation. Just like 1/3 can\'t be written exactly in decimal (it\'s 0.333…), 0.1 can\'t be written exactly in binary (it\'s 0.00011001100… repeating).',
         ],
       },
       {
         heading: 'Why it matters',
         paragraphs: [
-          'For most calculations, the tiny error doesn\'t matter. 0.30000000000000004 displays as 0.3 just fine. But for finance — calculating interest on a million-dollar loan, multiplying by a daily rate 365 times — those tiny errors accumulate into real money.',
+          'For most calculations, the tiny error doesn\'t matter. 0.30000000000000004 displays as 0.3 just fine. But for finance (calculating interest on a million-dollar loan, multiplying by a daily rate 365 times), those tiny errors accumulate into real money.',
           'A friend of mine once debugged a billing system that was off by $0.07 per invoice because of this exact issue, multiplied across 100,000 invoices per month. The result was a $7,000 monthly discrepancy that nobody noticed for six months.',
         ],
       },
@@ -144,13 +144,13 @@ const ARTICLES: Record<string, {
         heading: 'The fix: BigNumber arithmetic',
         paragraphs: [
           'Libraries like mathjs, decimal.js, and bignumber.js solve the problem by storing numbers as strings of decimal digits and doing the math digit-by-digit. They\'re slower than native floating-point, but they\'re exact.',
-          'Home of Calculators uses mathjs\'s BigNumber mode configured to 64 digits of precision for general calculations and 128 digits for financial ones. That\'s vastly more than any real-world calculation needs — 128 decimal digits could represent the number of atoms in the universe many times over — but it ensures that no rounding error ever creeps into a result.',
+          'Home of Calculators uses mathjs\'s BigNumber mode configured to 64 digits of precision for general calculations and 128 digits for financial ones. That\'s vastly more than any real-world calculation needs (128 decimal digits could represent the number of atoms in the universe many times over), but it ensures that no rounding error ever creeps into a result.',
         ],
       },
       {
         heading: 'What this means for you',
         paragraphs: [
-          'When our EMI calculator says your monthly payment is $836.88, it really is exactly that — not $836.8800000000001. When our BMI calculator says you\'re 24.7, it\'s not a fuzzy approximation; it\'s the true value to 14 significant figures.',
+          'When our EMI calculator says your monthly payment is $836.88, it really is exactly that, not $836.8800000000001. When our BMI calculator says you\'re 24.7, it\'s not a fuzzy approximation; it\'s the true value to 14 significant figures.',
           'For a calculator you can trust, BigNumber precision is non-negotiable. The performance cost (a few microseconds per operation) is invisible to the user, and the correctness benefit is permanent.',
         ],
       },

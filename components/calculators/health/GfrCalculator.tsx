@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
 
@@ -20,7 +20,7 @@ export default function GfrCalculator() {
     if (gfr < 60) stage = 'Stage 3 (Moderate decrease)'
     if (gfr < 30) stage = 'Stage 4 (Severe decrease)'
     if (gfr < 15) stage = 'Stage 5 (Kidney failure)'
-    setResult(`${gfr.toFixed(1)} mL/min — ${stage}`)
+    setResult(`${gfr.toFixed(1)} mL/min (${stage})`)
   }
 
   return (

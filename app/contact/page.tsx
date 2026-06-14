@@ -15,7 +15,7 @@ const REASONS = [
 
 const FAQ = [
   { q: 'How fast will I get a response?', a: 'Most support emails are answered within 24-48 hours, Monday through Friday.' },
-  { q: 'Do you offer phone support?', a: 'No — we keep costs low by handling support over email. This lets us keep the entire platform free.' },
+  { q: 'Do you offer phone support?', a: 'No; we keep costs low by handling support over email. This lets us keep the entire platform free.' },
   { q: 'Can I suggest a new calculator?', a: 'Absolutely. Use the suggestion form below or email us. We add new calculators monthly based on user feedback.' },
   { q: 'Is there a bug bounty program?', a: 'Not formally, but we reward responsible disclosure of security issues. Email security@homeofcalculators.com.' },
 ]
@@ -53,10 +53,10 @@ export default function ContactPage() {
     const fields: Record<string, string> = {
       name: form.name.trim(),
       email: form.email.trim().toLowerCase(),
-      subject: `[Contact] ${form.subject} — from ${form.name.trim()}`,
+      subject: `[Contact] ${form.subject} - from ${form.name.trim()}`,
       message: form.message.trim(),
       _replyto: form.email.trim().toLowerCase(),
-      _subject: `[Contact] ${form.subject} — from ${form.name.trim()}`,
+      _subject: `[Contact] ${form.subject} - from ${form.name.trim()}`,
       _captcha: 'false',
       _template: 'table',
     }

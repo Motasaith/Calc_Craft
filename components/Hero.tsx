@@ -58,7 +58,7 @@ export default function Hero() {
         {/* Responsive Background Image — single Next/Image with object-position tweaks per breakpoint */}
         <Image
           src="/hero.png"
-          alt="Home of Calculators — free online calculator platform with 50+ tools for math, finance, health, and everyday calculations"
+          alt="Home of Calculators, free online calculator platform with 50+ tools for math, finance, health, and everyday calculations"
           fill
           priority
           sizes="100vw"
@@ -119,7 +119,7 @@ export default function Hero() {
                 className="text-base sm:text-lg text-dark-600 leading-relaxed mb-6 sm:mb-8 max-w-2xl mx-auto px-2 sm:px-0"
                 itemProp="description"
               >
-                A complete <strong>calculator platform</strong>: 50+ ready-made calculators, a <strong>no-code visual builder</strong> to design your own, <strong>embeddable widgets</strong> for any website, and full <strong>white-labeling</strong> with your brand &amp; logo. Free forever, private by design — all math runs in your browser.
+                A complete <strong>calculator platform</strong>: 50+ ready-made calculators, a <strong>no-code visual builder</strong> to design your own, <strong>embeddable widgets</strong> for any website, and full <strong>white-labeling</strong> with your brand &amp; logo. Free forever, private by design. All math runs in your browser.
               </p>
 
               {/* CTAs */}

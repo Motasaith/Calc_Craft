@@ -46,10 +46,10 @@ export default function PrivacyPolicyPage() {
                 Most "free" online calculators quietly harvest your inputs and ship them to analytics servers, advertising networks, or third-party data brokers. <strong>Home of Calculators was designed from day one to be different.</strong>
               </p>
               <p>
-                Every one of our 50+ calculators — and every calculator you build with our visual builder — executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
+                Every one of our 50+ calculators (and every calculator you build with our visual builder) executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
               </p>
               <p>
-                This isn't marketing — it's a fundamental architectural choice. The Home of Calculators calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.
+                This isn't marketing; it's a fundamental architectural choice. The Home of Calculators calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.
               </p>
             </>
           ),
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
                 <li>Location data, IP addresses, or device fingerprints for advertising purposes</li>
               </ul>
               <p>
-                <strong>Custom calculators you build</strong> are stored in your browser's localStorage (a sandboxed key-value store on your device). They are never uploaded to our servers. If you clear your browser data, your custom calculators will be lost — which is why we provide a JSON export feature.
+                <strong>Custom calculators you build</strong> are stored in your browser's localStorage (a sandboxed key-value store on your device). They are never uploaded to our servers. If you clear your browser data, your custom calculators will be lost, which is why we provide a JSON export feature.
               </p>
             </>
           ),
@@ -82,7 +82,7 @@ export default function PrivacyPolicyPage() {
               <p>The data we collect falls into these categories:</p>
               <ul>
                 <li>
-                  <strong>Aggregated page-view counts:</strong> We use privacy-respecting analytics (Plausible or a self-hosted equivalent) to count how many people visit each calculator page. These counts are aggregated — we don't track individual sessions, we don't set cross-site identifiers, and we don't build user profiles.
+                  <strong>Aggregated page-view counts:</strong> We use privacy-respecting analytics (Plausible or a self-hosted equivalent) to count how many people visit each calculator page. These counts are aggregated: we don't track individual sessions, we don't set cross-site identifiers, and we don't build user profiles.
                 </li>
                 <li>
                   <strong>Aggregate calculator usage:</strong> We may count, in aggregate, how many times each calculator type is used per day. We do not see the actual values.
@@ -131,7 +131,7 @@ export default function PrivacyPolicyPage() {
                 <li><strong>Right to lodge a complaint:</strong> Lodge a complaint with your local data protection authority</li>
               </ul>
               <p>
-                Because we don't collect most categories of data, most of these rights are moot — there's nothing to access, port, or delete. For the limited data we do hold (newsletter email, contact submissions), email <a href="mailto:privacy@homeofcalculators.com">privacy@homeofcalculators.com</a> and we will respond within 30 days.
+                Because we don't collect most categories of data, most of these rights are moot: there's nothing to access, port, or delete. For the limited data we do hold (newsletter email, contact submissions), email <a href="mailto:privacy@homeofcalculators.com">privacy@homeofcalculators.com</a> and we will respond within 30 days.
               </p>
             </>
           ),
@@ -144,7 +144,7 @@ export default function PrivacyPolicyPage() {
               <ul>
                 <li>Know what personal information we collect, use, share, or sell (we don't sell any)</li>
                 <li>Delete personal information we have collected</li>
-                <li>Opt out of the sale of personal information (N/A — we don't sell)</li>
+                <li>Opt out of the sale of personal information (N/A, we don't sell)</li>
                 <li>Non-discrimination for exercising your CCPA rights</li>
               </ul>
             </>
@@ -177,8 +177,8 @@ export default function PrivacyPolicyPage() {
             <>
               <p>We use a small set of carefully chosen third-party services, each governed by its own privacy policy:</p>
               <ul>
-                <li><strong>Hosting & CDN:</strong> Vercel / Netlify / Cloudflare (or similar) — serves our static site at the edge</li>
-                <li><strong>Privacy-respecting analytics:</strong> Plausible Analytics or self-hosted — no cookies, no personal data, GDPR-compliant out of the box</li>
+                <li><strong>Hosting & CDN:</strong> Vercel / Netlify / Cloudflare (or similar), which serves our static site at the edge</li>
+                <li><strong>Privacy-respecting analytics:</strong> Plausible Analytics or self-hosted (no cookies, no personal data, GDPR-compliant out of the box)</li>
                 <li><strong>Email service:</strong> For newsletter delivery and contact form responses</li>
                 <li><strong>DNS provider:</strong> Standard DNS resolution</li>
               </ul>

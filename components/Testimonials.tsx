@@ -42,7 +42,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'library',
     capabilityLabel: '50+ Calculators',
-    text: "Home of Calculators has every calculator I need for my coursework — statistics, fractions, even the obscure formula sheet. It's the only tab I keep open during finals.",
+    text: "Home of Calculators has every calculator I need for my coursework: statistics, fractions, even the obscure formula sheet. It's the only tab I keep open during finals.",
   },
   {
     name: 'Marcus T.',
@@ -60,7 +60,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'embed',
     capabilityLabel: 'Embeddable Widgets',
-    text: 'I embedded the loan EMI and affordability calculators on my advisory website. Visitors can run real numbers without leaving the page — and my lead conversion went up 38%.',
+    text: 'I embedded the loan EMI and affordability calculators on my advisory website. Visitors can run real numbers without leaving the page, and my lead conversion went up 38%.',
   },
   {
     name: 'David K.',
@@ -69,7 +69,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'whitelabel',
     capabilityLabel: 'White-Label',
-    text: 'I used the visual builder to create a custom ROI calculator, dropped in our company logo, matched our brand colors, and embedded it on our pricing page. Visitors think it was custom-built — it took me an afternoon.',
+    text: 'I used the visual builder to create a custom ROI calculator, dropped in our company logo, matched our brand colors, and embedded it on our pricing page. Visitors think it was custom-built; it took me an afternoon.',
   },
   {
     name: 'Emma W.',
@@ -87,7 +87,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'privacy',
     capabilityLabel: 'Private by Design',
-    text: "I'm a security researcher. The fact that Home of Calculators runs every calculation in the browser — no server logging, no tracking — is genuinely rare. I trust it with sensitive financial planning.",
+    text: "I'm a security researcher. The fact that Home of Calculators runs every calculation in the browser (with no server logging or tracking) is genuinely rare. I trust it with sensitive financial planning.",
   },
   {
     name: 'Lara B.',
@@ -96,7 +96,7 @@ const TESTIMONIALS: {
     rating: 5,
     capability: 'library',
     capabilityLabel: '50+ Calculators',
-    text: 'I write about personal finance and embed Home of Calculators widgets in my blog posts. Readers get instant calculations inside the article — engagement is way up compared to static screenshots.',
+    text: 'I write about personal finance and embed Home of Calculators widgets in my blog posts. Readers get instant calculations inside the article, and engagement is way up compared to static screenshots.',
   },
   {
     name: 'Yusuf H.',

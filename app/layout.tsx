@@ -15,7 +15,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
   title: {
-    default: `${BRAND.name} — 50+ Free Online Calculators for Math, Finance, Health & Everyday Use`,
+    default: `${BRAND.name} - 50+ Free Online Calculators for Math, Finance, Health & Everyday Use`,
     template: `%s | ${BRAND.name}`,
   },
   description:

@@ -52,7 +52,7 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'builder',
     q: 'What is the visual builder, and do I need to know how to code?',
-    a: "The visual builder is a drag-and-drop, WordPress-style editor for creating custom calculators — entirely without writing code. You add input fields (Number, Slider, Select, Checkbox), write formulas using a built-in math function reference, pick a theme, and add your own logo. The result is a fully working calculator you can save, share, or embed. We also provide 6 ready-made templates (BMI, Tip, Discount, Compound Interest, Circle, plus a blank canvas) so you can get started in seconds.",
+    a: "The visual builder is a drag-and-drop, WordPress-style editor for creating custom calculators, entirely without writing code. You add input fields (Number, Slider, Select, Checkbox), write formulas using a built-in math function reference, pick a theme, and add your own logo. The result is a fully working calculator you can save, share, or embed. We also provide 6 ready-made templates (BMI, Tip, Discount, Compound Interest, Circle, plus a blank canvas) so you can get started in seconds.",
     link: { label: 'Open the builder', href: '/builder' },
   },
   {
@@ -76,48 +76,48 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'embed',
     q: 'Will the embedded calculator slow down my website?',
-    a: "No. The embedded widget is a single iframe that loads independently from your page. It only loads the calculator's JavaScript when a user scrolls to it, so it won't impact your initial page load. All calculations run inside the iframe in the user's browser — your server isn't involved.",
+    a: "No. The embedded widget is a single iframe that loads independently from your page. It only loads the calculator's JavaScript when a user scrolls to it, so it won't impact your initial page load. All calculations run inside the iframe in the user's browser; your server isn't involved.",
   },
   {
     capability: 'embed',
     q: 'Can I embed a custom calculator I built myself?',
-    a: "Absolutely. Every calculator you build with the visual builder can be shared or embedded using the same Share dialog. You get both a public URL (which is great for social sharing) and an iframe snippet for embedding. The embedded widget uses your custom branding, theme, and formulas — not ours.",
+    a: "Absolutely. Every calculator you build with the visual builder can be shared or embedded using the same Share dialog. You get both a public URL (which is great for social sharing) and an iframe snippet for embedding. The embedded widget uses your custom branding, theme, and formulas, not ours.",
   },
 
   // ─── WHITE LABEL ───
   {
     capability: 'whitelabel',
     q: 'How does white-labeling work? Can I make the calculator look like my own brand?',
-    a: 'Yes. In the visual builder, open the Settings tab and either pick one of 6 preset themes (Retro, Dark, Modern, Pastel, Cyberpunk) or design your own with custom colors for primary, secondary, background, and text. You can also upload your own logo (PNG, JPG, or SVG) and set a brand name that displays in the calculator header. The result is a widget that looks and feels like it came from your company — not from Home of Calculators.',
+    a: 'Yes. In the visual builder, open the Settings tab and either pick one of 6 preset themes (Retro, Dark, Modern, Pastel, Cyberpunk) or design your own with custom colors for primary, secondary, background, and text. You can also upload your own logo (PNG, JPG, or SVG) and set a brand name that displays in the calculator header. The result is a widget that looks and feels like it came from your company, not from Home of Calculators.',
   },
   {
     capability: 'whitelabel',
     q: 'Will Home of Calculators branding appear on my embedded calculator?',
-    a: "By default, embedded Home of Calculators widgets are unbranded and feel native to the host site — there's no 'Powered by Home of Calculators' badge on individual calculators. The full Home of Calculators footer branding only appears if you use the free embed; you can fully remove it by hosting the embed via your own setup (instructions in the Share dialog).",
+    a: "By default, embedded Home of Calculators widgets are unbranded and feel native to the host site. There's no 'Powered by Home of Calculators' badge on individual calculators. The full Home of Calculators footer branding only appears if you use the free embed; you can fully remove it by hosting the embed via your own setup (instructions in the Share dialog).",
   },
 
   // ─── JSON ───
   {
     capability: 'json',
     q: 'Can I back up or share my custom calculator configurations?',
-    a: "Yes. Every calculator in the visual builder has an Export JSON button that downloads a plain .json file containing the full configuration: every field, formula, theme, and branding setting. You can then re-import it on any device, share it with a teammate, or version-control it in Git. We never lock you in — your data is always yours.",
+    a: "Yes. Every calculator in the visual builder has an Export JSON button that downloads a plain .json file containing the full configuration: every field, formula, theme, and branding setting. You can then re-import it on any device, share it with a teammate, or version-control it in Git. We never lock you in. Your data is always yours.",
   },
   {
     capability: 'json',
     q: 'Is there a version history or rollback for my custom calculators?',
-    a: "The visual builder has a 50-step undo/redo history for the current session, plus localStorage auto-save that keeps your most recent draft. For long-term version control, use the JSON Export feature — you can store versions in Git, Dropbox, or anywhere you like. We're exploring a cloud-sync version history feature for the future.",
+    a: "The visual builder has a 50-step undo/redo history for the current session, plus localStorage auto-save that keeps your most recent draft. For long-term version control, use the JSON Export feature. You can store versions in Git, Dropbox, or anywhere you like. We're exploring a cloud-sync version history feature for the future.",
   },
 
   // ─── PRIVACY ───
   {
     capability: 'privacy',
     q: 'Is Home of Calculators really free? How do you make money?',
-    a: 'Yes, 100% free — no paywalls, no premium tiers, no in-app purchases, no ads. Home of Calculators is independently funded by its founders. We deliberately avoid the surveillance-ad business model that most "free" calculator sites use, which is why we can offer a fully private, ad-free experience.',
+    a: 'Yes, 100% free (no paywalls, no premium tiers, no in-app purchases, no ads). Home of Calculators is independently funded by its founders. We deliberately avoid the surveillance-ad business model that most "free" calculator sites use, which is why we can offer a fully private, ad-free experience.',
   },
   {
     capability: 'privacy',
     q: 'Do you see or store the values I enter into calculators?',
-    a: 'No. All calculations run locally in your browser using JavaScript. We never see, store, or transmit your inputs to any server. Custom calculators you build live in your browser\'s localStorage (a sandboxed key-value store) and are never uploaded to our infrastructure. The only data we collect is anonymous, aggregated page-view counts — and even that is privacy-respecting analytics (Plausible), not Google Analytics.',
+    a: 'No. All calculations run locally in your browser using JavaScript. We never see, store, or transmit your inputs to any server. Custom calculators you build live in your browser\'s localStorage (a sandboxed key-value store) and are never uploaded to our infrastructure. The only data we collect is anonymous, aggregated page-view counts, and even that is privacy-respecting analytics (Plausible), not Google Analytics.',
     link: { label: 'Read the full privacy policy', href: '/privacy-policy' },
   },
   {
@@ -202,7 +202,7 @@ export default function FAQ() {
             Questions about the full platform
           </h2>
           <p className="text-sm text-slate-500 max-w-xl mx-auto">
-            Not just "how do I calculate X" — the real questions: how to build, embed, brand, back up, and trust Home of Calculators.
+            Not just "how do I calculate X", the real questions: how to build, embed, brand, back up, and trust Home of Calculators.
           </p>
         </div>
 
@@ -341,7 +341,7 @@ export default function FAQ() {
           >
             <Calculator className="w-5 h-5 text-dark-700 mb-2" />
             <h3 className="text-sm font-bold text-dark-900 mb-0.5">50+ ready-made calculators</h3>
-            <p className="text-[11px] text-dark-500 leading-relaxed">Math, finance, health, conversion, and more — all free, all in your browser.</p>
+            <p className="text-[11px] text-dark-500 leading-relaxed">Math, finance, health, conversion, and more, all free, all in your browser.</p>
             <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-600 group-hover:gap-1.5 transition-all">
               Browse <ArrowRight className="w-3 h-3" />
             </span>

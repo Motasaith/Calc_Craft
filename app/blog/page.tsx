@@ -39,7 +39,7 @@ const ARTICLES: Article[] = [
   {
     slug: 'how-to-build-custom-calculator-no-code',
     title: 'How to Build a Custom Calculator in 5 Minutes (No Code Required)',
-    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder — from a blank canvas to an embeddable, white-labeled calculator on your website.',
+    excerpt: 'A step-by-step walkthrough of Home of Calculators\'s visual builder, from a blank canvas to an embeddable, white-labeled calculator on your website.',
     category: 'Tutorial',
     date: 'June 4, 2026',
     readTime: '6 min read',
@@ -49,7 +49,7 @@ const ARTICLES: Article[] = [
   {
     slug: 'understanding-loan-emi-calculation',
     title: 'Understanding Loan EMI Calculations: The Math Behind the Monthly Payment',
-    excerpt: 'EMI isn\'t magic — it\'s a precise amortization formula. Here\'s the derivation, what it means, and how to use it to compare loan offers.',
+    excerpt: 'EMI isn\'t magic; it\'s a precise amortization formula. Here\'s the derivation, what it means, and how to use it to compare loan offers.',
     category: 'Finance',
     date: 'May 28, 2026',
     readTime: '8 min read',
@@ -57,7 +57,7 @@ const ARTICLES: Article[] = [
   },
   {
     slug: 'calculator-engines-mathjs-precision',
-    title: 'Why Floating-Point Math Lies to You — and How BigNumber Arithmetic Saves the Day',
+    title: 'Why Floating-Point Math Lies to You, and How BigNumber Arithmetic Saves the Day',
     excerpt: 'JavaScript\'s default Number type silently loses precision at 16 digits. Here\'s why that matters for finance, science, and even everyday calculations.',
     category: 'Engineering',
     date: 'May 21, 2026',

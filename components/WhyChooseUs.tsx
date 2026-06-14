@@ -107,7 +107,7 @@ export default function WhyChooseUs() {
             </h2>
             <p className="text-sm sm:text-base text-dark-600 mb-5 sm:mb-6 leading-relaxed">
               Home of Calculators provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs.
-              No signup required, instant results, and completely private — all calculations run locally in your browser.
+              No signup required, instant results, and completely private. All calculations run locally in your browser.
             </p>
             <div className="space-y-4 sm:space-y-5" role="list">
               {reasons.map((reason, idx) => (

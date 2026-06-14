@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
 
@@ -19,7 +19,7 @@ export default function BacCalculator() {
     if (final > 0.02) status = 'Impaired'
     if (final > 0.05) status = 'Legally Intoxicated (many countries)'
     if (final > 0.08) status = 'Legally Drunk (US)'
-    setResult(`${final.toFixed(3)}% — ${status}`)
+    setResult(`${final.toFixed(3)}% (${status})`)
   }
 
   return (

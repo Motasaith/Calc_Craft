@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: 'Cookies Policy | Home of Calculators',
-    description: 'Minimal, privacy-respecting cookie usage — no advertising, no third-party tracking.',
+    description: 'Minimal, privacy-respecting cookie usage; no advertising, no third-party tracking.',
     type: 'article',
   },
   alternates: { canonical: 'https://homeofcalculators.com/cookies' },
@@ -35,7 +35,7 @@ export default function CookiesPage() {
           icon="cookie"
           lastUpdated="June 5, 2026"
           contactEmail="privacy@homeofcalculators.com"
-          intro="Most websites bury their cookie usage in legal jargon. We won't. Here's the complete list of what Home of Calculators stores on your device, why, and how to control it — in plain English."
+          intro="Most websites bury their cookie usage in legal jargon. We won't. Here's the complete list of what Home of Calculators stores on your device, why, and how to control it, in plain English."
           sections={[
         {
           heading: '1. What Are Cookies?',
@@ -52,7 +52,7 @@ export default function CookiesPage() {
               <p>Home of Calculators uses cookies and browser storage for <strong>only three things</strong>:</p>
               <ul>
                 <li>Saving your custom-built calculators and builder drafts (so they don't disappear when you close the tab)</li>
-                <li>Anonymous, aggregated analytics — counting page views, no individual tracking</li>
+                <li>Anonymous, aggregated analytics (counting page views, with no individual tracking)</li>
                 <li>Standard browser session management</li>
               </ul>
               <p>
@@ -149,14 +149,14 @@ export default function CookiesPage() {
                   <strong>Private/Incognito mode:</strong> Cookies and storage set during a private browsing session are automatically deleted when you close the window.
                 </li>
                 <li>
-                  <strong>Do Not Track (DNT):</strong> Home of Calculators honors DNT signals — when DNT is enabled in your browser, we disable all non-essential analytics.
+                  <strong>Do Not Track (DNT):</strong> Home of Calculators honors DNT signals: when DNT is enabled in your browser, we disable all non-essential analytics.
                 </li>
                 <li>
                   <strong>Per-site controls:</strong> Most browsers let you block specific sites from setting cookies while allowing others. You can use this to block third-party services on homeofcalculators.com while still using our core functionality.
                 </li>
               </ul>
               <p>
-                <strong>Note:</strong> If you block the storage entries that Home of Calculators uses for app functionality, your custom calculators and builder drafts will not be saved. The site will still work — you just won't have persistence.
+                <strong>Note:</strong> If you block the storage entries that Home of Calculators uses for app functionality, your custom calculators and builder drafts will not be saved. The site will still work; you just won't have persistence.
               </p>
             </>
           ),
@@ -169,13 +169,13 @@ export default function CookiesPage() {
                 Under the GDPR and ePrivacy Directive, cookies and similar tracking technologies require informed consent <strong>unless they are strictly necessary</strong> to provide a service the user has explicitly requested.
               </p>
               <p>
-                Our position is that the two localStorage entries we use (your custom calculators and builder drafts) are <strong>strictly necessary</strong> for the Service to function — without them, the visual builder and saved calculators would not work. Therefore, they do not require consent banners.
+                Our position is that the two localStorage entries we use (your custom calculators and builder drafts) are <strong>strictly necessary</strong> for the Service to function; without them, the visual builder and saved calculators would not work. Therefore, they do not require consent banners.
               </p>
               <p>
                 Our privacy-respecting analytics (Plausible) does not use cookies and does not require consent under GDPR.
               </p>
               <p>
-                This is why you don't see a "We use cookies!" popup on Home of Calculators — there are no non-essential cookies to consent to.
+                This is why you don't see a "We use cookies!" popup on Home of Calculators, as there are no non-essential cookies to consent to.
               </p>
             </>
           ),

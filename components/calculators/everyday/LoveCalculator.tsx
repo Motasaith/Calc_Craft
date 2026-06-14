@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
 
@@ -20,7 +20,7 @@ export default function LoveCalculator() {
     else if (score > 60) msg = 'Great compatibility! ❤️'
     else if (score > 40) msg = 'Not bad! 💛'
     else if (score > 20) msg = 'Could work... 💚'
-    setResult(`${score}% — ${msg}`)
+    setResult(`${score}% (${msg})`)
   }
 
   return (

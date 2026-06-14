@@ -91,10 +91,10 @@ const CATEGORY_COPY: Record<CalculatorCategory, { heading: string; description: 
 function generateSEOCopy(calc: { name: string; shortName: string; description: string; category: CalculatorCategory; keywords: string[] }): SEOCopy {
   const cat = CATEGORY_COPY[calc.category]
   return {
-    intro: `${calc.name} is a free, browser-based tool for ${cat.description}. Whether you're a ${calc.keywords[0] || 'user'} or just need a quick answer, this calculator handles the math for you — accurately, privately, and instantly. All calculations run in your browser; we never see your inputs.`,
+    intro: `${calc.name} is a free, browser-based tool for ${cat.description}. Whether you're a ${calc.keywords[0] || 'user'} or just need a quick answer, this calculator handles the math for you: accurately, privately, and instantly. All calculations run in your browser; we never see your inputs.`,
     whatIs: {
       heading: `What is the ${calc.name}?`,
-      body: `${calc.name} ${calc.description.toLowerCase()} It is part of Home of Calculators's ${cat.heading} suite — ${cat.description}. The calculator is designed for ${cat.useCase}, but anyone can use it. No signup, no ads, no tracking. Just accurate math, computed locally in your browser using a BigNumber-precision math engine.`,
+      body: `${calc.name} ${calc.description.toLowerCase()} It is part of Home of Calculators's ${cat.heading} suite for ${cat.description}. The calculator is designed for ${cat.useCase}, but anyone can use it. No signup, no ads, no tracking. Just accurate math, computed locally in your browser using a BigNumber-precision math engine.`,
     },
     howTo: {
       heading: `How to use the ${calc.name}`,
@@ -106,7 +106,7 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
       ],
     },
     tips: [
-      'All calculations run locally in your browser — your data never leaves your device.',
+      'All calculations run locally in your browser; your data never leaves your device.',
       'For best results on mobile, rotate to landscape when entering many values.',
       'Bookmark this page to come back to your calculation anytime.',
       'Need a different calculator? Try our visual builder to create your own.',
@@ -115,9 +115,9 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
       { q: `Is the ${calc.shortName} accurate?`, a: `Yes. Home of Calculators uses a BigNumber-precision math engine (64-128 decimal digits) to ensure calculations are accurate. We run 96+ automated tests covering unit conversion, financial formulas, health formulas, and more. For critical decisions (financial, medical, legal), we still recommend consulting a qualified professional.` },
       { q: `Is the ${calc.name} free?`, a: `Yes. Every calculator on Home of Calculators is 100% free, with no signup, no ads, and no hidden fees. The entire platform is free forever.` },
       { q: `Do you store the values I enter?`, a: `No. All calculations happen in your browser. We never see, store, or transmit your inputs to any server. Your data stays on your device.` },
-      { q: `Can I use the ${calc.shortName} on my phone?`, a: `Yes. Home of Calculators is fully responsive and works on any device — phone, tablet, laptop, or desktop. The interface adapts to your screen size.` },
+      { q: `Can I use the ${calc.shortName} on my phone?`, a: `Yes. Home of Calculators is fully responsive and works on any device (phone, tablet, laptop, or desktop). The interface adapts to your screen size.` },
       { q: `Can I embed this calculator on my own website?`, a: `Yes. Click the "Share" button to get an iframe embed code. The embedded calculator will look like any other Home of Calculators widget. You can also build a fully customized version using our visual builder.` },
-      { q: `Can I build my own custom calculator?`, a: `Absolutely. Home of Calculators's visual builder lets you add fields, write formulas, choose a theme, and brand the result with your own logo — all without writing code.` },
+      { q: `Can I build my own custom calculator?`, a: `Absolutely. Home of Calculators's visual builder lets you add fields, write formulas, choose a theme, and brand the result with your own logo, all without writing code.` },
     ],
   }
 }
@@ -208,10 +208,10 @@ export default function CalculatorSEOContent({ calc }: { calc: { name: string; s
             </div>
             <ul className="space-y-2">
               {[
-                { icon: Shield, text: '100% private — calculations run in your browser' },
-                { icon: Zap, text: '128-bit BigNumber precision — no rounding errors' },
-                { icon: Globe, text: 'Works on any device — phone, tablet, desktop' },
-                { icon: CalcIcon, text: 'Free forever — no signup, no ads, no upsells' },
+                { icon: Shield, text: '100% private (calculations run in your browser)' },
+                { icon: Zap, text: '128-bit BigNumber precision (no rounding errors)' },
+                { icon: Globe, text: 'Works on any device: phone, tablet, desktop' },
+                { icon: CalcIcon, text: 'Free forever (no signup, no ads, no upsells)' },
               ].map((f, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-white/80">
                   <f.icon className="w-3.5 h-3.5 text-primary-300 mt-0.5 shrink-0" />
@@ -264,7 +264,7 @@ export default function CalculatorSEOContent({ calc }: { calc: { name: string; s
               <Zap className="w-3 h-3" /> Want more?
             </div>
             <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
-            <p className="text-sm text-white/70 mb-3">Need a calculation we don't have? Build your own in minutes — no code required.</p>
+            <p className="text-sm text-white/70 mb-3">Need a calculation we don't have? Build your own in minutes, no code required.</p>
             <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
               Open the builder <ChevronRight className="w-4 h-4" />
             </span>

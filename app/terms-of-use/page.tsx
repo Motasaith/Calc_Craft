@@ -28,7 +28,7 @@ export default function TermsOfUsePage() {
           icon="file"
           lastUpdated="June 5, 2026"
           contactEmail="legal@homeofcalculators.com"
-          intro="These Terms of Use form a binding agreement between you and Home of Calculators. They cover the calculators we provide, the visual builder you can use to create your own, the embeddable widgets you can place on your own site, and the relationship between us. Please read them carefully — by using Home of Calculators, you accept these terms."
+          intro="These Terms of Use form a binding agreement between you and Home of Calculators. They cover the calculators we provide, the visual builder you can use to create your own, the embeddable widgets you can place on your own site, and the relationship between us. Please read them carefully; by using Home of Calculators, you accept these terms."
           sections={[
         {
           heading: '1. Acceptance of These Terms',
@@ -50,10 +50,10 @@ export default function TermsOfUsePage() {
               <p>Home of Calculators provides a free, browser-based calculator platform consisting of:</p>
               <ul>
                 <li><strong>50+ ready-made calculators</strong> across math, finance, health, conversion, datetime, and everyday categories</li>
-                <li><strong>A visual calculator builder</strong> — a drag-and-drop, no-code tool for creating custom calculators with your own fields, formulas, themes, and branding</li>
-                <li><strong>Embeddable widgets</strong> — iframe snippets that let you place any Home of Calculators calculator (or a custom one you build) on your own website</li>
-                <li><strong>White-labeling features</strong> — your own logo, brand colors, and domain-friendly output for embedded widgets</li>
-                <li><strong>JSON import/export</strong> — for backing up, sharing, or version-controlling your custom calculator configurations</li>
+                <li><strong>A visual calculator builder</strong>: a drag-and-drop, no-code tool for creating custom calculators with your own fields, formulas, themes, and branding</li>
+                <li><strong>Embeddable widgets</strong>: iframe snippets that let you place any Home of Calculators calculator (or a custom one you build) on your own website</li>
+                <li><strong>White-labeling features</strong>: your own logo, brand colors, and domain-friendly output for embedded widgets</li>
+                <li><strong>JSON import/export</strong>: for backing up, sharing, or version-controlling your custom calculator configurations</li>
               </ul>
               <p>
                 All of the above is provided <strong>free of charge</strong>. There are no paid tiers, no premium features, and no in-app purchases. We may introduce optional paid services in the future, but if we do, we will update these Terms and notify users in advance.
@@ -70,7 +70,7 @@ export default function TermsOfUsePage() {
                 <li>Use the Service for lawful purposes only</li>
                 <li>Not use the Service to harass, harm, defame, or discriminate against others</li>
                 <li>Not attempt to disrupt, hack, reverse-engineer, or interfere with the Service or its security</li>
-                <li>Not use automated systems (bots, scrapers, crawlers) to access the Service in a way that burdens our infrastructure, except for legitimate search engine indexing (which we welcome — see our robots.txt)</li>
+                <li>Not use automated systems (bots, scrapers, crawlers) to access the Service in a way that burdens our infrastructure, except for legitimate search engine indexing (which we welcome, see our robots.txt)</li>
                 <li>Not use the Service to build calculators that facilitate fraud, illegal activity, or content that violates third-party rights</li>
                 <li>Verify critical calculations independently when accuracy is essential (financial, medical, legal, engineering decisions)</li>
                 <li>Comply with all applicable local, state, national, and international laws</li>
@@ -89,7 +89,7 @@ export default function TermsOfUsePage() {
                 <strong>However</strong>, the Service is provided "as is" and "as available" without warranties of any kind, express or implied. While we strive for accuracy, we make no guarantees about the correctness, reliability, or suitability of any calculation for any particular purpose.
               </p>
               <p>
-                <strong>Always consult a qualified professional</strong> for decisions where calculation errors could cause material harm. Home of Calculators is an educational and informational tool — it is not a substitute for advice from a licensed financial advisor, doctor, lawyer, or other professional.
+                <strong>Always consult a qualified professional</strong> for decisions where calculation errors could cause material harm. Home of Calculators is an educational and informational tool; it is not a substitute for advice from a licensed financial advisor, doctor, lawyer, or other professional.
               </p>
             </>
           ),
@@ -140,7 +140,7 @@ export default function TermsOfUsePage() {
                 <strong>Calculator engines and content.</strong> The math formulas underlying our ready-made calculators are widely-known mathematical facts and are not protected by copyright. You are free to use these formulas in your own projects.
               </p>
               <p>
-                <strong>Trademark.</strong> "Home of Calculators" and our logo are our trademarks. You may not use them to suggest endorsement of your product without our permission. You <strong>may</strong> embed our widgets on your website, which may display our branding — this is permitted as part of the embed feature.
+                <strong>Trademark.</strong> "Home of Calculators" and our logo are our trademarks. You may not use them to suggest endorsement of your product without our permission. You <strong>may</strong> embed our widgets on your website, which may display our branding; this is permitted as part of the embed feature.
               </p>
             </>
           ),
@@ -159,7 +159,7 @@ export default function TermsOfUsePage() {
                 <li>Damages resulting from unauthorized access to or alteration of your data</li>
               </ul>
               <p>
-                In jurisdictions that do not allow the exclusion of certain damages, our liability is limited to the maximum extent permitted by law (often to USD $100 or the amount you have paid us in the past 12 months — which is $0 for the free Service).
+                In jurisdictions that do not allow the exclusion of certain damages, our liability is limited to the maximum extent permitted by law (often to USD $100 or the amount you have paid us in the past 12 months, which is $0 for the free Service).
               </p>
             </>
           ),

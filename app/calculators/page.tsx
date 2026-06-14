@@ -183,7 +183,7 @@ export default function CalculatorsPage() {
             </h1>
 
             <p className="text-base sm:text-lg text-dark-500 leading-relaxed mb-8 max-w-2xl mx-auto">
-              {totalCount} precision calculators for math, finance, health, and everyday life —
+              {totalCount} precision calculators for math, finance, health, and everyday life,
               all powered by a single BigNumber engine. No signup, no clutter, instant answers.
             </p>
 

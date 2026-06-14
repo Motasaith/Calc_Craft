@@ -48,7 +48,7 @@ const values = [
   {
     icon: Shield,
     title: 'Privacy first, always',
-    body: "Calculations happen in your browser. We never see your inputs. We never sell data. Privacy isn't a feature we added — it's the architecture.",
+    body: "Calculations happen in your browser. We never see your inputs. We never sell data. Privacy isn't a feature we added; it's the architecture.",
   },
   {
     icon: Heart,
@@ -68,7 +68,7 @@ const values = [
 ]
 
 const capabilities = [
-  { icon: Calculator, title: '50+ ready-made calculators', body: 'Math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools — all free, all browser-based.' },
+  { icon: Calculator, title: '50+ ready-made calculators', body: 'Math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools, all free and browser-based.' },
   { icon: Wrench, title: 'Visual calculator builder', body: 'A WordPress-style drag-and-drop editor. Add fields, write formulas, pick a theme. Your custom calculator is live in minutes.' },
   { icon: Globe, title: 'Embed on any website', body: 'One-line iframe snippets. Drop a Home of Calculators calculator into your blog, your Shopify store, or your internal docs.' },
   { icon: Code2, title: 'JSON import / export', body: 'Back up, version, or share your custom calculator configurations as plain JSON files.' },
@@ -85,7 +85,7 @@ const timeline = [
   {
     year: '2024',
     title: 'First 20 calculators',
-    body: 'Math, finance, health, conversion — the foundational categories ship. The mathjs-powered engine ensures every calculation is accurate to 128 digits.',
+    body: 'Math, finance, health, conversion: the foundational categories ship. The mathjs-powered engine ensures every calculation is accurate to 128 digits.',
   },
   {
     year: '2025',
@@ -100,7 +100,7 @@ const timeline = [
   {
     year: '2026',
     title: 'Where we are now',
-    body: '50+ calculators. 9 categories. 96+ automated engine tests. A thriving community of users who build, share, and embed their own calculators. The platform is mature — but the journey is just beginning.',
+    body: '50+ calculators. 9 categories. 96+ automated engine tests. A thriving community of users who build, share, and embed their own calculators. The platform is mature, but the journey is just beginning.',
   },
 ]
 
@@ -154,10 +154,10 @@ export default function AboutPage() {
                   Make calculation accessible, accurate, and owned by the user.
                 </h2>
                 <p className="text-base text-dark-600 leading-relaxed mb-4">
-                  Most online calculators treat you as the product — your inputs are logged, your behavior is tracked, and the page is cluttered with ads. Home of Calculators takes the opposite approach: <strong>no tracking, no ads, no paywalls</strong>. Just accurate math, done in your browser.
+                  Most online calculators treat you as the product: your inputs are logged, your behavior is tracked, and the page is cluttered with ads. Home of Calculators takes the opposite approach: <strong>no tracking, no ads, no paywalls</strong>. Just accurate math, done in your browser.
                 </p>
                 <p className="text-base text-dark-600 leading-relaxed mb-6">
-                  And because not every calculation fits a pre-built template, we built a <strong>visual calculator builder</strong> — the same WordPress-style editor, but for calculators. Need a niche mortgage formula? A custom workout-calorie estimator? A/B test ROI? You can build it in minutes, embed it on your site, and even white-label it with your own brand.
+                  And because not every calculation fits a pre-built template, we built a <strong>visual calculator builder</strong> (the same WordPress-style editor, but for calculators). Need a niche mortgage formula? A custom workout-calorie estimator? A/B test ROI? You can build it in minutes, embed it on your site, and even white-label it with your own brand.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Link href="/calculators" className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-dark-900 hover:bg-black text-white rounded-lg text-sm font-bold active:scale-95 transition-all">
@@ -327,7 +327,7 @@ export default function AboutPage() {
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3 tracking-tight">Ready to start calculating?</h2>
             <p className="text-base text-white/70 mb-6 max-w-xl mx-auto">
-              Browse the library, build your own, or embed one on your site — it's all free, and it all happens in your browser.
+              Browse the library, build your own, or embed one on your site; it's all free, and it all happens in your browser.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link href="/calculators" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-dark-900 rounded-xl text-sm font-bold hover:bg-neutral-100 active:scale-95 transition-all">
