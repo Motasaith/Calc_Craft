@@ -45,7 +45,7 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'library',
     q: 'Do I need an account to use a calculator?',
-    a: "No. Home of Calculators never requires an account for using calculators. You can open any calculator and start using it immediately. The only place an account would be relevant is if you build your own custom calculators — those are stored in your browser's localStorage and don't require a server account.",
+    a: "No. Home of Calculators never requires an account. You can open any calculator and start using it immediately. Custom calculators you build are stored locally in your browser's localStorage, so no server account is needed.",
   },
 
   // ─── VISUAL BUILDER ───

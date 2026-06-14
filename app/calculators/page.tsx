@@ -69,7 +69,7 @@ export default function CalculatorsPage() {
     if (customCalculators.length > 0) {
       list.push('custom')
     }
-    const standardCats: CategoryFilter[] = ['math', 'finance', 'health', 'date-time', 'conversion', 'everyday']
+    const standardCats: CategoryFilter[] = ['math', 'finance', 'health', 'date-time', 'conversion', 'everyday', 'islamic', 'construction', 'engineering', 'misc']
     return [...list, ...standardCats]
   }, [customCalculators])
 
@@ -129,6 +129,13 @@ export default function CalculatorsPage() {
     'date-time': { dot: 'bg-cyan-500', gradient: 'from-cyan-500 to-teal-500' },
     conversion: { dot: 'bg-emerald-500', gradient: 'from-emerald-500 to-green-500' },
     everyday: { dot: 'bg-purple-500', gradient: 'from-purple-500 to-fuchsia-500' },
+    islamic: { dot: 'bg-teal-500', gradient: 'from-teal-500 to-emerald-500' },
+    construction: { dot: 'bg-orange-500', gradient: 'from-orange-500 to-amber-500' },
+    engineering: { dot: 'bg-indigo-500', gradient: 'from-indigo-500 to-blue-500' },
+    geometry: { dot: 'bg-lime-500', gradient: 'from-lime-500 to-green-500' },
+    statistics: { dot: 'bg-sky-500', gradient: 'from-sky-500 to-cyan-500' },
+    trigonometry: { dot: 'bg-fuchsia-500', gradient: 'from-fuchsia-500 to-pink-500' },
+    misc: { dot: 'bg-slate-500', gradient: 'from-slate-500 to-gray-500' },
   }
 
   return (

@@ -5,7 +5,7 @@ import React from 'react'
 
 // Dynamic imports for all calculator components — code-split per calculator
 const calculatorComponents: Record<string, React.ComponentType> = {
-  // Math
+  // ═══════════════ MATH (25) ═══════════════
   'basic': dynamic(() => import('@/components/calculators/math/BasicCalculator')),
   'scientific': dynamic(() => import('@/components/calculators/math/ScientificCalculator')),
   'percentage': dynamic(() => import('@/components/calculators/math/PercentageCalculator')),
@@ -20,8 +20,19 @@ const calculatorComponents: Record<string, React.ComponentType> = {
   'permutation-combination': dynamic(() => import('@/components/calculators/math/PermutationCombinationCalculator')),
   'ratio': dynamic(() => import('@/components/calculators/math/RatioCalculator')),
   'logarithm': dynamic(() => import('@/components/calculators/math/LogarithmCalculator')),
+  'pythagorean': dynamic(() => import('@/components/calculators/math/PythagoreanCalculator')),
+  'circle': dynamic(() => import('@/components/calculators/math/CircleCalculator')),
+  'triangle': dynamic(() => import('@/components/calculators/math/TriangleCalculator')),
+  'prime-factorization': dynamic(() => import('@/components/calculators/math/PrimeFactorizationCalculator')),
+  'rounding': dynamic(() => import('@/components/calculators/math/RoundingCalculator')),
+  'scientific-notation': dynamic(() => import('@/components/calculators/math/ScientificNotationCalculator')),
+  'standard-deviation': dynamic(() => import('@/components/calculators/math/StandardDeviationCalculator')),
+  'mean-median-mode': dynamic(() => import('@/components/calculators/math/MeanMedianModeCalculator')),
+  'z-score': dynamic(() => import('@/components/calculators/math/ZScoreCalculator')),
+  'confidence-interval': dynamic(() => import('@/components/calculators/math/ConfidenceIntervalCalculator')),
+  'probability': dynamic(() => import('@/components/calculators/math/ProbabilityCalculator')),
 
-  // Finance
+  // ═══════════════ FINANCE (30) ═══════════════
   'loan-emi': dynamic(() => import('@/components/calculators/finance/LoanEmiCalculator')),
   'compound-interest': dynamic(() => import('@/components/calculators/finance/CompoundInterestCalculator')),
   'simple-interest': dynamic(() => import('@/components/calculators/finance/SimpleInterestCalculator')),
@@ -36,8 +47,24 @@ const calculatorComponents: Record<string, React.ComponentType> = {
   'break-even': dynamic(() => import('@/components/calculators/finance/BreakEvenCalculator')),
   'savings-goal': dynamic(() => import('@/components/calculators/finance/SavingsGoalCalculator')),
   'currency': dynamic(() => import('@/components/calculators/finance/CurrencyConverter')),
+  'auto-loan': dynamic(() => import('@/components/calculators/finance/AutoLoanCalculator')),
+  'credit-card-payoff': dynamic(() => import('@/components/calculators/finance/CreditCardPayoffCalculator')),
+  'debt-to-income': dynamic(() => import('@/components/calculators/finance/DebtToIncomeCalculator')),
+  'refinance': dynamic(() => import('@/components/calculators/finance/RefinanceCalculator')),
+  'rent-vs-buy': dynamic(() => import('@/components/calculators/finance/RentVsBuyCalculator')),
+  'present-value': dynamic(() => import('@/components/calculators/finance/PresentValueCalculator')),
+  'future-value': dynamic(() => import('@/components/calculators/finance/FutureValueCalculator')),
+  'annuity': dynamic(() => import('@/components/calculators/finance/AnnuityCalculator')),
+  'retirement': dynamic(() => import('@/components/calculators/finance/RetirementCalculator')),
+  '401k': dynamic(() => import('@/components/calculators/finance/FourOhOneKCalculator')),
+  'sales-tax': dynamic(() => import('@/components/calculators/finance/SalesTaxCalculator')),
+  'commission': dynamic(() => import('@/components/calculators/finance/CommissionCalculator')),
+  'apr': dynamic(() => import('@/components/calculators/finance/AprCalculator')),
+  'depreciation': dynamic(() => import('@/components/calculators/finance/DepreciationCalculator')),
+  'gold-price': dynamic(() => import('@/components/calculators/finance/GoldPriceCalculator')),
+  'crypto-converter': dynamic(() => import('@/components/calculators/finance/CryptoConverter')),
 
-  // Health
+  // ═══════════════ HEALTH (22) ═══════════════
   'bmi': dynamic(() => import('@/components/calculators/health/BmiCalculator')),
   'calorie': dynamic(() => import('@/components/calculators/health/CalorieCalculator')),
   'body-fat': dynamic(() => import('@/components/calculators/health/BodyFatCalculator')),
@@ -46,14 +73,36 @@ const calculatorComponents: Record<string, React.ComponentType> = {
   'heart-rate': dynamic(() => import('@/components/calculators/health/HeartRateCalculator')),
   'macro': dynamic(() => import('@/components/calculators/health/MacroCalculator')),
   'pregnancy': dynamic(() => import('@/components/calculators/health/PregnancyCalculator')),
+  'bmr': dynamic(() => import('@/components/calculators/health/BmrCalculator')),
+  'tdee': dynamic(() => import('@/components/calculators/health/TdeeCalculator')),
+  'one-rep-max': dynamic(() => import('@/components/calculators/health/OneRepMaxCalculator')),
+  'ovulation': dynamic(() => import('@/components/calculators/health/OvulationCalculator')),
+  'bac': dynamic(() => import('@/components/calculators/health/BacCalculator')),
+  'pace': dynamic(() => import('@/components/calculators/health/PaceCalculator')),
+  'protein': dynamic(() => import('@/components/calculators/health/ProteinCalculator')),
+  'carbohydrate': dynamic(() => import('@/components/calculators/health/CarbohydrateCalculator')),
+  'lean-body-mass': dynamic(() => import('@/components/calculators/health/LeanBodyMassCalculator')),
+  'body-surface-area': dynamic(() => import('@/components/calculators/health/BodySurfaceAreaCalculator')),
+  'gfr': dynamic(() => import('@/components/calculators/health/GfrCalculator')),
+  'pregnancy-weight-gain': dynamic(() => import('@/components/calculators/health/PregnancyWeightGainCalculator')),
+  'conception': dynamic(() => import('@/components/calculators/health/ConceptionCalculator')),
+  'period': dynamic(() => import('@/components/calculators/health/PeriodCalculator')),
 
-  // Date & Time
+  // ═══════════════ DATE & TIME (12) ═══════════════
   'age': dynamic(() => import('@/components/calculators/datetime/AgeCalculator')),
   'date-difference': dynamic(() => import('@/components/calculators/datetime/DateDifferenceCalculator')),
   'time': dynamic(() => import('@/components/calculators/datetime/TimeCalculator')),
   'countdown': dynamic(() => import('@/components/calculators/datetime/CountdownCalculator')),
+  'day-of-week': dynamic(() => import('@/components/calculators/datetime/DayOfWeekCalculator')),
+  'time-zone': dynamic(() => import('@/components/calculators/datetime/TimeZoneCalculator')),
+  'time-duration': dynamic(() => import('@/components/calculators/datetime/TimeDurationCalculator')),
+  'hours': dynamic(() => import('@/components/calculators/datetime/HoursCalculator')),
+  'date-calculator': dynamic(() => import('@/components/calculators/datetime/DateCalculator')),
+  'day-counter': dynamic(() => import('@/components/calculators/datetime/DayCounter')),
+  'sleep': dynamic(() => import('@/components/calculators/datetime/SleepCalculator')),
+  'time-card': dynamic(() => import('@/components/calculators/datetime/TimeCardCalculator')),
 
-  // Conversion
+  // ═══════════════ CONVERSION (12) ═══════════════
   'length': dynamic(() => import('@/components/calculators/conversion/LengthConverter')),
   'weight': dynamic(() => import('@/components/calculators/conversion/WeightConverter')),
   'temperature': dynamic(() => import('@/components/calculators/conversion/TemperatureConverter')),
@@ -61,13 +110,116 @@ const calculatorComponents: Record<string, React.ComponentType> = {
   'data-storage': dynamic(() => import('@/components/calculators/conversion/DataStorageConverter')),
   'energy': dynamic(() => import('@/components/calculators/conversion/EnergyConverter')),
   'cooking': dynamic(() => import('@/components/calculators/conversion/CookingConverter')),
+  'pressure': dynamic(() => import('@/components/calculators/conversion/PressureConverter')),
+  'angle': dynamic(() => import('@/components/calculators/conversion/AngleConverter')),
+  'power': dynamic(() => import('@/components/calculators/conversion/PowerConverter')),
+  'fuel': dynamic(() => import('@/components/calculators/conversion/FuelConverter')),
+  'roman-numeral': dynamic(() => import('@/components/calculators/conversion/RomanNumeralConverter')),
 
-  // Everyday
+  // ═══════════════ EVERYDAY (12) ═══════════════
   'gpa': dynamic(() => import('@/components/calculators/everyday/GpaCalculator')),
   'random-number': dynamic(() => import('@/components/calculators/everyday/RandomNumberGenerator')),
   'password': dynamic(() => import('@/components/calculators/everyday/PasswordGenerator')),
   'word-counter': dynamic(() => import('@/components/calculators/everyday/WordCounter')),
   'color': dynamic(() => import('@/components/calculators/everyday/ColorConverter')),
+  'grade': dynamic(() => import('@/components/calculators/everyday/GradeCalculator')),
+  'url-encode': dynamic(() => import('@/components/calculators/everyday/UrlEncodeCalculator')),
+  'base64': dynamic(() => import('@/components/calculators/everyday/Base64Calculator')),
+  'ip-subnet': dynamic(() => import('@/components/calculators/everyday/IpSubnetCalculator')),
+  'height': dynamic(() => import('@/components/calculators/everyday/HeightConverter')),
+  'shoe-size': dynamic(() => import('@/components/calculators/everyday/ShoeSizeConverter')),
+  'love': dynamic(() => import('@/components/calculators/everyday/LoveCalculator')),
+
+  // ═══════════════ ISLAMIC (8) ═══════════════
+  'zakat': dynamic(() => import('@/components/calculators/islamic/ZakatCalculator')),
+  'prayer-times': dynamic(() => import('@/components/calculators/islamic/PrayerTimesCalculator')),
+  'hijri-date': dynamic(() => import('@/components/calculators/islamic/HijriDateCalculator')),
+  'inheritance': dynamic(() => import('@/components/calculators/islamic/InheritanceCalculator')),
+  'qibla': dynamic(() => import('@/components/calculators/islamic/QiblaCalculator')),
+  'ramadan': dynamic(() => import('@/components/calculators/islamic/RamadanCalculator')),
+  'tahajjud': dynamic(() => import('@/components/calculators/islamic/TahajjudCalculator')),
+  'hajj-dates': dynamic(() => import('@/components/calculators/islamic/HajjDatesCalculator')),
+
+  // ═══════════════ CONSTRUCTION (10) ═══════════════
+  'concrete': dynamic(() => import('@/components/calculators/construction/ConcreteCalculator')),
+  'tile': dynamic(() => import('@/components/calculators/construction/TileCalculator')),
+  'gravel': dynamic(() => import('@/components/calculators/construction/GravelCalculator')),
+  'mulch': dynamic(() => import('@/components/calculators/construction/MulchCalculator')),
+  'roofing': dynamic(() => import('@/components/calculators/construction/RoofingCalculator')),
+  'stair': dynamic(() => import('@/components/calculators/construction/StairCalculator')),
+  'paint': dynamic(() => import('@/components/calculators/construction/PaintCalculator')),
+  'square-footage': dynamic(() => import('@/components/calculators/construction/SquareFootageCalculator')),
+  'drywall': dynamic(() => import('@/components/calculators/construction/DrywallCalculator')),
+  'flooring': dynamic(() => import('@/components/calculators/construction/FlooringCalculator')),
+
+  // ═══════════════ ENGINEERING (8) ═══════════════
+  'ohms-law': dynamic(() => import('@/components/calculators/engineering/OhmsLawCalculator')),
+  'resistor': dynamic(() => import('@/components/calculators/engineering/ResistorCalculator')),
+  'bandwidth': dynamic(() => import('@/components/calculators/engineering/BandwidthCalculator')),
+  'voltage-drop': dynamic(() => import('@/components/calculators/engineering/VoltageDropCalculator')),
+  'horsepower': dynamic(() => import('@/components/calculators/engineering/HorsepowerCalculator')),
+  'density': dynamic(() => import('@/components/calculators/engineering/DensityCalculator')),
+  'molarity': dynamic(() => import('@/components/calculators/engineering/MolarityCalculator')),
+  'tip-speed': dynamic(() => import('@/components/calculators/engineering/TipSpeedCalculator')),
+
+  // ═══════════════ MISC / OTHER (12) ═══════════════
+  'dice-roller': dynamic(() => import('@/components/calculators/misc/DiceRoller')),
+  'fuel-cost': dynamic(() => import('@/components/calculators/misc/FuelCostCalculator')),
+  'btu': dynamic(() => import('@/components/calculators/misc/BtuCalculator')),
+  'wind-chill': dynamic(() => import('@/components/calculators/misc/WindChillCalculator')),
+  'dew-point': dynamic(() => import('@/components/calculators/misc/DewPointCalculator')),
+  'heat-index': dynamic(() => import('@/components/calculators/misc/HeatIndexCalculator')),
+  'golf-handicap': dynamic(() => import('@/components/calculators/misc/GolfHandicapCalculator')),
+  'tire-size': dynamic(() => import('@/components/calculators/misc/TireSizeCalculator')),
+  'mileage': dynamic(() => import('@/components/calculators/misc/MileageCalculator')),
+  'tip-splitter': dynamic(() => import('@/components/calculators/misc/BillSplitter')),
+  'molecular-weight': dynamic(() => import('@/components/calculators/misc/MolecularWeightCalculator')),
+  'weather': dynamic(() => import('@/components/calculators/misc/WeatherCalculator')),
+
+  // ═══════════════ GEOMETRY (13) ═══════════════
+  'polygon-area': dynamic(() => import('@/components/calculators/geometry/PolygonAreaCalculator')),
+  'ellipse': dynamic(() => import('@/components/calculators/geometry/EllipseCalculator')),
+  'sphere': dynamic(() => import('@/components/calculators/geometry/SphereCalculator')),
+  'cylinder-geo': dynamic(() => import('@/components/calculators/geometry/CylinderGeoCalculator')),
+  'cone': dynamic(() => import('@/components/calculators/geometry/ConeCalculator')),
+  'pyramid': dynamic(() => import('@/components/calculators/geometry/PyramidCalculator')),
+  'parallelogram': dynamic(() => import('@/components/calculators/geometry/ParallelogramCalculator')),
+  'trapezoid': dynamic(() => import('@/components/calculators/geometry/TrapezoidCalculator')),
+  'sector': dynamic(() => import('@/components/calculators/geometry/SectorCalculator')),
+  'segment': dynamic(() => import('@/components/calculators/geometry/SegmentCalculator')),
+  'distance-2d': dynamic(() => import('@/components/calculators/geometry/Distance2dCalculator')),
+  'distance-3d': dynamic(() => import('@/components/calculators/geometry/Distance3dCalculator')),
+  'midpoint': dynamic(() => import('@/components/calculators/geometry/MidpointCalculator')),
+
+  // ═══════════════ STATISTICS (13) ═══════════════
+  'correlation': dynamic(() => import('@/components/calculators/statistics/CorrelationCalculator')),
+  'regression': dynamic(() => import('@/components/calculators/statistics/RegressionCalculator')),
+  'binomial': dynamic(() => import('@/components/calculators/statistics/BinomialCalculator')),
+  'normal-distribution': dynamic(() => import('@/components/calculators/statistics/NormalDistributionCalculator')),
+  'poisson': dynamic(() => import('@/components/calculators/statistics/PoissonCalculator')),
+  'chi-square': dynamic(() => import('@/components/calculators/statistics/ChiSquareCalculator')),
+  't-test': dynamic(() => import('@/components/calculators/statistics/TTestCalculator')),
+  'anova': dynamic(() => import('@/components/calculators/statistics/AnovaCalculator')),
+  'outlier': dynamic(() => import('@/components/calculators/statistics/OutlierCalculator')),
+  'percentile': dynamic(() => import('@/components/calculators/statistics/PercentileCalculator')),
+  'effect-size': dynamic(() => import('@/components/calculators/statistics/EffectSizeCalculator')),
+  'sampling': dynamic(() => import('@/components/calculators/statistics/SamplingCalculator')),
+  'histogram': dynamic(() => import('@/components/calculators/statistics/HistogramCalculator')),
+
+  // ═══════════════ TRIGONOMETRY (13) ═══════════════
+  'sin-cos-tan': dynamic(() => import('@/components/calculators/trigonometry/SinCosTanCalculator')),
+  'inverse-trig': dynamic(() => import('@/components/calculators/trigonometry/InverseTrigCalculator')),
+  'unit-circle': dynamic(() => import('@/components/calculators/trigonometry/UnitCircleCalculator')),
+  'law-of-sines': dynamic(() => import('@/components/calculators/trigonometry/LawOfSinesCalculator')),
+  'law-of-cosines': dynamic(() => import('@/components/calculators/trigonometry/LawOfCosinesCalculator')),
+  'trig-identities': dynamic(() => import('@/components/calculators/trigonometry/TrigIdentitiesCalculator')),
+  'polar-rectangular': dynamic(() => import('@/components/calculators/trigonometry/PolarRectangularCalculator')),
+  'deg-rad': dynamic(() => import('@/components/calculators/trigonometry/DegRadCalculator')),
+  'trig-graph': dynamic(() => import('@/components/calculators/trigonometry/TrigGraphCalculator')),
+  'reference-angle': dynamic(() => import('@/components/calculators/trigonometry/ReferenceAngleCalculator')),
+  'coterminal': dynamic(() => import('@/components/calculators/trigonometry/CoterminalCalculator')),
+  'trig-equation': dynamic(() => import('@/components/calculators/trigonometry/TrigEquationCalculator')),
+  'hyperbolic': dynamic(() => import('@/components/calculators/trigonometry/HyperbolicCalculator')),
 }
 
 export function getCalculatorComponent(slug: string): React.ComponentType | null {

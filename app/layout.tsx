@@ -283,7 +283,7 @@ const jsonLd = {
           name: 'Do I need to create an account to use Home of Calculators calculators?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Not at all. You can use every calculator without creating an account. However, signing up lets you save favorites and access your history.',
+            text: 'Not at all. You can use every calculator without creating an account. All calculations run locally in your browser.',
           },
         },
         {

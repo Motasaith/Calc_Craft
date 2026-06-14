@@ -51,6 +51,41 @@ const CATEGORY_COPY: Record<CalculatorCategory, { heading: string; description: 
     description: 'everyday utilities, random generators, simple calculations',
     useCase: 'everyone, daily use',
   },
+  islamic: {
+    heading: 'Islamic Calculators',
+    description: 'Islamic finance, prayer times, Hijri dates, and religious calculations',
+    useCase: 'Muslims, Islamic scholars, travelers',
+  },
+  construction: {
+    heading: 'Construction Calculators',
+    description: 'building materials, measurements, cost estimates, and project planning',
+    useCase: 'contractors, DIY enthusiasts, architects',
+  },
+  engineering: {
+    heading: 'Engineering Calculators',
+    description: 'electrical, mechanical, and chemical engineering formulas',
+    useCase: 'engineers, technicians, students',
+  },
+  geometry: {
+    heading: 'Geometry Calculators',
+    description: 'shapes, areas, volumes, distances, and coordinate geometry',
+    useCase: 'students, architects, designers',
+  },
+  statistics: {
+    heading: 'Statistics Calculators',
+    description: 'probability, distributions, hypothesis testing, and data analysis',
+    useCase: 'researchers, data scientists, students',
+  },
+  trigonometry: {
+    heading: 'Trigonometry Calculators',
+    description: 'angles, trig functions, identities, and triangle solving',
+    useCase: 'students, engineers, physicists',
+  },
+  misc: {
+    heading: 'Other Calculators',
+    description: 'specialty calculators for games, weather, vehicles, and more',
+    useCase: 'hobbyists, drivers, gamers, general users',
+  },
 }
 
 function generateSEOCopy(calc: { name: string; shortName: string; description: string; category: CalculatorCategory; keywords: string[] }): SEOCopy {
