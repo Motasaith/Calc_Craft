@@ -50,15 +50,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: BRAND.url,
-    languages: {
-      'en-US': BRAND.url,
-      'en-GB': BRAND.url,
-      'en-CA': BRAND.url,
-      'en-AU': BRAND.url,
-    },
-  },
+
   openGraph: {
     type: 'website',
     locale: 'en_US',
