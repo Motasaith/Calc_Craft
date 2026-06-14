@@ -39,7 +39,7 @@ const FAQS: { q: string; a: string; capability: CapabilityKey; link?: { label: s
   {
     capability: 'library',
     q: 'How many calculators do you offer, and what categories are covered?',
-    a: 'We offer 50+ ready-made calculators across 9 categories: math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools. New calculators are added regularly based on user feedback. Every calculator is free, browser-based, and works without any signup.',
+    a: 'We offer 190 ready-made calculators across 9 categories: math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools. New calculators are added regularly based on user feedback. Every calculator is free, browser-based, and works without any signup.',
     link: { label: 'Browse the full library', href: '/calculators' },
   },
   {
@@ -340,7 +340,7 @@ export default function FAQ() {
             className="group p-4 bg-white border border-neutral-200 hover:border-primary-400 hover:shadow-md rounded-2xl transition-all"
           >
             <Calculator className="w-5 h-5 text-dark-700 mb-2" />
-            <h3 className="text-sm font-bold text-dark-900 mb-0.5">50+ ready-made calculators</h3>
+            <h3 className="text-sm font-bold text-dark-900 mb-0.5">190 ready-made calculators</h3>
             <p className="text-[11px] text-dark-500 leading-relaxed">Math, finance, health, conversion, and more, all free, all in your browser.</p>
             <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-600 group-hover:gap-1.5 transition-all">
               Browse <ArrowRight className="w-3 h-3" />

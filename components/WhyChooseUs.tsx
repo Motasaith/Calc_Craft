@@ -85,7 +85,7 @@ export default function WhyChooseUs() {
             </div>
             <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 md:-bottom-6 md:-right-6 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 flex flex-col items-center justify-center">
               <DigitalText
-                text="50+"
+                text="190"
                 theme="minimal"
                 className="text-dark-800 [--char-height:1rem] sm:[--char-height:1.2rem] md:[--char-height:1.8rem] mb-0.5 sm:mb-1 md:mb-2"
                 animate={true}
@@ -106,7 +106,7 @@ export default function WhyChooseUs() {
               Designed for You.
             </h2>
             <p className="text-sm sm:text-base text-dark-600 mb-5 sm:mb-6 leading-relaxed">
-              Home of Calculators provides <strong>50+ free online calculators</strong> for math, finance, health, and everyday needs.
+              Home of Calculators provides <strong>190 free online calculators</strong> for math, finance, health, and everyday needs.
               No signup required, instant results, and completely private. All calculations run locally in your browser.
             </p>
             <div className="space-y-4 sm:space-y-5" role="list">

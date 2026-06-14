@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
                 Most "free" online calculators quietly harvest your inputs and ship them to analytics servers, advertising networks, or third-party data brokers. <strong>Home of Calculators was designed from day one to be different.</strong>
               </p>
               <p>
-                Every one of our 50+ calculators (and every calculator you build with our visual builder) executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
+                Every one of our 190 calculators (and every calculator you build with our visual builder) executes entirely in your web browser using client-side JavaScript. Your inputs never leave your device. Your results never touch a server. We don't have logs to comb through, breaches to disclose, or databases to leak, because <strong>the data never existed on our infrastructure in the first place</strong>.
               </p>
               <p>
                 This isn't marketing; it's a fundamental architectural choice. The Home of Calculators calculation engine is bundled into the JavaScript that your browser downloads, then runs locally. We use a BigNumber-precision math library (mathjs) so your calculations are accurate to 128 digits without ever contacting a remote math service.

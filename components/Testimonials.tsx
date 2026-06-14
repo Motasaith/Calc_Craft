@@ -41,7 +41,7 @@ const TESTIMONIALS: {
     avatar: 'SJ',
     rating: 5,
     capability: 'library',
-    capabilityLabel: '50+ Calculators',
+    capabilityLabel: '190 Calculators',
     text: "Home of Calculators has every calculator I need for my coursework: statistics, fractions, even the obscure formula sheet. It's the only tab I keep open during finals.",
   },
   {
@@ -95,7 +95,7 @@ const TESTIMONIALS: {
     avatar: 'LB',
     rating: 5,
     capability: 'library',
-    capabilityLabel: '50+ Calculators',
+    capabilityLabel: '190 Calculators',
     text: 'I write about personal finance and embed Home of Calculators widgets in my blog posts. Readers get instant calculations inside the article, and engagement is way up compared to static screenshots.',
   },
   {

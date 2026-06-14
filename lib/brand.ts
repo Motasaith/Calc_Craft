@@ -28,11 +28,11 @@ export const BRAND = {
 
   /** Default description for SEO */
   description:
-    'Home of Calculators is a complete calculator platform: 50+ free online calculators (math, finance, health, conversion, statistics), a no-code visual builder to design your own, embeddable widgets for any website, and full white-labeling. Free forever, private by design. All math runs in your browser.',
+    'Home of Calculators is a complete calculator platform: 190 free online calculators (math, finance, health, conversion, statistics), a no-code visual builder to design your own, embeddable widgets for any website, and full white-labeling. Free forever, private by design. All math runs in your browser.',
 
   /** Short description for cards / previews */
   shortDescription:
-    '50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly.',
+    '190 free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly.',
 
   /** Copyright line */
   copyright: (year: number) =>

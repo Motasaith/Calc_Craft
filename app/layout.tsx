@@ -15,11 +15,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
   title: {
-    default: `${BRAND.name} - 50+ Free Online Calculators for Math, Finance, Health & Everyday Use`,
+    default: `${BRAND.name} - 190 Free Online Calculators for Math, Finance, Health & Everyday Use`,
     template: `%s | ${BRAND.name}`,
   },
   description:
-    'Free online calculators for math, finance, health, conversion, and everyday needs. 50+ accurate, privacy-first calculators with no signup. Built-in visual builder to create and embed custom calculators on any website.',
+    'Free online calculators for math, finance, health, conversion, and everyday needs. 190 accurate, privacy-first calculators with no signup. Built-in visual builder to create and embed custom calculators on any website.',
   keywords: [
     'calculator', 'online calculator', 'free calculator', 'math calculator', 'finance calculator',
     'BMI calculator', 'loan calculator', 'EMI calculator', 'scientific calculator',
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     siteName: BRAND.name,
     title: `${BRAND.name} - Free Online Calculators for Math, Finance & Health`,
     description:
-      '50+ free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly.',
+      '190 free online calculators for math, finance, health, and everyday needs. No signup required. Fast, accurate, and mobile-friendly.',
     images: [
       {
         url: 'https://homeofcalculators.com/og-image.png',
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     creator: BRAND.handle,
     title: 'Home of Calculators - Free Online Calculators for Math, Finance & Health',
     description:
-      '50+ free online calculators. No signup required. Fast, accurate, and mobile-friendly.',
+      '190 free online calculators. No signup required. Fast, accurate, and mobile-friendly.',
     images: ['https://homeofcalculators.com/twitter-image.png'],
   },
   verification: {
@@ -141,7 +141,7 @@ const jsonLd = {
       url: 'https://homeofcalculators.com',
       name: 'Home of Calculators',
       description:
-        'Free online calculators for math, finance, health, and everyday needs. 50+ smart calculators with no signup required.',
+        'Free online calculators for math, finance, health, and everyday needs. 190 smart calculators with no signup required.',
       publisher: {
         '@id': 'https://homeofcalculators.com/#organization',
       },

@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Home of Calculators - Smart Calculators for Every Calculation',
     short_name: 'Home of Calculators',
     description:
-      'Fast, accurate and free online calculators for math, finance, health, and everyday needs. 50+ calculators, no signup required.',
+      'Fast, accurate and free online calculators for math, finance, health, and everyday needs. 190 calculators, no signup required.',
     start_url: '/',
     display: 'standalone',
     background_color: '#fafafa',
