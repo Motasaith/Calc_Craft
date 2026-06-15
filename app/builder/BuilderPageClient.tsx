@@ -415,8 +415,11 @@ export default function BuilderPageClient() {
   }
 
   const updateComponentField = (id: string, field: keyof CustomComponentConfig, value: any) => {
+    let oldName = ''
+    let newName = ''
     const updatedComps = calculator.components.map((c) => {
       if (c.id !== id) return c
+      oldName = c.name
       const next = { ...c, [field]: value }
       // Auto-rename variable when label changes, if name is still auto-derived
       if (field === 'label' && typeof value === 'string') {
@@ -432,9 +435,28 @@ export default function BuilderPageClient() {
           next.name = uniqueVarName(slugify(value), existing)
         }
       }
+      newName = next.name
       return next
     })
-    updateCalculator({ ...calculator, components: updatedComps })
+
+    // Auto-update formulas if the variable identifier changed
+    let updatedFormulas = calculator.formulas
+    if (oldName && newName && oldName !== newName) {
+      updatedFormulas = calculator.formulas.map((f) => {
+        try {
+          const regex = new RegExp(`\\b${oldName}\\b`, 'g')
+          return { ...f, formula: f.formula.replace(regex, newName) }
+        } catch (e) {
+          return f
+        }
+      })
+    }
+
+    updateCalculator({ 
+      ...calculator, 
+      components: updatedComps,
+      formulas: updatedFormulas
+    })
   }
 
   // ===================================================================
@@ -1803,8 +1825,8 @@ function TypographySettings({
   value?: LabelTypographyConfig
   onChange: (val: LabelTypographyConfig) => void
 }) {
-  const fontSize = value?.fontSize || 'default'
-  const fontWeight = value?.fontWeight || 'default'
+  const fontSize = value?.fontSize ?? ''
+  const fontWeight = value?.fontWeight ?? ''
   const fontStyle = value?.fontStyle || 'default'
 
   return (
@@ -1812,30 +1834,29 @@ function TypographySettings({
       <span className="block text-[10px] font-extrabold uppercase text-dark-800 font-mono tracking-wider">Label Typography</span>
       <div className="grid grid-cols-3 gap-2">
         <div>
-          <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Size</label>
-          <select
+          <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Size (px)</label>
+          <input
+            type="number"
+            placeholder="Default"
+            min={8}
+            max={72}
             value={fontSize}
-            onChange={(e) => onChange({ ...value, fontSize: e.target.value as any })}
-            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500"
-          >
-            <option value="default">Default</option>
-            <option value="sm">Small</option>
-            <option value="md">Medium</option>
-            <option value="lg">Large</option>
-          </select>
+            onChange={(e) => onChange({ ...value, fontSize: e.target.value ? parseInt(e.target.value) : undefined })}
+            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500 font-mono"
+          />
         </div>
         <div>
           <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Weight</label>
-          <select
+          <input
+            type="number"
+            placeholder="Default"
+            min={100}
+            max={900}
+            step={100}
             value={fontWeight}
-            onChange={(e) => onChange({ ...value, fontWeight: e.target.value as any })}
-            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500"
-          >
-            <option value="default">Default</option>
-            <option value="normal">Normal</option>
-            <option value="semibold">Semibold</option>
-            <option value="bold">Bold</option>
-          </select>
+            onChange={(e) => onChange({ ...value, fontWeight: e.target.value ? parseInt(e.target.value) : undefined })}
+            className="w-full h-8 px-2 bg-white border border-neutral-200 rounded-lg text-[10px] focus:outline-none focus:border-indigo-500 font-mono"
+          />
         </div>
         <div>
           <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Style</label>
@@ -2133,6 +2154,10 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
             className="w-full p-2.5 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500 resize-none"
           />
         </Field>
+        <TypographySettings
+          value={calculator.descriptionTypography}
+          onChange={(val) => updateCalculator({ ...calculator, descriptionTypography: val })}
+        />
 
         <Field label="Brand Label" hint="e.g. HOME OF CALCULATORS">
           <input
@@ -2142,6 +2167,10 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
             className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs font-bold text-dark-800 focus:outline-none"
           />
         </Field>
+        <TypographySettings
+          value={calculator.brandTypography}
+          onChange={(val) => updateCalculator({ ...calculator, brandTypography: val })}
+        />
 
         <Field label="Logo">
           <div className="flex gap-2">
@@ -2184,6 +2213,26 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
             </button>
           </div>
         </Field>
+
+        <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-100 mt-2">
+          <div>
+            <span className="block text-xs font-bold text-dark-800">Require Equal Button</span>
+            <span className="block text-[10px] text-neutral-500">Calculate results only when "Calculate" is clicked.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => updateCalculator({ ...calculator, requireSubmit: !calculator.requireSubmit })}
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              calculator.requireSubmit ? 'bg-indigo-600' : 'bg-neutral-200'
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                calculator.requireSubmit ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
 
         <TypographySettings
           value={calculator.labelTypography}

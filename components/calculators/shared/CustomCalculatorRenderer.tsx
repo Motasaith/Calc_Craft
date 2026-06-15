@@ -8,8 +8,8 @@ import { exportToCSV, exportToPDF } from '@/lib/export-utils'
 export type CustomThemeType = 'retro' | 'dark' | 'modern' | 'pastel' | 'cyberpunk' | 'custom'
 
 export interface LabelTypographyConfig {
-  fontSize?: 'default' | 'sm' | 'md' | 'lg'
-  fontWeight?: 'default' | 'normal' | 'semibold' | 'bold'
+  fontSize?: number | string
+  fontWeight?: number | string
   fontStyle?: 'default' | 'normal' | 'italic'
 }
 
@@ -32,6 +32,9 @@ export interface CustomCalculatorConfig {
   components: CustomComponentConfig[]
   formulas: CustomFormulaConfig[]
   labelTypography?: LabelTypographyConfig
+  brandTypography?: LabelTypographyConfig
+  descriptionTypography?: LabelTypographyConfig
+  requireSubmit?: boolean
 }
 
 export interface CustomComponentConfig {
@@ -48,6 +51,8 @@ export interface CustomComponentConfig {
   options?: { value: string; label: string }[]
   helpText?: string
   labelTypography?: LabelTypographyConfig
+  brandTypography?: LabelTypographyConfig
+  descriptionTypography?: LabelTypographyConfig
 }
 
 export interface CustomFormulaConfig {
@@ -58,23 +63,25 @@ export interface CustomFormulaConfig {
   prefix?: string
   suffix?: string
   labelTypography?: LabelTypographyConfig
+  brandTypography?: LabelTypographyConfig
+  descriptionTypography?: LabelTypographyConfig
 }
 
 function getLabelTypographyStyle(
   elementTypo?: LabelTypographyConfig,
   globalTypo?: LabelTypographyConfig
 ): React.CSSProperties {
-  const size = elementTypo?.fontSize && elementTypo.fontSize !== 'default'
+  const size = elementTypo?.fontSize !== undefined && elementTypo.fontSize !== ''
     ? elementTypo.fontSize
-    : globalTypo?.fontSize && globalTypo.fontSize !== 'default'
+    : globalTypo?.fontSize !== undefined && globalTypo.fontSize !== ''
     ? globalTypo.fontSize
-    : 'default';
+    : undefined;
 
-  const weight = elementTypo?.fontWeight && elementTypo.fontWeight !== 'default'
+  const weight = elementTypo?.fontWeight !== undefined && elementTypo.fontWeight !== ''
     ? elementTypo.fontWeight
-    : globalTypo?.fontWeight && globalTypo.fontWeight !== 'default'
+    : globalTypo?.fontWeight !== undefined && globalTypo.fontWeight !== ''
     ? globalTypo.fontWeight
-    : 'default';
+    : undefined;
 
   const style = elementTypo?.fontStyle && elementTypo.fontStyle !== 'default'
     ? elementTypo.fontStyle
@@ -84,13 +91,17 @@ function getLabelTypographyStyle(
 
   const styles: React.CSSProperties = {};
 
-  if (size === 'sm') styles.fontSize = '11px';
-  else if (size === 'md') styles.fontSize = '14px';
-  else if (size === 'lg') styles.fontSize = '16px';
+  if (size !== undefined && size !== '') {
+    if (typeof size === 'number' || !isNaN(Number(size))) {
+      styles.fontSize = `${size}px`;
+    } else {
+      styles.fontSize = String(size);
+    }
+  }
 
-  if (weight === 'normal') styles.fontWeight = '400';
-  else if (weight === 'semibold') styles.fontWeight = '600';
-  else if (weight === 'bold') styles.fontWeight = '800';
+  if (weight !== undefined && weight !== '') {
+    styles.fontWeight = String(weight);
+  }
 
   if (style === 'normal') styles.fontStyle = 'normal';
   else if (style === 'italic') styles.fontStyle = 'italic';
@@ -117,21 +128,40 @@ export default function CustomCalculatorRenderer({
 }: RendererProps) {
   // Initialize state from component defaults
   const [values, setValues] = useState<Record<string, string>>({})
+  const [submittedValues, setSubmittedValues] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    const initial: Record<string, string> = {}
-    config.components.forEach((c) => {
-      if (c.type === 'header' || c.type === 'text') return
-      
-      const defVal = c.defaultValue !== undefined ? String(c.defaultValue) : ''
-      initial[c.name] = defVal
+    setValues((prev) => {
+      const next: Record<string, string> = {}
+      config.components.forEach((c) => {
+        if (c.type === 'header' || c.type === 'text') return
+        const defVal = c.defaultValue !== undefined ? String(c.defaultValue) : ''
+        next[c.name] = prev[c.name] !== undefined ? prev[c.name] : defVal
+      })
+      return next
     })
-    setValues(initial)
+
+    setSubmittedValues((prev) => {
+      const next: Record<string, string> = {}
+      config.components.forEach((c) => {
+        if (c.type === 'header' || c.type === 'text') return
+        const defVal = c.defaultValue !== undefined ? String(c.defaultValue) : ''
+        next[c.name] = prev[c.name] !== undefined ? prev[c.name] : defVal
+      })
+      return next
+    })
   }, [config.components])
 
   const handleValueChange = (name: string, val: string) => {
     setValues((prev) => ({ ...prev, [name]: val }))
   }
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    setSubmittedValues(values)
+  }
+
+  const activeValues = config.requireSubmit ? submittedValues : values
 
   // Map input values into a numeric format for parsing formulas
   const variablesMap = useMemo(() => {
@@ -139,7 +169,7 @@ export default function CustomCalculatorRenderer({
     config.components.forEach((c) => {
       if (c.type === 'header' || c.type === 'text') return
       
-      const raw = values[c.name]
+      const raw = activeValues[c.name] ?? ''
       if (c.type === 'checkbox') {
         map[c.name] = raw === 'true' ? 1 : 0
       } else {
@@ -148,19 +178,22 @@ export default function CustomCalculatorRenderer({
       }
     })
     return map
-  }, [config.components, values])
+  }, [config.components, activeValues])
 
   // Compute results
   const results = useMemo(() => {
     return config.formulas.map((f) => {
       const numericVal = evaluateFormula(f.formula, variablesMap)
       
-      // Format decimal places
-      let formattedVal = numericVal.toFixed(f.decimalPlaces)
+      // Format decimal places safely
+      const dp = typeof f.decimalPlaces === 'number' && !isNaN(f.decimalPlaces)
+        ? Math.max(0, Math.min(20, f.decimalPlaces))
+        : 2
+      let formattedVal = numericVal.toFixed(dp)
       // Remove trailing zeroes if requested, or keep strictly formatted
       if (formattedVal.includes('.')) {
         // Strip unnecessary trailing decimals for integers
-        if (parseFloat(formattedVal) === Math.round(parseFloat(formattedVal)) && f.decimalPlaces === 0) {
+        if (parseFloat(formattedVal) === Math.round(parseFloat(formattedVal)) && dp === 0) {
           formattedVal = String(Math.round(numericVal))
         }
       }
@@ -185,6 +218,7 @@ export default function CustomCalculatorRenderer({
       initial[c.name] = defVal
     })
     setValues(initial)
+    setSubmittedValues(initial)
   }
 
   // Export handlers
@@ -387,37 +421,55 @@ export default function CustomCalculatorRenderer({
         className={s.header}
         style={activeTheme === 'custom' ? { borderBottomColor: 'rgba(0,0,0,0.08)' } : {}}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* Brand/Logo Row */}
+        {(config.logo || config.brandName) && (
+          <div className="flex items-center gap-2.5 mb-2.5">
             {config.logo && (
               <img 
                 src={config.logo} 
                 alt="Brand Logo" 
-                className="max-h-8 max-w-[120px] object-contain rounded-md" 
+                className="max-h-6 max-w-[100px] object-contain rounded" 
               />
             )}
-            <div>
-              <h2 className={s.headerText}>{config.name}</h2>
-              {config.description && <p className={s.description}>{config.description}</p>}
-            </div>
+            {config.brandName && (
+              <span 
+                className="text-[10px] uppercase font-mono font-bold tracking-wider opacity-65 select-none"
+                style={{
+                  ...getLabelTypographyStyle(config.brandTypography, config.labelTypography),
+                  color: activeTheme === 'custom' ? 'var(--custom-text)' : undefined
+                }}
+              >
+                {config.brandName}
+              </span>
+            )}
           </div>
-          {config.brandName && (
-            <span className="text-[9px] uppercase px-2 py-0.5 rounded font-mono font-bold bg-neutral-800 text-white select-none">
-              {config.brandName}
-            </span>
+        )}
+
+        {/* Title & Description */}
+        <div>
+          <h2 className={s.headerText} style={getLabelTypographyStyle(undefined, config.labelTypography)}>{config.name}</h2>
+          {config.description && (
+            <p 
+              className={s.description} 
+              style={getLabelTypographyStyle(config.descriptionTypography, config.labelTypography)}
+            >
+              {config.description}
+            </p>
           )}
         </div>
       </div>
 
       {/* Calculator Body */}
-      <div className={s.body}>
+      <form onSubmit={handleSubmit} className={s.body}>
         <div className={layoutClass}>
         {config.components.map((c) => {
           const isSelected = selectedId === c.id;
           const handleElementClick = onSelectComponent 
             ? (e: React.MouseEvent) => {
                 e.stopPropagation();
-                onSelectComponent(c.id);
+                setTimeout(() => {
+                  onSelectComponent(c.id);
+                }, 0);
               }
             : undefined;
 
@@ -476,6 +528,10 @@ export default function CustomCalculatorRenderer({
                         borderColor: 'rgba(0,0,0,0.15)',
                         color: 'var(--custom-text)',
                       } : {}}
+                      onClick={onSelectComponent ? (e) => {
+                        e.stopPropagation();
+                        setTimeout(() => onSelectComponent(c.id), 0);
+                      } : undefined}
                     />
                     {c.unit && (
                       <span 
@@ -509,6 +565,10 @@ export default function CustomCalculatorRenderer({
                         onChange={(e) => handleValueChange(c.name, e.target.value)}
                         className="absolute inset-x-0 w-full accent-current bg-transparent opacity-100 appearance-none h-1 cursor-pointer"
                         style={activeTheme === 'custom' ? { color: 'var(--custom-primary)' } : {}}
+                        onClick={onSelectComponent ? (e) => {
+                          e.stopPropagation();
+                          setTimeout(() => onSelectComponent(c.id), 0);
+                        } : undefined}
                       />
                     </div>
                   </div>
@@ -530,6 +590,10 @@ export default function CustomCalculatorRenderer({
                           color: 'var(--custom-text)',
                         } : {})
                       }}
+                      onClick={onSelectComponent ? (e) => {
+                        e.stopPropagation();
+                        setTimeout(() => onSelectComponent(c.id), 0);
+                      } : undefined}
                     >
                       <option value="" disabled className="text-gray-400">Select option...</option>
                       {c.options?.map((o) => (
@@ -550,6 +614,10 @@ export default function CustomCalculatorRenderer({
                         borderColor: 'rgba(0,0,0,0.2)',
                         backgroundColor: 'rgba(255,255,255,0.7)',
                       } : {}}
+                      onClick={onSelectComponent ? (e) => {
+                        e.stopPropagation();
+                        setTimeout(() => onSelectComponent(c.id), 0);
+                      } : undefined}
                     />
                     <span className="text-xs font-semibold opacity-90">{c.placeholder || 'Enable Option'}</span>
                   </label>
@@ -581,6 +649,22 @@ export default function CustomCalculatorRenderer({
         })}
         </div>
 
+        {config.requireSubmit && (
+          <div className="pt-2 pb-4 flex justify-end">
+            <button
+              type="submit"
+              className={s.btnPrimary}
+              style={activeTheme === 'custom' ? {
+                backgroundColor: 'var(--custom-primary)',
+                borderColor: 'var(--custom-secondary)',
+                color: '#ffffff'
+              } : {}}
+            >
+              Calculate
+            </button>
+          </div>
+        )}
+
         {/* Dynamic Outputs (Results Displays) */}
         <div className="grid gap-3 pt-4 border-t border-neutral-300/30" style={activeTheme === 'custom' ? { borderTopColor: 'rgba(0,0,0,0.08)' } : {}}>
           {results.map((r) => {
@@ -588,7 +672,9 @@ export default function CustomCalculatorRenderer({
             const handleFormulaClick = onSelectFormula 
               ? (e: React.MouseEvent) => {
                   e.stopPropagation();
-                  onSelectFormula(r.id);
+                  setTimeout(() => {
+                    onSelectFormula(r.id);
+                  }, 0);
                 }
               : undefined;
 
@@ -641,6 +727,7 @@ export default function CustomCalculatorRenderer({
         {/* Action Controls & Data Exports */}
         <div className="flex flex-wrap gap-2 pt-4 justify-between items-center">
           <button
+            type="button"
             onClick={handleReset}
             className={s.btnSecondary}
             style={activeTheme === 'custom' ? {
@@ -658,6 +745,7 @@ export default function CustomCalculatorRenderer({
           {!isPreview && (
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={handleExportCSV}
                 className={s.btnSecondary}
                 style={activeTheme === 'custom' ? {
@@ -673,6 +761,7 @@ export default function CustomCalculatorRenderer({
                 </span>
               </button>
               <button
+                type="button"
                 onClick={handleExportPDF}
                 className={s.btnPrimary}
                 style={activeTheme === 'custom' ? {
@@ -690,7 +779,7 @@ export default function CustomCalculatorRenderer({
             </div>
           )}
         </div>
-      </div>
+      </form>
     </div>
   )
 }
