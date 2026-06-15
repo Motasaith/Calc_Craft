@@ -10,7 +10,7 @@ import {
   Undo2, Redo2, Download, Upload, Wand2, BookOpen, Lightbulb,
   Calculator, Layers, Grid2x2, ArrowDownToLine, ArrowUpToLine,
   RotateCcw, ChevronRight, AlertCircle, FileJson, GraduationCap,
-  Hash, Zap, ChevronDown, Menu,
+  Hash, Zap, ChevronDown, Menu, CircleDot,
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -332,10 +332,10 @@ export default function BuilderPageClient() {
       name: suggested,
       type,
       label: defaultLabel,
-      defaultValue: type === 'checkbox' ? 'false' : type === 'select' ? '' : '0',
+      defaultValue: type === 'checkbox' ? 'false' : (type === 'select' || type === 'radio') ? '1' : '0',
     }
 
-    if (type === 'select') {
+    if (type === 'select' || type === 'radio') {
       newComponent.options = [
         { value: '1', label: 'Option A' },
         { value: '2', label: 'Option B' }
@@ -994,7 +994,7 @@ export default function BuilderPageClient() {
                                           <div className="w-full h-1.5 bg-neutral-200 rounded-full" />
                                         </div>
                                       )}
-                                      {c.type === 'select' && (
+                                      {(c.type === 'select' || c.type === 'radio') && (
                                         <div className="border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
                                           <span className="truncate">Default: {c.defaultValue || 'None'}</span>
                                           <span className="text-[9px] opacity-70 shrink-0 ml-2">({c.options?.length || 0} options)</span>
@@ -1209,7 +1209,7 @@ export default function BuilderPageClient() {
                                         <div className="w-full h-1.5 bg-neutral-200 rounded-full" />
                                       </div>
                                     )}
-                                    {c.type === 'select' && (
+                                    {(c.type === 'select' || c.type === 'radio') && (
                                       <div className="border border-neutral-200 bg-neutral-50 h-8 px-2.5 rounded-lg flex items-center justify-between text-xs text-neutral-400 font-mono">
                                         <span className="truncate">Default: {c.defaultValue || 'None'}</span>
                                         <span className="text-[9px] opacity-70 shrink-0 ml-2">({c.options?.length || 0} options)</span>
@@ -1684,6 +1684,7 @@ function ToolboxPanel({ onAdd, onShowTemplates, onShowHelp }: { onAdd: (t: Custo
           <ToolboxButton onClick={() => onAdd('number')} icon={Type} label="Number Input" desc="Numeric field" />
           <ToolboxButton onClick={() => onAdd('slider')} icon={Sliders} label="Range Slider" desc="Visual range track" />
           <ToolboxButton onClick={() => onAdd('select')} icon={List} label="Select Dropdown" desc="Pick from list" />
+          <ToolboxButton onClick={() => onAdd('radio')} icon={CircleDot} label="Radio Group" desc="Single option select" />
           <ToolboxButton onClick={() => onAdd('checkbox')} icon={CheckSquare} label="Checkbox" desc="On / off switch" />
         </div>
       </div>
@@ -2006,7 +2007,7 @@ function ElementInspector({
           </div>
         )}
 
-        {selectedComponent.type === 'select' && (
+        {(selectedComponent.type === 'select' || selectedComponent.type === 'radio') && (
           <div>
             <label className="block text-[10px] font-extrabold uppercase text-dark-600 font-mono tracking-wider mb-2">Options</label>
             <div className="space-y-1.5">

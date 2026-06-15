@@ -44,7 +44,7 @@ export interface CustomCalculatorConfig {
 export interface CustomComponentConfig {
   id: string
   name: string // variable name used in formulas (e.g., 'w', 'h')
-  type: 'number' | 'slider' | 'select' | 'checkbox' | 'header' | 'text'
+  type: 'number' | 'slider' | 'select' | 'checkbox' | 'radio' | 'header' | 'text'
   label: string
   placeholder?: string
   defaultValue?: string | number | boolean
@@ -236,7 +236,7 @@ export default function CustomCalculatorRenderer({
         let displayVal = raw
         if (c.type === 'checkbox') {
           displayVal = raw === 'true' ? 'Yes' : 'No'
-        } else if (c.type === 'select') {
+        } else if (c.type === 'select' || c.type === 'radio') {
           const opt = c.options?.find((o) => o.value === raw)
           if (opt) displayVal = opt.label
         }
@@ -288,6 +288,7 @@ export default function CustomCalculatorRenderer({
       input: 'bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-bold text-neutral-800 px-3 h-10 w-full focus:outline-none focus:border-neutral-500 shadow-inner',
       sliderTrack: 'relative w-full h-4 bg-neutral-300 rounded border border-neutral-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.15)] flex items-center px-1',
       checkbox: 'w-5 h-5 rounded border-2 border-neutral-300 accent-neutral-800 bg-[#fcfbfa]',
+      radio: 'w-4 h-4 rounded-full border-2 border-neutral-300 accent-neutral-800 bg-[#fcfbfa] cursor-pointer',
       select: 'bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-bold text-neutral-800 px-3 h-10 w-full focus:outline-none focus:border-neutral-500 appearance-none cursor-pointer',
       lcdDisplay: 'bg-[#cbd8ca] border-2 border-[#b0bdae] rounded-lg p-4 shadow-inner text-[#1a2019]',
       lcdTitle: 'text-[9px] font-bold text-[#4c5c4a] uppercase tracking-wider',
@@ -307,6 +308,7 @@ export default function CustomCalculatorRenderer({
       input: 'bg-[#1b1c26] border border-purple-900/40 rounded-xl text-sm text-white px-4 h-11 w-full focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 shadow-lg placeholder:text-gray-600',
       sliderTrack: 'relative w-full h-3 bg-purple-950/60 rounded-full border border-purple-900/30 flex items-center px-1',
       checkbox: 'w-5 h-5 rounded border border-purple-900 accent-purple-600 bg-[#1b1c26]',
+      radio: 'w-4 h-4 rounded-full border border-purple-900 accent-purple-600 bg-[#1b1c26] cursor-pointer',
       select: 'bg-[#1b1c26] border border-purple-900/40 rounded-xl text-sm text-white px-4 h-11 w-full focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 appearance-none cursor-pointer',
       lcdDisplay: 'bg-[#0f1016] border border-purple-900/50 rounded-xl p-4 shadow-[inset_0_4px_16px_rgba(0,0,0,0.6)] text-purple-400 shadow-purple-900/5',
       lcdTitle: 'text-[10px] font-semibold text-purple-400/60 uppercase tracking-wider font-mono',
@@ -326,6 +328,7 @@ export default function CustomCalculatorRenderer({
       input: 'bg-white border border-gray-300 rounded-xl text-sm text-gray-900 px-4 h-11 w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors placeholder:text-gray-400',
       sliderTrack: 'relative w-full h-2 bg-gray-200 rounded-full flex items-center',
       checkbox: 'w-5 h-5 rounded border-gray-300 accent-indigo-600 bg-white cursor-pointer',
+      radio: 'w-4 h-4 rounded-full border-gray-300 accent-indigo-600 bg-white cursor-pointer',
       select: 'bg-white border border-gray-300 rounded-xl text-sm text-gray-900 px-4 h-11 w-full focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none cursor-pointer transition-colors',
       lcdDisplay: 'bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 text-indigo-900',
       lcdTitle: 'text-[10px] font-bold text-indigo-600/80 uppercase tracking-wider',
@@ -345,6 +348,7 @@ export default function CustomCalculatorRenderer({
       input: 'bg-[#ffffff] border-3 border-[#e9e4d5] rounded-2xl text-sm text-[#4a4336] px-4 h-11 w-full focus:outline-none focus:border-[#c5bda6] shadow-sm transition-all',
       sliderTrack: 'relative w-full h-3 bg-[#e9e4d5] rounded-full flex items-center',
       checkbox: 'w-6 h-6 rounded-lg border-3 border-[#e9e4d5] accent-[#8fa499] bg-[#ffffff] cursor-pointer',
+      radio: 'w-5 h-5 rounded-full border-3 border-[#e9e4d5] accent-[#8fa499] bg-[#ffffff] cursor-pointer',
       select: 'bg-[#ffffff] border-3 border-[#e9e4d5] rounded-2xl text-sm text-[#4a4336] px-4 h-11 w-full focus:outline-none focus:border-[#c5bda6] appearance-none cursor-pointer transition-all',
       lcdDisplay: 'bg-[#e2ebe6] border-3 border-[#c9dad0] rounded-2xl p-4 text-[#355342] shadow-sm',
       lcdTitle: 'text-[10px] font-bold text-[#5c7a68] uppercase tracking-widest',
@@ -364,6 +368,7 @@ export default function CustomCalculatorRenderer({
       input: 'bg-black border border-yellow-400 text-sm font-bold text-yellow-300 px-3 h-10 w-full focus:outline-none focus:shadow-[0_0_10px_rgba(250,204,21,0.4)] placeholder:text-yellow-900',
       sliderTrack: 'relative w-full h-3 bg-black border border-yellow-500/60 rounded flex items-center px-1',
       checkbox: 'w-5 h-5 rounded border border-yellow-400 accent-yellow-400 bg-black',
+      radio: 'w-4 h-4 rounded-full border border-yellow-400 accent-yellow-400 bg-black cursor-pointer',
       select: 'bg-black border border-yellow-400 text-sm font-bold text-yellow-300 px-3 h-10 w-full focus:outline-none focus:shadow-[0_0_10px_rgba(250,204,21,0.4)] appearance-none cursor-pointer',
       lcdDisplay: 'bg-black border border-yellow-400 rounded p-4 shadow-[0_0_8px_rgba(250,204,21,0.1)] text-yellow-400',
       lcdTitle: 'text-[9px] font-black uppercase tracking-widest text-yellow-500/80',
@@ -383,6 +388,7 @@ export default function CustomCalculatorRenderer({
       input: 'border rounded-xl text-sm px-4 h-11 w-full focus:outline-none focus:ring-1 transition-all',
       sliderTrack: 'relative w-full h-2 rounded-full flex items-center',
       checkbox: 'w-5 h-5 rounded border cursor-pointer',
+      radio: 'w-4 h-4 rounded-full border cursor-pointer',
       select: 'border rounded-xl text-sm px-4 h-11 w-full focus:outline-none focus:ring-1 appearance-none cursor-pointer transition-all',
       lcdDisplay: 'border rounded-xl p-4',
       lcdTitle: 'text-[10px] font-bold uppercase tracking-wider opacity-70',
@@ -637,6 +643,37 @@ export default function CustomCalculatorRenderer({
                     />
                     <span className="text-xs font-semibold opacity-90">{c.placeholder || 'Enable Option'}</span>
                   </label>
+                )}
+
+                {c.type === 'radio' && (
+                  <div className="space-y-2 py-1">
+                    <div className="flex flex-col gap-2">
+                      {c.options?.map((o) => {
+                        const isChecked = currentVal === o.value;
+                        return (
+                          <label 
+                            key={o.value} 
+                            className={`flex items-center gap-2.5 select-none ${c.readOnly ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
+                          >
+                            <input
+                              type="radio"
+                              name={c.id}
+                              value={o.value}
+                              checked={isChecked}
+                              onChange={(e) => handleValueChange(c.name, e.target.value)}
+                              className={s.radio}
+                              disabled={c.readOnly}
+                              onClick={onSelectComponent ? (e) => {
+                                e.stopPropagation();
+                                setTimeout(() => onSelectComponent(c.id), 0);
+                              } : undefined}
+                            />
+                            <span className="text-xs font-semibold opacity-90">{o.label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
             );
