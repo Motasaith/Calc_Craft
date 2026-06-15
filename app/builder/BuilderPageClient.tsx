@@ -199,6 +199,13 @@ export default function BuilderPageClient() {
   const [canvasMode, setCanvasMode] = useState<'visual' | 'blueprint' | 'split'>('split')
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null)
 
+  // ---- Resizable panels ----
+  const [leftPanelWidth, setLeftPanelWidth] = useState(288)
+  const [rightPanelWidth, setRightPanelWidth] = useState(360)
+  const resizingPanel = useRef<'left' | 'right' | null>(null)
+  const resizeStartX = useRef(0)
+  const resizeStartWidth = useRef(0)
+
   // ---- Modals ----
   const [previewOpen, setPreviewOpen] = useState(false)
   const [shareModalOpen, setShareModalOpen] = useState(false)
@@ -324,7 +331,11 @@ export default function BuilderPageClient() {
 
   const addComponent = (type: CustomComponentConfig['type'], index?: number) => {
     const existing = calculator.components.map((c) => c.name)
-    const defaultLabel = `New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`
+    const defaultLabel = type === 'row' 
+      ? 'Row Layout' 
+      : type === 'column' 
+      ? 'Column Layout' 
+      : `New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`
     const suggested = uniqueVarName(slugify(type === 'number' ? 'value' : type), existing)
 
     const newComponent: CustomComponentConfig = {
@@ -332,7 +343,7 @@ export default function BuilderPageClient() {
       name: suggested,
       type,
       label: defaultLabel,
-      defaultValue: type === 'checkbox' ? 'false' : (type === 'select' || type === 'radio') ? '1' : '0',
+      defaultValue: type === 'checkbox' ? 'false' : (type === 'select' || type === 'radio') ? '1' : (type === 'row' || type === 'column' || type === 'header' || type === 'text') ? undefined : '0',
     }
 
     if (type === 'select' || type === 'radio') {
@@ -366,7 +377,9 @@ export default function BuilderPageClient() {
   }
 
   const deleteComponent = (id: string) => {
-    const updatedComps = calculator.components.filter((c) => c.id !== id)
+    const updatedComps = calculator.components
+      .filter((c) => c.id !== id)
+      .map((c) => (c.parentId === id ? { ...c, parentId: undefined } : c))
     updateCalculator({ ...calculator, components: updatedComps })
     if (selectedComponentId === id) setSelectedComponentId(null)
   }
@@ -455,7 +468,8 @@ export default function BuilderPageClient() {
       return next
     })
 
-    // Auto-update formulas if the variable identifier changed
+    // Auto-update formulas and other components' calculation formulas if the variable identifier changed
+    let finalComps = updatedComps
     let updatedFormulas = calculator.formulas
     if (oldName && newName && oldName !== newName) {
       updatedFormulas = calculator.formulas.map((f) => {
@@ -466,11 +480,22 @@ export default function BuilderPageClient() {
           return f
         }
       })
+      finalComps = updatedComps.map((c) => {
+        if (c.calculationFormula) {
+          try {
+            const regex = new RegExp(`\\b${oldName}\\b`, 'g')
+            return { ...c, calculationFormula: c.calculationFormula.replace(regex, newName) }
+          } catch (e) {
+            return c
+          }
+        }
+        return c
+      })
     }
 
     updateCalculator({ 
       ...calculator, 
-      components: updatedComps,
+      components: finalComps,
       formulas: updatedFormulas
     })
   }
@@ -617,13 +642,53 @@ export default function BuilderPageClient() {
   }, [previewOpen, shareModalOpen, templatesOpen, helpOpen, shortcutsOpen, calculator, undo, redo])
 
   // ===================================================================
+  // PANEL RESIZE HANDLERS
+  // ===================================================================
+  const startResize = useCallback((panel: 'left' | 'right', e: React.MouseEvent) => {
+    e.preventDefault()
+    resizingPanel.current = panel
+    resizeStartX.current = e.clientX
+    resizeStartWidth.current = panel === 'left' ? leftPanelWidth : rightPanelWidth
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+  }, [leftPanelWidth, rightPanelWidth])
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!resizingPanel.current) return
+      const dx = e.clientX - resizeStartX.current
+      if (resizingPanel.current === 'left') {
+        const newW = Math.max(200, Math.min(480, resizeStartWidth.current + dx))
+        setLeftPanelWidth(newW)
+      } else {
+        // Right panel: dragging left increases width
+        const newW = Math.max(280, Math.min(560, resizeStartWidth.current - dx))
+        setRightPanelWidth(newW)
+      }
+    }
+    const handleMouseUp = () => {
+      if (resizingPanel.current) {
+        resizingPanel.current = null
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
+      }
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
+  // ===================================================================
   // SELECTED
   // ===================================================================
   const selectedComponent = calculator.components.find((c) => c.id === selectedComponentId)
   const selectedFormula = calculator.formulas.find((f) => f.id === selectedFormulaId)
 
   const availableVariables = calculator.components
-    .filter((c) => c.type !== 'header' && c.type !== 'text')
+    .filter((c) => c.type !== 'header' && c.type !== 'text' && c.type !== 'row' && c.type !== 'column')
     .map((c) => ({ name: c.name, label: c.label }))
 
   const insertIntoFormula = (text: string) => {
@@ -648,9 +713,9 @@ export default function BuilderPageClient() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-16 sm:pt-20 bg-gradient-to-b from-neutral-50 to-white flex flex-col">
+      <main className="min-h-screen pt-28 bg-gradient-to-b from-neutral-50 to-white flex flex-col">
         {/* ─────────────────── TOOLBAR ─────────────────── */}
-        <div className="bg-white/90 backdrop-blur-xl border-b border-neutral-200/80 px-3 sm:px-5 py-2.5 sm:py-3 flex flex-wrap gap-2 sm:gap-3 items-center justify-between shadow-sm sticky top-16 sm:top-20 z-30">
+        <div className="bg-white/90 backdrop-blur-xl border-b border-neutral-200/80 px-3 sm:px-5 py-2.5 sm:py-3 flex flex-wrap gap-2 sm:gap-3 items-center justify-between shadow-sm sticky top-28 z-30">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <Link
               href="/calculators"
@@ -791,9 +856,9 @@ export default function BuilderPageClient() {
         </div>
 
         {/* ─────────────────── WORKSPACE ─────────────────── */}
-        <div className="flex-1 flex overflow-hidden h-[calc(100vh-10rem)] relative">
+        <div className="flex-1 flex overflow-hidden h-[calc(100vh-11rem)] relative">
             {/* Left Column (Toolbox & Document Outline) - Desktop */}
-            <div className="hidden lg:flex w-72 bg-white border-r border-neutral-200 flex-col h-full overflow-y-auto p-4 shrink-0 gap-6">
+            <div className="hidden lg:flex bg-white border-r border-neutral-200 flex-col h-full overflow-y-auto p-4 shrink-0 gap-6" style={{ width: leftPanelWidth, minWidth: 200, maxWidth: 480 }}>
               <ToolboxPanel
                 onAdd={addComponent}
                 onShowTemplates={() => setTemplatesOpen(true)}
@@ -853,6 +918,15 @@ export default function BuilderPageClient() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Left Resize Divider */}
+            <div
+              className="hidden lg:flex items-center justify-center w-2 hover:w-3 bg-transparent hover:bg-indigo-100/60 cursor-col-resize transition-all shrink-0 group/divider relative z-20"
+              onMouseDown={(e) => startResize('left', e)}
+              title="Drag to resize toolbox"
+            >
+              <div className="w-0.5 h-8 bg-neutral-300 group-hover/divider:bg-indigo-400 rounded-full transition-colors" />
             </div>
 
             {/* ─── CENTER CANVAS ─── */}
@@ -979,11 +1053,16 @@ export default function BuilderPageClient() {
                                       }`}
                                     >
                                       <div className="flex justify-between items-start mb-2">
-                                        <div className="flex-1 min-w-0">
-                                          <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded mr-1.5 font-bold">
+                                        <div className="flex-1 min-w-0 flex items-center flex-wrap gap-1.5">
+                                          <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded font-bold">
                                             {c.type}
                                           </span>
                                           <span className="text-xs font-bold text-dark-800">{c.label}</span>
+                                          {c.parentId && (
+                                            <span className="text-[8px] font-mono bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-bold select-none" title="Parent Container">
+                                              In: {calculator.components.find((p: any) => p.id === c.parentId)?.label || 'Container'}
+                                            </span>
+                                          )}
                                         </div>
                                         <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                           <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'up') }} disabled={idx === 0} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move up">
@@ -1039,8 +1118,13 @@ export default function BuilderPageClient() {
                                           {c.label || 'Explanatory text block...'}
                                         </p>
                                       )}
+                                      {(c.type === 'row' || c.type === 'column') && (
+                                        <div className="text-[10px] text-neutral-400 font-mono italic">
+                                          Container holds: {calculator.components.filter((child: any) => child.parentId === c.id).length} child item(s)
+                                        </div>
+                                      )}
 
-                                      {c.type !== 'header' && c.type !== 'text' && (
+                                      {c.type !== 'header' && c.type !== 'text' && c.type !== 'row' && c.type !== 'column' && (
                                         <div className="text-[8px] font-mono text-dark-400 mt-1.5 text-right select-none">
                                           var: <span className="font-black text-indigo-500 bg-indigo-50 px-1 rounded">{c.name}</span>
                                         </div>
@@ -1207,11 +1291,16 @@ export default function BuilderPageClient() {
                                     }`}
                                   >
                                     <div className="flex justify-between items-start mb-2">
-                                      <div className="flex-1 min-w-0">
-                                        <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded mr-1.5 font-bold">
+                                      <div className="flex-1 min-w-0 flex items-center flex-wrap gap-1.5">
+                                        <span className="text-[8px] font-mono uppercase bg-neutral-100 text-dark-600 px-1.5 py-0.5 rounded font-bold">
                                           {c.type}
                                         </span>
                                         <span className="text-xs font-bold text-dark-800">{c.label}</span>
+                                        {c.parentId && (
+                                          <span className="text-[8px] font-mono bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-bold select-none" title="Parent Container">
+                                            In: {calculator.components.find((p: any) => p.id === c.parentId)?.label || 'Container'}
+                                          </span>
+                                        )}
                                       </div>
                                       <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button onClick={(e) => { e.stopPropagation(); moveComponent(idx, 'up') }} disabled={idx === 0} className="p-1 hover:bg-neutral-100 text-dark-500 rounded disabled:opacity-30" title="Move up">
@@ -1268,7 +1357,13 @@ export default function BuilderPageClient() {
                                       </p>
                                     )}
 
-                                    {c.type !== 'header' && c.type !== 'text' && (
+                                    {(c.type === 'row' || c.type === 'column') && (
+                                      <div className="text-[10px] text-neutral-400 font-mono italic">
+                                        Container holds: {calculator.components.filter((child: any) => child.parentId === c.id).length} child item(s)
+                                      </div>
+                                    )}
+
+                                    {c.type !== 'header' && c.type !== 'text' && c.type !== 'row' && c.type !== 'column' && (
                                       <div className="text-[8px] font-mono text-dark-400 mt-1.5 text-right select-none">
                                         var: <span className="font-black text-indigo-500 bg-indigo-50 px-1 rounded">{c.name}</span>
                                       </div>
@@ -1372,8 +1467,17 @@ export default function BuilderPageClient() {
             </div>
           </div>
 
+          {/* Right Resize Divider */}
+          <div
+            className="hidden lg:flex items-center justify-center w-2 hover:w-3 bg-transparent hover:bg-indigo-100/60 cursor-col-resize transition-all shrink-0 group/divider relative z-20"
+            onMouseDown={(e) => startResize('right', e)}
+            title="Drag to resize inspector"
+          >
+            <div className="w-0.5 h-8 bg-neutral-300 group-hover/divider:bg-indigo-400 rounded-full transition-colors" />
+          </div>
+
           {/* ─── RIGHT SIDEBAR: Inspector ─── */}
-          <div className="hidden lg:flex bg-white border-t lg:border-t-0 lg:border-l border-neutral-200 flex-col h-auto lg:h-full lg:overflow-hidden">
+          <div className="hidden lg:flex bg-white border-t lg:border-t-0 lg:border-l border-neutral-200 flex-col h-auto lg:h-full lg:overflow-hidden" style={{ width: rightPanelWidth, minWidth: 280, maxWidth: 560 }}>
             <InspectorPanel
               activeTab={activeTab}
               setActiveTab={setActiveTab}
@@ -1727,6 +1831,17 @@ function ToolboxPanel({ onAdd, onShowTemplates, onShowHelp }: { onAdd: (t: Custo
 
       <div>
         <h3 className="text-xs font-bold text-dark-800 uppercase tracking-widest font-mono mb-3 flex items-center gap-1.5">
+          <Grid2x2 className="w-3.5 h-3.5 text-indigo-500" />
+          Layout Containers
+        </h3>
+        <div className="grid grid-cols-1 gap-2">
+          <ToolboxButton onClick={() => onAdd('row')} icon={Grid2x2} label="Row Container" desc="Horizontal inputs row" type="row" />
+          <ToolboxButton onClick={() => onAdd('column')} icon={Layout} label="Column Container" desc="Vertical nested column" type="column" />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-xs font-bold text-dark-800 uppercase tracking-widest font-mono mb-3 flex items-center gap-1.5">
           <Layout className="w-3.5 h-3.5 text-indigo-500" />
           Layout Blocks
         </h3>
@@ -1940,13 +2055,19 @@ function ElementInspector({
   const defaultVarsMap = useMemo(() => {
     const map: Record<string, number> = {}
     calculator?.components.forEach((c: any) => {
-      if (c.type === 'header' || c.type === 'text') return
-      const raw = String(c.defaultValue ?? '0')
-      if (c.type === 'checkbox') {
-        map[c.name] = raw === 'true' ? 1 : 0
+      if (c.type === 'header' || c.type === 'text' || c.type === 'row' || c.type === 'column') return
+      
+      if (c.calculationFormula) {
+        const calculatedVal = evaluateFormula(c.calculationFormula, map)
+        map[c.name] = isNaN(calculatedVal) ? 0 : calculatedVal
       } else {
-        const val = parseFloat(raw)
-        map[c.name] = isNaN(val) ? 0 : val
+        const raw = String(c.defaultValue ?? '0')
+        if (c.type === 'checkbox') {
+          map[c.name] = raw === 'true' ? 1 : 0
+        } else {
+          const val = parseFloat(raw)
+          map[c.name] = isNaN(val) ? 0 : val
+        }
       }
     })
     return map
@@ -1962,6 +2083,32 @@ function ElementInspector({
     const val = evaluateFormula(selectedFormula.formula, defaultVarsMap)
     return isNaN(val) || !isFinite(val) ? 0 : val
   }, [selectedFormula?.formula, defaultVarsMap, validation.isValid])
+
+  const componentFormulaValidation = useMemo(() => {
+    if (!selectedComponent || !selectedComponent.calculationFormula) return { isValid: true }
+    const selfRegex = new RegExp('\\b' + selectedComponent.name + '\\b')
+    if (selfRegex.test(selectedComponent.calculationFormula)) {
+      return { isValid: false, error: "Circular reference: Formula cannot reference its own variable name." }
+    }
+    return checkFormula(
+      selectedComponent.calculationFormula,
+      availableVariables.map((v: any) => v.name).filter((name: string) => name !== selectedComponent.name)
+    )
+  }, [selectedComponent?.calculationFormula, selectedComponent?.name, availableVariables])
+
+  const componentFormulaPreview = useMemo(() => {
+    if (!selectedComponent || !selectedComponent.calculationFormula || !componentFormulaValidation.isValid) return null
+    const tempMap = { ...defaultVarsMap }
+    delete tempMap[selectedComponent.name]
+    const val = evaluateFormula(selectedComponent.calculationFormula, tempMap)
+    return isNaN(val) || !isFinite(val) ? 0 : val
+  }, [selectedComponent?.calculationFormula, selectedComponent?.name, defaultVarsMap, componentFormulaValidation.isValid])
+
+  const insertIntoComponentFormula = (text: string) => {
+    if (!selectedComponent) return
+    const currentFormula = selectedComponent.calculationFormula || ''
+    updateComponentField(selectedComponent.id, 'calculationFormula', currentFormula + text)
+  }
 
   if (selectedComponent) {
     return (
@@ -1984,7 +2131,33 @@ function ElementInspector({
           />
         </Field>
 
-        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
+        {selectedComponent.type !== 'row' && selectedComponent.type !== 'column' && (
+          <Field label="Parent Container" hint="Place this element inside a row or column layout container.">
+            <select
+              value={selectedComponent.parentId || ''}
+              onChange={(e) => updateComponentField(selectedComponent.id, 'parentId', e.target.value || undefined)}
+              className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500"
+            >
+              <option value="">None (Top Level)</option>
+              {calculator?.components
+                .filter((c: any) => c.type === 'row' || c.type === 'column')
+                .map((c: any) => (
+                  <option key={c.id} value={c.id}>
+                    {c.label} ({c.type})
+                  </option>
+                ))}
+            </select>
+          </Field>
+        )}
+
+        {(selectedComponent.type === 'row' || selectedComponent.type === 'column') && (
+          <div className="p-3 bg-indigo-50 border border-indigo-150 rounded-xl text-xs text-indigo-750 font-mono space-y-1">
+            <span className="font-bold uppercase block text-indigo-850">Layout Container ({selectedComponent.type})</span>
+            <span>You can place other fields inside this layout by selecting it as their "Parent Container" in their settings.</span>
+          </div>
+        )}
+
+        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && selectedComponent.type !== 'row' && selectedComponent.type !== 'column' && (
           <Field label="Variable Identifier" hint="Use this keyword inside formulas. Auto-generated from your label.">
             <input
               type="text"
@@ -2003,7 +2176,7 @@ function ElementInspector({
           </Field>
         )}
 
-        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
+        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && selectedComponent.type !== 'row' && selectedComponent.type !== 'column' && (
           <>
             <Field label="Help Text" hint="Shown below the field.">
               <input
@@ -2024,12 +2197,13 @@ function ElementInspector({
                 />
               </Field>
             )}
-            <Field label="Default Value">
+            <Field label="Default Value" hint={selectedComponent.calculationFormula ? "Disabled. Derived from formula instead." : undefined}>
               {selectedComponent.type === 'checkbox' ? (
                 <select
                   value={String(selectedComponent.defaultValue)}
                   onChange={(e) => updateComponentField(selectedComponent.id, 'defaultValue', e.target.value === 'true')}
-                  className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500"
+                  className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                  disabled={!!selectedComponent.calculationFormula}
                 >
                   <option value="false">Unchecked (False)</option>
                   <option value="true">Checked (True)</option>
@@ -2039,7 +2213,8 @@ function ElementInspector({
                   type="text"
                   value={String(selectedComponent.defaultValue ?? '')}
                   onChange={(e) => updateComponentField(selectedComponent.id, 'defaultValue', e.target.value)}
-                  className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500"
+                  className="w-full h-9 px-3 bg-white border border-neutral-200 rounded-lg text-xs text-dark-800 focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                  disabled={!!selectedComponent.calculationFormula}
                 />
               )}
             </Field>
@@ -2103,7 +2278,56 @@ function ElementInspector({
           />
         )}
 
-        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
+        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && selectedComponent.type !== 'row' && selectedComponent.type !== 'column' && (
+          <div className="border-t border-neutral-200 pt-4 mt-2">
+            <h5 className="text-[11px] font-extrabold text-indigo-750 font-mono uppercase tracking-wider mb-2 flex items-center gap-1">
+              <Calculator className="w-3.5 h-3.5" /> Calculated Value (Optional)
+            </h5>
+            <Field
+              label="Calculation Formula"
+              hint="Enter a formula to calculate this input's value dynamically (e.g. x + y). Leave blank for manual entry."
+            >
+              <textarea
+                value={selectedComponent.calculationFormula || ''}
+                onChange={(e) => updateComponentField(selectedComponent.id, 'calculationFormula', e.target.value)}
+                rows={2}
+                className={`w-full p-2 bg-neutral-900 border rounded-lg font-mono text-xs font-bold focus:outline-none focus:border-indigo-500 ${
+                  componentFormulaValidation.isValid ? 'text-emerald-300 border-neutral-850' : 'text-rose-300 border-rose-500/80 focus:border-rose-500'
+                }`}
+                placeholder="e.g. x + y"
+              />
+            </Field>
+
+            <div className="space-y-2 mt-1">
+              {!componentFormulaValidation.isValid && (
+                <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-[10px] text-rose-600 font-mono flex items-start gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <span className="font-bold">Syntax/Circular Error:</span> {componentFormulaValidation.error}
+                  </div>
+                </div>
+              )}
+              {componentFormulaValidation.isValid && selectedComponent.calculationFormula && selectedComponent.calculationFormula.trim() && (
+                <div className="p-2.5 bg-indigo-50/60 border border-indigo-100 rounded-xl text-[10px] text-indigo-700 font-mono flex justify-between items-center">
+                  <span>Sample Value:</span>
+                  <span className="font-bold text-xs bg-white px-2 py-0.5 rounded border border-indigo-100 shadow-sm text-indigo-650 shrink-0">
+                    {componentFormulaPreview !== null ? componentFormulaPreview : '0'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Insertion panel for component calculation formulas */}
+            <InsertionPanel
+              availableVariables={availableVariables.filter((v: any) => v.name !== selectedComponent.name)}
+              formulaFunctions={formulaFunctions}
+              formulaConstants={formulaConstants}
+              onInsert={insertIntoComponentFormula}
+            />
+          </div>
+        )}
+
+        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && selectedComponent.type !== 'row' && selectedComponent.type !== 'column' && (
           <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-100 mt-2">
             <div>
               <span className="block text-xs font-bold text-dark-800">Read Only</span>
@@ -2125,11 +2349,9 @@ function ElementInspector({
           </div>
         )}
 
-        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
-          <button onClick={() => deleteComponent(selectedComponent.id)} className="w-full mt-2 px-3 h-9 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
-            <Trash className="w-3.5 h-3.5" /> Delete Field
-          </button>
-        )}
+        <button onClick={() => deleteComponent(selectedComponent.id)} className="w-full mt-4 px-3 h-9 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
+          <Trash className="w-3.5 h-3.5" /> Delete Component
+        </button>
       </div>
     )
   }
