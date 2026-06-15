@@ -34,7 +34,11 @@ export interface CustomCalculatorConfig {
   labelTypography?: LabelTypographyConfig
   brandTypography?: LabelTypographyConfig
   descriptionTypography?: LabelTypographyConfig
+  helpTextTypography?: LabelTypographyConfig
+  outputTypography?: LabelTypographyConfig
   requireSubmit?: boolean
+  enableCSVExport?: boolean
+  enablePDFExport?: boolean
 }
 
 export interface CustomComponentConfig {
@@ -53,6 +57,8 @@ export interface CustomComponentConfig {
   labelTypography?: LabelTypographyConfig
   brandTypography?: LabelTypographyConfig
   descriptionTypography?: LabelTypographyConfig
+  helpTextTypography?: LabelTypographyConfig
+  readOnly?: boolean
 }
 
 export interface CustomFormulaConfig {
@@ -508,7 +514,12 @@ export default function CustomCalculatorRenderer({
                     {c.label}
                   </label>
                   {c.helpText && (
-                    <span className="text-[9px] opacity-60 font-mono italic">{c.helpText}</span>
+                    <span 
+                      className="text-[9px] opacity-60 font-mono italic"
+                      style={getLabelTypographyStyle(c.helpTextTypography, config.helpTextTypography)}
+                    >
+                      {c.helpText}
+                    </span>
                   )}
                 </div>
 
@@ -522,7 +533,7 @@ export default function CustomCalculatorRenderer({
                       placeholder={c.placeholder}
                       value={currentVal}
                       onChange={(e) => handleValueChange(c.name, e.target.value)}
-                      className={s.input}
+                      className={`${s.input} ${c.readOnly ? 'opacity-70 cursor-not-allowed bg-neutral-100/50' : ''}`}
                       style={activeTheme === 'custom' ? { 
                         backgroundColor: 'rgba(255,255,255,0.7)', 
                         borderColor: 'rgba(0,0,0,0.15)',
@@ -532,6 +543,8 @@ export default function CustomCalculatorRenderer({
                         e.stopPropagation();
                         setTimeout(() => onSelectComponent(c.id), 0);
                       } : undefined}
+                      readOnly={c.readOnly}
+                      disabled={c.readOnly}
                     />
                     {c.unit && (
                       <span 
@@ -563,12 +576,13 @@ export default function CustomCalculatorRenderer({
                         step={c.step ?? 1}
                         value={currentVal || c.min || 0}
                         onChange={(e) => handleValueChange(c.name, e.target.value)}
-                        className="absolute inset-x-0 w-full accent-current bg-transparent opacity-100 appearance-none h-1 cursor-pointer"
+                        className={`absolute inset-x-0 w-full accent-current bg-transparent opacity-100 appearance-none h-1 cursor-pointer ${c.readOnly ? 'opacity-40 cursor-not-allowed' : ''}`}
                         style={activeTheme === 'custom' ? { color: 'var(--custom-primary)' } : {}}
                         onClick={onSelectComponent ? (e) => {
                           e.stopPropagation();
                           setTimeout(() => onSelectComponent(c.id), 0);
                         } : undefined}
+                        disabled={c.readOnly}
                       />
                     </div>
                   </div>
@@ -579,7 +593,7 @@ export default function CustomCalculatorRenderer({
                     <select
                       value={currentVal}
                       onChange={(e) => handleValueChange(c.name, e.target.value)}
-                      className={s.select}
+                      className={`${s.select} ${c.readOnly ? 'opacity-70 cursor-not-allowed bg-neutral-100/50' : ''}`}
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
                         backgroundRepeat: 'no-repeat',
@@ -594,6 +608,7 @@ export default function CustomCalculatorRenderer({
                         e.stopPropagation();
                         setTimeout(() => onSelectComponent(c.id), 0);
                       } : undefined}
+                      disabled={c.readOnly}
                     >
                       <option value="" disabled className="text-gray-400">Select option...</option>
                       {c.options?.map((o) => (
@@ -604,7 +619,7 @@ export default function CustomCalculatorRenderer({
                 )}
 
                 {c.type === 'checkbox' && (
-                  <label className="flex items-center gap-3 cursor-pointer py-1.5 select-none">
+                  <label className={`flex items-center gap-3 py-1.5 select-none ${c.readOnly ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}>
                     <input
                       type="checkbox"
                       checked={currentVal === 'true'}
@@ -618,6 +633,7 @@ export default function CustomCalculatorRenderer({
                         e.stopPropagation();
                         setTimeout(() => onSelectComponent(c.id), 0);
                       } : undefined}
+                      disabled={c.readOnly}
                     />
                     <span className="text-xs font-semibold opacity-90">{c.placeholder || 'Enable Option'}</span>
                   </label>
@@ -689,7 +705,7 @@ export default function CustomCalculatorRenderer({
               >
                 <div 
                   className={s.lcdTitle}
-                  style={getLabelTypographyStyle(r.labelTypography, config.labelTypography)}
+                  style={getLabelTypographyStyle(r.labelTypography, config.outputTypography)}
                 >
                   {r.label}
                 </div>
@@ -742,40 +758,44 @@ export default function CustomCalculatorRenderer({
             </span>
           </button>
 
-          {!isPreview && (
+          {!isPreview && (config.enableCSVExport || config.enablePDFExport) && (
             <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleExportCSV}
-                className={s.btnSecondary}
-                style={activeTheme === 'custom' ? {
-                  borderColor: 'rgba(0,0,0,0.1)',
-                  backgroundColor: 'rgba(0,0,0,0.04)',
-                  color: 'var(--custom-text)',
-                } : {}}
-                title="Export values to CSV"
-              >
-                <span className="flex items-center gap-1.5">
-                  <FileDown className="w-3.5 h-3.5" />
-                  CSV
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={handleExportPDF}
-                className={s.btnPrimary}
-                style={activeTheme === 'custom' ? {
-                  backgroundColor: 'var(--custom-primary)',
-                  borderColor: 'var(--custom-secondary)',
-                  color: '#ffffff',
-                } : {}}
-                title="Export report as PDF"
-              >
-                <span className="flex items-center gap-1.5">
-                  <Printer className="w-3.5 h-3.5" />
-                  Export PDF
-                </span>
-              </button>
+              {config.enableCSVExport && (
+                <button
+                  type="button"
+                  onClick={handleExportCSV}
+                  className={s.btnSecondary}
+                  style={activeTheme === 'custom' ? {
+                    borderColor: 'rgba(0,0,0,0.1)',
+                    backgroundColor: 'rgba(0,0,0,0.04)',
+                    color: 'var(--custom-text)',
+                  } : {}}
+                  title="Export values to CSV"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <FileDown className="w-3.5 h-3.5" />
+                    CSV
+                  </span>
+                </button>
+              )}
+              {config.enablePDFExport && (
+                <button
+                  type="button"
+                  onClick={handleExportPDF}
+                  className={s.btnPrimary}
+                  style={activeTheme === 'custom' ? {
+                    backgroundColor: 'var(--custom-primary)',
+                    borderColor: 'var(--custom-secondary)',
+                    color: '#ffffff',
+                  } : {}}
+                  title="Export report as PDF"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Printer className="w-3.5 h-3.5" />
+                    Export PDF
+                  </span>
+                </button>
+              )}
             </div>
           )}
         </div>

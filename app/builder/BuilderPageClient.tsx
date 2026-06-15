@@ -1820,10 +1820,12 @@ function InspectorPanel({
 // =====================================================================
 function TypographySettings({
   value,
-  onChange
+  onChange,
+  title = "Label Typography"
 }: {
   value?: LabelTypographyConfig
   onChange: (val: LabelTypographyConfig) => void
+  title?: string
 }) {
   const fontSize = value?.fontSize ?? ''
   const fontWeight = value?.fontWeight ?? ''
@@ -1831,7 +1833,7 @@ function TypographySettings({
 
   return (
     <div className="space-y-2.5 pt-3 border-t border-neutral-200">
-      <span className="block text-[10px] font-extrabold uppercase text-dark-800 font-mono tracking-wider">Label Typography</span>
+      <span className="block text-[10px] font-extrabold uppercase text-dark-800 font-mono tracking-wider">{title}</span>
       <div className="grid grid-cols-3 gap-2">
         <div>
           <label className="block text-[8px] font-bold text-neutral-500 mb-1 font-mono uppercase">Size (px)</label>
@@ -2042,7 +2044,38 @@ function ElementInspector({
         <TypographySettings
           value={selectedComponent.labelTypography}
           onChange={(val) => updateComponentField(selectedComponent.id, 'labelTypography', val)}
+          title="Input Label Typography"
         />
+
+        {selectedComponent.helpText && (
+          <TypographySettings
+            value={selectedComponent.helpTextTypography}
+            onChange={(val) => updateComponentField(selectedComponent.id, 'helpTextTypography', val)}
+            title="Help Text Typography"
+          />
+        )}
+
+        {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
+          <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-100 mt-2">
+            <div>
+              <span className="block text-xs font-bold text-dark-800">Read Only</span>
+              <span className="block text-[10px] text-neutral-500">Prevent user input or changes to this field.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => updateComponentField(selectedComponent.id, 'readOnly', !selectedComponent.readOnly)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                selectedComponent.readOnly ? 'bg-indigo-600' : 'bg-neutral-200'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  selectedComponent.readOnly ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        )}
 
         {selectedComponent.type !== 'header' && selectedComponent.type !== 'text' && (
           <button onClick={() => deleteComponent(selectedComponent.id)} className="w-full mt-2 px-3 h-9 border-2 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95">
@@ -2157,6 +2190,7 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
         <TypographySettings
           value={calculator.descriptionTypography}
           onChange={(val) => updateCalculator({ ...calculator, descriptionTypography: val })}
+          title="Global Description Typography"
         />
 
         <Field label="Brand Label" hint="e.g. HOME OF CALCULATORS">
@@ -2170,6 +2204,7 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
         <TypographySettings
           value={calculator.brandTypography}
           onChange={(val) => updateCalculator({ ...calculator, brandTypography: val })}
+          title="Global Brand Label Typography"
         />
 
         <Field label="Logo">
@@ -2234,9 +2269,62 @@ function SettingsInspector({ calculator, updateCalculator, handleLogoUpload, add
           </button>
         </div>
 
+        <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-100 mt-2">
+          <div>
+            <span className="block text-xs font-bold text-dark-800">Enable CSV Export</span>
+            <span className="block text-[10px] text-neutral-500">Allow users to export input/output data as CSV.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => updateCalculator({ ...calculator, enableCSVExport: !calculator.enableCSVExport })}
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              calculator.enableCSVExport ? 'bg-indigo-600' : 'bg-neutral-200'
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                calculator.enableCSVExport ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl border border-neutral-100 mt-2">
+          <div>
+            <span className="block text-xs font-bold text-dark-800">Enable PDF Export</span>
+            <span className="block text-[10px] text-neutral-500">Allow users to print or save a PDF report.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => updateCalculator({ ...calculator, enablePDFExport: !calculator.enablePDFExport })}
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              calculator.enablePDFExport ? 'bg-indigo-600' : 'bg-neutral-200'
+            }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                calculator.enablePDFExport ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
         <TypographySettings
           value={calculator.labelTypography}
           onChange={(val) => updateCalculator({ ...calculator, labelTypography: val })}
+          title="Global Input Label Typography"
+        />
+
+        <TypographySettings
+          value={calculator.helpTextTypography}
+          onChange={(val) => updateCalculator({ ...calculator, helpTextTypography: val })}
+          title="Global Help Text Typography"
+        />
+
+        <TypographySettings
+          value={calculator.outputTypography}
+          onChange={(val) => updateCalculator({ ...calculator, outputTypography: val })}
+          title="Global Output/LCD Typography"
         />
       </section>
 
