@@ -322,7 +322,7 @@ export default function BuilderPageClient() {
     return slug.slice(0, 24) || 'var'
   }
 
-  const addComponent = (type: CustomComponentConfig['type']) => {
+  const addComponent = (type: CustomComponentConfig['type'], index?: number) => {
     const existing = calculator.components.map((c) => c.name)
     const defaultLabel = `New ${type.charAt(0).toUpperCase() + type.slice(1)} Block`
     const suggested = uniqueVarName(slugify(type === 'number' ? 'value' : type), existing)
@@ -352,7 +352,14 @@ export default function BuilderPageClient() {
       newComponent.unit = ''
     }
 
-    const updated = { ...calculator, components: [...calculator.components, newComponent] }
+    const updatedComps = [...calculator.components]
+    if (typeof index === 'number') {
+      updatedComps.splice(index, 0, newComponent)
+    } else {
+      updatedComps.push(newComponent)
+    }
+
+    const updated = { ...calculator, components: updatedComps }
     updateCalculator(updated)
     setSelectedComponentId(newComponent.id)
     setSelectedFormulaId(null)
@@ -412,6 +419,15 @@ export default function BuilderPageClient() {
   const handleDragEnd = () => {
     setDraggedIdx(null)
     updateCalculator(calculator)
+  }
+
+  const handleDrop = (e: React.DragEvent, index?: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const type = e.dataTransfer.getData('application/x-calc-craft-type') as CustomComponentConfig['type']
+    if (type) {
+      addComponent(type, index)
+    }
   }
 
   const updateComponentField = (id: string, field: keyof CustomComponentConfig, value: any) => {
@@ -883,7 +899,9 @@ export default function BuilderPageClient() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white border-2 border-dashed border-indigo-200 rounded-2xl p-6 sm:p-10 text-center"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => handleDrop(e)}
+                  className="bg-white border-2 border-dashed border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50/10 rounded-2xl p-6 sm:p-10 text-center transition-all cursor-copy"
                 >
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
                     <Lightbulb className="w-8 h-8 text-white" />
@@ -929,7 +947,11 @@ export default function BuilderPageClient() {
                             </span>
                           </div>
 
-                          <div className="space-y-2.5 mt-4">
+                          <div 
+                            className="space-y-2.5 mt-4 min-h-[200px]"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => handleDrop(e)}
+                          >
                             <AnimatePresence mode="popLayout">
                               {calculator.components.map((c, idx) => {
                                 const isSelected = selectedComponentId === c.id
@@ -947,6 +969,7 @@ export default function BuilderPageClient() {
                                       onDragStart={(e) => handleDragStart(e, idx)}
                                       onDragOver={(e) => handleDragOver(e, idx)}
                                       onDragEnd={handleDragEnd}
+                                      onDrop={(e) => handleDrop(e, idx)}
                                       className={`p-3 rounded-xl border-2 transition-all cursor-grab active:cursor-grabbing relative group ${
                                         draggedIdx === idx
                                           ? 'opacity-40 border-dashed border-indigo-400 bg-neutral-100 scale-[0.97]'
@@ -1089,7 +1112,11 @@ export default function BuilderPageClient() {
                         <div className="bg-neutral-100/50 border border-neutral-200 p-2 rounded-xl text-center text-[10px] font-mono font-bold text-dark-500 uppercase tracking-wider select-none">
                           Interactive WYSIWYG Preview
                         </div>
-                        <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full">
+                        <div 
+                          className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full transition-all hover:bg-indigo-50/5 cursor-copy"
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => handleDrop(e)}
+                        >
                           <CustomCalculatorRenderer
                             config={calculator}
                             selectedId={selectedComponentId}
@@ -1113,7 +1140,11 @@ export default function BuilderPageClient() {
                       <div className="bg-neutral-100/50 border border-neutral-200 p-2.5 rounded-xl text-center text-[10px] font-mono font-bold text-dark-500 uppercase tracking-wider select-none">
                         Visual Editor — Click elements to edit settings
                       </div>
-                      <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full">
+                      <div 
+                        className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-6 shadow-sm w-full transition-all hover:bg-indigo-50/5 cursor-copy"
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => handleDrop(e)}
+                      >
                         <CustomCalculatorRenderer
                           config={calculator}
                           selectedId={selectedComponentId}
@@ -1144,7 +1175,11 @@ export default function BuilderPageClient() {
                           </span>
                         </div>
 
-                        <div className="space-y-2.5 mt-4">
+                        <div 
+                          className="space-y-2.5 mt-4 min-h-[200px]"
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => handleDrop(e)}
+                        >
                           <AnimatePresence mode="popLayout">
                             {calculator.components.map((c, idx) => {
                               const isSelected = selectedComponentId === c.id
@@ -1162,6 +1197,7 @@ export default function BuilderPageClient() {
                                     onDragStart={(e) => handleDragStart(e, idx)}
                                     onDragOver={(e) => handleDragOver(e, idx)}
                                     onDragEnd={handleDragEnd}
+                                    onDrop={(e) => handleDrop(e, idx)}
                                     className={`p-3 rounded-xl border-2 transition-all cursor-grab active:cursor-grabbing relative group ${
                                       draggedIdx === idx
                                         ? 'opacity-40 border-dashed border-indigo-400 bg-neutral-100 scale-[0.97]'
@@ -1681,11 +1717,11 @@ function ToolboxPanel({ onAdd, onShowTemplates, onShowHelp }: { onAdd: (t: Custo
           Input Controls
         </h3>
         <div className="grid grid-cols-1 gap-2">
-          <ToolboxButton onClick={() => onAdd('number')} icon={Type} label="Number Input" desc="Numeric field" />
-          <ToolboxButton onClick={() => onAdd('slider')} icon={Sliders} label="Range Slider" desc="Visual range track" />
-          <ToolboxButton onClick={() => onAdd('select')} icon={List} label="Select Dropdown" desc="Pick from list" />
-          <ToolboxButton onClick={() => onAdd('radio')} icon={CircleDot} label="Radio Group" desc="Single option select" />
-          <ToolboxButton onClick={() => onAdd('checkbox')} icon={CheckSquare} label="Checkbox" desc="On / off switch" />
+          <ToolboxButton onClick={() => onAdd('number')} icon={Type} label="Number Input" desc="Numeric field" type="number" />
+          <ToolboxButton onClick={() => onAdd('slider')} icon={Sliders} label="Range Slider" desc="Visual range track" type="slider" />
+          <ToolboxButton onClick={() => onAdd('select')} icon={List} label="Select Dropdown" desc="Pick from list" type="select" />
+          <ToolboxButton onClick={() => onAdd('radio')} icon={CircleDot} label="Radio Group" desc="Single option select" type="radio" />
+          <ToolboxButton onClick={() => onAdd('checkbox')} icon={CheckSquare} label="Checkbox" desc="On / off switch" type="checkbox" />
         </div>
       </div>
 
@@ -1695,8 +1731,8 @@ function ToolboxPanel({ onAdd, onShowTemplates, onShowHelp }: { onAdd: (t: Custo
           Layout Blocks
         </h3>
         <div className="grid grid-cols-1 gap-2">
-          <ToolboxButton onClick={() => onAdd('header')} icon={Heading} label="Section Header" desc="Visual divider" />
-          <ToolboxButton onClick={() => onAdd('text')} icon={Type} label="Paragraph Text" desc="Instructions / labels" />
+          <ToolboxButton onClick={() => onAdd('header')} icon={Heading} label="Section Header" desc="Visual divider" type="header" />
+          <ToolboxButton onClick={() => onAdd('text')} icon={Type} label="Paragraph Text" desc="Instructions / labels" type="text" />
         </div>
       </div>
 
@@ -1727,11 +1763,22 @@ function ToolboxPanel({ onAdd, onShowTemplates, onShowHelp }: { onAdd: (t: Custo
   )
 }
 
-function ToolboxButton({ onClick, icon: Icon, label, desc }: { onClick: () => void; icon: any; label: string; desc: string }) {
+function ToolboxButton({ onClick, icon: Icon, label, desc, type }: { onClick: () => void; icon: any; label: string; desc: string; type?: CustomComponentConfig['type'] }) {
+  const handleDragStart = (e: React.DragEvent) => {
+    if (type) {
+      e.dataTransfer.setData('application/x-calc-craft-type', type)
+      e.dataTransfer.effectAllowed = 'copy'
+    }
+  }
+
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 p-2.5 rounded-xl border border-neutral-100 hover:border-indigo-200 hover:bg-indigo-50/30 text-left transition-all group"
+      draggable={!!type}
+      onDragStart={type ? handleDragStart : undefined}
+      className={`flex items-center gap-3 p-2.5 rounded-xl border border-neutral-100 hover:border-indigo-200 hover:bg-indigo-50/30 text-left transition-all w-full group ${
+        type ? 'cursor-grab active:cursor-grabbing select-none' : ''
+      }`}
     >
       <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors shrink-0">
         <Icon className="w-4 h-4" />
