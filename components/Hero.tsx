@@ -172,9 +172,7 @@ export default function Hero() {
               ref={calcRef}
               className="w-full order-1 lg:order-2 flex justify-center lg:justify-end [perspective:1200px]"
             >
-              <div className="animate-float">
-                <CasioHeroCalculator />
-              </div>
+              <CasioHeroCalculator />
             </div>
           </div>
         </div>

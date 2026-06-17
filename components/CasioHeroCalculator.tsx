@@ -14,11 +14,10 @@ import {
 import s from './casio-hardware.module.css'
 
 /* =========================================================================
-   CASIO fx-991EX CLASSWIZ — Pixel-perfect hardware replica
+   CASIO fx-991EX CLASSWIZ — Pixel-perfect hardware replica  (v2)
    -------------------------------------------------------------------------
-   Runs the EXACT same engine (@/lib/scientific-engine) as the in-app
-   ScientificCalculator, so behavior is identical across the site.
-   Visual assets and layout updated to replicate the real fx-991EX.
+   Realistic brushed-steel buttons, sculpted D-pad, wider body, readable
+   bottom keys. Same engine as the in-app scientific calculator.
    ========================================================================= */
 
 export default function CasioHeroCalculator() {
@@ -34,7 +33,7 @@ export default function CasioHeroCalculator() {
     'log(100)*ln(e)',
   ])
   const [historyIdx, setHistoryIdx] = useState<number>(-1)
-  
+
   const exprRef = useRef(expr)
   exprRef.current = expr
 
@@ -106,11 +105,9 @@ export default function CasioHeroCalculator() {
     let e = exprRef.current
     if (!e.trim()) return
 
-    // Pre-process variables before passing to tokenizer
     const ansStr = ans !== null ? ans.toString() : '0'
     e = e.replace(/\bAns\b/g, ansStr)
 
-    // Substitute variable x with current ans or 5 as fallback
     const xStr = ans !== null ? ans.toString() : '5'
     e = e.replace(/\bx\b/gi, xStr)
 
@@ -122,8 +119,7 @@ export default function CasioHeroCalculator() {
       if (!isFinite(v) || isNaN(v)) throw new Error('math error')
       const formatted = formatNumberForDisplay(v)
       setAns(v)
-      
-      // Save current input to history
+
       setHistory(prev => {
         const next = [...prev, exprRef.current]
         if (next.length > 20) next.shift()
@@ -163,7 +159,6 @@ export default function CasioHeroCalculator() {
         return nextIdx
       })
     } else {
-      // Left/Right shift indicator visually
       setIsShift((s) => !s)
     }
   }
@@ -218,7 +213,6 @@ export default function CasioHeroCalculator() {
     'Enter': () => { equals(); flashKey.current?.('=') },
   })
 
-  /* Visual key-press flash for keyboard input */
   const [pressedKey, setPressedKey] = useState<string | null>(null)
   useEffect(() => {
     flashKey.current = (k: string) => {
@@ -254,7 +248,7 @@ export default function CasioHeroCalculator() {
     subShift?: string
     subAlpha?: string
     subBlue?: string
-    type: 'Metal' | 'Scientific' | 'White' | 'Blue'
+    type: 'Scientific' | 'White' | 'Blue'
     onClick: () => void
     pressId?: string
   }) => (
@@ -275,17 +269,14 @@ export default function CasioHeroCalculator() {
   return (
     <div className={s.casioOuterFrame}>
       <div className={s.casioBody}>
-        {/* ===== Glossy Bezel encompassing LCD, Solar and Brand Details ===== */}
+        {/* ===== Glossy Bezel: LCD, Solar, Brand ===== */}
         <div className={s.casioLcdBezel}>
-          
-          {/* Brand header */}
           <div className={s.casioBrandHeader}>
             <div className={s.casioBrandLeft}>
               <span className={s.casioWordmark}>CASIO</span>
               <span className={s.casioModel}>fx-991EX</span>
               <span className={s.casioClasswiz}>CLASSWIZ</span>
             </div>
-            {/* Solar panel */}
             <div className={s.casioSolar} aria-hidden="true">
               <div className={s.casioSolarCell} />
               <div className={s.casioSolarCell} />
@@ -294,9 +285,7 @@ export default function CasioHeroCalculator() {
             </div>
           </div>
 
-          {/* LCD Panel */}
           <div className={s.casioLcd}>
-            {/* Status bar */}
             <div className={s.casioStatus}>
               <span>
                 <span style={{ opacity: angleMode === 'DEG' ? 1 : 0.3 }}>D</span>
@@ -311,30 +300,40 @@ export default function CasioHeroCalculator() {
               </span>
               <span className={s.casioStatusRight}>Math</span>
             </div>
-
-            {/* Expression row */}
             <div className={s.casioExpr}>{displayExpr}</div>
-
-            {/* Result row */}
             <div className={`${s.casioResult} ${isError ? s.casioResultError : ''}`}>
               {bottomDisplay}
             </div>
           </div>
         </div>
 
-        {/* ===== Top Controls: Silver Metal Buttons & D-Pad ===== */}
+        {/* ===== Top Controls: Brushed-Steel Buttons & Sculpted D-Pad ===== */}
         <div className={s.casioTopControlPanel}>
+          {/* Left pair: SHIFT + ALPHA */}
           <div className={s.casioTopControlCol}>
             <div className={s.casioTopKeyWrap}>
               <span className={s.casioTopKeyLabel} style={{ color: '#d8a010' }}>SHIFT</span>
-              <Key label="" type="Metal" pressId="shift" onClick={() => { setIsShift(!isShift); setIsAlpha(false) }} />
+              <button
+                type="button"
+                className={s.casioMetalBtn}
+                onClick={() => { setIsShift(!isShift); setIsAlpha(false) }}
+                aria-label="Shift"
+              />
+              <span className={s.casioTopKeySubLabel} style={{ color: '#d8a010' }}>QR</span>
             </div>
             <div className={s.casioTopKeyWrap}>
               <span className={s.casioTopKeyLabel} style={{ color: '#ff3366' }}>ALPHA</span>
-              <Key label="" type="Metal" pressId="alpha" onClick={() => { setIsAlpha(!isAlpha); setIsShift(false) }} />
+              <button
+                type="button"
+                className={s.casioMetalBtn}
+                onClick={() => { setIsAlpha(!isAlpha); setIsShift(false) }}
+                aria-label="Alpha"
+              />
+              <span className={s.casioTopKeySubLabel} style={{ color: '#d8a010' }}>SOLVE <span style={{ color: '#ff3366' }}>=</span></span>
             </div>
           </div>
 
+          {/* Center: D-Pad */}
           <div className={s.casioDpadContainer}>
             <div className={s.casioDpad}>
               <button type="button" className={`${s.casioDpadBtn} ${s.casioDpadUp}`} onClick={() => handleDpad('UP')} aria-label="Up">▲</button>
@@ -345,43 +344,55 @@ export default function CasioHeroCalculator() {
             </div>
           </div>
 
+          {/* Right pair: MENU SETUP + ON */}
           <div className={s.casioTopControlCol}>
             <div className={s.casioTopKeyWrap}>
-              <span className={s.casioTopKeyLabel} style={{ color: '#ffffff' }}>MENU</span>
-              <Key label="" type="Metal" pressId="menu" onClick={() => setAngleMode(angleMode === 'DEG' ? 'RAD' : 'DEG')} />
+              <span className={s.casioTopKeyLabel} style={{ color: '#ffffff' }}>MENU SETUP</span>
+              <button
+                type="button"
+                className={s.casioMetalBtn}
+                onClick={() => setAngleMode(angleMode === 'DEG' ? 'RAD' : 'DEG')}
+                aria-label="Menu Setup"
+              />
+              <span className={s.casioTopKeySubLabel} style={{ color: '#d8a010' }}>d/dx <span style={{ color: '#ff3366' }}>■</span></span>
             </div>
             <div className={s.casioTopKeyWrap}>
               <span className={s.casioTopKeyLabel} style={{ color: '#ffffff' }}>ON</span>
-              <Key label="" type="Metal" pressId="on" onClick={clearAll} />
+              <button
+                type="button"
+                className={s.casioMetalBtn}
+                onClick={clearAll}
+                aria-label="On / Clear"
+              />
             </div>
           </div>
         </div>
 
         {/* ===== Scientific and Numeric Keys ===== */}
         <div className={s.casioKeys}>
-          
+
           {/* ROW 1: OPTN, CALC, ∫, x */}
           <div className={s.casioRow}>
             <Key label="OPTN" subShift="QR" type="Scientific" pressId="optn" onClick={() => append('mod')} />
             <Key label="CALC" subShift="SOLVE" subAlpha="=" type="Scientific" pressId="calc" onClick={equals} />
             <Key label="∫" subShift="d/dx" subAlpha=":" type="Scientific" pressId="int" onClick={() => appendFn('abs')} />
-            <Key label="x" subShift="Σ" subAlpha="x" type="Scientific" pressId="x" onClick={() => append('x')} />
+            <Key label="𝒙" subShift="Σ" subAlpha="x" type="Scientific" pressId="x" onClick={() => append('x')} />
           </div>
 
-          {/* ROW 2: Fraction, Root, x², x^■, log, ln */}
+          {/* ROW 2: Fraction, Root, x², xʸ, log, ln */}
           <div className={s.casioRow}>
             <Key label="■/□" subShift="■■/■" type="Scientific" pressId="frac" onClick={() => append('/')} />
             <Key label="√" subShift="∛" type="Scientific" pressId="sqrt" onClick={() => appendFn(isShift ? 'cbrt' : 'sqrt')} />
-            <Key label="x²" subShift="cu" subBlue="DEC" type="Scientific" pressId="sq" onClick={() => appendFn(isShift ? 'cu' : 'sq')} />
+            <Key label="x²" subShift="x³" subBlue="DEC" type="Scientific" pressId="sq" onClick={() => appendFn(isShift ? 'cu' : 'sq')} />
             <Key label="xʸ" subShift="ⁿ√" subBlue="HEX" type="Scientific" pressId="power" onClick={() => append('^')} />
             <Key label="log" subShift="10ˣ" subBlue="BIN" type="Scientific" pressId="log" onClick={() => appendFn(isShift ? 'tenx' : 'log')} />
             <Key label="ln" subShift="eˣ" subBlue="OCT" type="Scientific" pressId="ln" onClick={() => appendFn(isShift ? 'exp' : 'ln')} />
           </div>
 
-          {/* ROW 3: (-), Degree, Inverse, sin, cos, tan */}
+          {/* ROW 3: (−), °′″, x⁻¹, sin, cos, tan */}
           <div className={s.casioRow}>
             <Key label="(−)" subShift="log" subAlpha="A" type="Scientific" pressId="minus" onClick={toggleSign} />
-            <Key label=",,," subShift="fact" subAlpha="B" type="Scientific" pressId="deg" onClick={() => appendFn('fact')} />
+            <Key label="°′″" subShift="FACT" subAlpha="B" type="Scientific" pressId="deg" onClick={() => appendFn('fact')} />
             <Key label="x⁻¹" subShift="x!" subAlpha="C" type="Scientific" pressId="inv" onClick={() => appendFn(isShift ? 'fact' : 'inv')} />
             <Key label="sin" subShift="sin⁻¹" subAlpha="D" type="Scientific" pressId="sin" onClick={() => appendFn(isShift ? 'asin' : 'sin')} />
             <Key label="cos" subShift="cos⁻¹" subAlpha="E" type="Scientific" pressId="cos" onClick={() => appendFn(isShift ? 'acos' : 'cos')} />
@@ -390,7 +401,7 @@ export default function CasioHeroCalculator() {
 
           {/* ROW 4: STO, ENG, (, ), S⇔D, M+ */}
           <div className={s.casioRow}>
-            <Key label="STO" subShift="RECALL" type="Scientific" pressId="sto" onClick={() => {}} />
+            <Key label="STO" subShift="RCL" type="Scientific" pressId="sto" onClick={() => {}} />
             <Key label="ENG" subShift="←" subAlpha="i" type="Scientific" pressId="eng" onClick={() => {}} />
             <Key label="(" subShift="Abs" subAlpha="y" type="Scientific" pressId="(" onClick={() => append('(')} />
             <Key label=")" subAlpha="x" type="Scientific" pressId=")" onClick={() => append(')')} />
@@ -398,16 +409,16 @@ export default function CasioHeroCalculator() {
             <Key label="M+" subShift="M−" subAlpha="M" type="Scientific" pressId="mplus" onClick={() => append('+Ans')} />
           </div>
 
-          {/* ROW 5 (Numeric Row 1): 7, 8, 9, DEL, AC */}
+          {/* ROW 5: 7, 8, 9, DEL, AC */}
           <div className={s.casioRow}>
             <Key label="7" subShift="CONST" type="White" pressId="7" onClick={() => appendNumber('7')} />
             <Key label="8" subShift="CONV" type="White" pressId="8" onClick={() => appendNumber('8')} />
-            <Key label="9" subShift="RESET" type="White" pressId="9" onClick={() => appendNumber('9')} />
+            <Key label="9" subShift="CLR" type="White" pressId="9" onClick={() => appendNumber('9')} />
             <Key label="DEL" subShift="INS" subAlpha="UNDO" type="Blue" pressId="DEL" onClick={backspace} />
             <Key label="AC" subShift="OFF" type="Blue" pressId="AC" onClick={clearAll} />
           </div>
 
-          {/* ROW 6 (Numeric Row 2): 4, 5, 6, ×, ÷ */}
+          {/* ROW 6: 4, 5, 6, ×, ÷ */}
           <div className={s.casioRow}>
             <Key label="4" type="White" pressId="4" onClick={() => appendNumber('4')} />
             <Key label="5" type="White" pressId="5" onClick={() => appendNumber('5')} />
@@ -416,7 +427,7 @@ export default function CasioHeroCalculator() {
             <Key label="÷" type="White" pressId="÷" onClick={() => append('/')} />
           </div>
 
-          {/* ROW 7 (Numeric Row 3): 1, 2, 3, +, − */}
+          {/* ROW 7: 1, 2, 3, +, − */}
           <div className={s.casioRow}>
             <Key label="1" type="White" pressId="1" onClick={() => appendNumber('1')} />
             <Key label="2" type="White" pressId="2" onClick={() => appendNumber('2')} />
@@ -425,11 +436,11 @@ export default function CasioHeroCalculator() {
             <Key label="−" type="White" pressId="-" onClick={() => append('-')} />
           </div>
 
-          {/* ROW 8 (Numeric Row 4): 0, •, ×10ˣ, Ans, = */}
+          {/* ROW 8: 0, •, ×10ˣ, Ans, = */}
           <div className={s.casioRow}>
             <Key label="0" subShift="Rnd" type="White" pressId="0" onClick={() => appendNumber('0')} />
             <Key label="•" subShift="Ran#" subAlpha="RanInt" type="White" pressId="." onClick={appendDot} />
-            <Key label="×10ˣ" subShift="π" subAlpha="e" type="White" pressId="x10" onClick={() => {
+            <Key label={<span style={{ fontSize: '12px' }}>×10<sup>x</sup></span>} subShift="π" subAlpha="e" type="White" pressId="x10" onClick={() => {
               if (isShift) append('pi')
               else if (isAlpha) append('e')
               else append('*10^(')
@@ -445,7 +456,7 @@ export default function CasioHeroCalculator() {
 
         {/* ===== Footer ===== */}
         <div className={s.casioFooter}>
-          fx-991EX CLASSWIZ · Keyboard Enabled · ▲/▼ History
+          ⌨ Keyboard Enabled · ▲/▼ History
         </div>
       </div>
     </div>
