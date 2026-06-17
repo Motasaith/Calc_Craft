@@ -1,13 +1,13 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, Check } from 'lucide-react'
 import gsap from 'gsap'
 import DigitalText from './DigitalText'
 import CalculatorStack from './CalculatorStack'
 import Features from './Features'
+import CasioHeroCalculator from './CasioHeroCalculator'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -15,6 +15,7 @@ export default function Hero() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const subRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
+  const calcRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -43,6 +44,12 @@ export default function Hero() {
           { opacity: 1, y: 0, duration: 0.8 },
           '-=0.5'
         )
+        .fromTo(
+          calcRef.current,
+          { opacity: 0, y: 60, rotateX: -12 },
+          { opacity: 1, y: 0, rotateX: 0, duration: 1.1 },
+          '-=0.8'
+        )
     }, sectionRef)
 
     return () => ctx.revert()
@@ -52,28 +59,46 @@ export default function Hero() {
     <>
       <section
         ref={sectionRef}
-        className="relative pt-20 pb-6 sm:pt-24 sm:pb-8 md:pt-28 md:pb-10 lg:pt-32 lg:pb-12 overflow-hidden flex flex-col justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-[75vh] lg:min-h-[80vh]"
+        className="relative pt-20 pb-8 sm:pt-24 sm:pb-10 md:pt-28 md:pb-12 lg:pt-32 lg:pb-14 overflow-hidden flex flex-col justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-[78vh] lg:min-h-[82vh]"
         aria-label="Hero section - Free online calculators"
       >
-        {/* Responsive Background Image — single Next/Image with object-position tweaks per breakpoint */}
-        <Image
-          src="/hero.png"
-          alt="Home of Calculators, free online calculator platform with 190 tools for math, finance, health, and everyday calculations"
-          fill
-          priority
-          sizes="100vw"
-          className="absolute inset-0 -z-10 object-cover object-[center_30%] sm:object-center pointer-events-none select-none"
+        {/* ===== CSS-only background (no image, ~0 KB) ===== */}
+        {/* Soft primary gradient */}
+        <div
+          className="absolute inset-0 -z-20 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(1200px 600px at 15% 10%, #e0f2fe 0%, transparent 55%), radial-gradient(900px 500px at 90% 90%, #f0f9ff 0%, transparent 60%), linear-gradient(180deg, #ffffff 0%, #f8fbff 100%)',
+          }}
+          aria-hidden="true"
+        />
+        {/* Faint dot grid */}
+        <div
+          className="absolute inset-0 -z-20 pointer-events-none opacity-[0.5]"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle, #bae6fd 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+            maskImage:
+              'radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 75%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 75%)',
+          }}
+          aria-hidden="true"
+        />
+        {/* Glow behind the calculator */}
+        <div
+          className="absolute -z-10 right-[5%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full blur-3xl opacity-40 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #7dd3fc 0%, transparent 70%)' }}
+          aria-hidden="true"
         />
 
-        {/* Subtle overlay for mobile text legibility */}
-        <div className="absolute inset-0 -z-10 bg-white/15 sm:bg-white/5 pointer-events-none" aria-hidden="true" />
-
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-2 sm:pb-4 flex justify-center w-full">
-          <div className="text-center w-full">
-            {/* Content */}
-            <div className="max-w-2xl mx-auto w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center w-full">
+            {/* ===== LEFT: text content ===== */}
+            <div className="text-left w-full order-2 lg:order-1">
               {/* Badge */}
-              <div ref={badgeRef} className="inline-flex flex-wrap items-center justify-center gap-2 mb-5 sm:mb-6">
+              <div ref={badgeRef} className="inline-flex flex-wrap items-center gap-2 mb-5 sm:mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] sm:text-xs font-semibold whitespace-nowrap">
                   <Check className="w-3.5 h-3.5" aria-hidden="true" />
                   100% Free
@@ -86,7 +111,7 @@ export default function Hero() {
               {/* Heading - H1 for SEO */}
               <h1
                 ref={headingRef}
-                className="flex flex-col items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 leading-[0.95]"
+                className="flex flex-col items-start gap-1.5 sm:gap-2 mb-6 sm:mb-8 leading-[0.95]"
                 itemScope
                 itemType="https://schema.org/WebPageElement"
               >
@@ -116,14 +141,14 @@ export default function Hero() {
               {/* Subtitle - Rich description for SEO/GEO */}
               <p
                 ref={subRef}
-                className="text-base sm:text-lg text-dark-600 leading-relaxed mb-6 sm:mb-8 max-w-2xl mx-auto px-2 sm:px-0"
+                className="text-base sm:text-lg text-dark-600 leading-relaxed mb-6 sm:mb-8 max-w-xl"
                 itemProp="description"
               >
                 A complete <strong>calculator platform</strong>: 190 ready-made calculators, a <strong>no-code visual builder</strong> to design your own, <strong>embeddable widgets</strong> for any website, and full <strong>white-labeling</strong> with your brand &amp; logo. Free forever, private by design. All math runs in your browser.
               </p>
 
               {/* CTAs */}
-              <div ref={ctaRef} className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
+              <div ref={ctaRef} className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 w-full">
                 <Link
                   href="/calculators"
                   className="group inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-dark-800 text-white font-semibold rounded-full hover:bg-dark-700 transition-all shadow-xl shadow-dark-800/20 hover:shadow-dark-800/30 hover:-translate-y-0.5 text-sm sm:text-base"
@@ -134,11 +159,21 @@ export default function Hero() {
                 </Link>
                 <Link
                   href="/calculators/scientific"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-white/80 backdrop-blur-sm text-dark-800 font-semibold rounded-full border border-gray-200/80 hover:border-gray-300 hover:bg-white transition-all text-sm sm:text-base"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 bg-white text-dark-800 font-semibold rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all text-sm sm:text-base"
                   aria-label="Try the scientific calculator online"
                 >
                   Try Scientific Calculator
                 </Link>
+              </div>
+            </div>
+
+            {/* ===== RIGHT: live Casio-style calculator ===== */}
+            <div
+              ref={calcRef}
+              className="w-full order-1 lg:order-2 flex justify-center lg:justify-end [perspective:1200px]"
+            >
+              <div className="animate-float">
+                <CasioHeroCalculator />
               </div>
             </div>
           </div>

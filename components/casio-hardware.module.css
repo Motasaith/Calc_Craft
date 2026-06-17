@@ -1,0 +1,571 @@
+/* =========================================================================
+   CASIO fx-991EX CLASSWIZ — High-Fidelity Hardware Replica Style Sheet
+   Includes the white outer chassis, carbon fiber textured faceplate,
+   glossy LCD bezel, solar panel grid, chrome keys, and 3D buttons.
+   ========================================================================= */
+
+/* ---------- Outer white/light-grey plastic chassis ---------- */
+.casioOuterFrame {
+  background: #f4f5f8; /* Warm off-white plastic texture */
+  border-radius: 26px 26px 36px 36px;
+  padding: 4px 4px 14px 4px; /* Thicker white edge at the bottom for realism */
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15),
+    0 20px 45px rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.95),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.08);
+  display: inline-block;
+  position: relative;
+  border: 1px solid #dcdfe3;
+}
+
+/* ---------- Textured faceplate (carbon-fiber/diagonal mesh) ---------- */
+.casioBody {
+  width: 282px;
+  background-color: #1a1e24;
+  /* Carbon fiber style crosshatch pattern */
+  background-image:
+    linear-gradient(45deg, #232a32 25%, transparent 25%),
+    linear-gradient(-45deg, #232a32 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #232a32 75%),
+    linear-gradient(-45deg, transparent 75%, #232a32 75%);
+  background-size: 5px 5px;
+  background-position: 0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px;
+  border-radius: 22px 22px 32px 32px;
+  padding: 14px 12px 18px 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+  border: 1px solid #0a0d11;
+}
+
+/* Highlight reflection on faceplate */
+.casioBody::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(160deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 50%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- Glossy LCD & Brand Bezel ---------- */
+.casioLcdBezel {
+  background: linear-gradient(to bottom, #111111 0%, #1c1c1c 20%, #0c0c0c 100%);
+  border-radius: 12px 12px 6px 6px;
+  padding: 8px 8px 10px 8px;
+  margin-bottom: 12px;
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.9),
+    0 1px 0.5px rgba(255, 255, 255, 0.08);
+  border: 1px solid #000;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Brand logo and model name ---------- */
+.casioBrandHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.casioBrandLeft {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.casioWordmark {
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  font-weight: 950;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.casioModel {
+  color: #d1d9e2;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+.casioClasswiz {
+  color: #ff2a5f; /* Hot pink/magenta signature color */
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-top: 1px;
+}
+
+/* ---------- Solar Panel Grid ---------- */
+.casioSolar {
+  width: 66px;
+  height: 20px;
+  background: linear-gradient(135deg, #38201a 0%, #291511 100%);
+  border: 1px solid #140b08;
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.8),
+    0 0.5px 0.5px rgba(255,255,255,0.05);
+  display: flex;
+  gap: 1.5px;
+  padding: 1px;
+}
+
+.casioSolarCell {
+  flex: 1;
+  background: repeating-linear-gradient(
+    180deg,
+    #4a2922 0px,
+    #4a2922 2px,
+    #361b15 2px,
+    #361b15 4px
+  );
+  border-right: 0.5px solid #63332a;
+}
+
+.casioSolarCell:last-child {
+  border-right: none;
+}
+
+/* ---------- LCD screen (Sage Green/Grey) ---------- */
+.casioLcd {
+  background: linear-gradient(135deg, #bcc6b5 0%, #b3beac 50%, #b8c4b2 100%);
+  border-radius: 4px;
+  padding: 6px 8px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.4);
+  border: 1.5px solid #f9f9f9; /* White border outline around screen */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 84px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* LCD Glare overlay */
+.casioLcd::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.12),
+    transparent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* LCD Status Indicator Bar */
+.casioStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: #1e281a;
+  letter-spacing: 2px;
+  opacity: 0.8;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: 2px;
+  height: 10px;
+}
+
+.casioStatusRight {
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+/* LCD Expression and Result Rows */
+.casioExpr {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 13px;
+  color: #151e12;
+  text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.1);
+  letter-spacing: 0.5px;
+  min-height: 16px;
+  line-height: 1.1;
+  word-break: break-all;
+  text-align: left;
+  margin-top: 2px;
+  overflow: hidden;
+}
+
+.casioResult {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: bold;
+  color: #0c1409;
+  text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.15);
+  text-align: right;
+  line-height: 1;
+  min-height: 24px;
+}
+
+.casioResultError {
+  color: #630c0c;
+  font-size: 18px;
+}
+
+/* ---------- Key Area ---------- */
+.casioKeys {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Sufficient vertical gap to allow secondary labels */
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+}
+
+.casioRow {
+  display: flex;
+  gap: 5px; /* tight horizontal spacing matching Casio */
+}
+
+/* ---------- Key wrapper with secondary labels ---------- */
+.casioKeyWrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.casioKeyLabelLeft {
+  position: absolute;
+  top: -9px;
+  left: 2px;
+  font-size: 7px;
+  font-weight: 800;
+  font-family: Arial, sans-serif;
+  color: #d8a010; /* Yellow/Amber for SHIFT secondary labels */
+  pointer-events: none;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  text-shadow: 0 0.5px 1px rgba(0,0,0,0.4);
+}
+
+.casioKeyLabelRight {
+  position: absolute;
+  top: -9px;
+  right: 2px;
+  font-size: 7px;
+  font-weight: 800;
+  font-family: Arial, sans-serif;
+  color: #ff3366; /* Magenta/Red for ALPHA secondary labels */
+  pointer-events: none;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  text-shadow: 0 0.5px 1px rgba(0,0,0,0.4);
+}
+
+.casioKeyLabelCenter {
+  position: absolute;
+  top: -9px;
+  font-size: 6.5px;
+  font-weight: 800;
+  font-family: Arial, sans-serif;
+  color: #00aaee; /* Light blue labels (DEC/HEX/etc.) */
+  pointer-events: none;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  text-shadow: 0 0.5px 1px rgba(0,0,0,0.4);
+}
+
+/* ---------- Key base and types ---------- */
+.casioKey {
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.05s ease, box-shadow 0.05s ease, filter 0.05s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.casioKey::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1px;
+  right: 1px;
+  height: 40%;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.02));
+  border-radius: 4px 4px 0 0;
+  pointer-events: none;
+}
+
+/* Chrome metallic keys (Shift, Alpha, Menu, On) */
+.casioKeyMetal {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 145deg,
+    #ffffff,
+    #b0b6bc,
+    #697178,
+    #e8ecef,
+    #ffffff
+  );
+  border: 1px solid #555c62;
+  box-shadow:
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.45),
+    0 2px 3px rgba(0, 0, 0, 0.6);
+  color: #1a1a1a;
+  font-size: 0px; /* Hide text, or style tiny if needed */
+}
+
+.casioKeyMetal:hover {
+  filter: brightness(1.1);
+}
+
+.casioKeyMetal:active,
+.casioKeyMetal.casioPressed {
+  transform: translateY(1.5px);
+  box-shadow:
+    inset 0 1.5px 3px rgba(0, 0, 0, 0.6),
+    0 0.5px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Scientific keys (dark grey) */
+.casioKeyScientific {
+  height: 25px;
+  background: linear-gradient(180deg, #30353c 0%, #212529 100%);
+  color: #eeeeee;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px 6px 4px 4px;
+  border: 1px solid #14171a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.4),
+    0 2.5px 0 #0f1114,
+    0 3px 5px rgba(0, 0, 0, 0.4);
+}
+
+.casioKeyScientific:hover {
+  filter: brightness(1.15);
+}
+
+.casioKeyScientific:active,
+.casioKeyScientific.casioPressed {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1.5px 3px rgba(0, 0, 0, 0.6),
+    0 0.5px 0 #0f1114,
+    0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Numeric & Operator Keys (warm off-white) */
+.casioKeyWhite {
+  height: 33px;
+  background: linear-gradient(180deg, #ffffff 0%, #ededed 100%);
+  color: #111111;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid #cfd3d8;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.15),
+    0 3px 0 #b3b9bf,
+    0 4px 6px rgba(0, 0, 0, 0.35);
+}
+
+.casioKeyWhite:hover {
+  filter: brightness(1.05);
+}
+
+.casioKeyWhite:active,
+.casioKeyWhite.casioPressed {
+  transform: translateY(2.5px);
+  box-shadow:
+    inset 0 1.5px 2px rgba(0, 0, 0, 0.25),
+    0 0.5px 0 #b3b9bf,
+    0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+/* DEL & AC Keys (deep royal blue) */
+.casioKeyBlue {
+  height: 33px;
+  background: linear-gradient(180deg, #2f5ea3 0%, #1f4277 100%);
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid #142a4d;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.4),
+    0 3px 0 #122544,
+    0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.casioKeyBlue:hover {
+  filter: brightness(1.15);
+}
+
+.casioKeyBlue:active,
+.casioKeyBlue.casioPressed {
+  transform: translateY(2.5px);
+  box-shadow:
+    inset 0 1.5px 3px rgba(0, 0, 0, 0.5),
+    0 0.5px 0 #122544,
+    0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- Top Control Panel with Metallic Buttons & D-Pad ---------- */
+.casioTopControlPanel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.casioTopControlCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* spacing between top and bottom metallic buttons */
+  align-items: center;
+  width: 50px;
+}
+
+.casioTopKeyWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.casioTopKeyLabel {
+  font-family: Arial, sans-serif;
+  font-size: 7.5px;
+  font-weight: 800;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: center;
+  text-shadow: 0 0.5px 1px rgba(0,0,0,0.5);
+}
+
+/* ---------- D-Pad styling ---------- */
+.casioDpadContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  position: relative;
+}
+
+.casioDpad {
+  width: 72px;
+  height: 72px;
+  background: radial-gradient(circle, #2d3137 35%, #181c20 85%, #0f1114 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,0.08),
+    inset 0 -2px 3px rgba(0,0,0,0.7),
+    0 4px 8px rgba(0,0,0,0.5);
+  border: 1.5px solid #0a0c0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.casioDpadBtn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  color: #88929c;
+  font-size: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  transition: color 0.1s, transform 0.05s;
+  padding: 0;
+}
+
+.casioDpadBtn:hover {
+  color: #ffffff;
+}
+
+.casioDpadBtn:active {
+  transform: scale(0.85);
+}
+
+.casioDpadUp {
+  top: 1px;
+  left: 25px;
+}
+
+.casioDpadDown {
+  bottom: 1px;
+  left: 25px;
+}
+
+.casioDpadLeft {
+  left: 1px;
+  top: 25px;
+}
+
+.casioDpadRight {
+  right: 1px;
+  top: 25px;
+}
+
+.casioDpadCenter {
+  width: 26px;
+  height: 26px;
+  background: conic-gradient(from 45deg, #444a52, #1b1e22, #444a52);
+  border-radius: 50%;
+  border: 1.5px solid #0c0e11;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.15),
+    0 1.5px 2px rgba(0,0,0,0.6);
+  z-index: 2;
+}
+
+/* ---------- Bottom Footer Info ---------- */
+.casioFooter {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin-top: 14px;
+  text-align: center;
+  font-size: 7.5px;
+  color: #6a7c8c;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.2px;
+}

@@ -3,6 +3,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { Delete } from 'lucide-react'
 import { useKeyboardInput } from '@/hooks/useKeyboardInput'
+import {
+  tokenize,
+  evaluate,
+  balanceParens,
+  formatNumberForDisplay,
+  prettifyExpr,
+  type AngleMode,
+} from '@/lib/scientific-engine'
 
 /* =========================================================================
    EXPRESSION-BASED SCIENTIFIC CALCULATOR
@@ -10,317 +18,9 @@ import { useKeyboardInput } from '@/hooks/useKeyboardInput'
      - User builds an expression by pressing keys:  √(8) × 2 =
      - The display shows the expression as it is being built
      - Pressing = parses and evaluates the full expression
+   The math engine lives in @/lib/scientific-engine and is shared with the
+   hero Casio-style calculator so both behave identically.
    ========================================================================= */
-
-type AngleMode = 'DEG' | 'RAD'
-
-/* ----------------------- Tokenizer & Parser ----------------------- */
-
-type Token =
-  | { type: 'num'; value: number }
-  | { type: 'op'; value: '+' | '-' | '*' | '/' | '^' | 'mod' }
-  | { type: 'fn'; value: FnName }
-  | { type: 'lparen' }
-  | { type: 'rparen' }
-  | { type: 'const'; value: 'pi' | 'e' }
-
-type FnName =
-  | 'sqrt' | 'cbrt' | 'sq' | 'cu'
-  | 'sin' | 'cos' | 'tan' | 'asin' | 'acos' | 'atan'
-  | 'ln' | 'log' | 'exp' | 'tenx'
-  | 'abs' | 'inv' | 'fact' | 'floor' | 'ceil' | 'round' | 'neg'
-
-function tokenize(input: string): Token[] {
-  const tokens: Token[] = []
-  let i = 0
-  while (i < input.length) {
-    const c = input[i]
-    if (c === ' ') { i++; continue }
-
-    if (/[0-9.]/.test(c)) {
-      let num = ''
-      while (i < input.length && /[0-9.]/.test(input[i])) { num += input[i]; i++ }
-      const v = parseFloat(num)
-      if (!isNaN(v)) tokens.push({ type: 'num', value: v })
-      continue
-    }
-
-    if (/[a-zA-Z]/.test(c)) {
-      let name = ''
-      while (i < input.length && /[a-zA-Z]/.test(input[i])) { name += input[i]; i++ }
-      const lower = name.toLowerCase()
-      if (lower === 'pi') tokens.push({ type: 'const', value: 'pi' })
-      else if (lower === 'e') tokens.push({ type: 'const', value: 'e' })
-      else if (
-        ['sqrt','cbrt','sq','cu','sin','cos','tan','asin','acos','atan',
-         'ln','log','exp','tenx','abs','inv','fact','floor','ceil','round','neg'].includes(lower)
-      ) {
-        tokens.push({ type: 'fn', value: lower as FnName })
-      }
-      continue
-    }
-
-    if (c === '+' || c === '-') { tokens.push({ type: 'op', value: c }); i++; continue }
-    if (c === '×' || c === '*') { tokens.push({ type: 'op', value: '*' }); i++; continue }
-    if (c === '÷' || c === '/') { tokens.push({ type: 'op', value: '/' }); i++; continue }
-    if (c === '^') { tokens.push({ type: 'op', value: '^' }); i++; continue }
-    if (c === '(') { tokens.push({ type: 'lparen' }); i++; continue }
-    if (c === ')') { tokens.push({ type: 'rparen' }); i++; continue }
-    if (c === '!') { tokens.push({ type: 'fn', value: 'fact' }); i++; continue }
-
-    if (c === 'm' && input.slice(i, i + 3).toLowerCase() === 'mod') {
-      tokens.push({ type: 'op', value: 'mod' })
-      i += 3; continue
-    }
-
-    i++
-  }
-  return tokens
-}
-
-/* Inject implicit multiplication:
-   Between value-ending tokens (num/const/rparen) and value-starting tokens
-   (num/const/lparen/fn). Examples: 2π, 2sin(x), (2)(3), 8√2
-*/
-function injectImplicitMultiplication(tokens: Token[]): Token[] {
-  const out: Token[] = []
-  const isValueEnd = (t: Token) => t.type === 'num' || t.type === 'const' || t.type === 'rparen'
-  const isValueStart = (t: Token) => t.type === 'num' || t.type === 'const' || t.type === 'lparen' || t.type === 'fn'
-  for (let i = 0; i < tokens.length; i++) {
-    out.push(tokens[i])
-    if (i === 0) continue
-    const prev = out[out.length - 2]
-    const cur = tokens[i]
-    if (isValueEnd(prev) && isValueStart(cur)) {
-      out.splice(out.length - 1, 0, { type: 'op', value: '*' })
-    }
-  }
-  return out
-}
-
-/* Recursive-descent evaluator:
-   expr   := term (('+'|'-') term)*
-   term   := factor (('*'|'/'|'mod') factor)*
-   factor := unary ('^' factor)?       // right-assoc
-   unary  := ('-'|'+') unary | postfix
-   postfix := primary '!'*
-   primary := number | const | '(' expr ')' | fn '(' ... ')'
-   Functions consume the next sub-expression as their argument, e.g. sqrt(8).
-*/
-function evaluate(tokens: Token[], angleMode: AngleMode): number {
-  const t = injectImplicitMultiplication(tokens)
-  let p = 0
-  const peek = () => t[p]
-  const eat = () => t[p++]
-
-  const toRad = (v: number) => angleMode === 'DEG' ? v * Math.PI / 180 : v
-  const fromRad = (v: number) => angleMode === 'DEG' ? v * 180 / Math.PI : v
-
-  const applyFn = (fn: FnName, val: number): number => {
-    switch (fn) {
-      case 'sqrt': if (val < 0) throw new Error('sqrt of negative'); return Math.sqrt(val)
-      case 'cbrt': return Math.cbrt(val)
-      case 'sq': return val * val
-      case 'cu': return val * val * val
-      case 'sin': return Math.sin(toRad(val))
-      case 'cos': return Math.cos(toRad(val))
-      case 'tan': {
-        const a = toRad(val)
-        if (Math.abs(Math.cos(a)) < 1e-12) throw new Error('tan undefined')
-        return Math.tan(a)
-      }
-      case 'asin':
-        if (val < -1 || val > 1) throw new Error('asin domain')
-        return fromRad(Math.asin(val))
-      case 'acos':
-        if (val < -1 || val > 1) throw new Error('acos domain')
-        return fromRad(Math.acos(val))
-      case 'atan': return fromRad(Math.atan(val))
-      case 'ln':
-        if (val <= 0) throw new Error('ln domain')
-        return Math.log(val)
-      case 'log':
-        if (val <= 0) throw new Error('log domain')
-        return Math.log10(val)
-      case 'exp': return Math.exp(val)
-      case 'tenx': return Math.pow(10, val)
-      case 'abs': return Math.abs(val)
-      case 'inv':
-        if (val === 0) throw new Error('1/0 undefined')
-        return 1 / val
-      case 'fact': {
-        if (val < 0 || val > 170 || !Number.isInteger(val)) throw new Error('factorial domain')
-        let r = 1
-        for (let i = 2; i <= val; i++) r *= i
-        return r
-      }
-      case 'floor': return Math.floor(val)
-      case 'ceil': return Math.ceil(val)
-      case 'round': return Math.round(val)
-      case 'neg': return -val
-    }
-  }
-
-  const parsePrimary = (): number => {
-    const tok = peek()
-    if (!tok) throw new Error('unexpected end')
-    if (tok.type === 'num') { eat(); return tok.value }
-    if (tok.type === 'const') {
-      eat()
-      if (tok.value === 'pi') return Math.PI
-      return Math.E
-    }
-    if (tok.type === 'lparen') {
-      eat()
-      const v = parseExpr()
-      const close = eat()
-      if (!close || close.type !== 'rparen') throw new Error('missing )')
-      return v
-    }
-    if (tok.type === 'fn') {
-      eat()
-      const v = parseUnary()
-      return applyFn(tok.value, v)
-    }
-    if (tok.type === 'op' && (tok.value === '+' || tok.value === '-')) {
-      eat()
-      const v = parseUnary()
-      return tok.value === '-' ? -v : v
-    }
-    throw new Error('unexpected token')
-  }
-
-  const parsePostfix = (): number => {
-    let v = parsePrimary()
-    while (peek()?.type === 'fn' && (peek() as any).value === 'fact') {
-      eat()
-      v = applyFn('fact', v)
-    }
-    return v
-  }
-
-  const parseUnary = (): number => {
-    const tok = peek()
-    if (tok?.type === 'op' && tok.value === '-') { eat(); return -parseUnary() }
-    if (tok?.type === 'op' && tok.value === '+') { eat(); return parseUnary() }
-    return parsePostfix()
-  }
-
-  const parseFactor = (): number => {
-    const base = parseUnary()
-    if (peek()?.type === 'op' && (peek() as any).value === '^') {
-      eat()
-      const exp = parseFactor()
-      return Math.pow(base, exp)
-    }
-    return base
-  }
-
-  const parseTerm = (): number => {
-    let left = parseFactor()
-    while (true) {
-      const tok = peek()
-      if (tok?.type === 'op' && (tok.value === '*' || tok.value === '/' || tok.value === 'mod')) {
-        eat()
-        const right = parseFactor()
-        if (tok.value === '*') left = left * right
-        else if (tok.value === '/') {
-          if (right === 0) throw new Error('divide by 0')
-          left = left / right
-        } else left = left % right
-      } else break
-    }
-    return left
-  }
-
-  const parseExpr = (): number => {
-    let left = parseTerm()
-    while (true) {
-      const tok = peek()
-      if (tok?.type === 'op' && (tok.value === '+' || tok.value === '-')) {
-        eat()
-        const right = parseTerm()
-        if (tok.value === '+') left = left + right
-        else left = left - right
-      } else break
-    }
-    return left
-  }
-
-  return parseExpr()
-}
-
-function formatNumberForDisplay(v: number): string {
-  if (!isFinite(v) || isNaN(v)) return 'ERROR'
-  if (Math.abs(v) < 1e-14) return '0'
-  let s = v.toString()
-  if (s.length > 14) {
-    if (Math.abs(v) >= 1e10 || Math.abs(v) < 1e-6) s = v.toExponential(6)
-    else s = parseFloat(v.toPrecision(10)).toString()
-  }
-  return s
-}
-
-/* Convert raw expression buffer into a pretty display string.
-   "sqrt(8)"      => "√(8)"
-   "cbrt(27)"     => "∛(27)"
-   "pi"           => "π"
-   "2*pi"         => "2π"
-   "exp(2)"       => "e^(2)"   (display only — parser still reads "exp")
-   "log(100)"     => "log(100)"
-   "sin(pi/2)"    => "sin(π/2)"
-   "sq(3)"        => "(3)²"
-   "cu(2)"        => "(2)³"
-   "inv(4)"       => "1/(4)"
-   "abs(-7)"      => "|−7|"
-   "fact(5)"      => "(5)!"
-   "floor(3.7)"   => "⌊3.7⌋"
-   "ceil(3.2)"    => "⌈3.2⌉"
-   "round(3.7)"   => "[3.7]"
-   "tenx(3)"      => "10^(3)"
-   "neg(5)"       => "−(5)"
-   "mod"          => " mod "
-*/
-function prettifyExpr(raw: string): string {
-  if (!raw) return ''
-  // First, replace named constants with their symbols
-  let s = raw
-    .replace(/\bpi\b/g, 'π')
-    .replace(/\bmod\b/g, ' mod ')
-    .replace(/×/g, '×')
-    .replace(/÷/g, '÷')
-    .replace(/--/g, '+')
-  // Now replace function calls with pretty forms.
-  // The pattern "name(" is replaced with the symbol, and a matching ")" is
-  // also handled when it follows an expression: "sqrt(8)" => "√(8)".
-  s = s.replace(/\bsqrt\(/g, '√(')
-  s = s.replace(/\bcbrt\(/g, '∛(')
-  s = s.replace(/\bexp\(/g, 'e^(')
-  s = s.replace(/\btenx\(/g, '10^(')
-  s = s.replace(/\binv\(/g, '1/(')
-  s = s.replace(/\babs\(/g, '|−(')
-  // For "name(expr)" form, fold expr into the symbol form
-  s = s.replace(/√\(([^()]*)\)/g, '√($1)')
-  s = s.replace(/∛\(([^()]*)\)/g, '∛($1)')
-  s = s.replace(/e\^\(([^()]*)\)/g, 'e^($1)')
-  s = s.replace(/10\^\(([^()]*)\)/g, '10^($1)')
-  s = s.replace(/1\/\(([^()]*)\)/g, '1/($1)')
-  s = s.replace(/\|−\(([^()]*)\)\|/g, '|$1|')
-  // sq(x) and cu(x) become (x)² and (x)³
-  s = s.replace(/\bsq\(([^()]*)\)/g, '($1)²')
-  s = s.replace(/\bcu\(([^()]*)\)/g, '($1)³')
-  // fact(x) becomes (x)!
-  s = s.replace(/\bfact\(([^()]*)\)/g, '($1)!')
-  // floor/ceil/round/neg
-  s = s.replace(/\bfloor\(([^()]*)\)/g, '⌊$1⌋')
-  s = s.replace(/\bceil\(([^()]*)\)/g, '⌈$1⌉')
-  s = s.replace(/\bround\(([^()]*)\)/g, '[$1]')
-  s = s.replace(/\bneg\(([^()]*)\)/g, '−($1)')
-  // Collapse "× −" and "−−" to look cleaner
-  s = s.replace(/×\s*−/g, '× −')
-  s = s.replace(/\+\s*−/g, '+ −')
-  return s
-}
 
 /* ----------------------- Main component ----------------------- */
 
@@ -418,10 +118,7 @@ export default function ScientificCalculator() {
     const e = exprRef.current
     if (!e.trim()) return
     // Auto-close any unmatched parens so users can press = without closing them
-    let balanced = e
-    const openCount = (balanced.match(/\(/g) || []).length
-    const closeCount = (balanced.match(/\)/g) || []).length
-    for (let i = 0; i < openCount - closeCount; i++) balanced += ')'
+    const balanced = balanceParens(e)
     try {
       const tokens = tokenize(balanced)
       if (tokens.length === 0) return
@@ -441,10 +138,7 @@ export default function ScientificCalculator() {
   const evaluateCurrent = useCallback((): number | null => {
     const e = exprRef.current
     if (!e.trim()) return null
-    let balanced = e
-    const openCount = (balanced.match(/\(/g) || []).length
-    const closeCount = (balanced.match(/\)/g) || []).length
-    for (let i = 0; i < openCount - closeCount; i++) balanced += ')'
+    const balanced = balanceParens(e)
     try {
       const tokens = tokenize(balanced)
       if (tokens.length === 0) return null
