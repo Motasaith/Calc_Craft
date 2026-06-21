@@ -1,6 +1,34 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter, Plus_Jakarta_Sans, Share_Tech_Mono } from 'next/font/google'
 import './globals.css'
 import { BRAND } from '@/lib/brand'
+
+// Self-hosted fonts via next/font/google — no render-blocking @import,
+// zero layout shift (automatic size-adjust), served from the same origin.
+// Weights mirror exactly what globals.css + tailwind.config.js reference.
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+  display: 'swap',
+})
+
+// Share Tech Mono only ships a single (400) weight; the calculator
+// hardware CSS layer synthesizes boldness via font-weight on the client.
+const shareTechMono = Share_Tech_Mono({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -321,12 +349,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${jakarta.variable} ${shareTechMono.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

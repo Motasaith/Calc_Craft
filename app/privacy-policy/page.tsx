@@ -3,6 +3,10 @@ import LegalPage from '@/components/legal/LegalPage'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
+// Legal pages are fully static — prerendered at build time for SEO.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export const metadata: Metadata = {
   title: 'Privacy Policy - How Home of Calculators Protects Your Data | Home of Calculators',
   description:

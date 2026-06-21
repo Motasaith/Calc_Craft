@@ -9,6 +9,10 @@ import FAQ from '@/components/FAQ'
 import CTA from '@/components/CTA'
 import Footer from '@/components/Footer'
 
+// Landing page is fully static — prerendered at build time for SEO.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export const metadata: Metadata = {
   alternates: {
     canonical: BRAND.url,

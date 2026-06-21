@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 import CalculatorsPageClient from './CalculatorsPageClient'
 
+// Catalog page is statically prerendered at build time; the client component
+// handles search/filter interactivity after hydration.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export const metadata: Metadata = {
   title: 'Calculators Directory - Browse All Free Online Calculators | Home of Calculators',
   description:

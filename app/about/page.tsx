@@ -17,6 +17,10 @@ import {
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
+// Static marketing page — prerendered at build time for SEO.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export const metadata: Metadata = {
   title: 'About Home of Calculators - Our Mission, Story & the Team Behind Free Calculators | Home of Calculators',
   description:

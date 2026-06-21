@@ -4,6 +4,10 @@ import { Calendar, Clock, ArrowRight, BookOpen, Calculator, Wrench, Globe, Trend
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
+// Blog index is fully static — prerendered at build time for SEO.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export const metadata: Metadata = {
   title: 'Home of Calculators Blog - Calculator Tips, Tutorials & Industry Insights | Home of Calculators',
   description:

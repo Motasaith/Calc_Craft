@@ -8,7 +8,19 @@
 
 **URL**: [https://calc_craft.com](https://calc_craft.com)
 
-Calc_Craft is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude).
+Calc_Craft is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude). It deploys to **Cloudflare Pages** as a static site with a single Pages Function for the contact API.
+
+### Rendering strategy
+- **SSG (static generation)** — all SEO pages are prerendered at build time via `output: 'export'` + `export const dynamic = 'force-static'`, so Google gets fully-rendered HTML with zero JavaScript execution (the gold standard for SEO):
+  - Home (`/`), About (`/about`), Blog index (`/blog`) and all blog posts (`/blog/[slug]`)
+  - Calculators directory (`/calculators`) and every calculator page (`/calculators/[slug]`) via `generateStaticParams`
+  - Legal pages (`/privacy-policy`, `/terms-of-use`, `/cookies`)
+  - `sitemap.ts`, `robots.ts`, `manifest.ts`
+- **Client-hydrated shells** — interactive tools are exported as static HTML shells that hydrate in the browser (no server runtime needed):
+  - Visual Builder (`/builder`), Contact (`/contact`), Embed (`/embed`), Custom calculator (`/calculators/custom`)
+- **Cloudflare Pages Function** — `functions/api/contact.ts` handles `POST /api/contact` at the edge. The contact form also has a hidden-iframe fallback to FormSubmit.co so it works even without the Function.
+
+Build with `npm run build` (outputs to `out/`) and deploy the `out/` directory to Cloudflare Pages. No Node server required.
 
 ---
 

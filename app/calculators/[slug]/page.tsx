@@ -2,6 +2,10 @@ import { getAllSlugs, getCalculatorBySlug, CATEGORY_LABELS } from '@/lib/calcula
 import type { Metadata } from 'next'
 import CalculatorPageClient from './CalculatorPageClient'
 
+// Calculator pages are statically generated at build time via generateStaticParams.
+export const dynamic = 'force-static'
+export const revalidate = false
+
 // Generate static params for all calculator slugs
 export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }))

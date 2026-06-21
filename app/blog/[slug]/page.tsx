@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen, Tag } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-
+// Blog posts are statically generated at build time via generateStaticParams.
+export const dynamic = 'force-static'
+export const revalidate = false
 const ARTICLES: Record<string, {
   title: string
   excerpt: string
