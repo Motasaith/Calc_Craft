@@ -1,12 +1,27 @@
 import { MetadataRoute } from 'next'
 import { getAllSlugs, calculators } from '@/lib/calculators'
+import { getPublishedPostSlugs } from '@/lib/db/queries'
 
 export const dynamic = 'force-static'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://homeofcalculators.com'
   const now = new Date()
   const slugs = getAllSlugs()
+
+  // Merge static blog slugs with published DB posts.
+  const staticBlogSlugs = [
+    'how-to-build-custom-calculator-no-code',
+    'understanding-loan-emi-calculation',
+    'calculator-engines-mathjs-precision',
+  ]
+  let dbBlogSlugs: string[] = []
+  try {
+    dbBlogSlugs = await getPublishedPostSlugs()
+  } catch {
+    // DB not configured — static-only sitemap.
+  }
+  const allBlogSlugs = Array.from(new Set([...staticBlogSlugs, ...dbBlogSlugs]))
 
   return [
     // Homepage
@@ -53,11 +68,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     // Blog posts
-    ...[
-      'how-to-build-custom-calculator-no-code',
-      'understanding-loan-emi-calculation',
-      'calculator-engines-mathjs-precision',
-    ].map((slug) => ({
+    ...allBlogSlugs.map((slug) => ({
       url: `${baseUrl}/blog/${slug}`,
       lastModified: now,
       changeFrequency: 'monthly' as const,

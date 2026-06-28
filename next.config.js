@@ -1,16 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Static export for Cloudflare Pages.
-  // All SEO pages are prerendered at build time (SSG) via `export const dynamic = 'force-static'`
-  // or generateStaticParams — Google gets fully-rendered HTML with zero JS execution.
-  // Interactive tools (builder, embed, custom calculator) are exported as static client
-  // shells that hydrate in the browser; the contact form uses a hidden-iframe fallback
-  // to FormSubmit.co so no server runtime is required.
-  output: 'export',
+  // Deployed to Vercel. Public pages stay fully SSG via
+  // `export const dynamic = 'force-static'` + generateStaticParams — Google
+  // still gets fully-rendered HTML with zero JS execution, identical to the
+  // previous static-export setup. The difference is the platform now *can*
+  // run server code, which /admin, NextAuth, and server actions need.
+  //
+  // We previously used `output: 'export'` for Cloudflare Pages. That mode
+  // produces a folder of static files with no server runtime at all, which
+  // made auth, middleware, server actions, and DB queries impossible. On
+  // Vercel we don't need it — force-static handles the SSG guarantee.
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    // Local static assets only; sharp isn't available on Cloudflare Pages.
+    // Local static assets only; keep unoptimized for portability.
     unoptimized: true,
   },
 }

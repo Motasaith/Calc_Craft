@@ -1,14 +1,14 @@
-# Calc_Craft 🧮
+# Home of Calculators 🧮
 
-**Calc_Craft** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **50+ free online calculators** across **9 categories** — all powered by a single high-precision math engine.
+**Home of Calculators** is a premium, modern, and highly interactive **free online calculator platform** built with Next.js 15, React 19, TypeScript, Tailwind CSS, GSAP, and Framer Motion. It blends modern minimal flat aesthetics with nostalgic digital hardware designs, offering **190 free online calculators** across **13 categories** — all powered by a single high-precision math engine — plus a no-code visual builder and embeddable widgets.
 
 ---
 
 ## 🌐 Live Website
 
-**URL**: [https://calc_craft.com](https://calc_craft.com)
+**URL**: [https://homeofcalculators.com](https://homeofcalculators.com)
 
-Calc_Craft is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude). It deploys to **Cloudflare Pages** as a static site with a single Pages Function for the contact API.
+Home of Calculators is a **statically exported Next.js application** optimized for search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude). It deploys to **Cloudflare Pages** as a static site with a single Pages Function for the contact API.
 
 ### Rendering strategy
 - **SSG (static generation)** — all SEO pages are prerendered at build time via `output: 'export'` + `export const dynamic = 'force-static'`, so Google gets fully-rendered HTML with zero JavaScript execution (the gold standard for SEO):
@@ -19,6 +19,12 @@ Calc_Craft is a **statically exported Next.js application** optimized for search
 - **Client-hydrated shells** — interactive tools are exported as static HTML shells that hydrate in the browser (no server runtime needed):
   - Visual Builder (`/builder`), Contact (`/contact`), Embed (`/embed`), Custom calculator (`/calculators/custom`)
 - **Cloudflare Pages Function** — `functions/api/contact.ts` handles `POST /api/contact` at the edge. The contact form also has a hidden-iframe fallback to FormSubmit.co so it works even without the Function.
+
+### Fonts
+All three font families are self-hosted via `next/font/google` in `app/layout.tsx` — no render-blocking `@import` requests, zero layout shift (automatic `size-adjust`), served same-origin from Cloudflare's edge:
+- **Plus Jakarta Sans** (`--font-jakarta`) → body text
+- **Inter** (`--font-inter`) → headings
+- **Share Tech Mono** (`--font-mono`) → calculator displays only (scoped via `casio-hardware.module.css` and Tailwind's `font-mono` utility)
 
 Build with `npm run build` (outputs to `out/`) and deploy the `out/` directory to Cloudflare Pages. No Node server required.
 
@@ -38,61 +44,74 @@ Every numeric result on the site is produced by a single, centralized engine bui
 - **Lazy-loaded** — mathjs is dynamically imported on calculator pages only, keeping the landing-page bundle small
 - **Type-safe** — every helper returns either `EvalResult` (with `value` + `formatted`) or `EvalError`
 
-> **43 calculator components** share this single engine — no duplicated math, no float drift, no inconsistent rounding.
+> **43+ calculator components** share this single engine — no duplicated math, no float drift, no inconsistent rounding.
 
-### 🆕 New Categories
+### 🧮 Shared Scientific Engine ([lib/scientific-engine.ts](lib/scientific-engine.ts))
+A pure, dependency-free math engine (tokenizer → recursive-descent parser → evaluator) powers both the hero Casio calculator and the Scientific Calculator. No mathjs dependency, identical behavior, zero drift. Exports: `tokenize`, `evaluate`, `balanceParens`, `formatNumberForDisplay`, `prettifyExpr`, `tryEvaluate`, type `AngleMode`.
+
+### 🆕 Categories
 - **Statistics** — descriptive stats (mean, median, mode, std dev, variance, range)
 - **Trigonometry** — sin / cos / tan / asin / acos / atan with DEG/RAD toggle
 - **Geometry** — area & volume of 13 shapes (rectangle, circle, triangle, trapezoid, ellipse, parallelogram, rhombus, cube, sphere, cylinder, cone, pyramid, prism)
+- **Construction** — concrete, drywall, flooring, gravel, mulch, paint, roofing, square footage, stair, tile
+- **Engineering** — engineering-specific calculators
+- **Islamic** — Islamic finance and date calculators
 
 ---
 
 ## 🚀 Key Features
 
-### 1. Free Online Calculators (50+ across 9 categories)
+### 1. Free Online Calculators (190 across 13 categories)
 | Category | Calculators |
 |---|---|
 | **Math** | Basic, Scientific, Percentage, Fraction, Exponent, Logarithm, Quadratic, GCD & LCM, Permutation & Combination, Ratio, Number Base Converter, Statistics, Volume, Area |
 | **Finance** | Loan EMI, Mortgage, Compound Interest, Simple Interest, SIP, ROI, Inflation, Discount, Profit Margin, Break-Even, Tip, Salary, Savings Goal, Currency |
 | **Health** | BMI, Body Fat, Calorie (BMR + TDEE), Ideal Weight, Heart Rate, Macro, Water Intake, Pregnancy |
-| **Conversion** | Length, Weight, Temperature, Speed, Energy, Data Storage, Cooking |
-| **Datetime** | Age, Date Difference, Time, Countdown |
+| **Conversion** | Length, Weight, Temperature, Speed, Energy, Data Storage, Cooking, Angle, Power, Pressure, Fuel, Roman Numeral |
+| **Date & Time** | Age, Date Difference, Time, Countdown |
 | **Everyday** | GPA, Password Generator, Random Number, Color Converter, Word Counter |
+| **Construction** | Concrete, Drywall, Flooring, Gravel, Mulch, Paint, Roofing, Square Footage, Stair, Tile |
 | **Statistics** | Descriptive statistics (mean / median / mode / std dev / variance / range) |
 | **Trigonometry** | sin / cos / tan + inverses (DEG/RAD) |
 | **Geometry** | Area & Volume of 13 shapes |
+| **Engineering** | Engineering-specific calculators |
+| **Islamic** | Islamic finance and date calculators |
+| **Misc** | Miscellaneous utilities |
 
 ### 2. Flat Digital Calculator Text Rendering Engine
-Calc_Craft features a custom, high-fidelity SVG-based **14-segment digital text display system** that recreates the look and feel of physical LED/LCD calculator displays without relying on third-party fonts:
+Home of Calculators features a custom, high-fidelity SVG-based **14-segment digital text display system** that recreates the look and feel of physical LED/LCD calculator displays without relying on third-party fonts:
 - **Beveled SVG Polygons**: Hand-crafted coordinates for all 14 segments and a decimal point, providing clean and sharp edges at any scale.
-- **Physical Display Characteristics**: Simulates a physical screen with a subtle forward slant (`skewX(-8deg)`) and light-grey segment shadows (`rgba(0,0,0,0.06)`) for inactive background elements.
-- **Intellectual Decimal Parsing**: Automatically merges period (`.`) characters with their preceding digits into a single character cell, rendering decimals (e.g., `50+` or `12.5`) exactly like real hardware displays.
+- **Physical Display Characteristics**: Simulates a physical screen with a subtle forward slant (`skewX(-8deg)`) and light-grey segment shadows for inactive background elements.
+- **Intellectual Decimal Parsing**: Automatically merges period (`.`) characters with their preceding digits into a single character cell, rendering decimals exactly like real hardware displays.
 - **Power-On Startup Flicker**: Triggers a staggered vacuum-fluorescent VFD/LED flicker animation using Framer Motion when characters mount.
-- **Multiple Styling Themes**:
-  - `minimal` (Default): Floating, transparent background adapting to `currentColor`.
-  - `lcd`: Classic Casio olive-green backing with dark slate segments.
-  - `led-red` / `led-green` / `led-blue`: Glowing, high-contrast retro neon displays.
+- **Multiple Styling Themes**: `minimal` (default), `lcd` (Casio olive-green), `led-red` / `led-green` / `led-blue` (glowing retro neon).
 
-### 3. Animated Floating Header
+### 3. Pixel-Perfect Casio Hardware Replica
+`components/CasioHeroCalculator.tsx` is a pixel-perfect Casio fx-991EX ClassWiz replica styled via `components/casio-hardware.module.css` — 3D bevels, sage LCD, solar panel, amber/orange accent keys. The hero calculator floats via Tailwind `animate-float` and uses the shared scientific engine for identical behavior to the standalone Scientific Calculator.
+
+### 4. Animated Floating Header
 The navigation menu has been fully upgraded to stand out cleanly from the Hero canvas:
 - **Mount Slide Transition**: Slides smoothly from the top of the viewport on initial page load.
-- **Dynamic Scroll States**: The header transitionally adjusts border sharpness, background opacity (`bg-white/85` vs `bg-white/95`), and shadow depth as the user scrolls, creating layered separation.
-- **Magnetic Hover Pill**: Uses Framer Motion `layoutId` to slide a highlighting capsule smoothly behind menu items as you hover over links.
-- **Streamlined CTA**: Features a high-contrast black `"Start Building"` action button with micro-scale click transitions.
+- **Dynamic Scroll States**: The header transitionally adjusts border sharpness, background opacity, and shadow depth as the user scrolls.
+- **Magnetic Hover Pill**: Uses Framer Motion `layoutId` to slide a highlighting capsule smoothly behind menu items as you hover.
+- **Mega Menu**: Category-based dropdown for browsing all 190 calculators.
 - **Accessibility & SEO**: Semantic `<nav>` with `aria-label`, skip-to-content link, and keyboard-navigable dropdowns.
 
-### 4. Fully Responsive Design
+### 5. Fully Responsive Design
 - **Mobile-first** approach with breakpoints for `sm`, `md`, `lg`, `xl`, and `2xl`
 - Touch-optimized carousel and calculator interactions
 - Horizontal snap-scroll for calculator cards on mobile
 - Adaptive typography and spacing across all devices
 
-### 5. Custom Calculator Builder
+### 6. Custom Calculator Builder
 A drag-and-drop builder lets users create and share their own calculators without writing code:
-- **Form fields** — number, text, select, slider
+- **Form fields** — number, text, select, slider, checkbox
 - **Formula parser** — mathjs-based with shared engine helpers
-- **Export & share** — generate a shareable URL via the URL serializer
-- **Embed** — paste the calculator into any page via the `/embed` route
+- **Templates** — pre-built starting points (BMI, Tip, Compound Interest, Discount, and more)
+- **Themes** — Retro, Dark, Modern, Pastel, Cyberpunk + custom colors
+- **White-labeling** — custom logo, brand name, and colors
+- **Export & share** — generate a shareable URL via the URL serializer, or export as JSON
+- **Embed** — paste the calculator into any page via the `/embed` route with a one-line iframe
 
 ---
 
@@ -100,7 +119,7 @@ A drag-and-drop builder lets users create and share their own calculators withou
 
 | Technology | Purpose |
 |------------|---------|
-| **Next.js 15** | React framework with App Router, static export, and built-in SEO optimizations |
+| **Next.js 15** | React framework with App Router, static export, `next/font`, and built-in SEO optimizations |
 | **React 19** | UI library with concurrent features |
 | **TypeScript** | Type-safe development across the engine and UI |
 | **Tailwind CSS 3.4** | Utility-first CSS framework with custom color palette |
@@ -108,174 +127,194 @@ A drag-and-drop builder lets users create and share their own calculators withou
 | **GSAP + ScrollTrigger** | High-performance scroll animations |
 | **Framer Motion** | React animations and gestures |
 | **Lucide React** | Modern icon library |
+| **Cloudflare Pages** | Static hosting + Pages Functions for the contact API |
 
 ---
 
 ## 📂 Project Structure
-├── manifest.ts         # PWA manifest with calculator shortcuts
-│   ├── builder/            # Custom calculator builder
-│   ├── calculators/        # Catalog + dynamic [slug] routes
-│   ├── cookies/            # Cookie policy
-│   ├── embed/              # Embeddable calculator iframe
-│   ├── privacy-policy/     # Privacy policy
-│   └── terms-of-use/       # Terms of use
+```
+├── app/
+│   ├── layout.tsx              # Root layout: metadata, JSON-LD, next/font setup
+│   ├── page.tsx                # Home (SSG)
+│   ├── globals.css             # Tailwind + font CSS variables
+│   ├── manifest.ts             # PWA manifest (force-static)
+│   ├── robots.ts               # Crawler rules (force-static)
+│   ├── sitemap.ts              # XML sitemap (force-static)
+│   ├── about/page.tsx          # About (SSG)
+│   ├── blog/
+│   │   ├── page.tsx            # Blog index (SSG)
+│   │   └── [slug]/page.tsx     # Blog posts (SSG via generateStaticParams)
+│   ├── builder/
+│   │   ├── page.tsx            # Builder entry
+│   │   └── BuilderPageClient.tsx # Drag-and-drop editor (client)
+│   ├── calculators/
+│   │   ├── page.tsx            # Catalog (SSG)
+│   │   ├── CalculatorsPageClient.tsx # Search/filter (client)
+│   │   ├── [slug]/
+│   │   │   ├── page.tsx        # Calculator page (SSG via generateStaticParams)
+│   │   │   └── CalculatorPageClient.tsx
+│   │   └── custom/
+│   │       ├── page.tsx        # Custom calc entry
+│   │       └── CustomCalculatorPageClient.tsx # Reads URL hash (client)
+│   ├── contact/
+│   │   ├── page.tsx            # Contact entry
+│   │   └── ContactPageClient.tsx # Form with iframe fallback (client)
+│   ├── embed/
+│   │   ├── page.tsx            # Embed entry
+│   │   └── EmbedPageClient.tsx # Iframe widget (client)
+│   ├── cookies/page.tsx        # Cookies policy (SSG)
+│   ├── privacy-policy/page.tsx # Privacy policy (SSG)
+│   └── terms-of-use/page.tsx   # Terms of use (SSG)
 ├── components/
-│   ├── Navbar.tsx          # Animated floating header with semantic nav
-│   ├── Hero.tsx            # Landing section with ARIA labels and schema markup
-│   ├── Features.tsx        # Feature cards with ItemList schema
-│   ├── WhyChooseUs.tsx     # Service schema and rich descriptive content
-│   ├── HowItWorks.tsx      # HowTo schema with step-by-step instructions
-│   ├── PopularCalculators.tsx # SoftwareApplication schema for each calculator
-│   ├── CalculatorStack.tsx # Interactive calculator stack with schema
-│   ├── Testimonials.tsx    # Review schema and accessible carousel
-│   ├── FAQ.tsx             # FAQPage schema with Question/Answer markup
-│   ├── CTA.tsx             # Call-to-action with SoftwareApplication schema
-│   ├── Footer.tsx          # Organization schema and semantic footer
-│   ├── SegmentDisplay.tsx  # SVG drawing component for 14-segment characters
-│   ├── DigitalText.tsx     # Decimal-parsing parser wrapper for strings
+│   ├── Navbar.tsx              # Animated floating header with mega menu
+│   ├── Hero.tsx                # Landing section with live Casio calculator
+│   ├── CasioHeroCalculator.tsx # Pixel-perfect Casio fx-991EX replica
+│   ├── casio-hardware.module.css # Casio hardware styling (uses --font-mono)
+│   ├── Features.tsx            # Feature ticker with ItemList schema
+│   ├── WhyChooseUs.tsx         # Service schema and rich content
+│   ├── HowItWorks.tsx          # HowTo schema with step-by-step
+│   ├── PopularCalculators.tsx  # SoftwareApplication schema
+│   ├── CalculatorStack.tsx     # Interactive calculator showcase
+│   ├── Testimonials.tsx        # Review schema and carousel
+│   ├── FAQ.tsx                 # FAQPage schema
+│   ├── CTA.tsx                 # Call-to-action
+│   ├── Footer.tsx              # Organization schema and semantic footer
+│   ├── SegmentDisplay.tsx      # SVG 14-segment character renderer
+│   ├── DigitalText.tsx         # Decimal-parsing wrapper for strings
+│   ├── CalculatorSEOContent.tsx # Per-calculator SEO copy block
+│   ├── legal/LegalPage.tsx     # Reusable legal page layout
 │   └── calculators/
-│       ├── finance/        # 14 financial calculators (EMI, SIP, mortgage, …)
-│       ├── health/         # 8 health calculators (BMI, BMR, body fat, …)
-│       ├── conversion/     # 7 unit converters (length, weight, …)
-│       ├── datetime/       # 4 date/time calculators
-│       ├── math/           # 13 math calculators (algebra, stats, …)
-│       ├── everyday/       # 5 everyday utilities
-│       ├── statistics/     # Descriptive statistics
-│       ├── trigonometry/   # Trig with DEG/RAD
-│       ├── geometry/       # Area & volume
-│       └── shared/         # FormCalculatorShell, RetroInput, ResultDisplay, …
+│       ├── construction/       # 10 construction calculators
+│       ├── conversion/         # 12 unit converters
+│       ├── datetime/           # Date/time calculators
+│       ├── engineering/        # Engineering calculators
+│       ├── everyday/           # Everyday utilities
+│       ├── finance/            # Financial calculators
+│       ├── geometry/           # Area & volume
+│       ├── health/             # Health & fitness
+│       ├── islamic/            # Islamic calculators
+│       ├── math/               # Math calculators (incl. Scientific)
+│       ├── misc/               # Miscellaneous
+│       ├── shared/             # FormCalculatorShell, RetroInput, ResultDisplay, CustomCalculatorRenderer
+│       ├── statistics/         # Descriptive statistics
+│       └── trigonometry/       # Trig with DEG/RAD
+├── functions/
+│   └── api/contact.ts          # Cloudflare Pages Function — POST /api/contact
 ├── hooks/
-│   └── useKeyboardInput.ts # Keyboard input hook (used by Basic & Scientific)
+│   └── useKeyboardInput.ts     # Keyboard input hook (Basic & Scientific)
 ├── lib/
-│   ├── calc-engine.ts      # ⭐ Central calculation engine (mathjs, BigNumber)
-│   ├── calculators.ts      # Catalog of every calculator (slug, category, …)
+│   ├── brand.ts                # Central brand config (single source of truth)
+│   ├── calc-engine.ts          # mathjs-backed engine (lazy-loaded)
+│   ├── scientific-engine.ts    # Pure dependency-free scientific engine
+│   ├── calculators.ts          # Catalog of all 190 calculators
 │   ├── calculator-components.tsx # Lazy resolver: slug → React component
-│   ├── export-utils.ts     # Export calculated results to CSV / JSON
-│   ├── formula-parser.ts   # Custom-formula parser used by the builder
-│   └── url-serializer.ts   # Encode / decode calculator state in URLs
+│   ├── export-utils.ts         # Export results to CSV / JSON
+│   ├── formula-parser.ts       # Custom-formula parser for the builder
+│   └── url-serializer.ts       # Encode/decode calculator state in URLs
 ├── test/
-│   └── engine.test.mjs     # 96 engine tests (run with `npx tsx`)
-└── public/                 # Static assets (hero, icons, etc.)
+│   └── engine.test.mjs         # Engine tests (run with `npx tsx`)
+└── public/                     # Static assets (icons, og-image, etc.)
 ```
 
 ---
 
 ## 🧪 Testing the Engine
 
-The engine ships with **96 unit tests** covering unit conversion, financial formulas, health formulas, statistics, and BigNumber precision:
+The engine ships with unit tests covering unit conversion, financial formulas, health formulas, statistics, and BigNumber precision:
 
 ```bash
 npx tsx test/engine.test.mjs
 ```
 
-Expected output:
+Type-check the project:
 
-```
-96 passed, 0 failed out of 96 tests
-```
-
-A typical `npx tsc --noEmit` should also pass with **no output**. ├── Testimonials.tsx    # Review schema and accessible carousel
-│   ├── FAQ.tsx             # FAQPage schema with Question/Answer markup
-│   ├── CTA.tsx             # Call-to-action with SoftwareApplication schema
-│   ├── Footer.tsx          # Organization schema and semantic footer
-│   ├── SegmentDisplay.tsx  # SVG drawing component for 14-segment characters
-│   └── DigitalText.tsx     # Decimal-parsing parser wrapper for strings
-└── public/
-    └── hero.png            # Hero section background workspace image
+```bash
+npx tsc --noEmit
 ```
 
 ---
 
-## 🔍 SEO & GEO Optimization Guide
+## 🔍 SEO & GEO Optimization
 
 This project implements **comprehensive Search Engine Optimization (SEO)** and **Generative Engine Optimization (GEO)** techniques to maximize visibility on traditional search engines (Google, Bing, Yahoo, DuckDuckGo) and AI-powered search engines (ChatGPT, Perplexity, Google AI Mode, Bing Copilot, Claude).
 
 ### Technical SEO
 
-#### 1. Metadata & Open Graph (`app/layout.tsx`)
-- **Title Template**: `"%s | Calc_Craft — Free Online Calculators"`
+#### Metadata & Open Graph (`app/layout.tsx`)
+- **Title Template**: `"%s | Home of Calculators"`
 - **Meta Description**: Optimized for keywords like "free online calculators", "BMI calculator", "loan calculator"
 - **Open Graph**: `og:title`, `og:description`, `og:type=website`, `og:image` (1200x630), `og:locale=en_US`
 - **Twitter Card**: `summary_large_image` with title, description, and image
-- **Keywords**: 50+ targeted keywords including "free calculator", "online math tools", "percentage calculator", "scientific calculator online"
+- **Keywords**: 50+ targeted keywords
 - **Robots**: `index, follow` with `max-image-preview:large`, `max-snippet:-1`, `max-video-preview:-1`
 - **Verification Placeholders**: Google, Bing, Yandex site verification ready
 - **Apple Web App**: `capable=yes`, `statusBarStyle=black-translucent`
-- **Viewport Export**: `width=device-width, initial-scale=1, maximum-scale=5`
 
-#### 2. Structured Data (JSON-LD)
+#### Structured Data (JSON-LD)
 Six Schema.org types are embedded in `app/layout.tsx` using `@graph`:
 
 | Schema Type | Purpose |
 |-------------|---------|
 | **WebSite** | Site name, URL, search action (Sitelinks Searchbox) |
-| **Organization** | Brand name, logo, URL, sameAs (social profiles) |
+| **Organization** | Brand name, logo, URL, contact point |
 | **WebPage** | Page title, description, URL, breadcrumb reference |
 | **BreadcrumbList** | Navigation hierarchy for rich snippets |
-| **SoftwareApplication** | Application category, operating system, offers (Free) |
+| **SoftwareApplication** | Application category, offers (Free), aggregateRating |
 | **FAQPage** | Frequently asked questions for rich results |
 
-#### 3. Microdata (Inline Schema Markup)
+#### Microdata (Inline Schema Markup)
 Each component includes inline Schema.org microdata:
+- **Hero.tsx**: `WebPageElement` on H1
+- **Features.tsx**: `ItemList` with `itemProp="name"`
+- **WhyChooseUs.tsx**: `Service` with `ListItem` schema
+- **HowItWorks.tsx**: `HowTo` with `HowToStep` items
+- **PopularCalculators.tsx**: `ItemList` with `SoftwareApplication` per calculator
+- **Testimonials.tsx**: `Review` on carousel
+- **FAQ.tsx**: `FAQPage` with `Question` and `Answer` items
+- **CTA.tsx**: `SoftwareApplication`
+- **Footer.tsx**: `Organization` and `WPFooter`
+- **CalculatorStack.tsx**: `ItemList`
 
-- **Hero.tsx**: `itemScope itemType="https://schema.org/WebPageElement"` on H1
-- **Features.tsx**: `itemScope itemType="https://schema.org/ItemList"` with `itemProp="name"`
-- **WhyChooseUs.tsx**: `itemScope itemType="https://schema.org/Service"` with `ListItem` schema
-- **HowItWorks.tsx**: `itemScope itemType="https://schema.org/HowTo"` with `HowToStep` items
-- **PopularCalculators.tsx**: `itemScope itemType="https://schema.org/ItemList"` with `SoftwareApplication` per calculator
-- **Testimonials.tsx**: `itemScope itemType="https://schema.org/Review"` on carousel
-- **FAQ.tsx**: `itemScope itemType="https://schema.org/FAQPage"` with `Question` and `Answer` items
-- **CTA.tsx**: `itemScope itemType="https://schema.org/SoftwareApplication"`
-- **Footer.tsx**: `itemScope itemType="https://schema.org/Organization"` and `WPFooter`
-- **CalculatorStack.tsx**: `itemScope itemType="https://schema.org/ItemList"`
-
-#### 4. Crawler Management (`app/robots.ts`)
+#### Crawler Management (`app/robots.ts`)
 Custom rules for search engines and AI bots:
-- **All bots**: `Allow: /`, `Disallow: /api/`, `Disallow: /admin/`
-- **Googlebot**: Same rules with crawl delay hint
-- **Bingbot**: Same rules
+- **All bots**: `Allow: /`, `Disallow: /api/`, `Disallow: /_next/`, `Disallow: /embed`
+- **Googlebot / Bingbot**: Allow with crawl delay hint
+- **Googlebot-Image**: Allow all
 - **ChatGPT-User / GPTBot**: Allow all (GEO optimization)
 - **PerplexityBot / Claude-Web**: Allow all (GEO optimization)
 
-#### 5. XML Sitemap (`app/sitemap.ts`)
-14 URLs with priorities and change frequencies:
+#### XML Sitemap (`app/sitemap.ts`)
+All 190+ URLs with priorities and change frequencies:
 - Homepage: `priority: 1.0`, `changefreq: 'daily'`
-- Calculator categories: `priority: 0.8`, `changefreq: 'weekly'`
+- Calculator catalog: `priority: 0.9`, `changefreq: 'weekly'`
 - Individual calculators: `priority: 0.6`, `changefreq: 'monthly'`
-- Blog/About pages: `priority: 0.5`, `changefreq: 'weekly'`
+- Blog/About pages: `priority: 0.8`, `changefreq: 'weekly'`
 
-#### 6. PWA Manifest (`app/manifest.ts`)
+#### PWA Manifest (`app/manifest.ts`)
 - App name, short name, description
 - Theme colors and background colors
 - Icons for all platforms
-- **Calculator shortcuts**: Basic Calculator, BMI Calculator, Loan Calculator
+- Calculator shortcuts
 
 ### On-Page SEO
 
 #### Semantic HTML
-- `<main id="main-content" role="main" aria-label="Main content">` in `page.tsx`
+- `<main id="main-content" role="main" aria-label="...">` on every page
 - `<section>` with `aria-label` on every component
 - `<nav>` with `aria-label` in `Navbar.tsx`
 - `<footer>` with `itemType="https://schema.org/WPFooter"`
-- SkLazy engine loading** — mathjs is only loaded on calculator pages, not the landing page
-- **ip-to-content link for accessibility
+- Skip-to-content link for accessibility
 
 #### Heading Hierarchy
-- Single `<h1>` per page (Hero section)
-- `<h2>` for section titles (Features, How It Works, Testimonials, FAQ, CTA)
+- Single `<h1>` per page
+- `<h2>` for section titles
 - `<h3>` for card titles and subsections
 - `<h4>` for footer link categories
 
 #### Image Optimization
 - All decorative icons have `aria-hidden="true"`
-- Hero image has `role="img"` and `aria-label`
-- WhyChooseUs image has descriptive `alt` text with keywords
 - `loading="lazy"` and `sizes` attributes for performance
-
-#### Internal Linking
-- Anchor links (`#calculators`, `#builder`) for smooth scrolling
-- Breadcrumb navigation structure in JSON-LD
-- Related calculator suggestions in PopularCalculators
+- `images.unoptimized: true` (static export — manual optimization)
 
 ### Generative Engine Optimization (GEO)
 
@@ -293,30 +332,14 @@ Custom rules for search engines and AI bots:
 - **Entity relationships** defined via `@graph` in JSON-LD
 - **E-E-A-T signals**: Authoritative content, clear organization, trust signals
 
-#### Entity SEO
-- **Brand entity**: "Calc_Craft" consistently referenced across all schemas
-4. Run the engine test suite:
-   ```bash
-   npx tsx test/engine.test.mjs
-   ```
-
-5. Type-check the project:
-   ```bash
-   npx tsc --noEmit
-   ```
-
-- **Product entities**: Each calculator defined as `SoftwareApplication`
-- **Organization entity**: Full business details in Organization schema
-- **WebSite entity**: Search action for Sitelinks Searchbox
-
 ### Performance SEO
 
 #### Core Web Vitals
 - **Static export** (`output: 'export'`) for instant page loads
-- **Image optimization**: `images.unoptimized: true` with manual optimization
+- **Self-hosted fonts** via `next/font/google` — no render-blocking requests, zero layout shift
 - **CSS optimization**: Tailwind purges unused styles
 - **Animation performance**: GSAP and Framer Motion use `transform` and `opacity`
-- **Lazy loading**: Images and below-fold components load on demand
+- **Lazy loading**: mathjs dynamically imported on calculator pages only; images and below-fold components load on demand
 
 #### Mobile Optimization
 - **Responsive breakpoints**: `sm:`, `md:`, `lg:`, `xl:`, `2xl:`
@@ -330,7 +353,7 @@ Custom rules for search engines and AI bots:
 
 ### Prerequisites
 - Node.js (v18.0.0 or higher)
-- npm or yarn
+- npm
 
 ### Installation
 1. Clone the repository:
@@ -355,7 +378,12 @@ To build the optimized static production bundle:
 ```bash
 npm run build
 ```
-This command compiles TypeScript and generates fully optimized static assets in the `.next` and `out` directories.
+This generates fully optimized static assets in the `out/` directory. Deploy `out/` to Cloudflare Pages — no Node server required.
+
+### Deploy to Cloudflare Pages
+1. Run `npm run build` locally (or via CI)
+2. Set the build output directory to `out` in your Cloudflare Pages project settings
+3. The Pages Function in `functions/api/contact.ts` is automatically deployed alongside the static assets
 
 ### SEO Validation
 After building, validate your SEO implementation:
@@ -391,6 +419,8 @@ After building, validate your SEO implementation:
 - [x] SoftwareApplication schema for calculators
 - [x] BreadcrumbList schema for navigation
 - [x] WebSite schema with search action
+- [x] Self-hosted fonts via `next/font` (no render-blocking)
+- [x] Static export for instant edge delivery
 
 ---
 
@@ -414,9 +444,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **GSAP Team** for industry-standard animations
 - **Framer Motion Team** for React animation library
 - **Lucide** for the beautiful icon set
+- **Cloudflare** for edge hosting and Pages Functions
 
 ---
 
-**Made with ❤️ by the Calc_Craft Team**
+**Made with ❤️ by the Home of Calculators Team**
 
 *Free online calculators for everyone, everywhere.*

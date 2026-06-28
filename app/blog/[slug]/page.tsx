@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen, Tag } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { getPublishedPostSlugs, getPublishedPosts } from '@/lib/db/queries'
 // Blog posts are statically generated at build time via generateStaticParams.
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -164,8 +165,21 @@ const ARTICLES: Record<string, {
   },
 }
 
-export function generateStaticParams() {
-  return Object.keys(ARTICLES).map((slug) => ({ slug }))
+export async function generateStaticParams() {
+  const staticSlugs = Object.keys(ARTICLES).map((slug) => ({ slug }))
+  // Merge in published posts from the database (Neon) at build time.
+  // If the DB isn't configured yet (no DATABASE_URL), we gracefully fall
+  // back to the static articles only.
+  let dbSlugs: { slug: string }[] = []
+  try {
+    dbSlugs = (await getPublishedPostSlugs()).map((slug) => ({ slug }))
+  } catch {
+    // DATABASE_URL not set or unreachable — static-only build.
+  }
+  // Deduplicate: a DB post with the same slug as a static article wins
+  // (the page component checks ARTICLES first, then the DB).
+  const seen = new Set(staticSlugs.map((s) => s.slug))
+  return [...staticSlugs, ...dbSlugs.filter((s) => !seen.has(s.slug))]
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -189,7 +203,119 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const article = ARTICLES[slug]
-  if (!article) notFound()
+
+  // If there's no static article, try the database (published posts from Neon).
+  if (!article) {
+    let dbPost: Awaited<ReturnType<typeof getPublishedPosts>>[number] | undefined
+    try {
+      dbPost = (await getPublishedPosts()).find((p) => p.slug === slug)
+    } catch {
+      // DB unavailable — treat as not found.
+    }
+    if (!dbPost) notFound()
+
+    // Render the DB-sourced post with the same layout as static articles.
+    const publishedDate = dbPost!.publishedAt
+      ? new Date(dbPost!.publishedAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : ''
+    return (
+      <>
+        <Navbar />
+        <main
+          id="main-content"
+          role="main"
+          aria-label={dbPost!.title}
+          className="min-h-screen bg-white"
+        >
+          <article
+            className="pt-24 pb-16"
+            itemScope
+            itemType="https://schema.org/BlogPosting"
+          >
+            <meta itemProp="datePublished" content={publishedDate} />
+            <meta itemProp="author" content="Home of Calculators Team" />
+
+            <header className="relative pb-10 overflow-hidden">
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-primary-100/30 blur-3xl rounded-full" />
+              </div>
+              <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-1.5 text-xs text-dark-500 hover:text-dark-800 mb-6 font-medium"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" /> Back to blog
+                </Link>
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider text-primary-700">
+                    <Tag className="w-3 h-3" /> {dbPost!.category ?? 'General'}
+                  </span>
+                  {publishedDate && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-neutral-200 text-dark-600 text-[10px] font-mono font-bold">
+                      <Calendar className="w-3 h-3" /> {publishedDate}
+                    </span>
+                  )}
+                  {dbPost!.readTime && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-neutral-200 text-dark-600 text-[10px] font-mono font-bold">
+                      <Clock className="w-3 h-3" /> {dbPost!.readTime}
+                    </span>
+                  )}
+                </div>
+                <h1
+                  className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-dark-900 leading-[1.1] mb-4"
+                  itemProp="headline"
+                >
+                  {dbPost!.title}
+                </h1>
+                {dbPost!.excerpt && (
+                  <p
+                    className="text-base sm:text-lg text-dark-500 leading-relaxed"
+                    itemProp="description"
+                  >
+                    {dbPost!.excerpt}
+                  </p>
+                )}
+              </div>
+            </header>
+
+            <div className="max-w-3xl mx-auto px-4 sm:px-6">
+              <div
+                className="prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: dbPost!.content ?? '' }}
+              />
+
+              <div className="mt-12 p-6 bg-dark-900 text-white rounded-2xl text-center relative overflow-hidden">
+                <div className="absolute inset-0 opacity-30">
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary-500/30 rounded-full blur-3xl" />
+                </div>
+                <div className="relative">
+                  <BookOpen className="w-7 h-7 mx-auto mb-2" />
+                  <h3 className="text-lg font-extrabold mb-1">
+                    Ready to build your own calculator?
+                  </h3>
+                  <p className="text-sm text-white/70 mb-4 max-w-md mx-auto">
+                    The visual builder is free, no signup, and takes about 5
+                    minutes.
+                  </p>
+                  <Link
+                    href="/builder"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-dark-900 rounded-lg text-sm font-bold hover:bg-neutral-100 active:scale-95 transition-all"
+                  >
+                    Open the builder <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </article>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
