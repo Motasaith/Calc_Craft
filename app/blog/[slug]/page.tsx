@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import { getPosts, getPostBySlug } from '@/lib/wp'
 
 export const dynamic = 'force-static'
+export const dynamicParams = false
 export const revalidate = false
 
 export async function generateStaticParams() {
