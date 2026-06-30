@@ -1,27 +1,17 @@
 import { MetadataRoute } from 'next'
-import { getAllSlugs, calculators } from '@/lib/calculators'
-import { getPublishedPostSlugs } from '@/lib/db/queries'
+import { getPosts, getCalculators } from '@/lib/wp'
 
 export const dynamic = 'force-static'
+export const revalidate = false
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://homeofcalculators.com'
   const now = new Date()
-  const slugs = getAllSlugs()
-
-  // Merge static blog slugs with published DB posts.
-  const staticBlogSlugs = [
-    'how-to-build-custom-calculator-no-code',
-    'understanding-loan-emi-calculation',
-    'calculator-engines-mathjs-precision',
-  ]
-  let dbBlogSlugs: string[] = []
-  try {
-    dbBlogSlugs = await getPublishedPostSlugs()
-  } catch {
-    // DB not configured — static-only sitemap.
-  }
-  const allBlogSlugs = Array.from(new Set([...staticBlogSlugs, ...dbBlogSlugs]))
+  
+  const [posts, calculators] = await Promise.all([
+    getPosts(),
+    getCalculators()
+  ])
 
   return [
     // Homepage
@@ -68,23 +58,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     // Blog posts
-    ...allBlogSlugs.map((slug) => ({
-      url: `${baseUrl}/blog/${slug}`,
-      lastModified: now,
+    ...posts.map((post: any) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.modified || post.date || now),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
-    // Individual calculators (auto-generated with names for better context)
-    ...slugs.map((slug) => {
-      const calc = calculators.find((c) => c.slug === slug)
-      return {
-        url: `${baseUrl}/calculators/${slug}`,
-        lastModified: now,
-        changeFrequency: 'monthly' as const,
-        priority: 0.6,
-        ...(calc ? { images: [`https://homeofcalculators.com/og-image.png`] } : {}),
-      }
-    }),
+    // Individual calculators
+    ...calculators.map((calc: any) => ({
+      url: `${baseUrl}/calculators/${calc.slug}`,
+      lastModified: new Date(calc.modified || calc.date || now),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+      images: ['https://homeofcalculators.com/og-image.png'],
+    })),
     // Legal
     {
       url: `${baseUrl}/privacy-policy`,

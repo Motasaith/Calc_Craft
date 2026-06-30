@@ -599,20 +599,8 @@ export default function BuilderPageClient() {
       localStorage.setItem('my_custom_calculators', JSON.stringify(savedList))
       localStorage.removeItem('calc_craft_builder_draft')
 
-      // 2. If signed in, also persist to the server-side library (Neon DB).
-      try {
-        const { saveCalculatorToLibrary } = await import('@/app/library/actions')
-        const result = await saveCalculatorToLibrary(calculator.name, calculator)
-        if (result?.error) {
-          // Not signed in — that's fine, localStorage save already succeeded.
-          showToast('✅ Saved locally. Sign in to sync to your library.')
-          setTimeout(() => { window.location.href = '/calculators' }, 800)
-          return
-        }
-      } catch {
-        // Server action unavailable (e.g. static preview) — localStorage is enough.
-      }
 
+      showToast('✅ Saved locally!')
       showToast('✅ Saved to your library!')
       setTimeout(() => { window.location.href = '/library' }, 800)
     } catch (e) {

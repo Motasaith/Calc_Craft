@@ -1,20 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useTransition } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Calculator as CalcIcon,
-  Eye,
-  EyeOff,
-  Trash2,
   Copy,
   ExternalLink,
 } from 'lucide-react'
-import {
-  toggleCalculatorPublic,
-  deleteCalculatorFromLibrary,
-} from './actions'
 import { serializeConfig } from '@/lib/url-serializer'
+import { useAuth } from '@/components/providers/AuthContext'
 
 interface LibraryCalculator {
   id: string
@@ -26,13 +20,47 @@ interface LibraryCalculator {
   createdAt: Date
 }
 
-export default function LibraryPageClient({
-  calculators,
-}: {
-  calculators: LibraryCalculator[]
-}) {
-  const [pending, startTransition] = useTransition()
+export default function LibraryPageClient() {
+  const { user, isLoading } = useAuth()
+  const [calculators, setCalculators] = useState<LibraryCalculator[]>([])
   const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  useEffect(() => {
+    // For now, load saved calculators from local storage if logged in
+    if (user) {
+      const saved = localStorage.getItem('my_calculators')
+      if (saved) {
+        try {
+          setCalculators(JSON.parse(saved))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+    }
+  }, [user])
+
+  if (isLoading) return <div className="min-h-screen bg-dark-900" />
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-900 px-4">
+        <div className="text-center max-w-md">
+          <h1 className="font-heading text-2xl font-bold text-white mb-3">
+            Sign in to view your library
+          </h1>
+          <p className="text-sm text-dark-300 mb-6">
+            Save calculators from the builder and access them here anytime.
+          </p>
+          <Link
+            href="/login" // Need to create a new login page
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
+          >
+            Sign in
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   function copyShareLink(calc: LibraryCalculator) {
     const configStr = serializeConfig(calc.config as any)
@@ -72,10 +100,10 @@ export default function LibraryPageClient({
               library&rdquo;.
             </p>
             <Link
-              href="/builder"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
+               href="/builder"
+               className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 transition-colors"
             >
-              Start building
+               Start building
             </Link>
           </div>
         ) : (
@@ -89,44 +117,9 @@ export default function LibraryPageClient({
                   <h3 className="font-medium text-white truncate">
                     {calc.title}
                   </h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                        calc.isPublic
-                          ? 'bg-emerald-500/20 text-emerald-400'
-                          : 'bg-dark-600 text-dark-300'
-                      }`}
-                    >
-                      {calc.isPublic ? 'Public' : 'Private'}
-                    </span>
-                    {calc.isApproved && (
-                      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-primary-500/20 text-primary-400">
-                        Approved
-                      </span>
-                    )}
-                    <span className="text-xs text-dark-400">
-                      {new Date(calc.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      startTransition(async () => {
-                        await toggleCalculatorPublic(calc.id, !calc.isPublic)
-                      })
-                    }
-                    disabled={pending}
-                    className="p-2 rounded-lg text-dark-300 hover:bg-dark-600 hover:text-white transition-colors"
-                    title={calc.isPublic ? 'Make private' : 'Make public'}
-                  >
-                    {calc.isPublic ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
                   <button
                     onClick={() => copyShareLink(calc)}
                     className="p-2 rounded-lg text-dark-300 hover:bg-dark-600 hover:text-white transition-colors"
@@ -148,18 +141,6 @@ export default function LibraryPageClient({
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
-                  <button
-                    onClick={() =>
-                      startTransition(async () => {
-                        await deleteCalculatorFromLibrary(calc.id)
-                      })
-                    }
-                    disabled={pending}
-                    className="p-2 rounded-lg text-dark-300 hover:bg-red-500/20 hover:text-red-400 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
             ))}

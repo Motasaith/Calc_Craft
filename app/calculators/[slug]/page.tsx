@@ -1,39 +1,28 @@
-import { getAllSlugs, getCalculatorBySlug, CATEGORY_LABELS } from '@/lib/calculators'
+import { getCalculators, getCalculatorBySlug } from '@/lib/wp'
 import type { Metadata } from 'next'
 import CalculatorPageClient from './CalculatorPageClient'
 
-// Calculator pages are statically generated at build time via generateStaticParams.
 export const dynamic = 'force-static'
 export const revalidate = false
 
-// Generate static params for all calculator slugs
-export function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }))
+export async function generateStaticParams() {
+  const calculators = await getCalculators()
+  return calculators.map((calc) => ({ slug: calc.slug }))
 }
 
-// Generate metadata per calculator
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const calc = getCalculatorBySlug(slug)
+  const calc = await getCalculatorBySlug(slug)
   if (!calc) return { title: 'Calculator Not Found' }
 
-  const title = `${calc.name} - Free Online Calculator | Home of Calculators`
-  const description = `${calc.description} Fast, accurate, and 100% free. Runs entirely in your browser (no signup, no tracking, no ads).`
+  const title = `${calc.title.rendered} - Free Online Calculator | Home of Calculators`
+  const description = `Use the ${calc.title.rendered} to solve your problems instantly. Fast, accurate, and completely free.`
 
   return {
     title,
     description,
-    keywords: [
-      calc.shortName.toLowerCase(),
-      `${calc.shortName.toLowerCase()} calculator`,
-      'free online calculator',
-      CATEGORY_LABELS[calc.category].toLowerCase(),
-      'no signup calculator',
-      'browser calculator',
-      ...calc.keywords,
-    ],
     openGraph: {
-      title: `${calc.name} | Home of Calculators`,
+      title: `${calc.title.rendered} | Home of Calculators`,
       description,
       type: 'website',
       url: `https://homeofcalculators.com/calculators/${slug}`,
@@ -41,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${calc.name} | Home of Calculators`,
+      title: `${calc.title.rendered} | Home of Calculators`,
       description,
     },
     alternates: { canonical: `https://homeofcalculators.com/calculators/${slug}` },
@@ -50,5 +39,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CalculatorPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  return <CalculatorPageClient slug={slug} />
+  const calc = await getCalculatorBySlug(slug)
+  
+  if (!calc) {
+    return (
+      <div className="min-h-screen pt-32 text-center">
+        <h1 className="text-2xl font-bold">Calculator Not Found</h1>
+      </div>
+    )
+  }
+
+  return <CalculatorPageClient calc={calc} />
 }

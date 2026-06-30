@@ -1,0 +1,82 @@
+export const WP_API_URL = 'https://cms.homeofcalculators.com/wp-json/wp/v2'
+
+export interface WPCalculator {
+  id: number
+  slug: string
+  title: { rendered: string }
+  acf: {
+    brand_name: string
+    theme: string
+    layout: string
+    require_submit: boolean
+    calculator_type: 'simple' | 'react'
+    react_component_id: string
+    input_1_name?: string
+    input_2_name?: string
+    input_3_name?: string
+    input_4_name?: string
+    input_5_name?: string
+    input_1_type?: string
+    input_2_type?: string
+    input_3_type?: string
+    input_4_type?: string
+    input_5_type?: string
+    math_formula?: string
+    formula_2?: string
+    formula_3?: string
+  }
+}
+
+export async function getCalculators(): Promise<WPCalculator[]> {
+  try {
+    const res = await fetch(`${WP_API_URL}/calculator?_embed&per_page=100`, {
+      next: { revalidate: 60 } // optional ISR revalidation
+    })
+    if (!res.ok) throw new Error('Failed to fetch calculators')
+    return res.json()
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
+export async function getCalculatorBySlug(slug: string): Promise<WPCalculator | null> {
+  try {
+    const res = await fetch(`${WP_API_URL}/calculator?slug=${slug}&_embed`, {
+      next: { revalidate: 60 }
+    })
+    if (!res.ok) throw new Error('Failed to fetch calculator')
+    const data = await res.json()
+    return data[0] || null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+export async function getPosts() {
+  try {
+    const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100`, {
+      next: { revalidate: 60 }
+    })
+    if (!res.ok) throw new Error('Failed to fetch posts')
+    return res.json()
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
+export async function getPostBySlug(slug: string) {
+  try {
+    const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
+      next: { revalidate: 60 }
+    })
+    if (!res.ok) throw new Error('Failed to fetch post')
+    const data = await res.json()
+    return data[0] || null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}

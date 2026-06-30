@@ -1,0 +1,122 @@
+[
+    {
+        "key": "group_calculator_configuration",
+        "title": "Calculator Configuration (Imported)",
+        "fields": [
+            {
+                "key": "field_brand_name",
+                "label": "Brand Name",
+                "name": "brand_name",
+                "type": "text"
+            },
+            {
+                "key": "field_theme",
+                "label": "Theme",
+                "name": "theme",
+                "type": "select",
+                "choices": {
+                    "light": "Light",
+                    "dark": "Dark",
+                    "modern": "Modern"
+                },
+                "default_value": "light"
+            },
+            {
+                "key": "field_layout",
+                "label": "Layout",
+                "name": "layout",
+                "type": "select",
+                "choices": {
+                    "standard": "Standard",
+                    "wide": "Wide"
+                },
+                "default_value": "standard"
+            },
+            {
+                "key": "field_require_submit",
+                "label": "Require Submit",
+                "name": "require_submit",
+                "type": "true_false",
+                "ui": 1
+            },
+            {
+                "key": "field_calculator_type",
+                "label": "Calculator Type",
+                "name": "calculator_type",
+                "type": "select",
+                "instructions": "Simple calculators can be built right here. Advanced ones (like Scientific) require a developer to build a React component.",
+                "choices": {
+                    "simple": "Simple Dynamic Calculator",
+                    "react": "Advanced React Component"
+                },
+                "default_value": "simple"
+            },
+            {
+                "key": "field_react_component_id",
+                "label": "React Component ID",
+                "name": "react_component_id",
+                "type": "text",
+                "instructions": "Enter the exact ID of the React component (e.g., 'scientific_calc_v1')",
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_calculator_type",
+                            "operator": "==",
+                            "value": "react"
+                        }
+                    ]
+                ]
+            },
+            {
+                "key": "field_input_1_name",
+                "label": "Input 1 Name",
+                "name": "input_1_name",
+                "type": "text",
+                "instructions": "Example: 'Loan Amount'",
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_calculator_type",
+                            "operator": "==",
+                            "value": "simple"
+                        }
+                    ]
+                ]
+            },
+            {
+                "key": "field_formula",
+                "label": "Math Formula",
+                "name": "math_formula",
+                "type": "text",
+                "instructions": "Example: input_1_name * 0.2",
+                "conditional_logic": [
+                    [
+                        {
+                            "field": "field_calculator_type",
+                            "operator": "==",
+                            "value": "simple"
+                        }
+                    ]
+                ]
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "post"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "default",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": 1,
+        "description": "",
+        "show_in_rest": 1
+    }
+]
