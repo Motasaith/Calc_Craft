@@ -29,11 +29,29 @@ export interface WPCalculator {
 
 export async function getCalculators(): Promise<WPCalculator[]> {
   try {
-    const res = await fetch(`${WP_API_URL}/calculator?_embed&per_page=100`, {
-      next: { revalidate: 60 } // optional ISR revalidation
-    })
-    if (!res.ok) throw new Error('Failed to fetch calculators')
-    return res.json()
+    let allCalculators: WPCalculator[] = []
+    let page = 1
+    let totalPages = 1
+
+    while (page <= totalPages) {
+      const res = await fetch(`${WP_API_URL}/calculator?_embed&per_page=100&page=${page}`, {
+        next: { revalidate: 60 } // optional ISR revalidation
+      })
+      if (!res.ok) throw new Error('Failed to fetch calculators')
+      
+      const data = await res.json()
+      allCalculators = [...allCalculators, ...data]
+      
+      const totalPagesHeader = res.headers.get('x-wp-totalpages')
+      if (totalPagesHeader) {
+        totalPages = parseInt(totalPagesHeader, 10)
+      } else {
+        break // Fallback if header is missing
+      }
+      page++
+    }
+    
+    return allCalculators
   } catch (error) {
     console.error(error)
     return []
@@ -56,11 +74,28 @@ export async function getCalculatorBySlug(slug: string): Promise<WPCalculator | 
 
 export async function getPosts() {
   try {
-    const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100`, {
-      next: { revalidate: 60 }
-    })
-    if (!res.ok) throw new Error('Failed to fetch posts')
-    return res.json()
+    let allPosts: any[] = []
+    let page = 1
+    let totalPages = 1
+
+    while (page <= totalPages) {
+      const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100&page=${page}`, {
+        next: { revalidate: 60 }
+      })
+      if (!res.ok) throw new Error('Failed to fetch posts')
+      
+      const data = await res.json()
+      allPosts = [...allPosts, ...data]
+      
+      const totalPagesHeader = res.headers.get('x-wp-totalpages')
+      if (totalPagesHeader) {
+        totalPages = parseInt(totalPagesHeader, 10)
+      } else {
+        break
+      }
+      page++
+    }
+    return allPosts
   } catch (error) {
     console.error(error)
     return []
