@@ -2,9 +2,9 @@ import { getCalculators, getCalculatorBySlug } from '@/lib/wp'
 import type { Metadata } from 'next'
 import CalculatorPageClient from './CalculatorPageClient'
 
-export const dynamic = 'force-static'
-export const dynamicParams = false
-export const revalidate = false
+// Allow dynamic generation of new calculators published to WP after build
+export const dynamicParams = true
+export const revalidate = 60
 
 export async function generateStaticParams() {
   const calculators = await getCalculators()

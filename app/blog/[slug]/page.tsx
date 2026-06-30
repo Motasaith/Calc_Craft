@@ -6,9 +6,9 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { getPosts, getPostBySlug } from '@/lib/wp'
 
-export const dynamic = 'force-static'
-export const dynamicParams = false
-export const revalidate = false
+// Allow dynamic generation of new blog posts published to WP after build
+export const dynamicParams = true
+export const revalidate = 60
 
 export async function generateStaticParams() {
   const posts = await getPosts()

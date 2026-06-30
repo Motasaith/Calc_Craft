@@ -5,8 +5,8 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { getPosts } from '@/lib/wp'
 
-export const dynamic = 'force-static'
-export const revalidate = false
+// Blog uses ISR to automatically update when new posts are added to WP
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Home of Calculators Blog - Calculator Tips, Tutorials & Industry Insights | Home of Calculators',

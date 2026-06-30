@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import CalculatorsPageClient from './CalculatorsPageClient'
 
-// Catalog page is statically prerendered at build time; the client component
-// handles search/filter interactivity after hydration.
-export const dynamic = 'force-static'
-export const revalidate = false
+// Catalog page uses ISR to automatically update when new calculators are added to WP
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Calculators Directory - Browse All Free Online Calculators | Home of Calculators',
