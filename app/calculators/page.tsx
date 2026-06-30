@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://homeofcalculators.com/calculators' },
 }
 
-export default function CalculatorsPage() {
-  return <CalculatorsPageClient />
+import { getCalculators } from '@/lib/wp'
+
+export default async function CalculatorsPage() {
+  const wpCalculators = await getCalculators()
+  return <CalculatorsPageClient wpCalculators={wpCalculators} />
 }

@@ -29,10 +29,12 @@ import Footer from '@/components/Footer'
 import { serializeConfig } from '@/lib/url-serializer'
 import { CustomCalculatorConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 
+import type { WPCalculator } from '@/lib/wp'
+
 type CategoryFilter = CalculatorCategory | 'all' | 'custom'
 type ViewMode = 'grid' | 'list'
 
-export default function CalculatorsPageClient() {
+export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalculators?: WPCalculator[] }) {
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all')
   const [search, setSearch] = useState('')
   const [view, setView] = useState<ViewMode>('grid')
@@ -75,11 +77,22 @@ export default function CalculatorsPageClient() {
 
   // Filtered calculators (combining registry and custom calculators)
   const filtered = useMemo(() => {
-    let standardList = calculators.map((c) => ({
-      ...c,
-      isCustom: false,
-      customConfig: null as CustomCalculatorConfig | null,
-    }))
+    // Map WP Calculators, falling back to static registry for icons and categories
+    let standardList = wpCalculators.map((wpCalc) => {
+      const staticData = calculators.find((c) => c.slug === wpCalc.slug)
+      return {
+        slug: wpCalc.slug,
+        name: wpCalc.title.rendered,
+        shortName: wpCalc.acf?.brand_name || wpCalc.title.rendered,
+        category: staticData?.category || 'misc',
+        description: staticData?.description || 'Use this free online calculator.',
+        keywords: staticData?.keywords || [wpCalc.slug.replace('-', ' ')],
+        mode: staticData?.mode || 'form',
+        icon: staticData?.icon || 'Calculator',
+        isCustom: false,
+        customConfig: null as CustomCalculatorConfig | null,
+      }
+    })
 
     let customList = customCalculators.map((c) => ({
       slug: `custom-${c.id}`,
