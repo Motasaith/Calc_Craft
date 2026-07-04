@@ -53,7 +53,7 @@ export default function Navbar() {
           <Image src="/logo.png" alt="" width={58} height={58} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" priority />
           <div className="flex flex-col leading-none">
             <span className="text-[13px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
-              Home<span className="text-primary-600"> of </span>Calculators
+              Home<span className="text-primary-700"> of </span>Calculators
             </span>
             <span className="text-[9px] font-mono text-dark-500 uppercase tracking-[0.18em] mt-1">
               {BRAND.tagline}

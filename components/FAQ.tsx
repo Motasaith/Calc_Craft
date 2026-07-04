@@ -342,7 +342,7 @@ export default function FAQ() {
             <Calculator className="w-5 h-5 text-dark-700 mb-2" />
             <h3 className="text-sm font-bold text-dark-900 mb-0.5">190 ready-made calculators</h3>
             <p className="text-[11px] text-dark-500 leading-relaxed">Math, finance, health, conversion, and more, all free, all in your browser.</p>
-            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-600 group-hover:gap-1.5 transition-all">
+            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-700 group-hover:gap-1.5 transition-all">
               Browse <ArrowRight className="w-3 h-3" />
             </span>
           </Link>
@@ -353,7 +353,7 @@ export default function FAQ() {
             <WrenchIcon className="w-5 h-5 text-dark-700 mb-2" />
             <h3 className="text-sm font-bold text-dark-900 mb-0.5">Visual calculator builder</h3>
             <p className="text-[11px] text-dark-500 leading-relaxed">Drag-and-drop fields, write formulas, pick a theme. Ship a custom calculator in minutes.</p>
-            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-600 group-hover:gap-1.5 transition-all">
+            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-700 group-hover:gap-1.5 transition-all">
               Open builder <ArrowRight className="w-3 h-3" />
             </span>
           </Link>
@@ -364,7 +364,7 @@ export default function FAQ() {
             <Palette className="w-5 h-5 text-dark-700 mb-2" />
             <h3 className="text-sm font-bold text-dark-900 mb-0.5">White-label &amp; embed</h3>
             <p className="text-[11px] text-dark-500 leading-relaxed">Brand any calculator with your logo and colors, then drop it on your site with one iframe.</p>
-            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-600 group-hover:gap-1.5 transition-all">
+            <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-primary-700 group-hover:gap-1.5 transition-all">
               Learn more <ArrowRight className="w-3 h-3" />
             </span>
           </Link>

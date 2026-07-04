@@ -152,7 +152,7 @@ export default function BasicCalculator() {
 
         {/* Buttons */}
         <div className="grid grid-cols-4 gap-2">
-          <button onClick={clear} className="h-12 text-xs font-extrabold bg-[#cc6666] text-white rounded-lg shadow border border-red-800 active:scale-95 hover:bg-[#d47070] transition-all">AC</button>
+          <button onClick={clear} className="h-12 text-xs font-extrabold bg-[#ab3232] text-white rounded-lg shadow border border-red-800 active:scale-95 hover:bg-[#b94444] transition-all">AC</button>
           <button onClick={handleDelete} aria-label="Backspace" className="h-12 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded-lg shadow border border-neutral-500 active:scale-95 hover:bg-neutral-350 transition-all flex items-center justify-center">
             <Delete className="w-4 h-4" />
           </button>

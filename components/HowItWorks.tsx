@@ -95,7 +95,7 @@ export default function HowItWorks() {
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2 tracking-tight" itemProp="name">
             How It Works
           </h2>
-          <p className="text-sm text-slate-500" itemProp="description">Launch powerful calculators in three simple steps.</p>
+          <p className="text-sm text-slate-600" itemProp="description">Launch powerful calculators in three simple steps.</p>
           <div className="w-12 h-[3px] bg-[#c0392b] rounded-full mx-auto mt-3 shadow-[0_0_6px_rgba(192,57,43,0.4)]" />
         </div>
 
@@ -119,7 +119,7 @@ export default function HowItWorks() {
                 </div>
                 <div className="flex-grow">
                   <h3 className="text-base font-black text-slate-700 mb-1" itemProp="name">{step.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed" itemProp="text">{step.description}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed" itemProp="text">{step.description}</p>
                 </div>
                 <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eae7d9] border border-white/50 shadow-[3px_3px_6px_#c2beb0,-3px_-3px_6px_#ffffff] text-slate-700 flex items-center justify-center">
                   <Icon className="w-5 h-5" aria-hidden="true" />
@@ -146,7 +146,7 @@ export default function HowItWorks() {
             <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-800 mb-1 tracking-tight">
               How It Works
             </h2>
-            <p className="text-xs text-slate-500">Launch powerful calculators in three simple steps.</p>
+            <p className="text-xs text-slate-600">Launch powerful calculators in three simple steps.</p>
             {/* Soft red line indicator under title */}
             <div className="w-12 h-[3px] bg-[#c0392b] rounded-full mx-auto mt-3 shadow-[0_0_6px_rgba(192,57,43,0.4)]" />
           </div>
@@ -253,7 +253,7 @@ export default function HowItWorks() {
                       {/* Card Text Content */}
                       <div className="flex-grow flex flex-col justify-center my-3">
                         <h3 className="text-sm font-black text-slate-700 mb-1" itemProp="name">{step.title}</h3>
-                        <p className="text-[11px] text-slate-500 leading-relaxed max-w-[180px] mx-auto" itemProp="text">
+                        <p className="text-[11px] text-slate-600 leading-relaxed max-w-[180px] mx-auto" itemProp="text">
                           {step.description}
                         </p>
                       </div>
@@ -361,7 +361,7 @@ export default function HowItWorks() {
             <div className="h-[3px] w-24 bg-[#c2beb0] rounded-full shadow-[inset_1px_1px_2px_rgba(0,0,0,0.15),_1px_1px_0_#fff]" />
             
             {/* Center Powered Badge */}
-            <div className="px-5 py-1.5 rounded-full bg-[#eae7d9] border border-white/60 shadow-[2px_2px_4px_#c2beb0,-2px_-2px_4px_#ffffff] flex items-center gap-2.5 text-[9px] font-black tracking-widest text-slate-500 select-none">
+            <div className="px-5 py-1.5 rounded-full bg-[#eae7d9] border border-white/60 shadow-[2px_2px_4px_#c2beb0,-2px_-2px_4px_#ffffff] flex items-center gap-2.5 text-[9px] font-black tracking-widest text-slate-600 select-none">
               POWERED BY PRECISION
               <span className="w-2 h-2 rounded-full bg-[#c0392b] shadow-[0_0_8px_rgba(192,57,43,0.8)] animate-pulse" />
             </div>

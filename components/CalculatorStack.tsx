@@ -230,7 +230,7 @@ function ScientificCalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-2 py-2.5 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-2">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono">HoC SCIENTIFIC</span>
+        <span className="text-[10px] font-bold tracking-wider text-neutral-600 font-mono">HoC SCIENTIFIC</span>
         <div className="flex gap-1 items-center">
           <button
             onClick={() => setAngleMode(angleMode === 'DEG' ? 'RAD' : 'DEG')}
@@ -299,8 +299,8 @@ function ScientificCalculator() {
 
       {/* Standard Keys */}
       <div className="grid grid-cols-5 gap-1 mt-1">
-        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="h-8 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
-        <button onClick={clearAll} className="h-8 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
+        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="h-8 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
+        <button onClick={clearAll} className="h-8 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
         <button onClick={backspace} aria-label="Backspace" className="h-8 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
           <Delete className="w-3.5 h-3.5" />
         </button>
@@ -382,8 +382,8 @@ function BMICalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-3">
-        <span className="text-xs font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
-          <Activity className="w-4 h-4 text-neutral-600" />
+        <span className="text-xs font-bold tracking-wider text-neutral-600 font-mono flex items-center gap-1">
+          <Activity className="w-4 h-4 text-neutral-700" />
           HoC FITNESS
         </span>
         <span className="text-[10px] uppercase px-2 py-1 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">BMI</span>
@@ -392,10 +392,10 @@ function BMICalculator() {
       {/* Unit Toggle */}
       <div className="flex gap-1 mb-3 bg-neutral-200 p-1 rounded border border-neutral-300">
         <button onClick={() => setUnit('metric')}
-          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-600'}`}
         >Metric (kg/cm)</button>
         <button onClick={() => setUnit('imperial')}
-          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-600'}`}
         >Imperial (lbs/ft)</button>
       </div>
 
@@ -403,42 +403,42 @@ function BMICalculator() {
       {unit === 'metric' ? (
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Weight (kg)</label>
+            <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (kg)</label>
             <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 70"
               min="2" max="650" step="0.1"
               className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
+            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
           </div>
           <div>
-            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Height (cm)</label>
+            <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Height (cm)</label>
             <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g. 170"
               min="50" max="280" step="0.1"
               className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
+            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div>
-            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Feet</label>
+            <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Feet</label>
             <input type="number" value={feet} onChange={(e) => setFeet(e.target.value)} placeholder="e.g. 5"
               min="1" max="8" step="1"
               className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
+            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
           </div>
           <div>
-            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Inches</label>
+            <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Inches</label>
             <input type="number" value={inches} onChange={(e) => setInches(e.target.value)} placeholder="e.g. 10"
               min="0" max="11" step="1"
               className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 0–11 in</p>
+            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 0–11 in</p>
           </div>
           <div className="col-span-2">
-            <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1">Weight (lbs)</label>
+            <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (lbs)</label>
             <input type="number" value={lbs} onChange={(e) => setLbs(e.target.value)} placeholder="e.g. 160"
               min="5" max="1400" step="0.1"
               className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-500 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
+            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
           </div>
         </div>
       )}
@@ -447,18 +447,18 @@ function BMICalculator() {
       {result && (
         <>
           <div className="mb-3 bg-[#cbd8ca] border-2 border-[#b0bdae] rounded p-3 shadow-inner flex flex-col items-center">
-            <span className="text-[11px] font-bold text-[#4c5c4a] font-mono uppercase mb-1">Your BMI</span>
+            <span className="text-[11px] font-bold text-[#384536] font-mono uppercase mb-1">Your BMI</span>
             <div className="flex items-center">
               <DigitalText text={result.bmi.toFixed(1)} theme="lcd" size={32} gap={2} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
-              <span className="text-sm font-bold text-[#4c5c4a] font-mono ml-1.5">kg/m²</span>
+              <span className="text-sm font-bold text-[#384536] font-mono ml-1.5">kg/m²</span>
             </div>
             <span className="text-sm font-mono font-bold text-[#1a2019] mt-1">{result.category}</span>
           </div>
           <div className="grid grid-cols-4 gap-1.5">
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>UNDER</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>NORMAL</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OVER</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-500 border-neutral-300'}`}>OBESE</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>UNDER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>NORMAL</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>OVER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>OBESE</div>
           </div>
         </>
       )}
@@ -497,8 +497,8 @@ function LoanCalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-3">
-        <span className="text-[10px] font-bold tracking-wider text-neutral-500 font-mono flex items-center gap-1">
-          <DollarSign className="w-3.5 h-3.5 text-neutral-600" />
+        <span className="text-[10px] font-bold tracking-wider text-neutral-600 font-mono flex items-center gap-1">
+          <DollarSign className="w-3.5 h-3.5 text-neutral-700" />
           HoC PLANNER
         </span>
         <span className="text-[8px] uppercase px-1.5 py-0.5 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">EMI</span>
@@ -507,16 +507,16 @@ function LoanCalculator() {
       {/* LCD Results Displays */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="bg-neutral-200 border border-neutral-300 p-1.5 rounded flex flex-col justify-center items-center">
-          <span className="text-[7.5px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Monthly EMI</span>
+          <span className="text-[7.5px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Monthly EMI</span>
           <div className="relative bg-[#cbd8ca] border border-[#b0bdae] rounded px-1.5 py-1 w-full flex justify-center items-center h-8 select-none">
-            <span className="absolute left-1 text-[8px] font-bold text-[#4c5c4a] font-mono">$</span>
+            <span className="absolute left-1 text-[8px] font-bold text-[#384536] font-mono">$</span>
             <DigitalText text={emiStr} theme="lcd" size={getDigitSize(emiStr)} gap={1} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
           </div>
         </div>
         <div className="bg-neutral-200 border border-neutral-300 p-1.5 rounded flex flex-col justify-center items-center">
-          <span className="text-[7.5px] font-bold text-neutral-500 uppercase tracking-wider mb-1">Total Interest</span>
+          <span className="text-[7.5px] font-bold text-neutral-600 uppercase tracking-wider mb-1">Total Interest</span>
           <div className="relative bg-[#cbd8ca] border border-[#b0bdae] rounded px-1.5 py-1 w-full flex justify-center items-center h-8 select-none">
-            <span className="absolute left-1 text-[8px] font-bold text-[#4c5c4a] font-mono">$</span>
+            <span className="absolute left-1 text-[8px] font-bold text-[#384536] font-mono">$</span>
             <DigitalText text={interestStr} theme="lcd" size={getDigitSize(interestStr)} gap={1} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
           </div>
         </div>
@@ -525,25 +525,25 @@ function LoanCalculator() {
       {/* Form-style number inputs with helper labels */}
       <div className="flex flex-col gap-2.5 flex-grow px-1">
         <div>
-          <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Loan Amount ($)</label>
+          <label className="block text-[9px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-0.5">Loan Amount ($)</label>
           <input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} placeholder="e.g. 100000"
             min="1000" max="1000000" step="1000"
             className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-          <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Enter 1,000 – 1,000,000</p>
+          <p className="text-[7.5px] text-neutral-600 font-mono mt-0.5 leading-tight">Enter 1,000 – 1,000,000</p>
         </div>
         <div>
-          <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Interest Rate (%)</label>
+          <label className="block text-[9px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-0.5">Interest Rate (%)</label>
           <input type="number" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="e.g. 7.5"
             min="0.5" max="30" step="0.1"
             className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-          <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Annual rate, 0.5 – 30%</p>
+          <p className="text-[7.5px] text-neutral-600 font-mono mt-0.5 leading-tight">Annual rate, 0.5 – 30%</p>
         </div>
         <div>
-          <label className="block text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-0.5">Tenure (Years)</label>
+          <label className="block text-[9px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-0.5">Tenure (Years)</label>
           <input type="number" value={tenure} onChange={(e) => setTenure(e.target.value)} placeholder="e.g. 15"
             min="1" max="30" step="1"
             className="w-full h-8 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-xs font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-          <p className="text-[7.5px] text-neutral-500 font-mono mt-0.5 leading-tight">Loan term, 1 – 30 years</p>
+          <p className="text-[7.5px] text-neutral-600 font-mono mt-0.5 leading-tight">Loan term, 1 – 30 years</p>
         </div>
       </div>
 

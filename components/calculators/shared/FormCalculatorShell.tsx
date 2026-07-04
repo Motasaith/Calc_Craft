@@ -175,7 +175,7 @@ export function RetroActionButton({
   const colors = {
     primary: 'bg-[#dfaa44] text-neutral-900 border-[#be8b32] hover:bg-[#e5b44e]',
     secondary: 'bg-neutral-400 text-neutral-900 border-neutral-500 hover:bg-neutral-350',
-    danger: 'bg-[#cc6666] text-white border-red-800 hover:bg-[#d47070]',
+    danger: 'bg-[#ab3232] text-white border-red-800 hover:bg-[#b94444]',
   }
 
   return (

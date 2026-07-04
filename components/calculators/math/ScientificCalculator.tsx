@@ -279,8 +279,8 @@ export default function ScientificCalculator() {
 
         {/* Standard Keys */}
         <div className="grid grid-cols-5 gap-1.5 mt-1">
-          <button onClick={clearEntry} className="h-10 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
-          <button onClick={clearAll} className="h-10 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
+          <button onClick={clearEntry} className="h-10 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
+          <button onClick={clearAll} className="h-10 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
           <button onClick={backspace} aria-label="Backspace" className="h-10 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
             <Delete className="w-3.5 h-3.5" />
           </button>

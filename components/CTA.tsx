@@ -145,7 +145,7 @@ export default function CTA() {
                   </div>
                   <div className="text-left select-none">
                     <div className="font-extrabold text-white text-xs sm:text-sm">Fast & Accurate</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Millisecond response</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">Millisecond response</div>
                   </div>
                 </div>
                 
@@ -156,7 +156,7 @@ export default function CTA() {
                   </div>
                   <div className="text-left select-none">
                     <div className="font-extrabold text-white text-xs sm:text-sm">Safe & Private</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Local processing</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">Local processing</div>
                   </div>
                 </div>
 
@@ -167,7 +167,7 @@ export default function CTA() {
                   </div>
                   <div className="text-left select-none">
                     <div className="font-extrabold text-white text-xs sm:text-sm">Works on Any Device</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Fully responsive</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">Fully responsive</div>
                   </div>
                 </div>
               </div>

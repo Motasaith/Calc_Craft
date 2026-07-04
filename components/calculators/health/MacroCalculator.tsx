@@ -43,7 +43,7 @@ export default function MacroCalculator() {
           <div className="mt-3 h-4 rounded-full overflow-hidden bg-neutral-200 border border-neutral-300 flex">
             <div className="bg-[#4c5c4a] h-full" style={{ width: `${r.p}%` }} />
             <div className="bg-[#dfaa44] h-full" style={{ width: `${r.c_}%` }} />
-            <div className="bg-[#cc6666] h-full" style={{ width: `${r.f}%` }} />
+            <div className="bg-[#ab3232] h-full" style={{ width: `${r.f}%` }} />
           </div>
           <div className="flex justify-between mt-1 text-[8px] font-mono font-bold text-neutral-600">
             <span>■ Protein</span><span>■ Carbs</span><span>■ Fat</span>

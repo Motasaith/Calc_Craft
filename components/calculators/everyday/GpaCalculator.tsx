@@ -48,7 +48,7 @@ export default function GpaCalculator() {
               <RetroInput label={i === 0 ? 'Credits' : ''} value={c.credits} onChange={(v) => update(i, 'credits', v)} id={`gpa-c-${i}`} />
             </div>
             {courses.length > 1 && (
-              <button onClick={() => removeCourse(i)} className="h-10 w-10 text-xs font-bold bg-[#cc6666] text-white rounded border border-red-800 active:scale-95 transition-all mb-3">✕</button>
+              <button onClick={() => removeCourse(i)} className="h-10 w-10 text-xs font-bold bg-[#ab3232] text-white rounded border border-red-800 active:scale-95 transition-all mb-3">✕</button>
             )}
           </div>
         ))}

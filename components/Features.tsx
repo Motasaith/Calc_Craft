@@ -35,7 +35,7 @@ export default function Features() {
     >
       {/* Centered Section Heading */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 text-center">
-        <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-600 font-mono">
           Used by thousands of students, professionals & creators
         </h3>
       </div>
