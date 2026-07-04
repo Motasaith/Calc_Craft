@@ -222,9 +222,9 @@ function ScientificCalculator() {
     'Enter': () => equals(),
   })
 
-  const bSci = "h-8 text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
-  const bNum = "h-8 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
-  const bOp = "h-8 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
+  const bSci = "min-h-[44px] text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
+  const bNum = "min-h-[44px] text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
+  const bOp = "min-h-[44px] text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
 
   return (
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-2 py-2.5 shadow-inner text-neutral-800">
@@ -382,20 +382,20 @@ function BMICalculator() {
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-4 shadow-inner text-neutral-800">
       {/* Brand Header */}
       <div className="flex justify-between items-center mb-3">
-        <span className="text-xs font-bold tracking-wider text-neutral-600 font-mono flex items-center gap-1">
-          <Activity className="w-4 h-4 text-neutral-700" />
+        <span className="text-xs font-bold tracking-wider text-neutral-700 font-mono flex items-center gap-1">
+          <Activity className="w-4 h-4 text-neutral-800" />
           HoC FITNESS
         </span>
-        <span className="text-[10px] uppercase px-2 py-1 rounded bg-neutral-300 border border-neutral-400 text-neutral-700 font-mono font-bold">BMI</span>
+        <span className="text-[10px] uppercase px-2 py-1 rounded bg-neutral-300 border border-neutral-400 text-neutral-800 font-mono font-bold">BMI</span>
       </div>
 
       {/* Unit Toggle */}
       <div className="flex gap-1 mb-3 bg-neutral-200 p-1 rounded border border-neutral-300">
         <button onClick={() => setUnit('metric')}
-          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-600'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'metric' ? 'bg-[#fcfbfa] shadow text-neutral-900 border border-neutral-300' : 'text-neutral-700'}`}
         >Metric (kg/cm)</button>
         <button onClick={() => setUnit('imperial')}
-          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-600'}`}
+          className={`flex-1 py-1.5 text-[11px] font-bold font-mono rounded transition-all ${unit === 'imperial' ? 'bg-[#fcfbfa] shadow text-neutral-900 border border-neutral-300' : 'text-neutral-700'}`}
         >Imperial (lbs/ft)</button>
       </div>
 
@@ -406,15 +406,15 @@ function BMICalculator() {
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (kg)</label>
             <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 70"
               min="2" max="650" step="0.1"
-              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
+              className="w-full h-[48px] px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-700 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
           </div>
           <div>
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Height (cm)</label>
             <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g. 170"
               min="50" max="280" step="0.1"
-              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
+              className="w-full h-[48px] px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-700 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
           </div>
         </div>
       ) : (
@@ -423,22 +423,22 @@ function BMICalculator() {
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Feet</label>
             <input type="number" value={feet} onChange={(e) => setFeet(e.target.value)} placeholder="e.g. 5"
               min="1" max="8" step="1"
-              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
+              className="w-full h-[48px] px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-700 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
           </div>
           <div>
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Inches</label>
             <input type="number" value={inches} onChange={(e) => setInches(e.target.value)} placeholder="e.g. 10"
               min="0" max="11" step="1"
-              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 0–11 in</p>
+              className="w-full h-[48px] px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-700 font-mono mt-1 leading-tight">Enter 0–11 in</p>
           </div>
           <div className="col-span-2">
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (lbs)</label>
             <input type="number" value={lbs} onChange={(e) => setLbs(e.target.value)} placeholder="e.g. 160"
               min="5" max="1400" step="0.1"
-              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
-            <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
+              className="w-full h-[48px] px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+            <p className="text-[10px] text-neutral-700 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
           </div>
         </div>
       )}
@@ -447,18 +447,18 @@ function BMICalculator() {
       {result && (
         <>
           <div className="mb-3 bg-[#cbd8ca] border-2 border-[#b0bdae] rounded p-3 shadow-inner flex flex-col items-center">
-            <span className="text-[11px] font-bold text-[#384536] font-mono uppercase mb-1">Your BMI</span>
+            <span className="text-[11px] font-bold text-[#1a2019] font-mono uppercase mb-1">Your BMI</span>
             <div className="flex items-center">
               <DigitalText text={result.bmi.toFixed(1)} theme="lcd" size={32} gap={2} animate={false} activeColor="#1a2019" inactiveColor="#b8c6b6" />
-              <span className="text-sm font-bold text-[#384536] font-mono ml-1.5">kg/m²</span>
+              <span className="text-sm font-bold text-[#1a2019] font-mono ml-1.5">kg/m²</span>
             </div>
             <span className="text-sm font-mono font-bold text-[#1a2019] mt-1">{result.category}</span>
           </div>
           <div className="grid grid-cols-4 gap-1.5">
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>UNDER</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>NORMAL</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>OVER</div>
-            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-200 text-neutral-600 border-neutral-300'}`}>OBESE</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi < 18.5 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-300 text-neutral-800 border-neutral-400'}`}>UNDER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 18.5 && result.bmi < 25 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-300 text-neutral-800 border-neutral-400'}`}>NORMAL</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 25 && result.bmi < 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-300 text-neutral-800 border-neutral-400'}`}>OVER</div>
+            <div className={`text-[10px] font-bold text-center py-1.5 rounded border font-mono ${result.bmi >= 30 ? 'bg-neutral-800 text-white border-neutral-800' : 'bg-neutral-300 text-neutral-800 border-neutral-400'}`}>OBESE</div>
           </div>
         </>
       )}
@@ -728,10 +728,10 @@ export default function CalculatorStack() {
         <p className="text-dark-400 max-w-lg mx-auto mb-2 text-sm leading-relaxed">
           Explore our most used <strong>free online calculators</strong> to save time and simplify your life.
         </p>
-        <p className="text-[11px] font-semibold text-primary-800 tracking-wider uppercase bg-primary-50 border border-primary-100 px-3 py-1 rounded-full inline-block mt-2">
-          {isMobile
+        <p className="text-[11px] font-bold text-primary-950 tracking-wider uppercase bg-primary-100 border border-primary-200 px-3 py-1 rounded-full inline-block mt-2">
+          {(mounted && windowWidth < 640)
             ? 'Swipe to choose a calculator'
-            : 'Hover over any calculator to use it'}
+            : 'Hover over any calculator'}
         </p>
       </div>
 
@@ -809,8 +809,10 @@ export default function CalculatorStack() {
                     aria-selected={isActive}
                     aria-label={`Go to calculator ${i + 1}`}
                     onClick={() => setActiveIndex(i)}
-                    className={`h-2 rounded-full transition-all duration-300 relative after:absolute after:-inset-4 ${isActive ? 'bg-primary-600 w-5 shadow-[0_0_8px_rgba(249,115,22,0.6)]' : 'bg-slate-300 w-2 hover:bg-slate-400'}`}
-                  />
+                    className="p-3 group focus:outline-none"
+                  >
+                    <div className={`h-2 rounded-full transition-all duration-300 ${isActive ? 'bg-primary-600 w-5 shadow-[0_0_8px_rgba(249,115,22,0.6)]' : 'bg-slate-300 w-2 group-hover:bg-slate-400'}`} />
+                  </button>
                 )
               })}
             </div>
