@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import gsap from 'gsap'
 import Features from './Features'
 import CalculatorStack from './CalculatorStack'
@@ -135,11 +135,13 @@ export default function Hero() {
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
-          {/* Badge */}
+          {/* Builder Feature Highlight Badge */}
           <div ref={badgeRef} className="flex justify-center mb-8">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-gray-200 text-gray-800 text-xs sm:text-sm font-medium backdrop-blur-md shadow-sm">
-              <Sparkles className="w-4 h-4 text-primary-600" aria-hidden="true" />
-              The Next Generation of Calculators
+            <span className="inline-flex items-center gap-3 px-1.5 py-1.5 pr-5 rounded-full bg-white/60 backdrop-blur-md border border-gray-200/80 text-gray-700 text-[13px] font-medium shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+              <span className="px-3 py-1 rounded-full bg-gray-900 border border-gray-900 text-[10px] font-extrabold uppercase tracking-widest shadow-sm text-white">
+                New Feature
+              </span>
+              <span className="text-gray-600">Build your own custom calculators</span>
             </span>
           </div>
 
