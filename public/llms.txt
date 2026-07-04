@@ -1,8 +1,15 @@
 # Home of Calculators
 
-Welcome to Home of Calculators! We provide a large collection of free, accurate online calculators for math, finance, health, conversion, and everyday needs. 
+Welcome to Home of Calculators! We provide a large collection of free, accurate online calculators for math, finance, health, conversion, and everyday needs.
 
 This site is optimized for AI agentic browsing.
+
+## Navigation Links
+- [Homepage](https://homeofcalculators.com/)
+- [All Calculators Directory](https://homeofcalculators.com/calculators)
+- [About Us](https://homeofcalculators.com/about)
+
+## Accessibility Details
 - Calculators use standard semantic HTML inputs and buttons.
 - Forms are exposed with discernible labels.
 - WebMCP tools are available where applicable.
