@@ -40,7 +40,7 @@ function FloatingMathCards() {
       {MATH_CARDS.map((card, i) => (
         <div
           key={i}
-          className="absolute bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl px-5 py-3 text-primary-600 font-mono font-bold text-lg select-none"
+          className="absolute bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl px-5 py-3 text-primary-800 font-mono font-bold text-lg select-none"
           style={{
             top: card.top,
             bottom: card.bottom,

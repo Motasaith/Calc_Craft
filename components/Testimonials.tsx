@@ -347,16 +347,18 @@ export default function Testimonials() {
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex gap-1.5 flex-wrap justify-center max-w-md">
+          <div className="flex flex-wrap justify-center max-w-md">
             {TESTIMONIALS.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`h-1.5 rounded-full transition-all relative after:absolute after:-inset-4 ${
-                  active === i ? 'w-8 bg-slate-800' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
-                }`}
+                className="p-3 group focus:outline-none"
                 aria-label={`Go to review ${i + 1}`}
-              />
+              >
+                <div className={`h-1.5 rounded-full transition-all ${
+                  active === i ? 'w-8 bg-slate-800' : 'w-1.5 bg-slate-300 group-hover:bg-slate-400'
+                }`} />
+              </button>
             ))}
           </div>
         </div>

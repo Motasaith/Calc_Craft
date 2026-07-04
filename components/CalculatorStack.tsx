@@ -728,7 +728,7 @@ export default function CalculatorStack() {
         <p className="text-dark-400 max-w-lg mx-auto mb-2 text-sm leading-relaxed">
           Explore our most used <strong>free online calculators</strong> to save time and simplify your life.
         </p>
-        <p className="text-[11px] font-semibold text-primary-600 tracking-wider uppercase bg-primary-50 border border-primary-100 px-3 py-1 rounded-full inline-block mt-2">
+        <p className="text-[11px] font-semibold text-primary-800 tracking-wider uppercase bg-primary-50 border border-primary-100 px-3 py-1 rounded-full inline-block mt-2">
           {isMobile
             ? 'Swipe to choose a calculator'
             : 'Hover over any calculator to use it'}

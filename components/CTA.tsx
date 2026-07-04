@@ -78,26 +78,26 @@ export default function CTA() {
                 <div className="grid grid-cols-4 gap-2">
                   {/* Row 1 */}
                   {['MC', 'MR', 'M-', 'M+'].map((key) => (
-                    <div key={key} className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[10px] font-extrabold text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">{key}</div>
+                    <div key={key} className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[10px] font-extrabold text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">{key}</div>
                   ))}
 
                   {/* Row 2 */}
                   {['7', '8', '9'].map((key) => (
                     <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
                   ))}
-                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[13px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">÷</div>
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[13px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">÷</div>
 
                   {/* Row 3 */}
                   {['4', '5', '6'].map((key) => (
                     <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
                   ))}
-                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[12px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">×</div>
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">×</div>
 
                   {/* Row 4 */}
                   {['1', '2', '3'].map((key) => (
                     <div key={key} className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">{key}</div>
                   ))}
-                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[14px] font-black text-slate-500 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">-</div>
+                  <div className="h-9 rounded-lg bg-slate-200/80 border border-slate-300/30 flex items-center justify-center text-[14px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.06),_inset_0_-1.5px_0_#cbd5e1] hover:brightness-95 select-none">-</div>
 
                   {/* Row 5 */}
                   <div className="h-9 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-[12px] font-black text-slate-700 shadow-[0_1.5px_3px_rgba(0,0,0,0.05),_inset_0_-1.5px_0_#e2e8f0] hover:brightness-98 select-none">0</div>
