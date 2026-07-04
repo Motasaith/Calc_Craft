@@ -301,7 +301,7 @@ function ScientificCalculator() {
       <div className="grid grid-cols-5 gap-1 mt-1">
         <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="h-8 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
         <button onClick={clearAll} className="h-8 text-xs font-extrabold bg-[#cc6666] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
-        <button onClick={backspace} className="h-8 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
+        <button onClick={backspace} aria-label="Backspace" className="h-8 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
           <Delete className="w-3.5 h-3.5" />
         </button>
         <button onClick={() => append('mod')} className={bOp}>mod</button>
