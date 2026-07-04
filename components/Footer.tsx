@@ -188,7 +188,7 @@ export default function Footer() {
 
               {/* Brand Heading */}
               <Link href="/" className="flex items-center gap-2.5 mb-4 group select-none">
-                <Image src="/footer_logo.png" alt="" width={120} height={120} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" />
+                <Image src="/footer_logo.webp" alt="" width={120} height={120} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" />
                 <span className="text-lg font-bold text-white tracking-tight group-hover:text-slate-200 transition-colors">
                   {BRAND.name}
                 </span>
@@ -241,9 +241,9 @@ export default function Footer() {
                     <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                       <Calculator className="w-4 h-4 text-slate-400" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
+                    <h3 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
                       Calculators
-                    </h4>
+                    </h3>
                     <ul className="space-y-2.5">
                       {[
                         { label: 'All Calculators', href: '/calculators' },
@@ -278,9 +278,9 @@ export default function Footer() {
                     <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                       <Building className="w-4 h-4 text-slate-400" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
-                      Company
-                    </h4>
+                    <h3 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
+                      Resources
+                    </h3>
                     <ul className="space-y-2.5">
                       {[
                         { label: 'About Us', href: '/about' },
@@ -315,9 +315,9 @@ export default function Footer() {
                     <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-3">
                       <Headphones className="w-4 h-4 text-slate-400" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
+                    <h3 className="text-xs sm:text-sm font-black text-white mb-4 tracking-wide">
                       Support
-                    </h4>
+                    </h3>
                     <ul className="space-y-2.5">
                       {[
                         { label: 'Help Center', href: '/calculators' },

@@ -75,7 +75,7 @@ export default function WhyChooseUs() {
           <div ref={leftRef} className="relative order-1 lg:order-1 w-full">
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gray-100 aspect-[4/3] sm:aspect-[4/3]">
               <Image
-                src="/why_choose_calccraft.png"
+                src="/why_choose_calccraft.webp"
                 alt="Home of Calculators calculator workspace showing free online math, finance, and health calculators for students and professionals"
                 fill
                 className="object-cover"
@@ -123,7 +123,7 @@ export default function WhyChooseUs() {
                     <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" />
                   </div>
                   <div itemProp="item" itemScope itemType="https://schema.org/Thing">
-                    <h4 className="font-semibold text-dark-800" itemProp="name">{reason.text}</h4>
+                    <h3 className="font-semibold text-dark-800" itemProp="name">{reason.text}</h3>
                     <p className="text-sm text-dark-400 mt-0.5" itemProp="description">{reason.sub}</p>
                   </div>
                 </div>

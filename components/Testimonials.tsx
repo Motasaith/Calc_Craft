@@ -177,8 +177,6 @@ export default function Testimonials() {
       onMouseLeave={() => setIsPaused(false)}
       className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-b from-white via-neutral-50/40 to-white overflow-hidden font-sans relative"
       aria-label="User reviews covering all Home of Calculators capabilities"
-      itemScope
-      itemType="https://schema.org/Review"
     >
       {/* Decorative grid + arcs */}
       <div className="absolute top-8 right-8 text-slate-200 pointer-events-none opacity-40 select-none hidden md:block">
@@ -292,23 +290,29 @@ export default function Testimonials() {
                   {/* Quote icon */}
                   <Quote className="w-6 h-6 text-slate-700 fill-slate-700/5 mb-2" />
 
+                  <div itemProp="itemReviewed" itemScope itemType="https://schema.org/SoftwareApplication" className="hidden">
+                    <meta itemProp="name" content="Home of Calculators" />
+                  </div>
+
                   {/* Review body */}
-                  <p className="text-[12px] sm:text-[13px] text-slate-600 leading-relaxed flex-grow pr-1">
+                  <p itemProp="reviewBody" className="text-[12px] sm:text-[13px] text-slate-600 leading-relaxed flex-grow pr-1">
                     "{t.text}"
                   </p>
 
                   {/* Author + stars */}
                   <div className="flex items-center justify-between gap-3 mt-4">
-                    <div className="flex items-center gap-3 text-left min-w-0">
+                    <div itemProp="author" itemScope itemType="https://schema.org/Person" className="flex items-center gap-3 text-left min-w-0">
                       <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 text-xs font-black shadow-sm shrink-0">
                         {t.avatar}
                       </div>
                       <div className="overflow-hidden">
-                        <div className="font-extrabold text-slate-800 text-xs truncate leading-tight">{t.name}</div>
+                        <div itemProp="name" className="font-extrabold text-slate-800 text-xs truncate leading-tight">{t.name}</div>
                         <div className="text-[10px] text-slate-500 truncate mt-0.5">{t.role}</div>
                       </div>
                     </div>
-                    <div className="flex gap-0.5 shrink-0">
+                    <div itemProp="reviewRating" itemScope itemType="https://schema.org/Rating" className="flex gap-0.5 shrink-0">
+                      <meta itemProp="ratingValue" content={String(t.rating)} />
+                      <meta itemProp="bestRating" content="5" />
                       {Array.from({ length: t.rating }).map((_, j) => (
                         <Star key={j} className="w-3 h-3 fill-amber-400 text-amber-400" />
                       ))}
@@ -348,7 +352,7 @@ export default function Testimonials() {
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`h-1.5 rounded-full transition-all ${
+                className={`h-1.5 rounded-full transition-all relative after:absolute after:-inset-4 ${
                   active === i ? 'w-8 bg-slate-800' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
                 }`}
                 aria-label={`Go to review ${i + 1}`}

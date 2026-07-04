@@ -198,9 +198,9 @@ export default function ScientificCalculator() {
     'Enter': () => equals(),
   })
 
-  const bSci = "h-9 text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
-  const bNum = "h-10 text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
-  const bOp = "h-10 text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
+  const bSci = "min-h-[44px] text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
+  const bNum = "min-h-[44px] text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
+  const bOp = "min-h-[44px] text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -279,9 +279,9 @@ export default function ScientificCalculator() {
 
         {/* Standard Keys */}
         <div className="grid grid-cols-5 gap-1.5 mt-1">
-          <button onClick={clearEntry} className="h-10 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
-          <button onClick={clearAll} className="h-10 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
-          <button onClick={backspace} aria-label="Backspace" className="h-10 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
+          <button onClick={clearEntry} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
+          <button onClick={clearAll} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
+          <button onClick={backspace} aria-label="Backspace" className="min-h-[44px] text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
             <Delete className="w-3.5 h-3.5" />
           </button>
           <button onClick={() => append('mod')} className={bOp}>mod</button>

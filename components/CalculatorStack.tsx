@@ -299,9 +299,9 @@ function ScientificCalculator() {
 
       {/* Standard Keys */}
       <div className="grid grid-cols-5 gap-1 mt-1">
-        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="h-8 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
-        <button onClick={clearAll} className="h-8 text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
-        <button onClick={backspace} aria-label="Backspace" className="h-8 text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
+        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
+        <button onClick={clearAll} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
+        <button onClick={backspace} aria-label="Backspace" className="min-h-[44px] text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
           <Delete className="w-3.5 h-3.5" />
         </button>
         <button onClick={() => append('mod')} className={bOp}>mod</button>
@@ -406,14 +406,14 @@ function BMICalculator() {
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (kg)</label>
             <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 70"
               min="2" max="650" step="0.1"
-              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
             <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 2–650 kg</p>
           </div>
           <div>
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Height (cm)</label>
             <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="e.g. 170"
               min="50" max="280" step="0.1"
-              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
             <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 50–280 cm</p>
           </div>
         </div>
@@ -423,21 +423,21 @@ function BMICalculator() {
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Feet</label>
             <input type="number" value={feet} onChange={(e) => setFeet(e.target.value)} placeholder="e.g. 5"
               min="1" max="8" step="1"
-              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
             <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 1–8 ft</p>
           </div>
           <div>
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Inches</label>
             <input type="number" value={inches} onChange={(e) => setInches(e.target.value)} placeholder="e.g. 10"
               min="0" max="11" step="1"
-              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
             <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 0–11 in</p>
           </div>
           <div className="col-span-2">
             <label className="block text-[11px] font-bold text-neutral-700 font-mono uppercase tracking-wider mb-1">Weight (lbs)</label>
             <input type="number" value={lbs} onChange={(e) => setLbs(e.target.value)} placeholder="e.g. 160"
               min="5" max="1400" step="0.1"
-              className="w-full h-9 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
+              className="w-full h-11 px-2 bg-[#fcfbfa] border-2 border-neutral-300 rounded text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 shadow-inner" />
             <p className="text-[10px] text-neutral-600 font-mono mt-1 leading-tight">Enter 5–1400 lbs</p>
           </div>
         </div>
@@ -809,9 +809,7 @@ export default function CalculatorStack() {
                     aria-selected={isActive}
                     aria-label={`Go to calculator ${i + 1}`}
                     onClick={() => setActiveIndex(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      isActive ? 'bg-primary-600 w-5 shadow-[0_0_6px_rgba(2,132,199,0.4)]' : 'bg-slate-300 w-2 hover:bg-slate-400'
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-300 relative after:absolute after:-inset-4 ${isActive ? 'bg-primary-600 w-5 shadow-[0_0_8px_rgba(249,115,22,0.6)]' : 'bg-slate-300 w-2 hover:bg-slate-400'}`}
                   />
                 )
               })}
