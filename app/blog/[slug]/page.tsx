@@ -7,7 +7,7 @@ import Footer from '@/components/Footer'
 import { getPosts, getPostBySlug } from '@/lib/wp'
 
 // Allow dynamic generation of new blog posts published to WP after build
-export const dynamicParams = true
+export const dynamicParams = false
 export const revalidate = 60
 
 export async function generateStaticParams() {

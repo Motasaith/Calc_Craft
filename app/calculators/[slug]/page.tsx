@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import CalculatorPageClient from './CalculatorPageClient'
 
 // Allow dynamic generation of new calculators published to WP after build
-export const dynamicParams = true
+export const dynamicParams = false
 export const revalidate = 60
 
 export async function generateStaticParams() {
