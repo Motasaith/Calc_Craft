@@ -98,6 +98,14 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
                 {ReactComponent && <ReactComponent />}
                 {!ReactComponent && config && <CustomCalculatorRenderer config={config} />}
               </div>
+
+              {/* Educational Article/Content from WordPress */}
+              {calc.content?.rendered && (
+                <div 
+                  className="rich-text-content mt-12 pt-8 border-t border-gray-200 font-sans text-dark-800"
+                  dangerouslySetInnerHTML={{ __html: calc.content.rendered }}
+                />
+              )}
             </div>
 
             {/* Sidebar Placeholder */}

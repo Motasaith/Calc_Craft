@@ -1,0 +1,46 @@
+'use client'
+import React, { useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
+
+function wobblyBar(x: number, y: number, w: number, h: number) {
+  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
+}
+
+export default function SelfEmployedTaxCalculator() {
+  const [income, setIncome] = useState('60000')
+  const [rate, setRate] = useState('15.3')
+
+  const inc = parseFloat(income), r = parseFloat(rate)
+  const valid = !isNaN(inc) && !isNaN(r) && inc >= 0 && r >= 0
+  const seTax = valid ? (inc * r) / 100 : 0
+  const netIncome = valid ? inc - seTax : 0
+
+  return (
+    <FormCalculatorShell title="Self-Employed Tax" subtitle="SE Tax = Income × Rate%" badge="TAX">
+      <RetroInput label="Net Income" value={income} onChange={setIncome} placeholder="60000" id="se-i" unit="$" />
+      <RetroInput label="SE Tax Rate" value={rate} onChange={setRate} placeholder="15.3" id="se-r" unit="%" />
+      {valid && (
+        <>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <ResultDisplay label="SE Tax" value={`$${seTax.toFixed(0)}`} large />
+            <ResultDisplay label="After Tax" value={`$${netIncome.toFixed(0)}`} large />
+          </div>
+          <div className="mt-4 flex flex-col items-center">
+            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Tax Burden</span>
+            <svg width="160" height="70" viewBox="0 0 160 70" className="select-none">
+              <defs>
+                <pattern id="seGrid" width="15" height="15" patternUnits="userSpaceOnUse">
+                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
+                </pattern>
+              </defs>
+              <rect width="160" height="70" fill="url(#seGrid)" rx="8" />
+              <path d={wobblyBar(20, 15, 120, 35)} fill="#22c55e" fillOpacity="0.15" stroke="#16a34a" strokeWidth="2" />
+              <path d={wobblyBar(20, 15, (seTax / inc) * 120, 35)} fill="#ef4444" fillOpacity="0.4" stroke="#dc2626" strokeWidth="2" />
+              <text x="80" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#dc2626" fontWeight="bold">SE Tax: ${seTax.toFixed(0)}</text>
+            </svg>
+          </div>
+        </>
+      )}
+    </FormCalculatorShell>
+  )
+}

@@ -1,9 +1,29 @@
 export const WP_API_URL = 'https://cms.homeofcalculators.com/wp-json/wp/v2'
 
+const getHeaders = () => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  const username = process.env.WP_USERNAME
+  const password = process.env.WP_APPLICATION_PASSWORD
+  if (username && password) {
+    let token = ''
+    if (typeof Buffer !== 'undefined') {
+      token = Buffer.from(`${username}:${password}`).toString('base64')
+    } else {
+      token = btoa(`${username}:${password}`)
+    }
+    headers['Authorization'] = `Basic ${token}`
+  }
+  return headers
+}
+
+
 export interface WPCalculator {
   id: number
   slug: string
   title: { rendered: string }
+  content?: { rendered: string }
   acf: {
     brand_name: string
     theme: string
@@ -35,9 +55,14 @@ export async function getCalculators(): Promise<WPCalculator[]> {
 
     while (page <= totalPages) {
       const res = await fetch(`${WP_API_URL}/calculator?_embed&per_page=100&page=${page}`, {
+        headers: getHeaders(),
         next: { revalidate: 60 } // optional ISR revalidation
       })
-      if (!res.ok) throw new Error('Failed to fetch calculators')
+      if (!res.ok) {
+        const body = await res.text().catch(() => '')
+        console.error(`Fetch calculators failed: ${res.url} - Status ${res.status} - Body: ${body}`)
+        throw new Error(`Failed to fetch calculators: Status ${res.status}`)
+      }
       
       const data = await res.json()
       allCalculators = [...allCalculators, ...data]
@@ -61,9 +86,14 @@ export async function getCalculators(): Promise<WPCalculator[]> {
 export async function getCalculatorBySlug(slug: string): Promise<WPCalculator | null> {
   try {
     const res = await fetch(`${WP_API_URL}/calculator?slug=${slug}&_embed`, {
+      headers: getHeaders(),
       next: { revalidate: 60 }
     })
-    if (!res.ok) throw new Error('Failed to fetch calculator')
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      console.error(`Fetch calculator by slug failed: ${res.url} - Status ${res.status} - Body: ${body}`)
+      throw new Error(`Failed to fetch calculator: Status ${res.status}`)
+    }
     const data = await res.json()
     return data[0] || null
   } catch (error) {
@@ -80,9 +110,14 @@ export async function getPosts() {
 
     while (page <= totalPages) {
       const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100&page=${page}`, {
+        headers: getHeaders(),
         next: { revalidate: 60 }
       })
-      if (!res.ok) throw new Error('Failed to fetch posts')
+      if (!res.ok) {
+        const body = await res.text().catch(() => '')
+        console.error(`Fetch posts failed: ${res.url} - Status ${res.status} - Body: ${body}`)
+        throw new Error(`Failed to fetch posts: Status ${res.status}`)
+      }
       
       const data = await res.json()
       allPosts = [...allPosts, ...data]
@@ -105,9 +140,14 @@ export async function getPosts() {
 export async function getPostBySlug(slug: string) {
   try {
     const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
+      headers: getHeaders(),
       next: { revalidate: 60 }
     })
-    if (!res.ok) throw new Error('Failed to fetch post')
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      console.error(`Fetch post by slug failed: ${res.url} - Status ${res.status} - Body: ${body}`)
+      throw new Error(`Failed to fetch post: Status ${res.status}`)
+    }
     const data = await res.json()
     return data[0] || null
   } catch (error) {

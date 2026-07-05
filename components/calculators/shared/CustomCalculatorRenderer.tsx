@@ -4,6 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { FileDown, Printer, Play, RefreshCw, Calculator } from 'lucide-react'
 import { evaluateFormula } from '@/lib/formula-parser'
 import { exportToCSV, exportToPDF } from '@/lib/export-utils'
+import CategoryVisualizer from './CategoryVisualizer'
+import { calculators } from '@/lib/calculators'
 
 export type CustomThemeType = 'retro' | 'dark' | 'modern' | 'pastel' | 'cyberpunk' | 'custom'
 
@@ -134,6 +136,18 @@ export default function CustomCalculatorRenderer({
   selectedFormulaId = null,
   onSelectFormula,
 }: RendererProps) {
+  // Resolve category and entry details from the local registry
+  const localEntry = useMemo(() => {
+    const nameClean = config.name.toLowerCase().replace(/calculator/g, '').trim()
+    return calculators.find(c => 
+      c.name.toLowerCase().includes(nameClean) || 
+      nameClean.includes(c.shortName.toLowerCase())
+    )
+  }, [config.name])
+
+  const localCategory = localEntry?.category || 'math'
+  const hasVisualizer = ['geometry', 'trigonometry', 'finance', 'health', 'conversion'].includes(localCategory)
+
   // Initialize state from component defaults
   const [values, setValues] = useState<Record<string, string>>({})
   const [submittedValues, setSubmittedValues] = useState<Record<string, string>>({})
@@ -690,7 +704,7 @@ export default function CustomCalculatorRenderer({
 
   return (
     <div 
-      className={`w-full max-w-xl mx-auto ${s.wrapper}`}
+      className={`w-full mx-auto transition-all duration-300 ${s.wrapper} ${hasVisualizer ? 'max-w-4xl' : 'max-w-xl'}`}
       style={{ ...customStyleWrapper, ...customVariables }}
     >
       {/* Brand Header */}
@@ -738,7 +752,9 @@ export default function CustomCalculatorRenderer({
 
       {/* Calculator Body */}
       <form onSubmit={handleSubmit} className={s.body}>
-        <div className={layoutClass}>
+        <div className={hasVisualizer ? 'grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6' : ''}>
+          <div className="space-y-4">
+            <div className={layoutClass}>
           {config.components
             .filter((c) => !c.parentId) // Only render top-level elements
             .map((c) => renderComponent(c))}
@@ -877,7 +893,39 @@ export default function CustomCalculatorRenderer({
               )}
             </div>
           )}
+          </div>
         </div>
+
+        {/* Dynamic Visualizer Column */}
+        {hasVisualizer && (
+          <div className="flex flex-col items-center justify-center bg-[#cbd8ca]/15 border border-neutral-300/50 rounded-2xl p-4 h-full min-h-[220px] self-start sticky top-6">
+            <CategoryVisualizer 
+              category={localCategory}
+              slug={localEntry?.slug || config.id}
+              variables={variablesMap}
+              results={results}
+            />
+          </div>
+        )}
+      </div>
+
+        {/* How it Works & Formula Box at the bottom of the card */}
+        {localEntry && (
+          <div className="mt-8 pt-6 border-t border-neutral-300/35 text-left font-sans">
+            <h3 className="text-xs font-black uppercase text-neutral-700 tracking-wider mb-2">How It Works</h3>
+            <p className="text-xs text-neutral-500 font-bold leading-relaxed mb-4">
+              {localEntry.description}
+            </p>
+            {config.formulas.length > 0 && (
+              <div className="bg-[#cbd8ca]/10 border border-neutral-300/40 rounded-xl p-3">
+                <span className="text-[9px] font-black uppercase text-neutral-600 tracking-wider block mb-1">Formula Reference</span>
+                <code className="text-[10px] font-mono font-bold text-neutral-600 break-all bg-neutral-100/50 p-1.5 rounded block">
+                  {config.formulas.map(f => `${f.label} = ${f.formula}`).join('; ')}
+                </code>
+              </div>
+            )}
+          </div>
+        )}
       </form>
     </div>
   )
