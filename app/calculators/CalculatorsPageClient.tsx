@@ -71,7 +71,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     if (customCalculators.length > 0) {
       list.push('custom')
     }
-    const standardCats: CategoryFilter[] = ['math', 'finance', 'health', 'date-time', 'conversion', 'everyday', 'islamic', 'construction', 'engineering', 'misc']
+    const standardCats: CategoryFilter[] = ['math', 'finance', 'health', 'date-time', 'conversion', 'everyday', 'islamic', 'construction', 'engineering', 'geometry', 'statistics', 'trigonometry', 'physics', 'chemistry', 'astronomy', 'agriculture', 'photography', 'environment', 'real-estate', 'tax', 'automotive', 'sports', 'cooking', 'education', 'business', 'science', 'landscaping', 'plumbing', 'electrical', 'misc']
     return [...list, ...standardCats]
   }, [customCalculators])
 
@@ -148,6 +148,23 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     geometry: { dot: 'bg-lime-500', gradient: 'from-lime-500 to-green-500' },
     statistics: { dot: 'bg-sky-500', gradient: 'from-sky-500 to-cyan-500' },
     trigonometry: { dot: 'bg-fuchsia-500', gradient: 'from-fuchsia-500 to-pink-500' },
+    physics: { dot: 'bg-violet-500', gradient: 'from-violet-500 to-purple-500' },
+    chemistry: { dot: 'bg-green-500', gradient: 'from-green-500 to-emerald-500' },
+    astronomy: { dot: 'bg-indigo-500', gradient: 'from-indigo-500 to-violet-500' },
+    agriculture: { dot: 'bg-lime-500', gradient: 'from-lime-500 to-green-500' },
+    photography: { dot: 'bg-stone-500', gradient: 'from-stone-500 to-neutral-500' },
+    environment: { dot: 'bg-emerald-500', gradient: 'from-emerald-500 to-teal-500' },
+    'real-estate': { dot: 'bg-amber-500', gradient: 'from-amber-500 to-yellow-500' },
+    tax: { dot: 'bg-red-500', gradient: 'from-red-500 to-rose-500' },
+    automotive: { dot: 'bg-zinc-500', gradient: 'from-zinc-500 to-slate-500' },
+    sports: { dot: 'bg-orange-500', gradient: 'from-orange-500 to-red-500' },
+    cooking: { dot: 'bg-yellow-500', gradient: 'from-yellow-500 to-amber-500' },
+    education: { dot: 'bg-blue-500', gradient: 'from-blue-500 to-indigo-500' },
+    business: { dot: 'bg-slate-500', gradient: 'from-slate-500 to-gray-500' },
+    science: { dot: 'bg-teal-500', gradient: 'from-teal-500 to-cyan-500' },
+    landscaping: { dot: 'bg-green-500', gradient: 'from-green-500 to-lime-500' },
+    plumbing: { dot: 'bg-cyan-500', gradient: 'from-cyan-500 to-blue-500' },
+    electrical: { dot: 'bg-amber-500', gradient: 'from-amber-500 to-orange-500' },
     misc: { dot: 'bg-slate-500', gradient: 'from-slate-500 to-gray-500' },
   }
 
