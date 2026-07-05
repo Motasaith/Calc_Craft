@@ -16,10 +16,10 @@ interface FormShellProps {
  */
 export default function FormCalculatorShell({ title, subtitle, badge, children }: FormShellProps) {
   return (
-    <div className="w-full max-w-xl mx-auto px-2 sm:px-0">
-      <div className="bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden">
+    <div className="w-full h-full mx-auto px-2 sm:px-0">
+      <div className="bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden h-full flex flex-col">
         {/* Header */}
-        <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-2.5 sm:pb-3 border-b-2 border-[#d5d1c8]">
+        <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-2.5 sm:pb-3 border-b-2 border-[#d5d1c8] shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-extrabold tracking-wider text-neutral-700 font-mono uppercase">
@@ -38,7 +38,7 @@ export default function FormCalculatorShell({ title, subtitle, badge, children }
         </div>
 
         {/* Body */}
-        <div className="p-4 sm:p-5">
+        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between overflow-y-auto">
           {children}
         </div>
       </div>

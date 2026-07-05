@@ -229,9 +229,11 @@ export default function CasioHeroCalculator() {
     ? formatNumberForDisplay(preview)
     : isError
       ? 'Math ERROR'
-      : expr && expr !== 'Ans'
+      : expr && expr !== 'Ans' && !isNaN(Number(expr))
         ? formatNumberForDisplay(Number(expr)) || '0'
-        : '0'
+        : ans !== null
+          ? formatNumberForDisplay(ans)
+          : '0'
 
   /* ----------------------- Key render helper ----------------------- */
 

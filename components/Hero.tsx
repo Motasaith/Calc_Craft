@@ -199,11 +199,6 @@ export default function Hero() {
       {/* Separate Section for interactive stacked calculators */}
       <section className="relative py-16 sm:py-24 bg-gray-50" id="calculators-showcase">
         <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Discover the Collection</h2>
-            <p className="text-gray-600 text-lg">Browse through hundreds of professionally designed calculators.</p>
-          </div>
-          
           <CalculatorStack />
 
           {/* View All Calculators Link Button */}

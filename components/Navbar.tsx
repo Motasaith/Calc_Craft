@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, type CalculatorCategory } from '@/lib/calculators'
+import { useAuth } from '@/components/providers/AuthContext'
+import AuthModal from '@/components/AuthModal'
 
 const navLinks = [
   { label: 'Calculators', href: '/calculators', isMega: true },
@@ -17,12 +19,16 @@ const navLinks = [
 ]
 
 export default function Navbar() {
+  const { user, logout, isLoading } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState<CalculatorCategory>('math')
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login')
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -38,7 +44,7 @@ export default function Navbar() {
       className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
     >
       <div
-        className={`flex items-center justify-between h-20 px-4 pl-5 pr-4 rounded-2xl transition-all duration-300 max-w-5xl w-full hover:border-dark-800/30 shadow-[0_6px_0_rgba(26,32,25,0.9),0_8px_16px_rgba(26,32,25,0.15)] ${
+        className={`flex items-center justify-between h-20 px-4 pl-5 pr-4 rounded-2xl transition-all duration-300 max-w-7xl w-full hover:border-dark-800/30 shadow-[0_6px_0_rgba(26,32,25,0.9),0_8px_16px_rgba(26,32,25,0.15)] ${
           scrolled
             ? 'bg-[#eae7df]/95 backdrop-blur-xl border border-dark-800/20'
             : 'bg-[#eae7df]/85 backdrop-blur-md border border-dark-800/15'
@@ -63,7 +69,7 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav
-          className="hidden lg:flex items-center gap-1.5 relative py-1"
+          className="hidden lg:flex items-center gap-3 relative py-1"
           onMouseLeave={() => {
             setHoveredIdx(null)
           }}
@@ -197,8 +203,62 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop CTA — retro calculator key style */}
-        <div className="hidden lg:flex items-center">
+        {/* Desktop Auth / CTA */}
+        <div className="hidden lg:flex items-center gap-3">
+          {!isLoading && (
+            user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-2 bg-[#dad6cd]/50 hover:bg-[#dad6cd] border border-dark-800/10 rounded-xl text-xs font-mono font-bold text-dark-800 transition-colors shadow-sm"
+                >
+                  <UserIcon className="w-4 h-4 text-primary-700" />
+                  <span className="max-w-[100px] truncate">{user.name}</span>
+                  <ChevronDown className="w-3 h-3 text-dark-500" />
+                </button>
+
+                <AnimatePresence>
+                  {profileDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setProfileDropdownOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="absolute right-0 mt-2 w-48 bg-[#eae7df] border-2 border-dark-800/15 rounded-xl shadow-lg z-20 py-1 overflow-hidden"
+                      >
+                        <div className="px-4 py-2 border-b border-dark-800/10">
+                          <p className="text-[10px] font-mono text-dark-400 uppercase tracking-wider">Signed in as</p>
+                          <p className="text-xs font-bold text-dark-800 truncate">{user.email}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            logout()
+                            setProfileDropdownOpen(false)
+                          }}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors text-left"
+                        >
+                          <LogOut className="w-3.5 h-3.5" />
+                          Logout
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setAuthModalTab('login')
+                  setAuthModalOpen(true)
+                }}
+                className="px-4 h-12 flex items-center justify-center border border-dark-800/20 bg-[#eae7df]/20 hover:bg-[#dad6cd]/50 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px"
+              >
+                Sign In
+              </button>
+            )
+          )}
+
           <Link
             href="/calculators"
             className="group relative inline-flex items-center justify-center gap-2 h-12 px-5 bg-[#dfaa44] text-dark-900 text-[13px] font-extrabold font-mono uppercase tracking-wider rounded-lg border border-[#be8b32] shadow-[0_3px_0_#be8b32] hover:bg-[#e5b44e] hover:translate-y-px hover:shadow-[0_1.5px_0_#be8b32] active:translate-y-[2px] active:shadow-none transition-all"
@@ -271,7 +331,56 @@ export default function Navbar() {
                   </Link>
                 )
               })}
-              <div className="pt-4 flex flex-col">
+              <div className="pt-4 flex flex-col gap-2.5 border-t border-dark-800/10 mt-2">
+                {!isLoading && (
+                  user ? (
+                    <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex flex-col gap-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-primary-100 border border-primary-200 flex items-center justify-center text-primary-700">
+                          <UserIcon className="w-4 h-4" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-bold text-dark-800 truncate">{user.name}</span>
+                          <span className="text-[10px] text-dark-400 truncate">{user.email}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          logout()
+                          setMobileOpen(false)
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-2 text-xs font-mono font-bold text-red-600 bg-red-50 hover:bg-red-100/70 rounded-lg transition-colors border border-red-200/50"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setAuthModalTab('login')
+                          setAuthModalOpen(true)
+                          setMobileOpen(false)
+                        }}
+                        className="flex-1 py-2.5 border border-dark-800/20 hover:bg-[#dad6cd]/50 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-700 transition-colors"
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAuthModalTab('register')
+                          setAuthModalOpen(true)
+                          setMobileOpen(false)
+                        }}
+                        className="flex-1 py-2.5 bg-[#dad6cd]/80 hover:bg-[#dad6cd] border border-dark-800/20 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-900 transition-colors"
+                      >
+                        Register
+                      </button>
+                    </div>
+                  )
+                )}
+
                 <Link
                   href="/calculators"
                   className="group inline-flex items-center justify-center gap-2 px-5 py-3 text-[13px] font-extrabold font-mono uppercase tracking-wider text-dark-900 bg-[#dfaa44] rounded-lg border border-[#be8b32] shadow-[0_3px_0_#be8b32] active:translate-y-[2px] active:shadow-none transition-all"
@@ -286,6 +395,13 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialTab={authModalTab}
+      />
     </motion.header>
   )
 }

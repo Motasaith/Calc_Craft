@@ -222,9 +222,9 @@ function ScientificCalculator() {
     'Enter': () => equals(),
   })
 
-  const bSci = "min-h-[44px] text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
-  const bNum = "min-h-[44px] text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
-  const bOp = "min-h-[44px] text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
+  const bSci = "h-[35px] text-[10px] font-bold bg-[#a6b0a4] text-neutral-900 rounded shadow border border-[#909a8e] hover:bg-[#b0baa5] active:scale-95 transition-all font-mono"
+  const bNum = "h-[35px] text-sm font-bold bg-[#fcfbfa] text-neutral-800 rounded shadow border border-neutral-300 active:scale-95 hover:bg-neutral-100 transition-all"
+  const bOp = "h-[35px] text-sm font-bold bg-[#b5beb3] text-neutral-900 rounded shadow border border-[#9fa99c] active:scale-95 hover:bg-[#c2cbc0] transition-all"
 
   return (
     <div className="flex flex-col h-full bg-[#eae7df] border-4 border-[#dad6cd] rounded-2xl p-2 py-2.5 shadow-inner text-neutral-800">
@@ -242,7 +242,7 @@ function ScientificCalculator() {
       </div>
 
       {/* Screen Display — expression on top, live result on bottom */}
-      <div className="relative mb-3 bg-[#cbd8ca] border-2 border-[#b0bdae] p-3.5 rounded shadow-inner flex flex-col items-end justify-center min-h-[100px] select-none">
+      <div className="relative mb-2 bg-[#cbd8ca] border-2 border-[#b0bdae] p-3 rounded shadow-inner flex flex-col items-end justify-center h-[85px] select-none">
         <div className="absolute left-2 top-1 text-[8px] font-bold text-[#4c5c4a] font-mono flex gap-2">
           <span>{angleMode}</span>
           {memory !== 0 && <span>M</span>}
@@ -299,9 +299,9 @@ function ScientificCalculator() {
 
       {/* Standard Keys */}
       <div className="grid grid-cols-5 gap-1 mt-1">
-        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
-        <button onClick={clearAll} className="min-h-[44px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
-        <button onClick={backspace} aria-label="Backspace" className="min-h-[44px] text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
+        <button onClick={() => setExpr((cur) => cur === 'ERROR' || cur === 'Ans' ? '' : cur.replace(/[0-9.]+$/, '').replace(/(pi|e)$/, ''))} className="h-[35px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">CE</button>
+        <button onClick={clearAll} className="h-[35px] text-xs font-extrabold bg-[#ab3232] text-white rounded shadow border border-red-800 active:scale-95 transition-all">AC</button>
+        <button onClick={backspace} aria-label="Backspace" className="h-[35px] text-xs font-extrabold bg-neutral-400 text-neutral-900 rounded shadow border border-neutral-500 active:scale-95 transition-all flex items-center justify-center">
           <Delete className="w-3.5 h-3.5" />
         </button>
         <button onClick={() => append('mod')} className={bOp}>mod</button>
@@ -331,7 +331,7 @@ function ScientificCalculator() {
         <button onClick={() => append('!')} className={bOp}>!</button>
       </div>
 
-      <button onClick={equals} className="mt-1 h-8 w-full text-sm font-extrabold bg-[#dfaa44] text-neutral-900 rounded shadow border border-[#be8b32] active:scale-95 hover:bg-[#e5b44e] transition-all">=</button>
+      <button onClick={equals} className="mt-1 h-7 w-full text-xs font-extrabold bg-[#dfaa44] text-neutral-900 rounded shadow border border-[#be8b32] active:scale-95 hover:bg-[#e5b44e] transition-all">=</button>
     </div>
   )
 }
@@ -751,7 +751,7 @@ export default function CalculatorStack() {
             touchStartX.current = null
           }}
         >
-          <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[500px] sm:h-[520px] flex items-center justify-center">
+          <div className="relative w-full max-w-[320px] sm:max-w-[360px] h-[545px] sm:h-[565px] flex items-center justify-center">
             {cards.map((card, i) => {
               const offset = i - (activeIndex ?? 0)
               const isCenter = offset === 0
@@ -775,7 +775,7 @@ export default function CalculatorStack() {
                   }}
                   className={`
                     absolute left-1/2 top-1/2 transition-all duration-500 ease-out select-none flex-shrink-0 cursor-pointer
-                    w-[290px] sm:w-[320px] h-[500px] sm:h-[520px]
+                    w-[290px] sm:w-[320px] h-[540px] sm:h-[560px]
                   `}
                   role="group"
                   aria-roledescription="slide"
@@ -829,7 +829,7 @@ export default function CalculatorStack() {
       ) : (
         // Desktop Fanned Overlay Cards Layout
         <div
-          className="relative w-[880px] h-[580px] mt-10 flex items-center justify-center"
+          className="relative w-[880px] h-[620px] mt-10 flex items-center justify-center"
           onMouseLeave={() => setActiveIndex(null)} // Return focus to resting state
         >
           {cards.map((card, i) => {
@@ -838,7 +838,7 @@ export default function CalculatorStack() {
             return (
               <motion.div
                 key={card.name}
-                className="absolute left-[270px] top-[25px] w-[340px] h-[520px] rounded-2xl origin-bottom transition-all duration-300"
+                className="absolute left-[270px] top-[25px] w-[340px] h-[560px] rounded-2xl origin-bottom transition-all duration-300"
                 style={{
                   transform: `translate3d(${style.x}, ${style.y}, 0) rotate(${style.rotate}) scale(${style.scale})`,
                   zIndex: style.zIndex,
