@@ -59,9 +59,8 @@ export async function getCalculators(): Promise<WPCalculator[]> {
         next: { revalidate: 60 } // optional ISR revalidation
       })
       if (!res.ok) {
-        const body = await res.text().catch(() => '')
-        console.error(`Fetch calculators failed: ${res.url} - Status ${res.status} - Body: ${body}`)
-        throw new Error(`Failed to fetch calculators: Status ${res.status}`)
+        console.error(`Fetch calculators failed: ${res.url} - Status ${res.status}`)
+        return allCalculators // Return whatever we have instead of throwing
       }
       
       const data = await res.json()
@@ -90,9 +89,8 @@ export async function getCalculatorBySlug(slug: string): Promise<WPCalculator | 
       next: { revalidate: 60 }
     })
     if (!res.ok) {
-      const body = await res.text().catch(() => '')
-      console.error(`Fetch calculator by slug failed: ${res.url} - Status ${res.status} - Body: ${body}`)
-      throw new Error(`Failed to fetch calculator: Status ${res.status}`)
+      console.error(`Fetch calculator by slug failed: ${res.url} - Status ${res.status}`)
+      return null // Return null instead of throwing
     }
     const data = await res.json()
     return data[0] || null
@@ -114,9 +112,8 @@ export async function getPosts() {
         next: { revalidate: 60 }
       })
       if (!res.ok) {
-        const body = await res.text().catch(() => '')
-        console.error(`Fetch posts failed: ${res.url} - Status ${res.status} - Body: ${body}`)
-        throw new Error(`Failed to fetch posts: Status ${res.status}`)
+        console.error(`Fetch posts failed: ${res.url} - Status ${res.status}`)
+        return allPosts // Return whatever we have so far instead of throwing
       }
       
       const data = await res.json()
@@ -144,9 +141,8 @@ export async function getPostBySlug(slug: string) {
       next: { revalidate: 60 }
     })
     if (!res.ok) {
-      const body = await res.text().catch(() => '')
-      console.error(`Fetch post by slug failed: ${res.url} - Status ${res.status} - Body: ${body}`)
-      throw new Error(`Failed to fetch post: Status ${res.status}`)
+      console.error(`Fetch post by slug failed: ${res.url} - Status ${res.status}`)
+      return null // Return null instead of throwing
     }
     const data = await res.json()
     return data[0] || null

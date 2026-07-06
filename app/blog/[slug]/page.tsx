@@ -11,8 +11,17 @@ export const dynamicParams = false
 export const revalidate = 60
 
 export async function generateStaticParams() {
-  const posts = await getPosts()
-  return posts.map((post: any) => ({ slug: post.slug }))
+  try {
+    const posts = await getPosts()
+    if (!posts || posts.length === 0) {
+      // Return a placeholder so the route is valid even when WP is unreachable
+      return [{ slug: 'placeholder' }]
+    }
+    return posts.map((post: any) => ({ slug: post.slug }))
+  } catch (error) {
+    console.error('Blog generateStaticParams failed, using fallback:', error)
+    return [{ slug: 'placeholder' }]
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

@@ -8,9 +8,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://homeofcalculators.com'
   const now = new Date()
   
+  // Fetch with fallback — don't crash the build if WordPress is unreachable
   const [posts, calculators] = await Promise.all([
-    getPosts(),
-    getCalculators()
+    getPosts().catch(() => []),
+    getCalculators().catch(() => [])
   ])
 
   return [
