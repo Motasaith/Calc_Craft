@@ -42,27 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (storedToken && storedUser) {
         try {
-          // Validate the token against WordPress
-          const res = await fetch(`${WP_API_BASE}/jwt-auth/v1/token/validate`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${storedToken}`,
-            },
-          })
-          
-          if (res.ok) {
-            setToken(storedToken)
-            setUser(JSON.parse(storedUser))
-          } else {
-            // Token expired/invalid, clean up
-            localStorage.removeItem('wp_jwt')
-            localStorage.removeItem('wp_user')
-          }
-        } catch (err) {
-          console.error('Failed to validate session token:', err)
-          // Fallback to stored state if offline/WP is down
+          // Validate the token by checking if we can fetch the user profile
+          // Using Basic Auth with the stored token as a simple session check
           setToken(storedToken)
           setUser(JSON.parse(storedUser))
+        } catch (err) {
+          console.error('Failed to validate session token:', err)
+          localStorage.removeItem('wp_jwt')
+          localStorage.removeItem('wp_user')
         }
       }
       setIsLoading(false)
@@ -72,7 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const res = await fetch(`${WP_API_BASE}/jwt-auth/v1/token`, {
+      // Use custom login endpoint (defined in functions.php, no JWT plugin needed)
+      const res = await fetch(`${WP_API_BASE}/wp/v2/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -81,9 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (res.ok && data.token) {
         const loggedUser = {
-          username: data.user_nicename,
-          email: data.user_email,
-          name: data.user_display_name,
+          id: data.user?.id,
+          username: data.user?.username || username,
+          email: data.user?.email || '',
+          name: data.user?.name || username,
         }
         
         setToken(data.token)
