@@ -58,6 +58,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly',
       priority: 0.6,
     },
+    // Builder
+    {
+      url: `${baseUrl}/builder`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Blog posts
     ...posts.map((post: any) => ({
       url: `${baseUrl}/blog/${post.slug}`,

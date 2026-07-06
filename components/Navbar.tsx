@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Bookmark } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -102,11 +102,11 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.98 }}
                       transition={{ duration: 0.15, ease: 'easeOut' }}
-                      className="absolute top-full left-0 mt-2 w-[700px] bg-[#eae7df] rounded-2xl shadow-2xl border border-dark-800/15 overflow-hidden z-30 origin-top-left flex"
+                      className="absolute top-full left-0 mt-2 w-[900px] max-w-[calc(100vw-2rem)] bg-[#eae7df] rounded-2xl shadow-2xl border border-dark-800/15 overflow-hidden z-30 origin-top-left flex"
                     >
                       {/* Left Column: Categories */}
-                      <div className="w-[220px] border-r border-dark-800/10 p-4 bg-[#dad6cd]/20 space-y-1">
-                        <div className="text-[10px] font-mono font-bold text-dark-400 uppercase tracking-widest px-3 mb-2">Categories</div>
+                      <div className="w-[240px] border-r border-dark-800/10 p-3 bg-[#dad6cd]/20 space-y-0.5 max-h-[440px] overflow-y-auto">
+                        <div className="text-[10px] font-mono font-bold text-dark-400 uppercase tracking-widest px-3 mb-2 sticky top-0 bg-[#dad6cd]/90 backdrop-blur-sm py-1.5 z-10">Categories</div>
                         {Object.keys(CATEGORY_LABELS).map((catKey) => {
                           const cat = catKey as CalculatorCategory
                           const label = CATEGORY_LABELS[cat]
@@ -231,6 +231,22 @@ export default function Navbar() {
                           <p className="text-[10px] font-mono text-dark-400 uppercase tracking-wider">Signed in as</p>
                           <p className="text-xs font-bold text-dark-800 truncate">{user.email}</p>
                         </div>
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-dark-700 hover:bg-[#dad6cd]/50 transition-colors text-left"
+                        >
+                          <LayoutDashboard className="w-3.5 h-3.5" />
+                          My Dashboard
+                        </Link>
+                        <Link
+                          href="/library"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-dark-700 hover:bg-[#dad6cd]/50 transition-colors text-left"
+                        >
+                          <Bookmark className="w-3.5 h-3.5" />
+                          My Library
+                        </Link>
                         <button
                           onClick={() => {
                             logout()

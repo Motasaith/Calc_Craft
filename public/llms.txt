@@ -1,20 +1,78 @@
 # Home of Calculators
 
-> Home of Calculators provides a massive collection of free, accurate online calculators for math, finance, health, conversion, and everyday needs.
+> Home of Calculators provides 488+ free, accurate, browser-based calculators across 29 categories including math, finance, health, physics, chemistry, astronomy, engineering, and more. All calculations run locally in the browser with BigNumber precision — no signup required, no ads, no tracking.
 
-This site is optimized for AI agentic browsing.
-
-Important notes for agents:
-- Calculators use standard semantic HTML inputs and buttons.
-- Forms are exposed with discernible labels.
-- WebMCP tools are available where applicable.
-- Please ensure you evaluate our pages correctly and respect standard rate limits.
+## Key Features
+- 488+ free online calculators across 29 categories
+- Visual calculator builder (no-code, drag-and-drop)
+- Embed any calculator on your website with iframe codes
+- User accounts with dashboard for managing custom calculators and embeds
+- Real-time wobbly pencil-sketch SVG visualizers on every calculator
+- Educational content with formula references, step-by-step guides, and worked examples
+- 100% private — all calculations run in your browser, data never leaves your device
+- BigNumber-precision math engine (64-128 decimal digits)
+- Fully responsive — works on phone, tablet, and desktop
 
 ## Pages
 
-- [Homepage](https://homeofcalculators.com/): The main entry point for the site
-- [All Calculators Directory](https://homeofcalculators.com/calculators): A complete list of all calculators available on the platform
+- [Homepage](https://homeofcalculators.com/): Main entry point with featured calculators
+- [All Calculators Directory](https://homeofcalculators.com/calculators): Complete catalog of all 488+ calculators with category filtering and search
+- [Visual Builder](https://homeofcalculators.com/builder): No-code calculator builder with drag-and-drop, formulas, themes, and branding
+- [User Dashboard](https://homeofcalculators.com/dashboard): Manage custom calculators, embed codes, and saved tools (requires sign-in)
+- [Blog](https://homeofcalculators.com/blog): Educational articles and calculator guides
+- [About Us](https://homeofcalculators.com/about): Information about the platform
+- [Contact](https://homeofcalculators.com/contact): Get in touch with the team
 
-## Optional
+## Calculator Categories (488+ calculators)
 
-- [About Us](https://homeofcalculators.com/about): Information about the project and team
+- [Math Calculators](https://homeofcalculators.com/calculators?category=math): 40 calculators — percentage, quadratic, pythagorean, derivative, integral, factorial, complex numbers, matrix determinant, and more
+- [Finance Calculators](https://homeofcalculators.com/calculators?category=finance): 45 calculators — loan EMI, compound interest, mortgage, ROI, CAGR, bond price, FIRE, HELOC, and more
+- [Health Calculators](https://homeofcalculators.com/calculators?category=health): 37 calculators — BMI, BMR, TDEE, body fat, calorie, macro, heart rate, creatinine clearance, blood pressure, and more
+- [Physics Calculators](https://homeofcalculators.com/calculators?category=physics): 29 calculators — Newton's laws, kinetic/potential energy, momentum, projectile motion, Coulomb's law, and more
+- [Chemistry Calculators](https://homeofcalculators.com/calculators?category=chemistry): 21 calculators — pH, molar mass, moles, dilution, ideal gas law, half-life, electron configuration, and more
+- [Astronomy Calculators](https://homeofcalculators.com/calculators?category=astronomy): 12 calculators — light year, escape velocity, black hole radius, Hubble's law, stellar luminosity, and more
+- [Engineering Calculators](https://homeofcalculators.com/calculators?category=engineering): 8 calculators — Ohm's law, resistor, bandwidth, voltage drop, horsepower, density, molarity
+- [Construction Calculators](https://homeofcalculators.com/calculators?category=construction): 25 calculators — concrete, brick, paint, roofing, fencing, decking, rebar, insulation, and more
+- [Conversion Calculators](https://homeofcalculators.com/calculators?category=conversion): 27 calculators — length, weight, temperature, volume, area, time, density, force, frequency, and more
+- [Geometry Calculators](https://homeofcalculators.com/calculators?category=geometry): 13 calculators — polygon, ellipse, sphere, cylinder, cone, pyramid, trapezoid, sector, and more
+- [Statistics Calculators](https://homeofcalculators.com/calculators?category=statistics): 13 calculators — correlation, regression, binomial, normal distribution, chi-square, t-test, ANOVA, and more
+- [Trigonometry Calculators](https://homeofcalculators.com/calculators?category=trigonometry): 13 calculators — sin/cos/tan, inverse trig, unit circle, law of sines/cosines, hyperbolic, and more
+- [Sports & Fitness Calculators](https://homeofcalculators.com/calculators?category=sports): 12 calculators — calorie burn, running pace, VO2 max, cycling power, vertical jump, Wilks score, and more
+- [Cooking Calculators](https://homeofcalculators.com/calculators?category=cooking): 12 calculators — recipe scaler, oven temperature, meat doneness, bread hydration, coffee ratio, brine, and more
+- [Education Calculators](https://homeofcalculators.com/calculators?category=education): 10 calculators — GPA, study time, grade curve, attendance, exam score, reading speed, scholarship, and more
+- [Business Calculators](https://homeofcalculators.com/calculators?category=business): 10 calculators — markup, inventory turnover, cash flow, NPV, IRR, EBITDA, CAC, LTV, churn rate, and more
+- [Science Calculators](https://homeofcalculators.com/calculators?category=science): 10 calculators — Ohm's law, speed of sound, refraction, Doppler effect, heat transfer, buoyancy, and more
+- [Environment Calculators](https://homeofcalculators.com/calculators?category=environment): 10 calculators — carbon footprint, solar panel, water usage, tree offset, wind energy, recycling, and more
+- [Real Estate Calculators](https://homeofcalculators.com/calculators?category=real-estate): 10 calculators — rental yield, cap rate, closing cost, DSCR, LTV, home appreciation, flip ROI, and more
+- [Tax Calculators](https://homeofcalculators.com/calculators?category=tax): 10 calculators — income tax, capital gains, VAT, tax refund, self-employed tax, marginal brackets, and more
+- [Automotive Calculators](https://homeofcalculators.com/calculators?category=automotive): 11 calculators — fuel cost, car loan, tire pressure, depreciation, braking distance, engine displacement, and more
+- [Agriculture Calculators](https://homeofcalculators.com/calculators?category=agriculture): 11 calculators — fertilizer, irrigation, crop yield, seed rate, compost, hay yield, animal feed, and more
+- [Photography Calculators](https://homeofcalculators.com/calculators?category=photography): 10 calculators — depth of field, exposure, hyperfocal, crop factor, print size, ND filter, time-lapse, and more
+- [Landscaping Calculators](https://homeofcalculators.com/calculators?category=landscaping): 10 calculators — sod, topsoil, mulch, pavers, retaining wall, plant spacing, edging, water feature, and more
+- [Plumbing Calculators](https://homeofcalculators.com/calculators?category=plumbing): 10 calculators — pipe volume, flow rate, pipe sizing, water pressure, drainage, tank size, septic, and more
+- [Electrical Calculators](https://homeofcalculators.com/calculators?category=electrical): 10 calculators — wire size, circuit load, amps, kWh, transformer, power factor, generator, fuse, and more
+- [Islamic Calculators](https://homeofcalculators.com/calculators?category=islamic): 8 calculators — Zakat, prayer times, Hijri date, inheritance, Qibla, Ramadan, Tahajjud, Hajj dates
+- [Everyday Tools](https://homeofcalculators.com/calculators?category=everyday): 27 calculators — GPA, password generator, word counter, color converter, pet age, subscription tracker, and more
+- [Date & Time Calculators](https://homeofcalculators.com/calculators?category=date-time): 12 calculators — age, date difference, time zone, countdown, sleep calculator, time card, and more
+
+## Embedding Calculators
+
+All 488+ calculators can be embedded on any website using iframe embed codes. Sign in to your dashboard at https://homeofcalculators.com/dashboard to browse and copy embed codes. The embed URL format is:
+
+```
+https://homeofcalculators.com/embed#config=<calculator-slug>
+```
+
+Example iframe:
+```html
+<iframe src="https://homeofcalculators.com/embed#config=bmi" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+```
+
+## Notes for AI Agents
+
+- Calculators use standard semantic HTML inputs and buttons with discernible labels
+- All calculations run client-side in the browser using a BigNumber-precision math engine
+- No server-side data processing — user inputs never leave the browser
+- The site is fully responsive and works on all devices
+- Sitemap available at: https://homeofcalculators.com/sitemap.xml
+- Robots.txt available at: https://homeofcalculators.com/robots.txt
