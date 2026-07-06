@@ -5,11 +5,15 @@ import Link from 'next/link'
 import { ChevronRight, ArrowLeft, Calculator } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import CalculatorSEOContent from '@/components/CalculatorSEOContent'
 import { WPCalculator } from '@/lib/wp'
+import { getCalculatorBySlug } from '@/lib/calculators'
 import CustomCalculatorRenderer, { CustomCalculatorConfig, CustomComponentConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { getCalculatorComponent } from '@/lib/calculator-components'
 
 export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
+  // Get local registry data for SEO content (fallback if WP content is empty)
+  const localCalc = getCalculatorBySlug(calc.slug)
   // If it's a React component, grab it
   const ReactComponent = calc.acf.calculator_type === 'react' && calc.acf.react_component_id
     ? getCalculatorComponent(calc.acf.react_component_id)
@@ -104,6 +108,20 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
                 <div 
                   className="rich-text-content mt-12 pt-8 border-t border-gray-200 font-sans text-dark-800"
                   dangerouslySetInnerHTML={{ __html: calc.content.rendered }}
+                />
+              )}
+
+              {/* SEO Educational Content — formula reference, how-to, FAQ */}
+              {localCalc && (
+                <CalculatorSEOContent
+                  slug={calc.slug}
+                  calc={{
+                    name: localCalc.name,
+                    shortName: localCalc.shortName,
+                    description: localCalc.description,
+                    category: localCalc.category,
+                    keywords: localCalc.keywords,
+                  }}
                 />
               )}
             </div>

@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe } from 'lucide-react'
+import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare } from 'lucide-react'
 import Link from 'next/link'
 import { CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
+import { getFormulaRef } from '@/lib/formula-references'
 
 // =====================================================================
 // PER-CALCULATOR SEO-RICH COPY
@@ -207,8 +208,11 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
   }
 }
 
-export default function CalculatorSEOContent({ calc }: { calc: { name: string; shortName: string; description: string; category: CalculatorCategory; keywords: string[] } }) {
+export default function CalculatorSEOContent({ calc, slug }: { calc: { name: string; shortName: string; description: string; category: CalculatorCategory; keywords: string[] }; slug?: string }) {
   const copy = generateSEOCopy(calc)
+  const formulaRef = slug ? getFormulaRef(slug) : null
+  // Use formula-specific steps if available, otherwise use generic steps
+  const steps = formulaRef ? formulaRef.steps : copy.howTo.steps
 
   return (
     <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
@@ -232,6 +236,61 @@ export default function CalculatorSEOContent({ calc }: { calc: { name: string; s
         </motion.div>
       </div>
 
+      {/* ────── FORMULA REFERENCE ────── */}
+      {formulaRef && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+              <FunctionSquare className="w-3 h-3" /> Formula Reference
+            </span>
+          </div>
+
+          {/* Formula display */}
+          <div className="mb-5 p-4 bg-white border border-neutral-300 rounded-xl">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono mb-2">The Formula</div>
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-dark-900 text-center py-2">
+              {formulaRef.formula}
+            </div>
+          </div>
+
+          {/* Educational description */}
+          <p className="text-sm text-dark-600 leading-relaxed mb-5">{formulaRef.description}</p>
+
+          {/* Variables table */}
+          <div className="mb-5">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono mb-2">Variables</div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {formulaRef.variables.map((v, i) => (
+                <div key={i} className="flex items-center gap-2 p-2.5 bg-white border border-neutral-200 rounded-lg">
+                  <code className="text-sm font-bold text-primary-700 font-mono">{v.symbol}</code>
+                  <span className="text-xs text-dark-600">{v.name}{v.unit ? ` (${v.unit})` : ''}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Worked example */}
+          <div className="p-4 bg-neutral-900 text-white rounded-xl">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-primary-300 font-mono mb-2">Worked Example</div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {Object.entries(formulaRef.example.inputs).map(([key, val]) => (
+                <span key={key} className="text-xs font-mono px-2 py-1 bg-white/10 rounded">
+                  {key} = {val}
+                </span>
+              ))}
+            </div>
+            <div className="text-sm font-bold font-mono text-primary-300">
+              Result: {formulaRef.example.result}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* ────── HOW TO USE ────── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -246,7 +305,7 @@ export default function CalculatorSEOContent({ calc }: { calc: { name: string; s
           <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 tracking-tight">{copy.howTo.heading}</h2>
         </div>
         <ol className="space-y-3" itemProp="steps">
-          {copy.howTo.steps.map((step, i) => (
+          {steps.map((step, i) => (
             <li key={i} className="flex gap-4 p-4 sm:p-5 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/HowToStep">
               <meta itemProp="position" content={String(i + 1)} />
               <div className="shrink-0 w-8 h-8 rounded-xl bg-dark-900 text-white flex items-center justify-center font-extrabold text-sm">
