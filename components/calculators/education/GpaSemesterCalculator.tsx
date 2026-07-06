@@ -49,7 +49,7 @@ export default function GpaSemesterCalculator() {
                 value={c.grade}
                 onChange={(v) => updateCourse(i, 'grade', v)}
                 type="number"
-                step="0.1"
+                step={0.1}
                 min={0}
                 max={4}
               />

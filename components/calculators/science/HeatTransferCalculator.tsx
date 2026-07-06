@@ -31,9 +31,9 @@ export default function HeatTransferCalculator() {
       badge="SCIENCE"
     >
       <div>
-        <RetroInput label="Thermal Conductivity" value={k} onChange={setK} unit="W/m·K" placeholder="e.g. 0.04" step="0.001" />
+        <RetroInput label="Thermal Conductivity" value={k} onChange={setK} unit="W/m·K" placeholder="e.g. 0.04" step={0.001} />
         <RetroInput label="Area" value={area} onChange={setArea} unit="m²" placeholder="e.g. 10" />
-        <RetroInput label="Thickness" value={thickness} onChange={setThickness} unit="m" placeholder="e.g. 0.05" step="0.001" />
+        <RetroInput label="Thickness" value={thickness} onChange={setThickness} unit="m" placeholder="e.g. 0.05" step={0.001} />
         <RetroInput label="Temp Difference" value={dT} onChange={setDT} unit="°C" placeholder="e.g. 20" />
       </div>
 

@@ -37,8 +37,8 @@ export default function SnellsLawCalculator() {
     >
       <div>
         <RetroInput label="Incident Angle" value={incAngle} onChange={setIncAngle} unit="°" placeholder="e.g. 30" />
-        <RetroInput label="n₁ (medium 1)" value={n1} onChange={setN1} placeholder="e.g. 1.00" step="0.01" />
-        <RetroInput label="n₂ (medium 2)" value={n2} onChange={setN2} placeholder="e.g. 1.50" step="0.01" />
+        <RetroInput label="n₁ (medium 1)" value={n1} onChange={setN1} placeholder="e.g. 1.00" step={0.01} />
+        <RetroInput label="n₂ (medium 2)" value={n2} onChange={setN2} placeholder="e.g. 1.50" step={0.01} />
       </div>
 
       {valid && (

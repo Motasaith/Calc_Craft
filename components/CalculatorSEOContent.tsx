@@ -81,6 +81,91 @@ const CATEGORY_COPY: Record<CalculatorCategory, { heading: string; description: 
     description: 'angles, trig functions, identities, and triangle solving',
     useCase: 'students, engineers, physicists',
   },
+  physics: {
+    heading: 'Physics Calculators',
+    description: 'force, energy, motion, waves, and thermodynamics calculations',
+    useCase: 'students, physicists, engineers',
+  },
+  chemistry: {
+    heading: 'Chemistry Calculators',
+    description: 'molar mass, pH, stoichiometry, and chemical reactions',
+    useCase: 'students, chemists, researchers',
+  },
+  astronomy: {
+    heading: 'Astronomy Calculators',
+    description: 'orbital mechanics, stellar properties, and cosmological calculations',
+    useCase: 'astronomers, students, space enthusiasts',
+  },
+  agriculture: {
+    heading: 'Agriculture Calculators',
+    description: 'crop yields, fertilizer, irrigation, and farming calculations',
+    useCase: 'farmers, agronomists, gardeners',
+  },
+  photography: {
+    heading: 'Photography Calculators',
+    description: 'depth of field, exposure, focal length, and camera settings',
+    useCase: 'photographers, filmmakers, content creators',
+  },
+  environment: {
+    heading: 'Environment Calculators',
+    description: 'carbon footprint, energy savings, and sustainability metrics',
+    useCase: 'environmentalists, homeowners, conscious consumers',
+  },
+  'real-estate': {
+    heading: 'Real Estate Calculators',
+    description: 'rental yield, cap rate, mortgage, and property investment analysis',
+    useCase: 'investors, realtors, homebuyers',
+  },
+  tax: {
+    heading: 'Tax Calculators',
+    description: 'income tax, capital gains, VAT, and tax planning calculations',
+    useCase: 'taxpayers, accountants, business owners',
+  },
+  automotive: {
+    heading: 'Automotive Calculators',
+    description: 'fuel cost, car loans, depreciation, and vehicle maintenance',
+    useCase: 'drivers, car buyers, mechanics',
+  },
+  sports: {
+    heading: 'Sports & Fitness Calculators',
+    description: 'calorie burn, pace, VO2 max, and athletic performance metrics',
+    useCase: 'athletes, coaches, fitness enthusiasts',
+  },
+  cooking: {
+    heading: 'Cooking & Food Calculators',
+    description: 'recipe scaling, conversions, cooking times, and food preparation',
+    useCase: 'cooks, bakers, home chefs',
+  },
+  education: {
+    heading: 'Education Calculators',
+    description: 'GPA, study time, grade calculations, and academic planning',
+    useCase: 'students, teachers, parents',
+  },
+  business: {
+    heading: 'Business Calculators',
+    description: 'markup, NPV, IRR, cash flow, and business metrics',
+    useCase: 'entrepreneurs, analysts, business owners',
+  },
+  science: {
+    heading: 'Science Calculators',
+    description: 'physics formulas, optics, acoustics, and scientific constants',
+    useCase: 'students, scientists, researchers',
+  },
+  landscaping: {
+    heading: 'Landscaping Calculators',
+    description: 'sod, mulch, pavers, retaining walls, and garden planning',
+    useCase: 'homeowners, landscapers, gardeners',
+  },
+  plumbing: {
+    heading: 'Plumbing Calculators',
+    description: 'pipe sizing, flow rate, water pressure, and tank capacity',
+    useCase: 'plumbers, contractors, DIY homeowners',
+  },
+  electrical: {
+    heading: 'Electrical Calculators',
+    description: 'wire sizing, circuit load, power consumption, and electrical safety',
+    useCase: 'electricians, engineers, homeowners',
+  },
   misc: {
     heading: 'Other Calculators',
     description: 'specialty calculators for games, weather, vehicles, and more',

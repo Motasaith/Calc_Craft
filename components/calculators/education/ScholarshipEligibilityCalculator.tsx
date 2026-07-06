@@ -31,7 +31,7 @@ export default function ScholarshipEligibilityCalculator() {
       badge="EDUCATION"
     >
       <div>
-        <RetroInput label="GPA" value={gpa} onChange={setGpa} unit="/4.0" step="0.1" min={0} max={4} />
+        <RetroInput label="GPA" value={gpa} onChange={setGpa} unit="/4.0" step={0.1} min={0} max={4} />
         <RetroInput label="SAT Score" value={sat} onChange={setSat} unit="/1600" min={0} max={1600} />
         <RetroInput label="Community Service" value={service} onChange={setService} unit="hrs" />
       </div>

@@ -36,8 +36,8 @@ export default function BuoyancyCalculator() {
     >
       <div>
         <RetroInput label="Fluid Density" value={density} onChange={setDensity} unit="kg/m³" placeholder="e.g. 1000" />
-        <RetroInput label="Volume Displaced" value={volume} onChange={setVolume} unit="m³" placeholder="e.g. 0.5" step="0.01" />
-        <RetroInput label="Gravity" value={g} onChange={setG} unit="m/s²" placeholder="e.g. 9.81" step="0.001" />
+        <RetroInput label="Volume Displaced" value={volume} onChange={setVolume} unit="m³" placeholder="e.g. 0.5" step={0.01} />
+        <RetroInput label="Gravity" value={g} onChange={setG} unit="m/s²" placeholder="e.g. 9.81" step={0.001} />
       </div>
 
       {valid && (

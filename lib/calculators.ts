@@ -3775,9 +3775,9 @@ export const calculators: CalculatorEntry[] = [
     icon: 'Users',
   },
   {
-    slug: 'ltv',
+    slug: 'ltv-business',
     name: 'Customer Lifetime Value Calculator',
-    shortName: 'LTV',
+    shortName: 'CLV',
     category: 'business',
     description: 'Calculate customer lifetime value from purchase behavior.',
     keywords: ['lifetime value', 'ltv', 'customer value', 'clv', 'business metrics'],

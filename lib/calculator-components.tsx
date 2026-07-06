@@ -411,7 +411,7 @@ const calculatorComponents: Record<string, React.ComponentType> = {
   'irr': dynamic(() => import('@/components/calculators/business/IRRCalculator')),
   'ebitda': dynamic(() => import('@/components/calculators/business/EBITDACalculator')),
   'cac': dynamic(() => import('@/components/calculators/business/CustomerAcquisitionCostCalculator')),
-  'ltv': dynamic(() => import('@/components/calculators/business/LifetimeValueCalculator')),
+  'ltv-business': dynamic(() => import('@/components/calculators/business/LifetimeValueCalculator')),
   'churn-rate': dynamic(() => import('@/components/calculators/business/ChurnRateCalculator')),
   'gross-margin-biz': dynamic(() => import('@/components/calculators/business/GrossMarginCalculator')),
 

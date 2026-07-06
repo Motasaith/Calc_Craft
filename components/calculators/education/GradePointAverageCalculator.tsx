@@ -48,7 +48,7 @@ export default function GradePointAverageCalculator() {
                 value={c.grade}
                 onChange={(v) => update(i, 'grade', v)}
                 type="number"
-                step="0.1"
+                step={0.1}
                 min={0}
                 max={4}
               />
@@ -59,7 +59,7 @@ export default function GradePointAverageCalculator() {
                 value={c.weight}
                 onChange={(v) => update(i, 'weight', v)}
                 type="number"
-                step="0.1"
+                step={0.1}
                 min={0}
               />
             </div>

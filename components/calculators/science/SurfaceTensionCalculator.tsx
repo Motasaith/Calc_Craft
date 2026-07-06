@@ -27,8 +27,8 @@ export default function SurfaceTensionCalculator() {
       badge="SCIENCE"
     >
       <div>
-        <RetroInput label="Surface Tension Coeff." value={gamma} onChange={setGamma} unit="N/m" placeholder="e.g. 0.0728" step="0.0001" />
-        <RetroInput label="Length" value={length} onChange={setLength} unit="m" placeholder="e.g. 0.05" step="0.001" />
+        <RetroInput label="Surface Tension Coeff." value={gamma} onChange={setGamma} unit="N/m" placeholder="e.g. 0.0728" step={0.0001} />
+        <RetroInput label="Length" value={length} onChange={setLength} unit="m" placeholder="e.g. 0.05" step={0.001} />
       </div>
 
       {valid && (
