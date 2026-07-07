@@ -19,15 +19,13 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const { user, logout, isLoading } = useAuth()
+  const { user, logout, isLoading, authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState<CalculatorCategory>('math')
-  const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login')
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
   useEffect(() => {

@@ -247,9 +247,11 @@ export default function Footer() {
                     <ul className="space-y-2.5">
                       {[
                         { label: 'All Calculators', href: '/calculators' },
-                        { label: 'Math Calculators', href: '/calculators?category=math' },
-                        { label: 'Finance Calculators', href: '/calculators?category=finance' },
-                        { label: 'Health Calculators', href: '/calculators?category=health' },
+                        { label: 'Categories Hub', href: '/categories' },
+                        { label: 'Math Calculators', href: '/categories/math' },
+                        { label: 'Finance Calculators', href: '/categories/finance' },
+                        { label: 'Health Calculators', href: '/categories/health' },
+                        { label: 'Visual Builder', href: '/builder' },
                       ].map((link) => (
                         <li key={link.label}>
                           <Link

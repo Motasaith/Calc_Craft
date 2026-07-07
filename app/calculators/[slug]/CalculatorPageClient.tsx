@@ -11,9 +11,11 @@ import { getCalculatorBySlug } from '@/lib/calculators'
 import CustomCalculatorRenderer, { CustomCalculatorConfig, CustomComponentConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { getCalculatorComponent } from '@/lib/calculator-components'
 import { useUserData } from '@/components/providers/UserDataContext'
+import { useAuth } from '@/components/providers/AuthContext'
 
 export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
   const { savedCalculators, addSavedCalculator, removeSavedCalculator, addEmbeddedCalculator } = useUserData()
+  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
   
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -21,6 +23,12 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
   const isBookmarked = savedCalculators.includes(calc.slug)
 
   const handleBookmark = () => {
+    if (!user) {
+      setAuthModalTab('login')
+      setAuthModalOpen(true)
+      return
+    }
+
     if (isBookmarked) {
       removeSavedCalculator(calc.slug)
     } else {

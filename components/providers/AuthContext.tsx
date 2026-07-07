@@ -16,6 +16,10 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
+  authModalOpen: boolean
+  setAuthModalOpen: (open: boolean) => void
+  authModalTab: 'login' | 'register'
+  setAuthModalTab: (tab: 'login' | 'register') => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,6 +29,10 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => ({ success: false }),
   register: async () => ({ success: false }),
   logout: async () => {},
+  authModalOpen: false,
+  setAuthModalOpen: () => {},
+  authModalTab: 'login',
+  setAuthModalTab: () => {},
 })
 
 const WP_API_BASE = 'https://cms.homeofcalculators.com/wp-json'
@@ -33,6 +41,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login')
 
   // Verify session on mount
   useEffect(() => {
@@ -117,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab }}>
       {children}
     </AuthContext.Provider>
   )

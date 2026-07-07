@@ -20,6 +20,7 @@ import CustomCalculatorRenderer, {
 } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { serializeConfig, deserializeConfig } from '@/lib/url-serializer'
 import { checkFormula, evaluateFormula } from '@/lib/formula-parser'
+import { useAuth } from '@/components/providers/AuthContext'
 
 // =====================================================================
 // TEMPLATES — pre-built calculators to help users start quickly
@@ -193,6 +194,7 @@ const THEME_SWATCHES: Record<string, { label: string; primary: string; bg: strin
 
 export default function BuilderPageClient() {
   const { addCustomCalculator } = useUserData()
+  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
 
   // ---- Core state ----
   const [calculator, setCalculator] = useState<CustomCalculatorConfig>(TEMPLATES[0].config)
@@ -589,6 +591,12 @@ export default function BuilderPageClient() {
   // SAVE TO DASHBOARD
   // ===================================================================
   const handleSaveToDashboard = async () => {
+    if (!user) {
+      setAuthModalTab('login')
+      setAuthModalOpen(true)
+      return
+    }
+
     try {
       const newCalc = { ...calculator, id: calculator.id || `custom-${Date.now()}` }
       addCustomCalculator(newCalc)

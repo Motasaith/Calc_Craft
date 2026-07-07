@@ -9,9 +9,11 @@ import Footer from '@/components/Footer'
 import CustomCalculatorRenderer, { CustomCalculatorConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { deserializeConfig, serializeConfig } from '@/lib/url-serializer'
 import { useUserData } from '@/components/providers/UserDataContext'
+import { useAuth } from '@/components/providers/AuthContext'
 
 export default function CustomCalculatorPageClient() {
   const { customCalculators, addCustomCalculator, removeCustomCalculator, addEmbeddedCalculator } = useUserData()
+  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
 
   const [config, setConfig] = useState<CustomCalculatorConfig | null>(null)
   const [loading, setLoading] = useState(true)
@@ -24,7 +26,12 @@ export default function CustomCalculatorPageClient() {
 
   const handleBookmark = () => {
     if (!config) return
-    
+    if (!user) {
+      setAuthModalTab('login')
+      setAuthModalOpen(true)
+      return
+    }
+
     if (isBookmarked) {
       removeCustomCalculator(config.id)
     } else {
