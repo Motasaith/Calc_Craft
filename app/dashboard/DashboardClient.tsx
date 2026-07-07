@@ -64,7 +64,7 @@ export default function DashboardClient() {
   }
 
   const handleCopyEmbed = (slug: string) => {
-    const embedUrl = `https://homeofcalculators.com/embed#config=${slug}`
+    const embedUrl = `https://homeofcalculators.com/embed/${slug}`
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopiedSlug(slug)
