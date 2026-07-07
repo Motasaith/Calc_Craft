@@ -10,37 +10,22 @@ import { WPCalculator } from '@/lib/wp'
 import { getCalculatorBySlug } from '@/lib/calculators'
 import CustomCalculatorRenderer, { CustomCalculatorConfig, CustomComponentConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { getCalculatorComponent } from '@/lib/calculator-components'
+import { useUserData } from '@/components/providers/UserDataContext'
 
 export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
+  const { savedCalculators, addSavedCalculator, removeSavedCalculator } = useUserData()
+  
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(false)
-
-  useEffect(() => {
-    const saved = localStorage.getItem('my_saved_calculators')
-    if (saved) {
-      try {
-        const savedList: string[] = JSON.parse(saved)
-        setIsBookmarked(savedList.includes(calc.slug))
-      } catch (e) {}
-    }
-  }, [calc.slug])
+  
+  const isBookmarked = savedCalculators.includes(calc.slug)
 
   const handleBookmark = () => {
-    const saved = localStorage.getItem('my_saved_calculators')
-    let savedList: string[] = []
-    try {
-      if (saved) savedList = JSON.parse(saved)
-    } catch (e) {}
-    
     if (isBookmarked) {
-      savedList = savedList.filter(s => s !== calc.slug)
+      removeSavedCalculator(calc.slug)
     } else {
-      savedList.push(calc.slug)
+      addSavedCalculator(calc.slug)
     }
-    
-    localStorage.setItem('my_saved_calculators', JSON.stringify(savedList))
-    setIsBookmarked(!isBookmarked)
   }
 
   const handleCopyEmbed = () => {

@@ -30,6 +30,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { serializeConfig } from '@/lib/url-serializer'
 import { CustomCalculatorConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
+import { useUserData } from '@/components/providers/UserDataContext'
 
 import type { WPCalculator } from '@/lib/wp'
 
@@ -40,7 +41,8 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all')
   const [search, setSearch] = useState('')
   const [view, setView] = useState<ViewMode>('grid')
-  const [customCalculators, setCustomCalculators] = useState<CustomCalculatorConfig[]>([])
+  
+  const { customCalculators, removeCustomCalculator } = useUserData()
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -51,27 +53,13 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     setCurrentPage(1)
   }, [activeCategory, search, itemsPerPage])
 
-  // Load custom calculators from localStorage on mount
-  useEffect(() => {
-    const listRaw = localStorage.getItem('my_custom_calculators')
-    if (listRaw) {
-      try {
-        setCustomCalculators(JSON.parse(listRaw))
-      } catch (e) {
-        console.warn('Failed to parse custom calculators')
-      }
-    }
-  }, [])
-
   const handleDeleteCustom = (id: string, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
     if (confirm('Are you sure you want to delete this custom calculator from your site dashboard?')) {
-      const updated = customCalculators.filter((c) => c.id !== id)
-      setCustomCalculators(updated)
-      localStorage.setItem('my_custom_calculators', JSON.stringify(updated))
-      if (activeCategory === 'custom' && updated.length === 0) {
+      removeCustomCalculator(id)
+      if (activeCategory === 'custom' && customCalculators.length <= 1) {
         setActiveCategory('all')
       }
     }

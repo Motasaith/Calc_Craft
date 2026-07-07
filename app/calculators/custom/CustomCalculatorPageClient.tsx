@@ -8,39 +8,28 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CustomCalculatorRenderer, { CustomCalculatorConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { deserializeConfig, serializeConfig } from '@/lib/url-serializer'
+import { useUserData } from '@/components/providers/UserDataContext'
 
 export default function CustomCalculatorPageClient() {
+  const { customCalculators, addCustomCalculator, removeCustomCalculator } = useUserData()
+
   const [config, setConfig] = useState<CustomCalculatorConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(false)
 
-  useEffect(() => {
-    if (config) {
-      const saved = localStorage.getItem('my_custom_calculators')
-      if (saved) {
-        const savedList: CustomCalculatorConfig[] = JSON.parse(saved)
-        setIsBookmarked(savedList.some(c => c.id === config.id))
-      }
-    }
-  }, [config])
+  const isBookmarked = config ? customCalculators.some(c => c.id === config.id) : false
 
   const handleBookmark = () => {
     if (!config) return
-    const saved = localStorage.getItem('my_custom_calculators')
-    let savedList: CustomCalculatorConfig[] = saved ? JSON.parse(saved) : []
     
     if (isBookmarked) {
-      savedList = savedList.filter(c => c.id !== config.id)
+      removeCustomCalculator(config.id)
     } else {
-      savedList.push(config)
+      addCustomCalculator(config)
     }
-    
-    localStorage.setItem('my_custom_calculators', JSON.stringify(savedList))
-    setIsBookmarked(!isBookmarked)
   }
 
   const handleCopyEmbed = () => {

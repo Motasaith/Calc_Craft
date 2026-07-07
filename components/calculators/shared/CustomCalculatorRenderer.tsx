@@ -41,6 +41,7 @@ export interface CustomCalculatorConfig {
   requireSubmit?: boolean
   enableCSVExport?: boolean
   enablePDFExport?: boolean
+  createdAt?: string
 }
 
 export interface CustomComponentConfig {

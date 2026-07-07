@@ -11,6 +11,7 @@ import {
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { useAuth } from '@/components/providers/AuthContext'
+import { useUserData } from '@/components/providers/UserDataContext'
 import { calculators, CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
 import { serializeConfig } from '@/lib/url-serializer'
 
@@ -28,39 +29,22 @@ type Tab = 'overview' | 'custom' | 'embeds' | 'saved' | 'settings'
 
 export default function DashboardClient() {
   const { user, logout, isLoading } = useAuth()
+  const { 
+    customCalculators: customCalcs, 
+    savedCalculators: savedCalcs, 
+    removeCustomCalculator, 
+    removeSavedCalculator,
+    isSyncing
+  } = useUserData()
+  
   const [activeTab, setActiveTab] = useState<Tab>('overview')
-  const [customCalcs, setCustomCalcs] = useState<SavedCalculator[]>([])
-  const [savedCalcs, setSavedCalcs] = useState<string[]>([])
   const [embedSearch, setEmbedSearch] = useState('')
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null)
   const [customSearch, setCustomSearch] = useState('')
 
-  // Load from localStorage
-  useEffect(() => {
-    if (!user) return
-    // Load custom calculators
-    try {
-      const stored = localStorage.getItem('my_custom_calculators')
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        setCustomCalcs(Array.isArray(parsed) ? parsed : [parsed])
-      }
-    } catch { setCustomCalcs([]) }
-
-    // Load saved/bookmarked calculators
-    try {
-      const saved = localStorage.getItem('my_saved_calculators')
-      if (saved) {
-        setSavedCalcs(JSON.parse(saved))
-      }
-    } catch { setSavedCalcs([]) }
-  }, [user])
-
   // ─── Handlers ───
   const handleDeleteCustom = (id: string) => {
-    const updated = customCalcs.filter(c => c.id !== id)
-    setCustomCalcs(updated)
-    localStorage.setItem('my_custom_calculators', JSON.stringify(updated))
+    removeCustomCalculator(id)
   }
 
   const handleCopyEmbed = (slug: string) => {
@@ -78,9 +62,7 @@ export default function DashboardClient() {
   }
 
   const handleRemoveSaved = (slug: string) => {
-    const updated = savedCalcs.filter(s => s !== slug)
-    setSavedCalcs(updated)
-    localStorage.setItem('my_saved_calculators', JSON.stringify(updated))
+    removeSavedCalculator(slug)
   }
 
   // ─── Filtered data ───
@@ -510,22 +492,26 @@ export default function DashboardClient() {
                       <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl">
                         <div>
                           <div className="font-bold text-sm text-dark-900">Custom Calculators</div>
-                          <div className="text-xs text-dark-500">Stored locally in your browser</div>
+                          <div className="text-xs text-dark-500">
+                            {isSyncing ? 'Syncing...' : 'Synced to your account'}
+                          </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{customCalcs.length}</span>
                       </div>
                       <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl">
                         <div>
                           <div className="font-bold text-sm text-dark-900">Saved Tools</div>
-                          <div className="text-xs text-dark-500">Stored locally in your browser</div>
+                          <div className="text-xs text-dark-500">
+                            {isSyncing ? 'Syncing...' : 'Synced to your account'}
+                          </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{savedCalcs.length}</span>
                       </div>
-                      <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                      <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                         <div className="flex items-start gap-2">
-                          <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
                           <p className="text-xs text-dark-600">
-                            Your data is stored locally in your browser (localStorage). Clearing your browser data will remove your saved calculators. Sign in with the same account on a different device to sync.
+                            Your data is securely synced to your WordPress account. You can safely access your tools from any device.
                           </p>
                         </div>
                       </div>

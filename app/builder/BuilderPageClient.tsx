@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { useUserData } from '@/components/providers/UserDataContext'
 import CustomCalculatorRenderer, {
   CustomCalculatorConfig, CustomComponentConfig, CustomFormulaConfig, CustomThemeType, LabelTypographyConfig
 } from '@/components/calculators/shared/CustomCalculatorRenderer'
@@ -191,6 +192,8 @@ const THEME_SWATCHES: Record<string, { label: string; primary: string; bg: strin
 }
 
 export default function BuilderPageClient() {
+  const { addCustomCalculator } = useUserData()
+
   // ---- Core state ----
   const [calculator, setCalculator] = useState<CustomCalculatorConfig>(TEMPLATES[0].config)
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null)
@@ -587,16 +590,9 @@ export default function BuilderPageClient() {
   // ===================================================================
   const handleSaveToDashboard = async () => {
     try {
-      // 1. Always save to localStorage (works for anonymous users).
-      const savedListRaw = localStorage.getItem('my_custom_calculators')
-      const savedList: CustomCalculatorConfig[] = savedListRaw ? JSON.parse(savedListRaw) : []
-
       const newCalc = { ...calculator, id: calculator.id || `custom-${Date.now()}` }
-      const index = savedList.findIndex((item) => item.id === newCalc.id)
-      if (index !== -1) savedList[index] = newCalc
-      else savedList.push(newCalc)
-
-      localStorage.setItem('my_custom_calculators', JSON.stringify(savedList))
+      addCustomCalculator(newCalc)
+      
       localStorage.removeItem('calc_craft_builder_draft')
 
 

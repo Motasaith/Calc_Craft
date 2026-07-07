@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans, Share_Tech_Mono } from 'next/font/google'
 import './globals.css'
 import { BRAND } from '@/lib/brand'
 import { AuthProvider } from '@/components/providers/AuthContext'
+import { UserDataProvider } from '@/components/providers/UserDataContext'
 
 // Self-hosted fonts via next/font/google — no render-blocking @import,
 // zero layout shift (automatic size-adjust), served from the same origin.
@@ -377,7 +378,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <UserDataProvider>
+            {children}
+          </UserDataProvider>
+        </AuthProvider>
       </body>
     </html>
   )
