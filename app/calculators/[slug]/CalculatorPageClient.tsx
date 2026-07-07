@@ -13,7 +13,7 @@ import { getCalculatorComponent } from '@/lib/calculator-components'
 import { useUserData } from '@/components/providers/UserDataContext'
 
 export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
-  const { savedCalculators, addSavedCalculator, removeSavedCalculator } = useUserData()
+  const { savedCalculators, addSavedCalculator, removeSavedCalculator, addEmbeddedCalculator } = useUserData()
   
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -33,6 +33,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopied(true)
+    addEmbeddedCalculator({ id: calc.slug, name: calc.title.rendered, isCustom: false, embeddedAt: new Date().toISOString() })
     setTimeout(() => setCopied(false), 2000)
   }
 

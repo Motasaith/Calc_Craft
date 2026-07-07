@@ -25,15 +25,17 @@ interface SavedCalculator {
   isPublic: boolean
 }
 
-type Tab = 'overview' | 'custom' | 'embeds' | 'saved' | 'settings'
+type Tab = 'overview' | 'custom' | 'embeds' | 'my_embeds' | 'saved' | 'settings'
 
 export default function DashboardClient() {
   const { user, logout, isLoading } = useAuth()
   const { 
     customCalculators: customCalcs, 
     savedCalculators: savedCalcs, 
+    embeddedCalculators,
     removeCustomCalculator, 
     removeSavedCalculator,
+    addEmbeddedCalculator,
     isSyncing
   } = useUserData()
   
@@ -47,11 +49,12 @@ export default function DashboardClient() {
     removeCustomCalculator(id)
   }
 
-  const handleCopyEmbed = (slug: string) => {
+  const handleCopyEmbed = (slug: string, name: string) => {
     const embedUrl = `https://homeofcalculators.com/embed/${slug}`
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopiedSlug(slug)
+    addEmbeddedCalculator({ id: slug, name, isCustom: false, embeddedAt: new Date().toISOString() })
     setTimeout(() => setCopiedSlug(null), 2000)
   }
 
@@ -135,7 +138,8 @@ export default function DashboardClient() {
   const tabs: { id: Tab; label: string; icon: any; count?: number }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'custom', label: 'My Calculators', icon: Calculator, count: customCalcs.length },
-    { id: 'embeds', label: 'Embed Widgets', icon: Code2, count: calculators.length },
+    { id: 'embeds', label: 'Embed Library', icon: Code2, count: calculators.length },
+    { id: 'my_embeds', label: 'My Embeds', icon: Code2, count: embeddedCalculators.length },
     { id: 'saved', label: 'Saved Tools', icon: Bookmark, count: savedCalcs.length },
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
@@ -197,7 +201,7 @@ export default function DashboardClient() {
                     {[
                       { label: 'Custom Calculators', value: customCalcs.length, icon: Calculator, color: 'from-blue-500 to-cyan-500' },
                       { label: 'Saved Tools', value: savedCalcs.length, icon: Bookmark, color: 'from-amber-500 to-orange-500' },
-                      { label: 'Available to Embed', value: calculators.length, icon: Code2, color: 'from-emerald-500 to-green-500' },
+                      { label: 'My Embeds', value: embeddedCalculators.length, icon: Code2, color: 'from-emerald-500 to-green-500' },
                       { label: 'Categories', value: Object.keys(CATEGORY_LABELS).length, icon: TrendingUp, color: 'from-violet-500 to-purple-500' },
                     ].map((stat, i) => (
                       <motion.div
@@ -387,7 +391,7 @@ export default function DashboardClient() {
                             <Eye className="w-3 h-3" /> Preview
                           </Link>
                           <button
-                            onClick={() => handleCopyEmbed(calc.slug)}
+                            onClick={() => handleCopyEmbed(calc.slug, calc.name)}
                             className={`flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                               copiedSlug === calc.slug
                                 ? 'bg-emerald-600 text-white'
@@ -410,6 +414,86 @@ export default function DashboardClient() {
                       <p className="text-sm text-dark-500">
                         Showing 60 of {filteredEmbedCalcs.length} calculators. Use search to narrow down.
                       </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ═══ MY EMBEDS ═══ */}
+              {activeTab === 'my_embeds' && (
+                <div className="space-y-4">
+                  {embeddedCalculators.length === 0 ? (
+                    <div className="text-center py-16">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-neutral-100 flex items-center justify-center">
+                        <Code2 className="w-8 h-8 text-neutral-400" />
+                      </div>
+                      <h3 className="font-bold text-dark-900 mb-1">No embedded calculators</h3>
+                      <p className="text-sm text-dark-500 mb-4">You haven't copied any embed codes yet.</p>
+                      <button onClick={() => setActiveTab('embeds')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700">
+                        <Search className="w-4 h-4" /> Browse Embed Library
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {embeddedCalculators.map((embed) => (
+                        <div key={embed.id} className="p-5 bg-white border border-neutral-200 rounded-2xl flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-bold text-sm text-dark-900 line-clamp-1">{embed.name}</h3>
+                              {embed.isCustom && (
+                                <span className="text-[10px] text-indigo-600 font-mono uppercase bg-indigo-50 px-2 py-0.5 rounded ml-2 shrink-0">Custom</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-neutral-400 mb-4">
+                              <Clock className="w-3 h-3" />
+                              Embedded: {new Date(embed.embeddedAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 mt-auto">
+                            {!embed.isCustom && (
+                              <Link
+                                href={`/calculators/${embed.id}`}
+                                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-neutral-100 text-dark-700 text-xs font-bold hover:bg-neutral-200 transition-colors"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" /> View
+                              </Link>
+                            )}
+                            <button
+                              onClick={() => {
+                                let iframeCode = ''
+                                if (embed.isCustom) {
+                                  // For custom, we just grab it from local if it exists, or they'd need to re-copy from builder
+                                  const c = customCalcs.find(c => c.id === embed.id)
+                                  if (c) {
+                                    const embedUrl = `${window.location.origin}/embed#config=${serializeConfig(c as any)}`
+                                    iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
+                                  } else {
+                                    alert('Custom calculator config no longer exists!')
+                                    return
+                                  }
+                                } else {
+                                  const embedUrl = `https://homeofcalculators.com/embed/${embed.id}`
+                                  iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
+                                }
+                                navigator.clipboard.writeText(iframeCode)
+                                setCopiedSlug(embed.id)
+                                setTimeout(() => setCopiedSlug(null), 2000)
+                              }}
+                              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-colors ${
+                                copiedSlug === embed.id
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                              }`}
+                            >
+                              {copiedSlug === embed.id ? (
+                                <><CheckCircle2 className="w-3 h-3" /> Copied!</>
+                              ) : (
+                                <><Copy className="w-3 h-3" /> Copy Code</>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

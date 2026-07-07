@@ -11,7 +11,7 @@ import { deserializeConfig, serializeConfig } from '@/lib/url-serializer'
 import { useUserData } from '@/components/providers/UserDataContext'
 
 export default function CustomCalculatorPageClient() {
-  const { customCalculators, addCustomCalculator, removeCustomCalculator } = useUserData()
+  const { customCalculators, addCustomCalculator, removeCustomCalculator, addEmbeddedCalculator } = useUserData()
 
   const [config, setConfig] = useState<CustomCalculatorConfig | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,6 +38,7 @@ export default function CustomCalculatorPageClient() {
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopied(true)
+    addEmbeddedCalculator({ id: config.id, name: config.name, isCustom: true, embeddedAt: new Date().toISOString() })
     setTimeout(() => setCopied(false), 2000)
   }
 
