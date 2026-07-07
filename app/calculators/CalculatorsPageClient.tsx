@@ -17,6 +17,8 @@ import {
   X,
   Star,
   Zap,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import {
   calculators,
@@ -39,6 +41,15 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
   const [search, setSearch] = useState('')
   const [view, setView] = useState<ViewMode>('grid')
   const [customCalculators, setCustomCalculators] = useState<CustomCalculatorConfig[]>([])
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(50)
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeCategory, search, itemsPerPage])
 
   // Load custom calculators from localStorage on mount
   useEffect(() => {
@@ -129,6 +140,13 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
 
     return combined
   }, [activeCategory, search, customCalculators])
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage)
+  
+  const paginatedCalculators = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage
+    return filtered.slice(start, start + itemsPerPage)
+  }, [filtered, currentPage, itemsPerPage])
 
   const totalCount = calculators.length + customCalculators.length
 
@@ -364,8 +382,13 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
           {/* ─────────────────── Results count ─────────────────── */}
           <div className="flex items-center justify-between mb-5 text-xs font-mono">
             <div className="text-dark-500">
-              <span className="font-bold text-dark-900">{filtered.length}</span> calculator
-              {filtered.length !== 1 ? 's' : ''}
+              {filtered.length > 0 ? (
+                <>
+                  Showing <span className="font-bold text-dark-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-bold text-dark-900">{Math.min(currentPage * itemsPerPage, filtered.length)}</span> of <span className="font-bold text-dark-900">{filtered.length}</span> calculator{filtered.length !== 1 ? 's' : ''}
+                </>
+              ) : (
+                <><span className="font-bold text-dark-900">0</span> calculators</>
+              )}
               {activeCategory !== 'all' && (
                 <span> in <span className="font-bold text-dark-700">{activeCategory === 'custom' ? 'My Custom' : CATEGORY_LABELS[activeCategory]}</span></span>
               )}
@@ -388,7 +411,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
           {view === 'grid' && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <AnimatePresence mode="popLayout">
-                {filtered.map((calc, i) => {
+                {paginatedCalculators.map((calc, i) => {
                   const colors = CATEGORY_COLORS[calc.category]
                   const meta = categoryMeta[calc.category]
                   const targetUrl =
@@ -496,7 +519,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
           {view === 'list' && (
             <div className="space-y-2">
               <AnimatePresence mode="popLayout">
-                {filtered.map((calc, i) => {
+                {paginatedCalculators.map((calc, i) => {
                   const colors = CATEGORY_COLORS[calc.category]
                   const targetUrl =
                     calc.isCustom && calc.customConfig
@@ -559,6 +582,69 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
                   )
                 })}
               </AnimatePresence>
+            </div>
+          )}
+
+          {/* ─────────────────── Pagination Controls ─────────────────── */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 bg-white/80 backdrop-blur border border-neutral-200 p-3 sm:p-4 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-dark-500">
+                <span>ITEMS PER PAGE:</span>
+                <select 
+                  value={itemsPerPage} 
+                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                  className="bg-neutral-50 border border-neutral-200 rounded-lg px-2 py-1 text-dark-900 focus:outline-none focus:border-indigo-400 cursor-pointer"
+                >
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg border border-neutral-200 bg-white text-dark-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors shadow-sm"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                
+                <div className="flex items-center gap-1 px-1 sm:px-2">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum = i + 1;
+                    if (totalPages > 5) {
+                      if (currentPage > 3) {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      if (currentPage > totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      }
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg text-sm font-bold transition-all ${
+                          currentPage === pageNum 
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
+                            : 'text-dark-600 hover:bg-neutral-100 hover:text-dark-900'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-neutral-200 bg-white text-dark-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-50 transition-colors shadow-sm"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 
