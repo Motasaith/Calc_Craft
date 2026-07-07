@@ -35,8 +35,8 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
         heading: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
-        // Calculator displays only — Share Tech Mono via next/font.
-        mono: ['var(--font-mono)', 'Share Tech Mono', 'ui-monospace', 'monospace'],
+        // Switched mono to standard sans font as requested by the user for all calculators and navbar
+        mono: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

@@ -53,7 +53,7 @@ export default function TermsOfUsePage() {
             <>
               <p>Home of Calculators provides a free, browser-based calculator platform consisting of:</p>
               <ul>
-                <li><strong>190 ready-made calculators</strong> across math, finance, health, conversion, datetime, and everyday categories</li>
+                <li><strong>500+ ready-made calculators</strong> across math, finance, health, conversion, datetime, and everyday categories</li>
                 <li><strong>A visual calculator builder</strong>: a drag-and-drop, no-code tool for creating custom calculators with your own fields, formulas, themes, and branding</li>
                 <li><strong>Embeddable widgets</strong>: iframe snippets that let you place any Home of Calculators calculator (or a custom one you build) on your own website</li>
                 <li><strong>White-labeling features</strong>: your own logo, brand colors, and domain-friendly output for embedded widgets</li>

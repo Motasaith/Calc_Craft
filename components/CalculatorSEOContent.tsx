@@ -418,7 +418,7 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
             <CalcIcon className="w-3 h-3" /> More tools
           </div>
-          <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 190 calculators</h3>
+          <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
           <p className="text-sm text-dark-600 mb-3">Explore the full library across math, finance, health, conversion, and more.</p>
           <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
             See all calculators <ChevronRight className="w-4 h-4" />

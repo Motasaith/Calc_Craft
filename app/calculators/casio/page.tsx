@@ -135,7 +135,7 @@ export default function CasioPage() {
                 className="p-3 bg-white hover:bg-neutral-50 border border-dark-800/10 rounded-xl shadow-sm text-center transition-all group"
               >
                 <span className="block text-xs font-mono font-bold text-dark-800 group-hover:text-primary-700">Calculators Directory</span>
-                <span className="text-[10px] text-dark-400 mt-1 block">Browse all 190+ tools</span>
+                <span className="text-[10px] text-dark-400 mt-1 block">Browse all 500+ tools</span>
               </Link>
               <Link
                 href="/builder"

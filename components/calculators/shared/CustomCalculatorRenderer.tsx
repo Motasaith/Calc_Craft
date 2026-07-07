@@ -520,7 +520,7 @@ export default function CustomCalculatorRenderer({
                 placeholder={c.placeholder}
                 value={currentVal}
                 onChange={(e) => handleValueChange(c.name, e.target.value)}
-                className={`${s.input} ${isFieldReadOnly ? 'opacity-70 cursor-not-allowed bg-neutral-100/50' : ''}`}
+                className={`${s.input} ${isFieldReadOnly ? 'opacity-70 cursor-not-allowed bg-neutral-100/50' : ''} ${c.unit ? 'pr-24' : ''}`}
                 style={activeTheme === 'custom' ? { 
                   backgroundColor: 'rgba(255,255,255,0.7)', 
                   borderColor: 'rgba(0,0,0,0.15)',
@@ -535,7 +535,7 @@ export default function CustomCalculatorRenderer({
               />
               {c.unit && (
                 <span 
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold opacity-60 font-mono"
+                  className="absolute right-12 top-1/2 -translate-y-1/2 text-sm font-bold opacity-70"
                   style={activeTheme === 'custom' ? { color: 'var(--custom-text)' } : {}}
                 >
                   {c.unit}

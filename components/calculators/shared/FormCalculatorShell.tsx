@@ -85,10 +85,10 @@ export function RetroInput({
           min={min}
           max={max}
           step={step}
-          className="w-full h-10 px-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-400 transition-all shadow-inner placeholder:text-neutral-400"
+          className={`w-full h-10 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-400 transition-all shadow-inner placeholder:text-neutral-400 ${unit ? 'pl-3 pr-20' : 'px-3'}`}
         />
         {unit && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-neutral-500 font-mono">
+          <span className="absolute right-10 top-1/2 -translate-y-1/2 text-sm font-bold text-neutral-500 font-mono">
             {unit}
           </span>
         )}

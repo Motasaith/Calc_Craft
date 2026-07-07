@@ -24,7 +24,7 @@ export const revalidate = false
 export const metadata: Metadata = {
   title: 'About Home of Calculators - Our Mission, Story & the Team Behind Free Calculators | Home of Calculators',
   description:
-    'Learn about Home of Calculators: a free, privacy-first calculator platform that gives you 190 ready-made calculators, a no-code visual builder, and embeddable widgets for any website.',
+    'Learn about Home of Calculators: a free, privacy-first calculator platform that gives you 500+ ready-made calculators, a no-code visual builder, and embeddable widgets for any website.',
   keywords: [
     'about homeofcalculators',
     'calculator platform',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 }
 
 const stats = [
-  { value: '190', label: 'Ready-made calculators', sub: 'across 9 categories' },
+  { value: '500+', label: 'Ready-made calculators', sub: 'across 9 categories' },
   { value: '128-bit', label: 'Calculation precision', sub: 'BigNumber arithmetic' },
   { value: '100%', label: 'Free forever', sub: 'no paid tiers, no upsells' },
   { value: '0', label: 'Servers storing your inputs', sub: 'all calculations in your browser' },
@@ -72,7 +72,7 @@ const values = [
 ]
 
 const capabilities = [
-  { icon: Calculator, title: '190 ready-made calculators', body: 'Math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools, all free and browser-based.' },
+  { icon: Calculator, title: '500+ ready-made calculators', body: 'Math, finance, health, conversion, datetime, statistics, trigonometry, geometry, and everyday tools, all free and browser-based.' },
   { icon: Wrench, title: 'Visual calculator builder', body: 'A WordPress-style drag-and-drop editor. Add fields, write formulas, pick a theme. Your custom calculator is live in minutes.' },
   { icon: Globe, title: 'Embed on any website', body: 'One-line iframe snippets. Drop a Home of Calculators calculator into your blog, your Shopify store, or your internal docs.' },
   { icon: Code2, title: 'JSON import / export', body: 'Back up, version, or share your custom calculator configurations as plain JSON files.' },
@@ -104,14 +104,14 @@ const timeline = [
   {
     year: '2026',
     title: 'Where we are now',
-    body: '190 calculators. 9 categories. 96+ automated engine tests. A thriving community of users who build, share, and embed their own calculators. The platform is mature, but the journey is just beginning.',
+    body: '500+ calculators. 9 categories. 96+ automated engine tests. A thriving community of users who build, share, and embed their own calculators. The platform is mature, but the journey is just beginning.',
   },
 ]
 
 const team = [
   { name: 'The Engineering Team', role: 'Architecture & Engine', bio: 'Maintains the math engine, frontend, and infrastructure that keep Home of Calculators running smoothly across the globe.' },
   { name: 'The Design Team', role: 'UX & Visual Design', bio: 'Crafts the interface, the 14-segment digital displays, and the retro-modern aesthetic that makes Home of Calculators feel alive.' },
-  { name: 'The Content Team', role: 'Calculators & Documentation', bio: 'Builds each of the 190 calculators, writes the help docs, and ensures every formula is verified for accuracy.' },
+  { name: 'The Content Team', role: 'Calculators & Documentation', bio: 'Builds each of the 500+ calculators, writes the help docs, and ensures every formula is verified for accuracy.' },
   { name: 'The Community', role: 'You', bio: 'Thousands of users, builders, and embedders who test new calculators, share feedback, and shape what Home of Calculators becomes next.' },
 ]
 
@@ -141,7 +141,7 @@ export default function AboutPage() {
               </span>
             </h1>
             <p className="text-base sm:text-lg text-dark-500 max-w-2xl mx-auto leading-relaxed">
-              Home of Calculators started as a frustration and became a platform. Today it powers 190 free calculators, a no-code visual builder, and embeddable widgets used by thousands of people every day.
+              Home of Calculators started as a frustration and became a platform. Today it powers 500+ free calculators, a no-code visual builder, and embeddable widgets used by thousands of people every day.
             </p>
           </div>
         </section>
