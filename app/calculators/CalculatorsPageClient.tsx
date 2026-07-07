@@ -86,9 +86,8 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     return [...list, ...standardCats]
   }, [customCalculators])
 
-  // Filtered calculators (combining registry and custom calculators)
-  const filtered = useMemo(() => {
-    // Map WP Calculators, falling back to static registry for icons and categories
+  // Base combined list of all WP and custom calculators
+  const allCalculators = useMemo(() => {
     let standardList = wpCalculators.map((wpCalc) => {
       const staticData = calculators.find((c) => c.slug === wpCalc.slug)
       return {
@@ -118,7 +117,12 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
       customConfig: c,
     }))
 
-    let combined = [...standardList, ...customList]
+    return [...standardList, ...customList]
+  }, [wpCalculators, customCalculators])
+
+  // Filtered calculators
+  const filtered = useMemo(() => {
+    let combined = [...allCalculators]
 
     // Apply category filters
     if (activeCategory === 'custom') {
@@ -139,7 +143,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     }
 
     return combined
-  }, [activeCategory, search, customCalculators])
+  }, [allCalculators, activeCategory, search])
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
   
@@ -148,7 +152,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     return filtered.slice(start, start + itemsPerPage)
   }, [filtered, currentPage, itemsPerPage])
 
-  const totalCount = calculators.length + customCalculators.length
+  const totalCount = allCalculators.length
 
   // Category meta for the chips
   const categoryMeta: Record<CategoryFilter, { dot: string; gradient: string }> = {
@@ -339,7 +343,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
                       ? totalCount
                       : cat === 'custom'
                         ? customCalculators.length
-                        : calculators.filter((c) => c.category === cat).length
+                        : allCalculators.filter((c) => !c.isCustom && c.category === cat).length
                   const meta = categoryMeta[cat]
                   return (
                     <button
