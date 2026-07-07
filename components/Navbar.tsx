@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Bookmark } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -238,14 +238,6 @@ export default function Navbar() {
                         >
                           <LayoutDashboard className="w-3.5 h-3.5" />
                           My Dashboard
-                        </Link>
-                        <Link
-                          href="/library"
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-dark-700 hover:bg-[#dad6cd]/50 transition-colors text-left"
-                        >
-                          <Bookmark className="w-3.5 h-3.5" />
-                          My Library
                         </Link>
                         <button
                           onClick={() => {

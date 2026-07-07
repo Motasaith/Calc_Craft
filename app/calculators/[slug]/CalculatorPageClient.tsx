@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronRight, ArrowLeft, Calculator, Code2, Copy, CheckCircle2, X } from 'lucide-react'
+import { ChevronRight, ArrowLeft, Calculator, Code2, Copy, CheckCircle2, X, Bookmark } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CalculatorSEOContent from '@/components/CalculatorSEOContent'
@@ -14,6 +14,34 @@ import { getCalculatorComponent } from '@/lib/calculator-components'
 export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('my_saved_calculators')
+    if (saved) {
+      try {
+        const savedList: string[] = JSON.parse(saved)
+        setIsBookmarked(savedList.includes(calc.slug))
+      } catch (e) {}
+    }
+  }, [calc.slug])
+
+  const handleBookmark = () => {
+    const saved = localStorage.getItem('my_saved_calculators')
+    let savedList: string[] = []
+    try {
+      if (saved) savedList = JSON.parse(saved)
+    } catch (e) {}
+    
+    if (isBookmarked) {
+      savedList = savedList.filter(s => s !== calc.slug)
+    } else {
+      savedList.push(calc.slug)
+    }
+    
+    localStorage.setItem('my_saved_calculators', JSON.stringify(savedList))
+    setIsBookmarked(!isBookmarked)
+  }
 
   const handleCopyEmbed = () => {
     const embedUrl = `https://homeofcalculators.com/embed/${calc.slug}`
@@ -106,13 +134,27 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
               {/* Page Header */}
               <div className="mb-6 flex items-start justify-between gap-4">
                 <h1 className="text-2xl lg:text-3xl font-extrabold text-dark-900 mb-2" dangerouslySetInnerHTML={{ __html: calc.title.rendered }} />
-                <button
-                  onClick={() => setShowEmbedModal(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 mt-1 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 transition-colors text-sm font-bold shrink-0 shadow-sm"
-                >
-                  <Code2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Embed</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleBookmark}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 mt-1 rounded-lg border transition-colors text-sm font-bold shrink-0 shadow-sm ${
+                      isBookmarked 
+                        ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 border-amber-200' 
+                        : 'bg-white text-dark-600 hover:bg-neutral-50 border-neutral-200'
+                    }`}
+                    title={isBookmarked ? "Remove from Library" : "Save to Library"}
+                  >
+                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
+                    <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
+                  </button>
+                  <button
+                    onClick={() => setShowEmbedModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 mt-1 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 transition-colors text-sm font-bold shrink-0 shadow-sm"
+                  >
+                    <Code2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Embed</span>
+                  </button>
+                </div>
               </div>
 
               {/* Calculator Component */}
