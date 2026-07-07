@@ -601,8 +601,8 @@ export default function BuilderPageClient() {
 
 
       showToast('✅ Saved locally!')
-      showToast('✅ Saved to your library!')
-      setTimeout(() => { window.location.href = '/library' }, 800)
+      showToast('✅ Saved to your dashboard!')
+      setTimeout(() => { window.location.href = '/dashboard' }, 800)
     } catch (e) {
       console.error('Failed to save calculator:', e)
       showToast('❌ Error saving')

@@ -278,7 +278,7 @@ export default function DashboardClient() {
                               <div className="font-bold text-sm text-dark-900">{calc.name}</div>
                               <div className="text-xs text-dark-500">{calc.description || 'No description'}</div>
                             </div>
-                            <Link href={`/calculators/custom#${serializeConfig(calc.config)}`} className="text-indigo-600 hover:text-indigo-700">
+                            <Link href={`/calculators/custom#${serializeConfig(calc as any)}`} className="text-indigo-600 hover:text-indigo-700">
                               <ExternalLink className="w-4 h-4" />
                             </Link>
                           </div>
@@ -334,17 +334,17 @@ export default function DashboardClient() {
                           </div>
                           <div className="flex items-center gap-2 text-xs text-neutral-400 mb-3">
                             <Clock className="w-3 h-3" />
-                            {new Date(calc.createdAt).toLocaleDateString()}
+                            {calc.createdAt ? new Date(calc.createdAt).toLocaleDateString() : 'Recently'}
                           </div>
                           <div className="flex gap-2">
                             <Link
-                              href={`/calculators/custom#${serializeConfig(calc.config)}`}
+                              href={`/calculators/custom#${serializeConfig(calc as any)}`}
                               className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-neutral-100 text-dark-700 text-xs font-bold hover:bg-neutral-200 transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5" /> Open
                             </Link>
                             <button
-                              onClick={() => handleCopyShareLink(calc.config)}
+                              onClick={() => handleCopyShareLink(calc)}
                               className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-neutral-100 text-dark-700 text-xs font-bold hover:bg-neutral-200 transition-colors"
                             >
                               <Copy className="w-3.5 h-3.5" /> Share
