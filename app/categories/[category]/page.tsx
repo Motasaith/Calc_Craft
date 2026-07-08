@@ -23,6 +23,12 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   }
 }
 
+export function generateStaticParams() {
+  return Object.keys(CATEGORY_LABELS).map((category) => ({
+    category,
+  }))
+}
+
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const p = await params
   const categorySlug = p.category as CalculatorCategory
