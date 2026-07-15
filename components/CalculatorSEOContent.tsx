@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare } from 'lucide-react'
+import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
 import { getFormulaRef } from '@/lib/formula-references'
@@ -209,6 +209,10 @@ function generateSEOCopy(calc: { name: string; shortName: string; description: s
 }
 
 export default function CalculatorSEOContent({ calc, slug }: { calc: { name: string; shortName: string; description: string; category: CalculatorCategory; keywords: string[] }; slug?: string }) {
+  if (slug === 'bmi') {
+    return <BmiCustomSEOContent />
+  }
+
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
   // Use formula-specific steps if available, otherwise use generic steps
@@ -423,6 +427,317 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
           <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
             See all calculators <ChevronRight className="w-4 h-4" />
           </span>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function BmiCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Body Mass Index (BMI) calculator calculates BMI and determines corresponding weight classification ranges for adults and children (ages 2-19)." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> About this calculator
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What is the BMI Calculator?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            The <strong>BMI Calculator</strong> is a free, browser-based tool for calculating Body Mass Index (BMI), representing an internationally recognized proxy measure of body fat. Originally conceived in the 1830s by Belgian statistician Adolphe Quetelet, BMI has grown into the baseline screening standard used by healthcare professionals worldwide to categorize individuals into weight classifications.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            It provides a quick, non-invasive estimate of whether a person is underweight, normal weight, overweight, or obese. While BMI does not directly measure body fat percentage (as it cannot distinguish between muscle mass and fat tissue), it correlates strongly with more direct measures of body fatness and serves as an important diagnostic baseline for prospective health risks.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── ADULT CLASSIFICATIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Adult BMI Classifications</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          For adults aged 20 and older, BMI values are grouped into standard weight status categories defined by the World Health Organization (WHO) and the Centers for Disease Control and Prevention (CDC). These ranges remain identical for both men and women of all body types.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Classification</th>
+                  <th className="p-3 font-bold text-neutral-700">BMI Range (kg/m²)</th>
+                  <th className="p-3 font-bold text-neutral-700">BMI Prime</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold text-blue-600">Severe Thinness</td><td className="p-3">&lt; 16.0</td><td className="p-3">&lt; 0.64</td></tr>
+                <tr><td className="p-3 font-bold text-blue-500">Moderate Thinness</td><td className="p-3">16.0 – 16.9</td><td className="p-3">0.64 – 0.67</td></tr>
+                <tr><td className="p-3 font-bold text-cyan-500">Mild Thinness</td><td className="p-3">17.0 – 18.4</td><td className="p-3">0.68 – 0.73</td></tr>
+                <tr className="bg-green-50/20"><td className="p-3 font-bold text-green-600">Normal (Healthy Weight)</td><td className="p-3">18.5 – 24.9</td><td className="p-3">0.74 – 0.99</td></tr>
+                <tr><td className="p-3 font-bold text-amber-500">Overweight</td><td className="p-3">25.0 – 29.9</td><td className="p-3">1.00 – 1.19</td></tr>
+                <tr><td className="p-3 font-bold text-orange-600">Obese Class I (Moderate)</td><td className="p-3">30.0 – 34.9</td><td className="p-3">1.20 – 1.39</td></tr>
+                <tr><td className="p-3 font-bold text-red-500">Obese Class II (Severe)</td><td className="p-3">35.0 – 39.9</td><td className="p-3">1.40 – 1.59</td></tr>
+                <tr><td className="p-3 font-bold text-red-800">Obese Class III (Morbid)</td><td className="p-3">&ge; 40.0</td><td className="p-3">&ge; 1.60</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/bmi-adult-chart.png"
+              alt="Adult BMI chart mapping height in feet/inches and centimeters to weight in pounds and kilograms to visualize underweight, normal, overweight, and obese categories."
+              className="w-full rounded-xl border border-neutral-200 shadow-sm object-cover aspect-video"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Visual grid chart illustrating BMI classification bounds based on height and weight.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── CHILDREN & TEENS BMI ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">BMI Percentiles for Children & Teens (Ages 2-19)</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          BMI is calculated the same way for children and teens as it is for adults, but the resulting number is interpreted differently. Because children grow rapidly and develop body fat at varying rates depending on their exact age and biological sex, their weight status is determined by comparing their raw BMI against growth percentile curves of a reference population (developed by the CDC).
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2">
+            <img
+              src="/bmi-child-chart.png"
+              alt="CDC BMI-for-age percentile growth chart for boys and girls aged 2 to 20 showing the 5th, 50th, 85th, and 95th percentile curves."
+              className="w-full rounded-xl border border-neutral-200 shadow-sm object-cover aspect-video"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: CDC BMI-for-age growth percentile curves for boys and girls.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Category</th>
+                    <th className="p-3 font-bold text-neutral-700">Percentile Range</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr><td className="p-3 font-bold text-blue-600">Underweight</td><td className="p-3">&lt; 5th percentile</td></tr>
+                  <tr className="bg-green-50/20"><td className="p-3 font-bold text-green-600">Healthy Weight</td><td className="p-3">5th percentile to &lt; 85th percentile</td></tr>
+                  <tr><td className="p-3 font-bold text-amber-500">Overweight</td><td className="p-3">85th percentile to &lt; 95th percentile</td></tr>
+                  <tr><td className="p-3 font-bold text-red-600">Obese</td><td className="p-3">&ge; 95th percentile</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Children's percentiles act as a comparative metric. For example, if a 10-year-old boy has a BMI in the 75th percentile, it means that his BMI is higher than 75% of other 10-year-old boys in the standard reference growth index.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FORMULAS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> Mathematical Formulas
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-3">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Metric System Formula</div>
+            <div className="text-lg font-extrabold font-mono text-dark-900 text-center py-2 bg-neutral-50 rounded-lg">
+              BMI = weight (kg) / [height (m)]²
+            </div>
+            <p className="text-xs text-dark-600 leading-relaxed">
+              The standard global formula. Height is converted to meters and squared, then weight in kilograms is divided by that value.
+            </p>
+            <div className="text-[10px] font-mono text-neutral-500 border-t border-neutral-100 pt-2">
+              <strong>Worked Example:</strong> Weight = 75 kg, Height = 1.78 m:<br />
+              75 / (1.78 * 1.78) = 75 / 3.1684 = 23.67 kg/m²
+            </div>
+          </div>
+          <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-3">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">US Customary / Imperial Formula</div>
+            <div className="text-lg font-extrabold font-mono text-dark-900 text-center py-2 bg-neutral-50 rounded-lg">
+              BMI = [weight (lbs) / (height (in))²] * 703
+            </div>
+            <p className="text-xs text-dark-600 leading-relaxed">
+              Calculates index using pounds and inches, incorporating a standard mathematical conversion scaling coefficient of 703.
+            </p>
+            <div className="text-[10px] font-mono text-neutral-500 border-t border-neutral-100 pt-2">
+              <strong>Worked Example:</strong> Weight = 160 lbs, Height = 5 ft 10 in (70 inches):<br />
+              [160 / 70²] * 703 = [160 / 4900] * 703 = 22.95 kg/m²
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── RISKS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <div className="p-6 bg-red-50/40 border border-red-200 rounded-2xl space-y-3">
+          <h4 className="text-base font-extrabold text-red-700 tracking-tight flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-500" /> Risks of High BMI (Overweight/Obese)
+          </h4>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            Maintaining a body weight significantly above normal distributions is associated with elevated risks for chronic conditions:
+          </p>
+          <ul className="text-xs space-y-2 text-dark-600 pl-4 list-disc font-mono">
+            <li><strong>Cardiovascular Diseases</strong>: Hypertension, stroke, and coronary heart blockages.</li>
+            <li><strong>Type 2 Diabetes</strong>: Elevated fat levels increase insulin resistance.</li>
+            <li><strong>Respiratory Issues</strong>: Sleep apnea, chronic snoring, and hypoventilation.</li>
+            <li><strong>Mechanical Loading</strong>: Osteoarthritis and accelerated joint wear.</li>
+          </ul>
+        </div>
+        <div className="p-6 bg-blue-50/40 border border-blue-200 rounded-2xl space-y-3">
+          <h4 className="text-base font-extrabold text-blue-700 tracking-tight flex items-center gap-2">
+            <Shield className="w-4 h-4 text-blue-500" /> Risks of Low BMI (Underweight)
+          </h4>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            An excessively low BMI denotes nutritional deficits or underlying metabolic concerns, carrying distinct clinical risks:
+          </p>
+          <ul className="text-xs space-y-2 text-dark-600 pl-4 list-disc font-mono">
+            <li><strong>Nutritional Deficits</strong>: Anemia, chronic fatigue, and electrolyte imbalances.</li>
+            <li><strong>Osteoporosis</strong>: Reduced bone mineral density, elevating fracture risk.</li>
+            <li><strong>Immune Impairment</strong>: Higher vulnerability to infections and slow healing.</li>
+            <li><strong>Hormonal Disruptions</strong>: Menstrual irregularity and infertility.</li>
+          </ul>
+        </div>
+      </motion.div>
+
+      {/* ────── LIMITATIONS ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-4"
+        >
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-800 text-[10px] font-bold uppercase tracking-wider font-mono">
+              <Lightbulb className="w-3.5 h-3.5" /> Limitations of BMI
+            </span>
+          </div>
+          <h3 className="text-xl font-extrabold text-dark-900 tracking-tight">When BMI Fails to Be Accurate</h3>
+          <p className="text-sm text-dark-600 leading-relaxed">
+            While BMI is an excellent comparative epidemiological index, it should not be considered an absolute measure of personal body fat or diagnostic health. Because it only accounts for gross weight and height, it does not distinguish between muscle mass and fat tissue.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl space-y-1">
+              <span className="text-xs font-bold text-dark-900 font-mono block">1. Muscle vs. Fat</span>
+              <p className="text-xs text-neutral-500 leading-relaxed">
+                Muscle is much denser than fat. Athletes and bodybuilders can have high BMIs that classify them as "overweight" or "obese" despite having minimal body fat.
+              </p>
+            </div>
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl space-y-1">
+              <span className="text-xs font-bold text-dark-900 font-mono block">2. Elderly Adults</span>
+              <p className="text-xs text-neutral-500 leading-relaxed">
+                Older adults often lose muscle mass and bone density (sarcopenia) and carry higher visceral fat, which BMI fails to reflect.
+              </p>
+            </div>
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl space-y-1">
+              <span className="text-xs font-bold text-dark-900 font-mono block">3. Fat Distribution</span>
+              <p className="text-xs text-neutral-500 leading-relaxed">
+                BMI does not indicate where fat is stored. Abdominal visceral fat carries significantly higher metabolic risks than subcutaneous fat in other areas.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "Is BMI accurate for athletes?", a: "No. BMI does not distinguish between muscle weight and fat weight. Because muscle is denser than fat, muscular athletes often get a high BMI score that incorrectly classifies them as overweight or obese, despite having excellent health and low body fat." },
+            { q: "What is a healthy BMI range for adults?", a: "For adults aged 20 and older, a normal or healthy BMI range is between 18.5 and 24.9 kg/m². Scores below 18.5 are classified as underweight, scores from 25.0 to 29.9 are overweight, and scores of 30.0 or higher are categorized as obese." },
+            { q: "How is children's BMI calculated differently?", a: "While the raw BMI calculation formula (weight / height²) is identical for children and adults, it is interpreted using age-and-sex-specific growth percentiles for anyone under 20. This is because body composition changes rapidly as children grow, and fat distributions differ significantly between boys and girls during developmental years." },
+            { q: "What is BMI Prime?", a: "BMI Prime is a simple ratio of your actual BMI to the upper limit of the normal weight BMI range (which is 25.0). It is calculated as actual BMI / 25. A BMI Prime between 0.74 and 1.00 represents a normal weight. A value greater than 1.00 is overweight, and a value below 0.74 is underweight." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
         </Link>
       </motion.div>
     </section>

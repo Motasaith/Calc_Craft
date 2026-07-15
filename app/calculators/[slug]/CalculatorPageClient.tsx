@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CalculatorSEOContent from '@/components/CalculatorSEOContent'
 import { WPCalculator } from '@/lib/wp'
-import { getCalculatorBySlug } from '@/lib/calculators'
+import { getCalculatorBySlug, calculators } from '@/lib/calculators'
 import CustomCalculatorRenderer, { CustomCalculatorConfig, CustomComponentConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { getCalculatorComponent } from '@/lib/calculator-components'
 import { useUserData } from '@/components/providers/UserDataContext'
@@ -47,6 +47,14 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
 
   // Get local registry data for SEO content (fallback if WP content is empty)
   const localCalc = getCalculatorBySlug(calc.slug)
+
+  // Get related calculators from the same category
+  const relatedCalculators = useMemo(() => {
+    if (!localCalc) return []
+    return calculators
+      .filter((item) => item.category === localCalc.category && item.slug !== localCalc.slug)
+      .slice(0, 6)
+  }, [localCalc])
   // If it's a React component, grab it
   const ReactComponent = calc.acf.calculator_type === 'react' && calc.acf.react_component_id
     ? getCalculatorComponent(calc.acf.react_component_id)
@@ -178,17 +186,63 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
                   }}
                 />
               )}
+
+              {/* Mobile Related Calculators Widget (visible on mobile only) */}
+              {relatedCalculators.length > 0 && (
+                <div className="block lg:hidden mt-12 pt-8 border-t border-neutral-200 space-y-4">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500">
+                    Related Calculators
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {relatedCalculators.map((c) => (
+                      <Link
+                        key={c.slug}
+                        href={`/calculators/${c.slug}`}
+                        className="p-3 bg-white hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-400 rounded-xl text-center transition-all flex flex-col justify-center h-14"
+                      >
+                        <span className="text-[10px] font-bold font-mono text-neutral-700 leading-tight block">
+                          {c.name}
+                        </span>
+                        <span className="text-[8px] font-bold font-mono text-primary-600 uppercase tracking-widest mt-1 block">
+                          Calculate <ChevronRight className="w-2.5 h-2.5 inline" />
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Sidebar Placeholder */}
+            {/* Sidebar with related calculators (desktop only) */}
             <aside className="hidden lg:block">
-              <div className="sticky top-28">
+              <div className="sticky top-28 space-y-4">
                 <Link
                   href="/calculators"
-                  className="flex items-center justify-center gap-2 mt-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-dark-600 hover:bg-gray-50 transition-all"
+                  className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-dark-600 hover:bg-gray-50 transition-all bg-white shadow-sm"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> All Calculators
                 </Link>
+
+                {relatedCalculators.length > 0 && (
+                  <div className="bg-white border border-neutral-200 rounded-2xl p-4 shadow-sm space-y-3">
+                    <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-500 border-b border-neutral-100 pb-2">
+                      Related Calculators
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {relatedCalculators.map((c) => (
+                        <li key={c.slug}>
+                          <Link
+                            href={`/calculators/${c.slug}`}
+                            className="flex items-center justify-between p-2 rounded-xl text-xs font-bold text-dark-700 hover:bg-neutral-50 hover:text-primary-700 transition-all group"
+                          >
+                            <span className="truncate max-w-[180px]">{c.name}</span>
+                            <ChevronRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-primary-500 transition-colors group-hover:translate-x-0.5" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </aside>
           </div>
