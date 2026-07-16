@@ -230,6 +230,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'bac') {
     return <BacCustomSEOContent />
   }
+  if (slug === 'protein') {
+    return <ProteinCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -2503,6 +2506,328 @@ function BacCustomSEOContent() {
             { q: "Does drinking water or coffee sober you up faster?", a: "No. Only time can lower your BAC. While water helps you stay hydrated and coffee can increase alertness, they do not speed up the metabolic rate of the liver, which continues to filter alcohol at a constant rate of ~0.015% per hour." },
             { q: "How does food consumption affect your BAC?", a: "Eating food before or during drinking slows the rate of alcohol absorption in your stomach, resulting in a lower and delayed peak BAC. Drinking on an empty stomach triggers rapid absorption, causing your BAC to rise very quickly." },
             { q: "Why is the gender factor different for men and women?", a: "The Widmark gender factor (0.68 for men, 0.55 for women) accounts for differences in average body composition. Women generally have a higher percentage of body fat and less water content per pound of body mass than men, meaning the same amount of alcohol is distributed in less fluid, leading to a higher BAC." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function ProteinCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Protein Calculator estimates daily dietary protein requirements for children, teens, adults, and pregnancy/lactation periods based on body weight, age, and activity levels." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> Essential Macronutrients
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What are Proteins?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            **Proteins** are one of three primary macronutrients that provide energy to the human body, along with fats and carbohydrates. Proteins are also responsible for a large portion of the work that is done in cells; they are necessary for proper structure and function of tissues and organs, and also act to regulate them. They are comprised of a number of amino acids that are essential to proper body function, and serve as the building blocks of body tissue.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            There are 20 different amino acids in total, and the sequence of amino acids determines a protein's structure and function. While some amino acids can be synthesized in the body, there are 9 amino acids that humans can only obtain from dietary sources, termed **essential amino acids**. Foods that provide all of the essential amino acids are called complete protein sources, and include both animal (meat, dairy, eggs, fish) as well as plant-based sources (soy, quinoa, buckwheat).
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── PROTEIN ROLES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-sm">
+          <span className="font-bold text-dark-800 font-mono text-[10px] uppercase tracking-wider block mb-2">Antibodies & Enzymes</span>
+          <p className="text-xs text-dark-600 leading-relaxed">
+            Proteins act as antibodies that protect the body from foreign particles (such as viruses and bacteria) by binding to them. As enzymes, they accelerate the chemical reactions that occur throughout the body.
+          </p>
+        </div>
+        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-sm">
+          <span className="font-bold text-dark-800 font-mono text-[10px] uppercase tracking-wider block mb-2">Messengers & Transport</span>
+          <p className="text-xs text-dark-600 leading-relaxed">
+            Messenger proteins transmit chemical signals to coordinate cellular processes. Transport and storage proteins bind and carry atoms and small molecules within cells and throughout the bloodstream.
+          </p>
+        </div>
+        <div className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-sm">
+          <span className="font-bold text-dark-800 font-mono text-[10px] uppercase tracking-wider block mb-2">Structural Components</span>
+          <p className="text-xs text-dark-600 leading-relaxed">
+            Structural proteins provide support and rigidity at the cellular level. They build connective fibers, muscle tissues, and organs that ultimately enable the body to move and maintain integrity.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* ────── HOW MUCH PROTEIN & INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">How Much Protein Do I Need?</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The amount of protein that the human body requires daily is dependent on many conditions, including overall energy intake, growth of the individual, biological sex, and physical activity level. It is often estimated based on body weight, as a percentage of total caloric intake (10-35%), or based on age alone.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4 font-sans text-xs">
+            <p className="text-dark-600 leading-relaxed">
+              A commonly cited Recommended Dietary Allowance (RDA) is **0.8 grams of protein per kilogram of body weight** (0.36 grams per pound). This value is the minimum recommended value to maintain basic nutritional requirements and prevent muscle wasting.
+            </p>
+            <p className="text-dark-600 leading-relaxed">
+              Consuming more protein—up to a certain point—can be highly beneficial. The recommended range of protein intake is between **0.8 g/kg and 1.8 g/kg** of body weight. People who are highly active, or who wish to build muscle mass, should generally consume more protein (often ranging from **1.8 to 2.0+ g/kg**).
+            </p>
+            <div className="p-3.5 bg-neutral-50 border border-neutral-250 rounded-xl space-y-2">
+              <span className="font-bold text-neutral-800 font-mono text-[10px] uppercase tracking-wider block">Protein RDA Based on Age Group</span>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-mono">
+                  <thead>
+                    <tr className="border-b border-neutral-300 bg-neutral-100 text-neutral-700">
+                      <th className="p-2 font-bold">Age Group</th>
+                      <th className="p-2 font-bold">Grams / Day</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-200 text-dark-700">
+                    <tr><td className="p-2">Age 1 - 3</td><td className="p-2">13 g</td></tr>
+                    <tr><td className="p-2">Age 4 - 8</td><td className="p-2">19 g</td></tr>
+                    <tr><td className="p-2">Age 9 - 13</td><td className="p-2">34 g</td></tr>
+                    <tr><td className="p-2">Age 14 - 18 (Girls)</td><td className="p-2">46 g</td></tr>
+                    <tr><td className="p-2">Age 14 - 18 (Boys)</td><td className="p-2">52 g</td></tr>
+                    <tr><td className="p-2">Age 19 - 70+ (Women)</td><td className="p-2">46 g</td></tr>
+                    <tr><td className="p-2">Age 19 - 70+ (Men)</td><td className="p-2">56 g</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <img
+              src="/protein-rda-by-age.webp"
+              alt="Infographic showing standard Recommended Dietary Allowance (RDA) of protein by age and gender categories."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Average Recommended Dietary Allowance (RDA) of protein.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── PREGNANCY REQUIREMENTS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Extra Protein Requirements for Pregnancy & Lactation</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          During pregnancy and lactation, protein demands increase substantially to support fetal development, tissue expansion, and milk synthesis:
+        </p>
+
+        <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="p-3 font-bold text-neutral-700">Trimester / Stage</th>
+                <th className="p-3 font-bold text-neutral-700">Additional Protein Needed</th>
+                <th className="p-3 font-bold text-neutral-700">Additional Energy (kJ/day)</th>
+                <th className="p-3 font-bold text-neutral-700">Protein : Energy Ratio</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 text-dark-700">
+              <tr>
+                <td className="p-3 font-bold">Pregnancy Trimester 1</td>
+                <td className="p-3">+1 g / day</td>
+                <td className="p-3">375 kJ</td>
+                <td className="p-3">0.04</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">Pregnancy Trimester 2</td>
+                <td className="p-3">+10 g / day</td>
+                <td className="p-3">1,200 kJ</td>
+                <td className="p-3">0.11</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">Pregnancy Trimester 3</td>
+                <td className="p-3">+31 g / day</td>
+                <td className="p-3">1,950 kJ</td>
+                <td className="p-3">0.23</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">Lactation (First 6 months)</td>
+                <td className="p-3">+19 g / day</td>
+                <td className="p-3">2,800 kJ</td>
+                <td className="p-3">0.11</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">Lactation (After 6 months)</td>
+                <td className="p-3">+13 g / day</td>
+                <td className="p-3">1,925 kJ</td>
+                <td className="p-3">0.11</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ────── FOOD SOURCES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Complete vs. Incomplete Protein Foods</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          A **complete protein** contains adequate amounts of all nine essential amino acids required in the human diet. In contrast, **incomplete proteins** are low in one or more essential amino acids. Consuming a variety of incomplete protein sources throughout the day allows them to complement each other to cover your needs.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs font-sans">
+          <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-2">
+            <span className="font-bold text-emerald-900 font-mono text-[10px] uppercase tracking-wider block">Complete Protein Sources</span>
+            <div className="space-y-3">
+              <div>
+                <span className="font-bold text-emerald-800 block">Animal-Based Sources:</span>
+                <span className="text-neutral-600">Chicken breast, lean beef, turkey breast, wild salmon, tuna, shrimp, whole eggs, cottage cheese, and Greek yogurt.</span>
+              </div>
+              <div className="border-t border-emerald-200/50 pt-2">
+                <span className="font-bold text-emerald-800 block">Plant-Based Sources:</span>
+                <span className="text-neutral-600">Soy products (tofu, tempeh, edamame), quinoa, buckwheat, hemp seeds, chia seeds, spirulina, and hummus with pita bread.</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-amber-50/50 border border-amber-100 rounded-xl space-y-2">
+            <span className="font-bold text-amber-900 font-mono text-[10px] uppercase tracking-wider block">Incomplete Protein Sources</span>
+            <div className="space-y-3">
+              <div>
+                <span className="font-bold text-amber-800 block">Legumes & Grains:</span>
+                <span className="text-neutral-600">Lentils, chickpeas, black beans, kidney beans, rolled oats, Ezekiel bread, brown rice, and green peas.</span>
+              </div>
+              <div className="border-t border-amber-200/50 pt-2">
+                <span className="font-bold text-amber-800 block">Nuts, Seeds & Vegetables:</span>
+                <span className="text-neutral-600">Almonds, walnuts, pumpkin seeds, peanut butter, broccoli, Brussels sprouts, spinach, mushrooms, and avocados.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── AMOUT OF PROTEIN IN COMMON FOODS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Protein Content in Common Foods</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The table below lists the average protein content found in standard servings of common whole and prepared foods:
+        </p>
+
+        <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="p-3 font-bold text-neutral-700">Food Item</th>
+                <th className="p-3 font-bold text-neutral-700">Serving Size</th>
+                <th className="p-3 font-bold text-neutral-700">Average Protein (g)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 text-dark-700">
+              <tr><td className="p-3 font-bold">Seafood (Salmon, Tuna)</td><td className="p-3">2 oz / 57 g</td><td className="p-3">16 g</td></tr>
+              <tr><td className="p-3 font-bold">Meat (Chicken, Beef, Pork)</td><td className="p-3">2 oz / 57 g</td><td className="p-3">14 g</td></tr>
+              <tr><td className="p-3 font-bold">Pizza</td><td className="p-3">1 slice / 107 g</td><td className="p-3">12 g</td></tr>
+              <tr><td className="p-3 font-bold">Hamburger (Medium size)</td><td className="p-3">1 serving</td><td className="p-3">20 g</td></tr>
+              <tr><td className="p-3 font-bold">Dry Beans</td><td className="p-3">1 cup / 92 g</td><td className="p-3">16 g</td></tr>
+              <tr><td className="p-3 font-bold">Corn</td><td className="p-3">1 cup / 166 g</td><td className="p-3">16 g</td></tr>
+              <tr><td className="p-3 font-bold">Nuts</td><td className="p-3">1 cup / 92 g</td><td className="p-3">20 g</td></tr>
+              <tr><td className="p-3 font-bold">Milk</td><td className="p-3">1 cup / 8 oz</td><td className="p-3">8 g</td></tr>
+              <tr><td className="p-3 font-bold">Whole Grain Bread</td><td className="p-3">1 slice / 64 g</td><td className="p-3">8 g</td></tr>
+              <tr><td className="p-3 font-bold">Large Egg</td><td className="p-3">1 large / 50 g</td><td className="p-3">6 g</td></tr>
+              <tr><td className="p-3 font-bold">Brown Rice</td><td className="p-3">1 cup / 195 g</td><td className="p-3">5 g</td></tr>
+              <tr><td className="p-3 font-bold">Fruits & Vegetables</td><td className="p-3">1 cup</td><td className="p-3">0 – 1 g</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "What happens if I consume too much protein?", a: "For most healthy individuals, a high-protein diet does not cause harm when accompanied by adequate hydration. However, excessive consumption over long periods can strain the kidneys in people with pre-existing kidney disease, and if protein is sourced mostly from high-fat red meats, it can increase cardiovascular risks." },
+            { q: "Can I get enough protein on a vegan or plant-based diet?", a: "Yes. By consuming a wide variety of plant foods such as beans, lentils, chickpeas, oats, tofu, tempeh, nuts, and seeds, you can easily obtain all essential amino acids. Combos like rice and beans or peanut butter on whole grain bread form complete proteins." },
+            { q: "Is it better to consume protein before or after a workout?", a: "Research indicates that total daily protein intake is the most critical factor for muscle repair. However, consuming 20-30g of protein within 2 hours post-workout can optimize muscle protein synthesis and support muscle tissue recovery." },
+            { q: "What is the difference between essential and non-essential amino acids?", a: "Of the 20 amino acids, 9 are essential because the human body cannot synthesize them; they must be obtained through food. The other 11 are non-essential because the body can produce them internally." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
