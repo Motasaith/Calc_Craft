@@ -218,6 +218,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'bmr') {
     return <BmrCustomSEOContent />
   }
+  if (slug === 'water-intake') {
+    return <WaterIntakeCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -1263,6 +1266,265 @@ function BmrCustomSEOContent() {
             { q: "Can you eat below your BMR?", a: "Eating below your BMR is generally not recommended unless under medical supervision. Your BMR represents the energy needed for basic cellular life; eating below it for extended periods triggers metabolic adaptation (slowdown), fatigue, nutrient deficiencies, and muscle loss." },
             { q: "What is the difference between BMR and RMR?", a: "BMR requires strict measurement conditions: waking up after 8 hours of sleep, 12 hours of fasting, in a dark, temperature-controlled environment. RMR (Resting Metabolic Rate) is measured under less restrictive conditions (normal resting state) and is typically 5-10% higher than BMR." },
             { q: "How accurate are BMR formulas?", a: "For most people, the Mifflin-St Jeor equation is within 10% of actual metabolic output. However, for highly muscular individuals or those with high body fat, the Katch-McArdle equation is far more accurate because it directly incorporates lean mass composition." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function WaterIntakeCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Water Intake Calculator estimates your daily recommended fluid intake based on body weight, climate, exercise duration, and pregnancy/nursing status." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> Scientific Hydration
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">Why Does Tracking Water Intake Matter?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            Water makes up roughly 60% of human body weight and plays a crucial role in virtually every biological process: regulating body temperature, lubricating joints, flushing out waste, carrying nutrients to cells, and maintaining cognitive performance. 
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            Even mild dehydration (losing just 1–2% of body weight in fluids) can lead to headaches, brain fog, fatigue, reduced physical stamina, and muscle cramps. Estimating your personal daily baseline lets you target your hydration goals accurately, helping you optimize athletic performance, recovery, digestive health, and energy levels.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── HYDRATION BY WEIGHT CHART ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Daily Water Recommendations by Body Weight</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Your body mass is the single strongest indicator of baseline water requirements. Larger bodies contain more cells and metabolic processes, requiring more fluid to sustain chemical equilibria. The table below represents baseline recommendations before exercise and climate factors are added:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Weight (kg / lbs)</th>
+                  <th className="p-3 font-bold text-neutral-700">Daily Baseline (Liters)</th>
+                  <th className="p-3 font-bold text-neutral-700">Daily Baseline (fl oz)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold">50 kg / 110 lbs</td><td className="p-3">1.8 L</td><td className="p-3">60 fl oz</td></tr>
+                <tr><td className="p-3 font-bold">60 kg / 132 lbs</td><td className="p-3">2.1 L</td><td className="p-3">71 fl oz</td></tr>
+                <tr><td className="p-3 font-bold">70 kg / 154 lbs</td><td className="p-3">2.5 L</td><td className="p-3">83 fl oz</td></tr>
+                <tr><td className="p-3 font-bold">80 kg / 176 lbs</td><td className="p-3">2.8 L</td><td className="p-3">95 fl oz</td></tr>
+                <tr><td className="p-3 font-bold">90 kg / 198 lbs</td><td className="p-3">3.2 L</td><td className="p-3">107 fl oz</td></tr>
+                <tr><td className="p-3 font-bold">100 kg / 220 lbs</td><td className="p-3">3.5 L</td><td className="p-3">118 fl oz</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/hydration-by-weight.webp"
+              alt="Daily recommended water intake chart in liters plotted against body weight in kilograms and pounds."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Baseline water needs based on total body weight.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── ENVIRONMENTAL & LIFECYCLE GUIDELINES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Factors That Alter Hydration Needs</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Standard water targets must be customized to fit your current lifestyle and environment. Sweat rates, physical motion, climate heat, and physiological conditions alter your fluid expenditure rate:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 lg:order-2">
+            <img
+              src="/hydration-guidelines.webp"
+              alt="Vector infographic showing factors that influence daily water needs, including climate, activity level, and pregnancy/lactation offsets."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Summary of physiological and environmental factors affecting daily water requirements.
+            </p>
+          </div>
+          <div className="space-y-4 lg:order-1">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Factor</th>
+                    <th className="p-3 font-bold text-neutral-700">Adjustment</th>
+                    <th className="p-3 font-bold text-neutral-700">Description / Rationale</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr>
+                    <td className="p-3 font-bold">Physical Exercise</td>
+                    <td className="p-3">+500 ml per 30m</td>
+                    <td className="p-3">Compensates for fluid lost through respiration and sweat.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold">Hot / Humid Climate</td>
+                    <td className="p-3">+15% baseline</td>
+                    <td className="p-3">Elevated temperatures trigger thermoregulatory sweating.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold">Cold Climate</td>
+                    <td className="p-3">-10% baseline</td>
+                    <td className="p-3">Cold air reduces perspiration, slightly lowering demand.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold">Pregnancy</td>
+                    <td className="p-3">+300 ml / day</td>
+                    <td className="p-3">Supports fetal circulation, amniotic fluid volume, and blood plasma expansion.</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold">Breastfeeding</td>
+                    <td className="p-3">+750 ml / day</td>
+                    <td className="p-3">Breast milk is roughly 87% water; nursing mothers require offsets.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── MATH & FORMULA ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> Worked Hydration Calculations
+          </span>
+        </div>
+
+        <div className="space-y-6 font-sans">
+          <div>
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">How Daily Hydration is Calculated</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              The calculator uses weight to determine a baseline fluid volume of 35 ml per kilogram, increments this baseline by 500 ml for every 30 minutes of training, applies climate multiplier scaling, and appends pregnancy or breastfeeding constant offsets.
+            </p>
+            
+            <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-4">
+              <div className="space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">1. Metric System Example</div>
+                <p className="text-xs text-neutral-600 leading-relaxed">
+                  Calculate target for a 70 kg woman exercising for 30 minutes in a hot/humid climate:
+                </p>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  Baseline = 70 kg × 35 ml = 2,450 ml <br />
+                  Exercise Offset = (30 mins / 30 mins) × 500 ml = 500 ml <br />
+                  Climate Scaling = (2,450 ml + 500 ml) × 1.15 = 3,393 ml
+                </div>
+              </div>
+
+              <div className="border-t border-neutral-250 pt-3 space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">2. US Customary / Imperial Example</div>
+                <p className="text-xs text-neutral-600 leading-relaxed">
+                  Calculate target for a 150 lbs man exercising for 60 minutes in a cold climate:
+                </p>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  Weight in kg = 150 lbs × 0.453592 = 68.04 kg <br />
+                  Baseline = 68.04 kg × 35 ml = 2,381 ml <br />
+                  Exercise Offset = (60 mins / 30 mins) × 500 ml = 1,000 ml <br />
+                  Climate Scaling = (2,381 ml + 1,000 ml) × 0.90 = 3,043 ml (~103 fl oz)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "Does coffee, tea, or soda count towards my water intake?", a: "Yes. Clinical studies show that caffeinated beverages, sodas, and juices contribute to your overall hydration levels. However, water is still the ideal choice as it contains no added sugars, artificial sweeteners, or caffeine, which has a mild, non-significant diuretic effect." },
+            { q: "Can you drink too much water?", a: "Yes. Drinking excessive amounts of water in a short window can lead to hyponatremia (water intoxication). This condition occurs when blood sodium levels drop dangerously low, causing cellular swelling, confusion, headaches, and in severe cases, medical emergencies." },
+            { q: "How do I check if I am hydrated without a calculator?", a: "The easiest way is to inspect your urine color. Light straw or pale yellow urine indicates healthy hydration levels. Clear urine means you may be overhydrating, while dark yellow or amber-colored urine is a clear warning sign of dehydration." },
+            { q: "Does food contribute to my daily water requirement?", a: "Yes. Approximately 20% of the average person's daily fluid intake comes from food moisture. Fruits and vegetables like watermelon, strawberries, cucumbers, and zucchini are over 90% water by weight and are excellent sources of hydration." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
