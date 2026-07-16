@@ -865,7 +865,7 @@ export default function BacCalculator() {
               <div className="p-3 bg-neutral-50 border border-neutral-350 rounded-lg text-[9px] font-mono text-neutral-500 leading-normal flex items-start gap-1.5">
                 <Info className="w-3.5 h-3.5 shrink-0 text-neutral-400 mt-0.5" />
                 <span>
-                  <strong>Legal Disclaimer:</strong> BAC estimates are for educational purposes only. Metabolism rates vary wildly based on stomach contents, medication, liver health, and hydration. Never use this calculator to determine fitness to drive.
+                  <strong>Legal Disclaimer:</strong> BAC estimates are for educational and entertainment purposes only. This is not medical advice. For proper medical advice, please consult a qualified physician or doctor. Metabolism rates vary wildly based on stomach contents, medication, liver health, and hydration. Never use this calculator to determine fitness to drive.
                 </span>
               </div>
             </div>
