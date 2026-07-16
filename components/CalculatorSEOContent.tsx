@@ -227,6 +227,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'one-rep-max') {
     return <OneRepMaxCustomSEOContent />
   }
+  if (slug === 'bac') {
+    return <BacCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -2060,6 +2063,446 @@ function OneRepMaxCustomSEOContent() {
             { q: "How often should I test my 1RM?", a: "Testing your actual 1RM directly should be done sparingly, such as at the end of a training block (every 8 to 12 weeks) or during a competition. For weekly programming, using submaximal estimates from the calculator is safer and places far less wear and tear on your joints." },
             { q: "Why do different formulas yield different results?", a: "Each formula was formulated by researchers studying different athletic populations. For example, the Brzycki formula is highly popular and works exceptionally well in intermediate weight ranges, while the Epley formula is often preferred for compound powerlifts (squat, bench, deadlift)." },
             { q: "Can I use this calculator for bodyweight exercises?", a: "Yes. To estimate 1RM for bodyweight movements like pull-ups or dips, use your total weight (bodyweight + any added plate weight). For exercises like push-ups, the calculator is less accurate because you only lift roughly 60-70% of your body weight in the plank position." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function BacCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Blood Alcohol Concentration (BAC) Calculator estimates your level of alcohol intoxication based on body weight, biological sex, elapsed time, and standard drinks consumed." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> Intoxication Metrics
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">Understanding Blood Alcohol Concentration (BAC)</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            **Blood Alcohol Concentration (BAC)** is a commonly used measure of alcohol intoxication, also known as drunkenness. It is typically expressed as a percentage of alcohol per volume of blood in your body. For example, in the United States (US), a BAC of 0.08 (0.08%) translates to exactly 0.08 grams of alcohol per 100 mL of blood.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            In the US, the legal limit for BAC when driving is 0.08%. Drivers who are over the age of 21 (the legal drinking age in the US) who have a BAC equal to or greater than 0.08% can face penalties, including fines, license suspension, or jail time. Penalties for those under the age of 21 are significantly stricter, though they vary by state. For individuals under 21, the legal limit ranges from a zero-tolerance 0.01% to 0.05% depending on state-level legislation.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── ALCOHOL AND HEALTH ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Alcohol and Health Effects</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Alcohol consumption has a number of short-term as well as long-term effects on the human body. Short-term effects include dehydration, loss of motor coordination, slurred speech, and acute alcohol intoxication. Long-term effects can include serious alterations in the metabolism of the liver, cellular changes in the brain, and structural cardiovascular damage. Persistent consumption can also result in alcohol use disorder (alcoholism), which is generally described as the compulsive use of alcohol that results in problems with mental or physical health.
+        </p>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start font-sans text-xs">
+          <div className="space-y-4">
+            <h4 className="font-bold text-neutral-800 uppercase font-mono tracking-wide">Moderate Drinking Claims & Risks</h4>
+            <p className="text-dark-600 leading-relaxed">
+              Many studies regarding the effects of alcohol on health have been performed. Although there are some studies that support the conventional wisdom that a glass of red wine a day can have potential health benefits (due to antioxidants like resveratrol), these claims have not been rigorously proven in clinical trials. While some people may experience certain health benefits as a result of consuming some alcohol daily, not all people will, and the benefits do not come without risk.
+            </p>
+            <p className="text-dark-600 leading-relaxed">
+              Although alcohol, in moderation, is not necessarily deleterious, and may even have some positive benefits, more recent epidemiological studies recommend that alcohol should not be consumed for its potential health benefits. While light or moderate alcohol (~1 drink per day: 12 fl oz beer, 5 fl oz wine, 1.5 fl oz distilled spirits) drinkers can certainly remain healthy, it is not fully known whether these benefits are worth the potential risks, since the potential benefits are relatively small compared to the risks.
+            </p>
+            <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl space-y-1">
+              <span className="font-bold text-neutral-700 block">Potential Benefits of Light Use:</span>
+              <ul className="list-disc pl-4 text-neutral-600 space-y-1">
+                <li>Slightly reducing the risk of developing and dying from heart disease</li>
+                <li>Reducing the risk of ischemic stroke (blocked arteries in the brain)</li>
+                <li>Reducing the risk of diabetes</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-bold text-neutral-800 uppercase font-mono tracking-wide">Heavy Drinking & Chronic Hazards</h4>
+            <p className="text-dark-600 leading-relaxed">
+              Heavy alcohol use has no health benefits and leads to physical dependency. Heavy drinking, as defined by the Mayo Clinic, is having more than three drinks a day for women and men over 65, and more than four drinks per day, or more than 14 drinks a week for men younger than 65.
+            </p>
+            <p className="text-dark-600 leading-relaxed">
+              Excessive drinking can result in serious health issues, including:
+            </p>
+            <div className="p-3 bg-red-50 border border-red-100 rounded-xl space-y-1 text-red-900">
+              <ul className="list-disc pl-4 space-y-1">
+                <li>Increased risk of certain cancers (breast, mouth, throat, esophagus, liver)</li>
+                <li>Sudden death as a result of pre-existing cardiovascular disease</li>
+                <li>Heart muscle damage (alcoholic cardiomyopathy) leading to heart failure</li>
+                <li>Stroke and high blood pressure</li>
+                <li>Liver disease (fatty liver, alcoholic hepatitis, cirrhosis)</li>
+                <li>Accidental serious injury or death from motor vehicle accidents</li>
+                <li>Irreversible brain damage and cognitive decline</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── LEGAL LIMITS WEB INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Legal BAC Driving Limits Around the World</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Traffic safety laws globally set strict thresholds for legal intoxication. Exceeding these limits can result in heavy penalties, license suspensions, or criminal charges:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Country / Region</th>
+                  <th className="p-3 font-bold text-neutral-700">Driving Limit</th>
+                  <th className="p-3 font-bold text-neutral-700">Enforcement / Policy</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold">United States & Canada</td><td className="p-3">0.08%</td><td className="p-3">Standard limit for drivers 21+. Zero-tolerance for minors.</td></tr>
+                <tr><td className="p-3 font-bold">United Kingdom</td><td className="p-3">0.08%</td><td className="p-3">Applies to England, Wales, and Northern Ireland. (Scotland: 0.05%).</td></tr>
+                <tr><td className="p-3 font-bold">Australia & Western Europe</td><td className="p-3">0.05%</td><td className="p-3">Strict random breath tests and license suspensions.</td></tr>
+                <tr><td className="p-3 font-bold">Japan</td><td className="p-3">0.03%</td><td className="p-3">Zero-tolerance zones; penalties apply to passengers as well.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/bac-legal-limits.webp"
+              alt="Global infographic of legal blood alcohol concentration limits for drivers."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Comparison of driving limits across major global jurisdictions.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── GLOBAL REGULATION & BANS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Global Regulations & Complete Alcohol Bans</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          While most countries regulate alcohol via sales licensing, taxation, and minimum drinking ages, several nations impose absolute prohibitions on alcohol manufacturing, distribution, sale, and consumption:
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+          <div className="p-4 bg-red-50/50 border border-red-100 rounded-xl space-y-2">
+            <span className="font-bold text-red-900 font-mono text-[10px] uppercase tracking-wider block">Absolute Prohibitions (Complete Bans)</span>
+            <ul className="list-disc pl-4 text-neutral-700 space-y-1.5 leading-normal">
+              <li><strong>Saudi Arabia:</strong> Strict national prohibition. Importing, brewing, purchasing, and consuming are completely illegal for all citizens and foreign residents.</li>
+              <li><strong>Iran:</strong> Complete prohibition for Muslim citizens. Possessing or selling alcohol carries severe legal penalties.</li>
+              <li><strong>Kuwait:</strong> Absolute ban. Alcohol imports, sales, and retail distribution are strictly prohibited by law.</li>
+              <li><strong>Libya, Somalia, & Mauritania:</strong> Total national bans on commercial sales and consumption.</li>
+            </ul>
+          </div>
+
+          <div className="p-4 bg-amber-50/50 border border-amber-100 rounded-xl space-y-2">
+            <span className="font-bold text-amber-900 font-mono text-[10px] uppercase tracking-wider block">Partial Bans / Restricted Access</span>
+            <ul className="list-disc pl-4 text-neutral-700 space-y-1.5 leading-normal">
+              <li><strong>Pakistan & Brunei:</strong> Prohibited for Muslim citizens, but legal for non-Muslim residents or tourists who hold special state licenses or personal consumption permits.</li>
+              <li><strong>Qatar & United Arab Emirates:</strong> Sale is prohibited in public retail spaces, but legal for non-Muslim residents in licensed hotel bars and clubs with state permits.</li>
+              <li><strong>India:</strong> Varies by state. States like Gujarat, Bihar, Nagaland, and Mizoram enforce complete prohibition, whereas others heavily tax and license distribution.</li>
+            </ul>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── RELIGIOUS PERSPECTIVES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Religious Rulings & Stances on Alcohol</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Throughout history, spiritual and religious scriptures have provided guidelines and decrees on intoxicants, reflecting various theological viewpoints:
+        </p>
+
+        <div className="space-y-4 font-sans text-xs">
+          {/* Islam Card */}
+          <div className="p-4 bg-[#e8efe7] border-l-4 border-emerald-600 rounded-r-xl space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-emerald-800 font-mono text-[10px] uppercase tracking-widest">Islam (Prohibited / Haram)</span>
+              <span className="px-2 py-0.5 bg-emerald-600 text-white rounded text-[8px] font-bold font-mono">STRICT PROHIBITION</span>
+            </div>
+            <p className="text-neutral-700 leading-relaxed">
+              In Islamic law, alcohol and all other forms of chemical intoxicants (collectively termed **Khamr**) are classified as **Haram (forbidden)** in any quantity. The Quran explicitly prohibits consumption (Surah Al-Ma'idah 5:90-91), describing it as a tool of spiritual distraction and heedlessness, and warning that the harms, addictions, and sins resulting from alcohol far outweigh any potential economic or physical benefits. Muslims are strictly forbidden from drinking, producing, selling, transporting, or serving alcohol.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Buddhism Card */}
+            <div className="p-4 bg-white border border-neutral-250 rounded-xl space-y-1.5">
+              <span className="font-bold text-neutral-800 block">Buddhism (Abstinence Precept)</span>
+              <p className="text-neutral-600 leading-relaxed">
+                The **Fifth Precept (Pancha Sila)** advises all adherents to abstain from fermented and distilled liquors that lead to heedlessness. Because clarity of mind and mindfulness are central to Buddhist meditation and the path to enlightenment, mind-clouding substances are strongly discouraged.
+              </p>
+            </div>
+
+            {/* Christianity Card */}
+            <div className="p-4 bg-white border border-neutral-250 rounded-xl space-y-1.5">
+              <span className="font-bold text-neutral-800 block">Christianity (Moderation vs. Teetotalism)</span>
+              <p className="text-neutral-600 leading-relaxed">
+                Varies by denomination. Traditional Catholic, Orthodox, and Anglican teachings allow moderate consumption (including wine in liturgical Holy Communion) but strictly condemn drunkenness. Evangelical and Baptist traditions often advocate for **teetotalism** (complete abstinence).
+              </p>
+            </div>
+
+            {/* Judaism Card */}
+            <div className="p-4 bg-white border border-neutral-250 rounded-xl space-y-1.5">
+              <span className="font-bold text-neutral-800 block">Judaism (Ritual Integration)</span>
+              <p className="text-neutral-600 leading-relaxed">
+                Wine is integrated into religious rituals, including the Kiddush blessing for Shabbat, weddings, and Pesach (Passover). While wine is appreciated as a source of joy and blessing, excessive drinking, loss of self-control, and intoxication are condemned in biblical proverbs.
+              </p>
+            </div>
+
+            {/* Hinduism Card */}
+            <div className="p-4 bg-white border border-neutral-250 rounded-xl space-y-1.5">
+              <span className="font-bold text-neutral-800 block">Hinduism (Varying Traditions)</span>
+              <p className="text-neutral-600 leading-relaxed">
+                Stances vary by sect, caste, and region. Most ancient texts discourage intoxicants, and complete abstinence is practiced by priests, ascetics (sadhus), and devout yoga practitioners to maintain a **Sattvic (pure)** state of mind and body.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── IMPAIRMENT STAGES TABLE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Effects by Blood Alcohol Concentration</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The degree of physical and cognitive impairment caused by alcohol intoxication varies based on BAC, as shown in the table below. Impairments range from subtle effects that can only be detected with special tests at levels between 0.001-0.029%, to problems with concentration, reflexes, motor control, and more, including a serious possibility of death at 0.50% or more.
+        </p>
+
+        <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="p-3 font-bold text-neutral-700">BAC (%)</th>
+                <th className="p-3 font-bold text-neutral-700">Behavioral Symptoms</th>
+                <th className="p-3 font-bold text-neutral-700">Cognitive & Motor Impairments</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 text-dark-700">
+              <tr>
+                <td className="p-3 font-bold">0.001% – 0.029%</td>
+                <td className="p-3">Average individual appears normal.</td>
+                <td className="p-3">Subtle effects that can be detected with special laboratory tests.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.030% – 0.059%</td>
+                <td className="p-3">Mild euphoria, relaxation, joyfulness, talkativeness, decreased inhibition.</td>
+                <td className="p-3">Impairment in concentration.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.060% – 0.099%</td>
+                <td className="p-3">Blunted feelings, reduced sensitivity to pain, euphoria, disinhibition, extraversion.</td>
+                <td className="p-3">Impairment in reasoning, depth perception, peripheral vision, and glare recovery.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.100% – 0.199%</td>
+                <td className="p-3">Over-expression, boisterousness, possibility of nausea and vomiting.</td>
+                <td className="p-3">Slowed reflexes, increased reaction time, gross motor control loss, staggering, slurred speech, temporary erectile dysfunction.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.200% – 0.299%</td>
+                <td className="p-3">Nausea, vomiting, emotional swings, anger or sadness, partial loss of understanding, impaired sensations, decreased libido, possibility of stupor.</td>
+                <td className="p-3">Severe motor impairment, loss of consciousness, memory blackout.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.300% – 0.399%</td>
+                <td className="p-3">Stupor, central nervous system depression, loss of understanding, lapses in and out of consciousness, low possibility of death.</td>
+                <td className="p-3">Impaired bladder function, breathing, dysequilibrium, heart rate.</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">0.400% – 0.500%</td>
+                <td className="p-3">Severe central nervous system depression, coma, possibility of death.</td>
+                <td className="p-3">Slowed breathing, heart rate, positional alcohol nystagmus (involuntary eye oscillation).</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">&gt; 0.50%</td>
+                <td className="p-3">High possibility of death.</td>
+                <td className="p-3">Complete metabolic collapse, respiratory arrest.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ────── STANDARD DRINKS REFERENCE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">What is a Standard Drink?</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Standard drink definitions help you track your total alcohol consumption. In the United States, a "standard drink" contains exactly **14 grams (or 0.6 ounces)** of pure ethanol:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 lg:order-2">
+            <img
+              src="/standard-drink-sizes.webp"
+              alt="Vector chart showcasing standard drink equivalences containing 14g of pure alcohol: beer, wine, and hard spirits."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Serving size volume equivalence of standard alcoholic beverages.
+            </p>
+          </div>
+          <div className="space-y-4 lg:order-1 font-sans text-xs">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Beverage Type</th>
+                    <th className="p-3 font-bold text-neutral-700">Volume</th>
+                    <th className="p-3 font-bold text-neutral-700">Average ABV</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr><td className="p-3 font-bold">Standard Beer</td><td className="p-3">12 fl oz / 355 ml</td><td className="p-3">~5.0% ABV</td></tr>
+                  <tr><td className="p-3 font-bold">Table Wine</td><td className="p-3">5 fl oz / 148 ml</td><td className="p-3">~12.0% ABV</td></tr>
+                  <tr><td className="p-3 font-bold">Distilled Spirits (Liquor)</td><td className="p-3">1.5 fl oz / 44 ml</td><td className="p-3">~40.0% ABV (80 proof)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── MATH & FORMULA ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> The Widmark Formula & Decay
+          </span>
+        </div>
+
+        <div className="space-y-6 font-sans">
+          <div>
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">How BAC is Calculated</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              The calculator uses the Swedish Widmark formula to estimate peak BAC, and subtracts metabolic elimination over time:
+            </p>
+            
+            <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-4">
+              <div className="space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">1. Peak BAC Equation</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  Peak BAC = [Alcohol Mass (g) / (Body Weight (g) × Gender Factor)] × 100 <br />
+                  &nbsp;&nbsp;[where Gender Factor: Male = 0.68, Female = 0.55]
+                </div>
+              </div>
+
+              <div className="border-t border-neutral-250 pt-3 space-y-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">2. Time Elimination Decay</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  Current BAC = Max(0, Peak BAC - 0.015% × Hours Elapsed)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "How long does it take for a standard drink to leave your system?", a: "On average, the liver metabolizes alcohol at a constant rate of roughly 0.015% BAC per hour. This equates to approximately one standard drink (14g of pure alcohol) leaving your system every 1 to 2 hours, depending on body weight." },
+            { q: "Does drinking water or coffee sober you up faster?", a: "No. Only time can lower your BAC. While water helps you stay hydrated and coffee can increase alertness, they do not speed up the metabolic rate of the liver, which continues to filter alcohol at a constant rate of ~0.015% per hour." },
+            { q: "How does food consumption affect your BAC?", a: "Eating food before or during drinking slows the rate of alcohol absorption in your stomach, resulting in a lower and delayed peak BAC. Drinking on an empty stomach triggers rapid absorption, causing your BAC to rise very quickly." },
+            { q: "Why is the gender factor different for men and women?", a: "The Widmark gender factor (0.68 for men, 0.55 for women) accounts for differences in average body composition. Women generally have a higher percentage of body fat and less water content per pound of body mass than men, meaning the same amount of alcohol is distributed in less fluid, leading to a higher BAC." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
