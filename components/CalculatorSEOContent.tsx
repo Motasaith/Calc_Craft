@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare, AlertTriangle } from 'lucide-react'
+import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare, AlertTriangle, Info } from 'lucide-react'
 import Link from 'next/link'
 import { CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
 import { getFormulaRef } from '@/lib/formula-references'
@@ -235,6 +235,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   }
   if (slug === 'lean-body-mass') {
     return <LeanBodyMassCustomSEOContent />
+  }
+  if (slug === 'gfr') {
+    return <GfrCustomSEOContent />
   }
 
   const copy = generateSEOCopy(calc)
@@ -3086,6 +3089,287 @@ function LeanBodyMassCustomSEOContent() {
           <li>James, W. "Research on obesity: a report of the DHSS/MRC group" HM Stationery Office 1976</li>
           <li>Hume, R. "Prediction of lean body mass from height and weight." J Clin Pathol. 1966 Jul; 19(4):389-91.</li>
           <li>A. M. Peters, H. L. R. Snelling, D. M. Glass, N. J. Bird. "Estimation of lean body mass in children." British Journal of Anaesthesia 106(5): 719-23 (2011).</li>
+        </ol>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function GfrCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Glomerular Filtration Rate (GFR) Calculator estimates kidney filtration rates using recommended 2021 CKD-EPI, 2009 CKD-EPI, MDRD, Mayo Quadratic, and Schwartz equations." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> Renal Health
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What is Glomerular Filtration Rate (GFR)?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            <strong>Glomerular filtration rate (GFR)</strong> describes the rate of flow of filtered fluids through the kidney and is used as a primary measure of overall kidney function. Generally, a higher value of GFR indicates healthier kidney performance. A significant decrease in GFR indicates that the kidneys are not filtering blood properly, resulting in lower volumes of metabolic waste fluids being cleared over a given time.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            The normal range of GFR adjusted for body surface area is <strong>100 to 130 mL/min/1.73m² in men</strong> and <strong>90 to 120 mL/min/1.73m² in women</strong> below the age of 40. After age 40, GFR decreases progressively with age. Refer to the table below for mean estimated GFR for different age ranges.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── GFR BY AGE & INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Expected GFR Averages by Age Group</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Because kidney filters naturally decline as part of the aging process, standard population averages decrease steadily every decade:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Age Range</th>
+                    <th className="p-3 font-bold text-neutral-700">Mean Estimated GFR (mL/min/1.73 m²)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr><td className="p-3 font-bold">20 - 29 Years</td><td className="p-3">116 mL/min/1.73 m²</td></tr>
+                  <tr><td className="p-3 font-bold">30 - 39 Years</td><td className="p-3">107 mL/min/1.73 m²</td></tr>
+                  <tr><td className="p-3 font-bold">40 - 49 Years</td><td className="p-3">99 mL/min/1.73 m²</td></tr>
+                  <tr><td className="p-3 font-bold">50 - 59 Years</td><td className="p-3">93 mL/min/1.73 m²</td></tr>
+                  <tr><td className="p-3 font-bold">60 - 69 Years</td><td className="p-3">85 mL/min/1.73 m²</td></tr>
+                  <tr><td className="p-3 font-bold">70+ Years</td><td className="p-3">75 mL/min/1.73 m²</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <img
+              src="/gfr-averages-by-age.webp"
+              alt="Infographic showing population mean estimated GFR values by age range."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Mean population GFR ranges by age group.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── CKD STAGES & INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Chronic Kidney Disease (CKD) Stages</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          A GFR value above 60 mL/min/1.73m² is usually adequate for most patients. Alone, it is not necessarily indicative of chronic kidney disease (CKD). However, a significant decline in GFR since a previous test can serve as an early warning indicator. Note that the sooner that kidney disease is diagnosed and treated, the higher the probability that the need for dialysis can be prevented.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 order-2 lg:order-1">
+            <img
+              src="/ckd-stages-gfr-chart.webp"
+              alt="CKD stages chart mapping Stage 1 to Stage 5 kidney failure based on GFR thresholds."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Clinical GFR stages of Chronic Kidney Disease.
+            </p>
+          </div>
+
+          <div className="space-y-4 order-1 lg:order-2">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Stage</th>
+                    <th className="p-3 font-bold text-neutral-700">GFR Range</th>
+                    <th className="p-3 font-bold text-neutral-700">Clinical Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr className="bg-emerald-50/50"><td className="p-3 font-bold">Normal</td><td className="p-3">90+</td><td className="p-3">No proteinuria, normal kidneys</td></tr>
+                  <tr><td className="p-3 font-bold">CKD Stage 1</td><td className="p-3">90+</td><td className="p-3">Kidney damage with normal GFR</td></tr>
+                  <tr className="bg-lime-50/30"><td className="p-3 font-bold">CKD Stage 2 (Mild)</td><td className="p-3">60 – 89</td><td className="p-3">Mild reduction in kidney function</td></tr>
+                  <tr className="bg-amber-50/30"><td className="p-3 font-bold">CKD Stage 3 (Moderate)</td><td className="p-3">30 – 59</td><td className="p-3">Moderate reduction in function</td></tr>
+                  <tr className="bg-red-50/30"><td className="p-3 font-bold">CKD Stage 4 (Severe)</td><td className="p-3">15 – 29</td><td className="p-3">Severe reduction in function</td></tr>
+                  <tr className="bg-purple-50/30"><td className="p-3 font-bold">CKD Stage 5 (Failure)</td><td className="p-3">&lt; 15</td><td className="p-3">Kidney failure / Dialysis required</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── DEEP DIVE: ELIMINATION OF RACE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-amber-50/50 border border-amber-200 rounded-2xl shadow-sm space-y-4"
+      >
+        <div className="flex items-center gap-2 text-amber-800">
+          <Info className="w-5 h-5 shrink-0" />
+          <h3 className="text-lg font-extrabold tracking-tight">Clinical Update: Why Race Was Removed from GFR Equations</h3>
+        </div>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          Historical equations like the <strong>MDRD</strong> (developed in 1999) and the original <strong>2009 CKD-EPI</strong> included a coefficient multiplier for Black patients (multiplying their GFR output by 1.212 or 1.159 respectively). The premise was that Black individuals had, on average, higher muscle mass, resulting in higher creatinine release for the same kidney function.
+        </p>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          In <strong>September 2021</strong>, the National Kidney Foundation (NKF) and the American Society of Nephrology (ASN) Task Force recommended the immediate adoption of the new <strong>2021 CKD-EPI creatinine equation</strong> that does not include race.
+        </p>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          Medical consensus established that race is a social construct rather than a biological one, and the inclusion of race falsely inflated estimated kidney function in Black patients. This overestimation caused systemic health disparities by delaying referrals to nephrologists, keeping patients off kidney transplant waitlists, and postponing critical clinical interventions.
+        </p>
+      </motion.div>
+
+      {/* ────── METHODOLOGY & FORMULAS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">How GFR is Measured and Estimated</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The most accurate way to determine GFR is <strong>inulin clearance</strong>, which measures the rate at which inulin is cleared from the bloodstream. Because inulin is freely filtered without being reabsorbed or metabolized, it represents the gold standard. However, this method requires continuous intravenous infusion and multiple blood/urine collections, making it impractical for routine clinical use.
+        </p>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Consequently, clinicians use equations based on <strong>serum creatinine (SCr)</strong>. The equations used by this calculator are detailed below:
+        </p>
+
+        <div className="space-y-4 text-xs font-mono">
+          <div className="p-4 bg-white border border-neutral-255 rounded-xl space-y-2">
+            <span className="font-bold text-neutral-800 block border-b pb-1">1. 2021 CKD-EPI Creatinine Equation (Race-Free)</span>
+            <p className="text-neutral-500 leading-relaxed">
+              <strong>Females (SCr ≤ 0.7):</strong> 142 × (SCr/0.7)⁻⁰.²⁴¹ × 0.9938^age × 1.012 <br />
+              <strong>Females (SCr &gt; 0.7):</strong> 142 × (SCr/0.7)⁻¹.²⁰⁰ × 0.9938^age × 1.012 <br />
+              <strong>Males (SCr ≤ 0.9):</strong> 142 × (SCr/0.9)⁻⁰.³⁰² × 0.9938^age <br />
+              <strong>Males (SCr &gt; 0.9):</strong> 142 × (SCr/0.9)⁻¹.²⁰⁰ × 0.9938^age
+            </p>
+          </div>
+
+          <div className="p-4 bg-white border border-neutral-255 rounded-xl space-y-2">
+            <span className="font-bold text-neutral-800 block border-b pb-1">2. MDRD Study Equation</span>
+            <p className="text-neutral-500 leading-relaxed">
+              GFR = 175 × (SCr)⁻¹.¹⁵⁴ × (age)⁻⁰.²⁰³ × (0.742 if female) × (1.212 if Black)
+            </p>
+          </div>
+
+          <div className="p-4 bg-white border border-neutral-255 rounded-xl space-y-2">
+            <span className="font-bold text-neutral-800 block border-b pb-1">3. Mayo Quadratic Formula</span>
+            <p className="text-neutral-500 leading-relaxed">
+              If SCr &lt; 0.8 mg/dL, use 0.8 mg/dL. <br />
+              GFR = exp(1.911 + 5.249/SCr - 2.114/SCr² - 0.00686 × age - (0.205 if female))
+            </p>
+          </div>
+
+          <div className="p-4 bg-white border border-neutral-255 rounded-xl space-y-2">
+            <span className="font-bold text-neutral-800 block border-b pb-1">4. Schwartz Formula (Children)</span>
+            <p className="text-neutral-500 leading-relaxed">
+              GFR = 0.413 × Height(cm) / SCr
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "What is the difference between creatinine clearance and GFR?", a: "Glomerular Filtration Rate (GFR) represents the actual volume of blood filtered by the kidneys. Creatinine clearance is an estimate of this filtration rate based on creatinine levels in blood or urine. Because the kidney active-secretes a small amount of creatinine, creatinine clearance typically overestimates the true GFR by 10-20%." },
+            { q: "How can I improve my glomerular filtration rate?", a: "You can support kidney health by keeping blood pressure and blood sugar within target ranges, eating a balanced diet low in processed sodium, staying hydrated, exercising regularly, and avoiding nephrotoxic drugs like chronic over-the-counter NSAIDs (ibuprofen, naproxen)." },
+            { q: "Is GFR affected by muscle mass?", a: "Yes. Creatinine is a waste product of muscle metabolism. People with high muscle mass (such as bodybuilders) will naturally have higher serum creatinine levels, which may falsely lower their estimated GFR, even with healthy kidneys." },
+            { q: "What GFR level indicates kidney failure?", a: "A GFR below 15 mL/min/1.73m² indicates Stage 5 kidney disease, also known as kidney failure. At this stage, the kidneys have lost nearly all filtering capacity, and renal replacement therapies like dialysis or a transplant are required." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── REFERENCES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 bg-neutral-50 border border-neutral-200 rounded-2xl text-xs font-mono text-neutral-600 space-y-3"
+      >
+        <span className="font-bold text-[10px] uppercase text-neutral-800 tracking-wider block">Scientific References & Clinical Guidelines</span>
+        <ol className="list-decimal list-inside space-y-2">
+          <li>"Normal GFR," The UK eCKD Guide, The Renal Association.</li>
+          <li>Gaspari, F., Perico, N., Remuzzi, G. 1997. "Measurement of glomerular filtration rate." Kidney International Supplements 63: S151-4. PMID 9407445.</li>
+          <li>Hsu, C., Bansal, N. 2011. "Measured GFR as 'Gold Standard' – All that Glitters Is Not Gold?" Clinical Journal of the American Society of Nephrology 6(8): 1813-14. doi:10.2215/CJN.06040611.</li>
+          <li>Delgado, C., et al. "Reassessing the Inclusion of Race in Diagnosing Kidney Diseases: An Interim Report from the NKF-ASN Task Force." Am J Kidney Dis 2021.</li>
         </ol>
       </motion.div>
 
