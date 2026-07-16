@@ -503,7 +503,7 @@ function BmiCustomSEOContent() {
           </div>
           <div className="space-y-2">
             <img
-              src="/bmi-adult-chart.png"
+              src="/bmi-adult-chart.webp"
               alt="Adult BMI chart mapping height in feet/inches and centimeters to weight in pounds and kilograms to visualize underweight, normal, overweight, and obese categories."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
@@ -529,7 +529,7 @@ function BmiCustomSEOContent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-2">
             <img
-              src="/bmi-child-chart.png"
+              src="/bmi-child-chart.webp"
               alt="CDC BMI-for-age percentile growth chart for boys and girls aged 2 to 20 showing the 5th, 50th, 85th, and 95th percentile curves."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
@@ -811,7 +811,7 @@ function BodyFatCustomSEOContent() {
           </div>
           <div className="space-y-2">
             <img
-              src="/body-fat-categories.png"
+              src="/body-fat-categories.webp"
               alt="ACE body fat classification chart illustrating percentage ranges for essential fat, athletes, fitness, average, and obese categories for men and women."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
@@ -837,7 +837,7 @@ function BodyFatCustomSEOContent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-2">
             <img
-              src="/body-fat-ideal.png"
+              src="/body-fat-ideal.webp"
               alt="Ideal body fat curves showing recommended body fat percentages by age for men and women based on the Jackson & Pollock method."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
@@ -1115,7 +1115,7 @@ function BmrCustomSEOContent() {
           </div>
           <div className="space-y-2">
             <img
-              src="/bmr-by-weight.png"
+              src="/bmr-by-weight.webp"
               alt="BMR curve graph showing basal metabolic rate calories per day plotted against weight in kilograms and pounds for both men and women."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
@@ -1141,7 +1141,7 @@ function BmrCustomSEOContent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-2 lg:order-2">
             <img
-              src="/bmr-tdee-breakdown.png"
+              src="/bmr-tdee-breakdown.webp"
               alt="Circular infographic displaying activity level multipliers for TDEE, showing values from 1.2x sedentary up to 1.9x extremely active."
               className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
