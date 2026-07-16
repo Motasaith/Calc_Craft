@@ -212,6 +212,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'bmi') {
     return <BmiCustomSEOContent />
   }
+  if (slug === 'body-fat') {
+    return <BodyFatCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -499,7 +502,7 @@ function BmiCustomSEOContent() {
             <img
               src="/bmi-adult-chart.png"
               alt="Adult BMI chart mapping height in feet/inches and centimeters to weight in pounds and kilograms to visualize underweight, normal, overweight, and obese categories."
-              className="w-full rounded-xl border border-neutral-200 shadow-sm object-cover aspect-video"
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
             <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
               Figure 1: Visual grid chart illustrating BMI classification bounds based on height and weight.
@@ -525,7 +528,7 @@ function BmiCustomSEOContent() {
             <img
               src="/bmi-child-chart.png"
               alt="CDC BMI-for-age percentile growth chart for boys and girls aged 2 to 20 showing the 5th, 50th, 85th, and 95th percentile curves."
-              className="w-full rounded-xl border border-neutral-200 shadow-sm object-cover aspect-video"
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
             />
             <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
               Figure 2: CDC BMI-for-age growth percentile curves for boys and girls.
@@ -693,6 +696,309 @@ function BmiCustomSEOContent() {
             { q: "What is a healthy BMI range for adults?", a: "For adults aged 20 and older, a normal or healthy BMI range is between 18.5 and 24.9 kg/m². Scores below 18.5 are classified as underweight, scores from 25.0 to 29.9 are overweight, and scores of 30.0 or higher are categorized as obese." },
             { q: "How is children's BMI calculated differently?", a: "While the raw BMI calculation formula (weight / height²) is identical for children and adults, it is interpreted using age-and-sex-specific growth percentiles for anyone under 20. This is because body composition changes rapidly as children grow, and fat distributions differ significantly between boys and girls during developmental years." },
             { q: "What is BMI Prime?", a: "BMI Prime is a simple ratio of your actual BMI to the upper limit of the normal weight BMI range (which is 25.0). It is calculated as actual BMI / 25. A BMI Prime between 0.74 and 1.00 represents a normal weight. A value greater than 1.00 is overweight, and a value below 0.74 is underweight." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function BodyFatCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Body Fat Calculator estimates total body fat percentage based on the U.S. Navy Method and the BMI Method (Deurenberg formula)." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> About this calculator
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What is the Body Fat Calculator?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            The <strong>Body Fat Calculator</strong> is a premium health tool designed to estimate your total body fat percentage. It uses two widely accepted calculation methods: the **U.S. Navy Method** (which relies on circumferences of the waist, neck, and hips) and the **BMI Method** (which derives body fat using height, weight, age, and sex).
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            Understanding your body composition—rather than just your scale weight—gives you a much clearer picture of your overall fitness and health. This tool helps you track muscle retention, fat loss goals, and compare your body fat against standard fitness categories and age-based ideals.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── ACE CATEGORIZATION ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">ACE Body Fat Classifications</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The American Council on Exercise (ACE) lists standard body fat percentage categories. Since women require higher essential fat levels for reproductive and hormonal health, women's category boundaries are higher than men's:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Description</th>
+                  <th className="p-3 font-bold text-neutral-700">Women (%)</th>
+                  <th className="p-3 font-bold text-neutral-700">Men (%)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold text-red-500">Essential Fat</td><td className="p-3">10 – 13%</td><td className="p-3">2 – 5%</td></tr>
+                <tr><td className="p-3 font-bold text-green-600">Athletes</td><td className="p-3">14 – 20%</td><td className="p-3">6 – 13%</td></tr>
+                <tr><td className="p-3 font-bold text-emerald-600">Fitness</td><td className="p-3">21 – 24%</td><td className="p-3">14 – 17%</td></tr>
+                <tr className="bg-green-50/10"><td className="p-3 font-bold text-amber-500">Average Weight</td><td className="p-3">25 – 31%</td><td className="p-3">18 – 24%</td></tr>
+                <tr><td className="p-3 font-bold text-red-700">Obese</td><td className="p-3">&ge; 32%</td><td className="p-3">&ge; 25%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/body-fat-categories.png"
+              alt="ACE body fat classification chart illustrating percentage ranges for essential fat, athletes, fitness, average, and obese categories for men and women."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Visual breakdown of ACE body fat percentage classifications.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── IDEAL BODY FAT (JACKSON & POLLOCK) ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Ideal Body Fat by Age (Jackson & Pollock)</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          As humans age, the natural proportion of internal lipid stores increases slightly. The Jackson & Pollock method provides standard ideal targets for different age groups:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2">
+            <img
+              src="/body-fat-ideal.png"
+              alt="Ideal body fat curves showing recommended body fat percentages by age for men and women based on the Jackson & Pollock method."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Ideal body fat curves by age for men and women.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs font-mono">
+                <thead>
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="p-3 font-bold text-neutral-700">Age Bracket</th>
+                    <th className="p-3 font-bold text-neutral-700">Ideal Women (%)</th>
+                    <th className="p-3 font-bold text-neutral-700">Ideal Men (%)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 text-dark-700">
+                  <tr><td className="p-3">20</td><td className="p-3">17.7%</td><td className="p-3">8.5%</td></tr>
+                  <tr><td className="p-3">25</td><td className="p-3">18.4%</td><td className="p-3">10.5%</td></tr>
+                  <tr><td className="p-3">30</td><td className="p-3">19.3%</td><td className="p-3">12.7%</td></tr>
+                  <tr><td className="p-3">35</td><td className="p-3">21.5%</td><td className="p-3">13.7%</td></tr>
+                  <tr><td className="p-3">40</td><td className="p-3">22.2%</td><td className="p-3">15.3%</td></tr>
+                  <tr><td className="p-3">45</td><td className="p-3">22.9%</td><td className="p-3">16.4%</td></tr>
+                  <tr><td className="p-3">50</td><td className="p-3">25.2%</td><td className="p-3">18.9%</td></tr>
+                  <tr><td className="p-3">55+</td><td className="p-3">26.3%</td><td className="p-3">20.9%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FORMULAS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> Mathematical Equations
+          </span>
+        </div>
+
+        <div className="space-y-6 font-sans">
+          <div>
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">1. The U.S. Navy Method Equations</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              Adopted by the military, these log equations require waist, neck, and height dimensions (and hips for women).
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Men (US Customary)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 86.010 × log10(waist - neck) - 70.041 × log10(height) + 36.76
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Women (US Customary)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 163.205 × log10(waist + hip - neck) - 97.684 × log10(height) - 78.387
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Men (Metric)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 495 / [1.0324 - 0.19077 × log10(waist - neck) + 0.15456 × log10(height)] - 450
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Women (Metric)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 495 / [1.29579 - 0.35004 × log10(waist + hip - neck) + 0.22100 × log10(height)] - 450
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-neutral-200 pt-4">
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">2. The BMI Method (Deurenberg Formula)</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              Estimates body fat % purely using height, weight (BMI), age, and biological sex.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Adults (Age &ge; 15)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 1.20 × BMI + 0.23 × Age - 10.8 × gender - 5.4
+                </div>
+                <div className="text-[9px] font-mono text-neutral-500">
+                  *gender = 1 for male, 0 for female.
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">Children (Age &lt; 15)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  BF% = 1.51 × BMI - 0.70 × Age - 3.6 × gender + 1.4
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── RISKS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <div className="p-6 bg-red-50/40 border border-red-200 rounded-2xl space-y-3">
+          <h4 className="text-base font-extrabold text-red-700 tracking-tight flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-500" /> Risks of High Body Fat
+          </h4>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            Carrying excess adipose tissue, particularly visceral fat around organs, raises metabolic and health risks:
+          </p>
+          <ul className="text-xs space-y-2 text-dark-600 pl-4 list-disc font-mono">
+            <li><strong>Cardiovascular Issues</strong>: Atherosclerosis, heart attack, and high blood pressure.</li>
+            <li><strong>Type 2 Diabetes</strong>: Visceral lipids decrease muscle and liver insulin sensitivity.</li>
+            <li><strong>Obstructive Apnea</strong>: Airway obstruction during sleep due to neck fat tissue deposits.</li>
+            <li><strong>Joint Degeneration</strong>: Mechanical joint overload on hips and knees.</li>
+          </ul>
+        </div>
+        <div className="p-6 bg-blue-50/40 border border-blue-200 rounded-2xl space-y-3">
+          <h4 className="text-base font-extrabold text-blue-700 tracking-tight flex items-center gap-2">
+            <Shield className="w-4 h-4 text-blue-500" /> Risks of Low Body Fat
+          </h4>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            Adipose drop below essential distributions triggers physiological distress:
+          </p>
+          <ul className="text-xs space-y-2 text-dark-600 pl-4 list-disc font-mono">
+            <li><strong>Hormonal Shutdown</strong>: Cessation of menstruation and reduced bone density in women.</li>
+            <li><strong>Immune Impairment</strong>: High vulnerability to standard infection vectors.</li>
+            <li><strong>Thermo-Regulation</strong>: Extreme hypothermia vulnerability due to lack of thermal fat barrier.</li>
+            <li><strong>Chronic Fatigue</strong>: Depleted cellular energy storage and muscle breakdown.</li>
+          </ul>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "How accurate is the U.S. Navy Body Fat Method?", a: "The Navy Method is highly accurate and reliable for the vast majority of individuals, usually aligning within 2-3% of clinical DXA scans. It relies on standard fat deposit areas (abdominal visceral fat for waist circumference, and sub-occipital neck fat) to calculate fat density." },
+            { q: "What is the difference between BMI and Body Fat Percentage?", a: "BMI (Body Mass Index) is a crude ratio of weight to height and cannot distinguish between muscle and fat. Body Fat Percentage calculates the exact portion of your total body weight composed of fat tissue, providing a far more accurate representation of body composition." },
+            { q: "How does gender affect body fat targets?", a: "Women have higher essential body fat requirements (10-13%) than men (2-5%). This biological fat is stored in breast tissue, hips, and thighs, and is critical for normal hormonal production, reproductive cycles, and basic metabolic functions." },
+            { q: "What is Lean Body Mass (LBM)?", a: "Lean Body Mass represents everything in your body that is not fat. This includes skeletal muscle, bone density, organs, blood, connective tissue, and water weight. It is calculated by subtracting your body fat mass from your total weight." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
