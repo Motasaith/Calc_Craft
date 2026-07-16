@@ -221,6 +221,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'water-intake') {
     return <WaterIntakeCustomSEOContent />
   }
+  if (slug === 'macro') {
+    return <MacroCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -1525,6 +1528,298 @@ function WaterIntakeCustomSEOContent() {
             { q: "Can you drink too much water?", a: "Yes. Drinking excessive amounts of water in a short window can lead to hyponatremia (water intoxication). This condition occurs when blood sodium levels drop dangerously low, causing cellular swelling, confusion, headaches, and in severe cases, medical emergencies." },
             { q: "How do I check if I am hydrated without a calculator?", a: "The easiest way is to inspect your urine color. Light straw or pale yellow urine indicates healthy hydration levels. Clear urine means you may be overhydrating, while dark yellow or amber-colored urine is a clear warning sign of dehydration." },
             { q: "Does food contribute to my daily water requirement?", a: "Yes. Approximately 20% of the average person's daily fluid intake comes from food moisture. Fruits and vegetables like watermelon, strawberries, cucumbers, and zucchini are over 90% water by weight and are excellent sources of hydration." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function MacroCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Macronutrient Calculator estimates your target calories and splits them into protein, carbohydrates, and fats based on preset or custom diets." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> About macronutrients
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What are Macronutrients (Macros)?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            Macronutrients are the chemical compounds humans consume in largest quantities to obtain energy and raw materials for growth, metabolism, and bodily functions. They are composed of three primary groups: **Proteins**, **Carbohydrates (Carbs)**, and **Fats (Lipids)**.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            While calories determine your weight gain or loss, the distribution of those calories across the three macros determines your body composition (muscle vs. fat ratio), metabolic health, hormone levels, and energy curves throughout the day. By calculating your personal macro ratios, you can target specific fitness and athletic outcomes.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── MACRO DIETS REFERENCE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Standard Diet Macro Ratios Comparison</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Different nutritional strategies distribute daily calories across macros to trigger specific metabolic adaptations. The table below displays standard target ratios for typical health presets:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Diet Strategy</th>
+                  <th className="p-3 font-bold text-neutral-700">Protein (%)</th>
+                  <th className="p-3 font-bold text-neutral-700">Carbs (%)</th>
+                  <th className="p-3 font-bold text-neutral-700">Fat (%)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold">Balanced / Zone Diet</td><td className="p-3">30%</td><td className="p-3">40%</td><td className="p-3">30%</td></tr>
+                <tr><td className="p-3 font-bold">High Protein / Bodybuilding</td><td className="p-3">35%</td><td className="p-3">35%</td><td className="p-3">30%</td></tr>
+                <tr><td className="p-3 font-bold">Low Carb / Fat Adaptation</td><td className="p-3">40%</td><td className="p-3">20%</td><td className="p-3">40%</td></tr>
+                <tr><td className="p-3 font-bold">Keto / Very Low Carb</td><td className="p-3">25%</td><td className="p-3">5%</td><td className="p-3">75%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/macro-diets.webp"
+              alt="Macronutrient ratio pie charts for Balanced, High Protein, Low Carb, and Keto diet programs."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Visual comparison of calorie distribution in common diets.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── MACRO FOOD SOURCES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Understanding Macronutrient Functions</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Each macro plays a unique role in your body's survival and performance. Choosing whole food sources ensures you consume quality micronutrients alongside macros:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 lg:order-2">
+            <img
+              src="/macro-sources.webp"
+              alt="Modern health infographic showing healthy whole food sources for protein, carbohydrates, and lipids."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Food groups rich in proteins, carbs, and fats.
+            </p>
+          </div>
+          <div className="space-y-4 lg:order-1 font-sans text-xs">
+            <div className="p-4 bg-blue-50/50 border border-blue-200 rounded-xl space-y-1">
+              <span className="font-bold text-blue-700 block uppercase font-mono tracking-wide">1. Proteins (4 kcal/gram)</span>
+              <p className="text-dark-600 leading-relaxed">
+                The building blocks of body tissues, muscles, enzymes, and hormones. Quality sources include chicken breast, lean beef, fish, eggs, tofu, and legumes.
+              </p>
+            </div>
+            <div className="p-4 bg-orange-50/50 border border-orange-200 rounded-xl space-y-1">
+              <span className="font-bold text-orange-700 block uppercase font-mono tracking-wide">2. Carbohydrates (4 kcal/gram)</span>
+              <p className="text-dark-600 leading-relaxed">
+                The body's primary and most efficient energy source. Complex sources include oats, sweet potatoes, brown rice, quinoa, and vegetables.
+              </p>
+            </div>
+            <div className="p-4 bg-yellow-50/50 border border-yellow-250 rounded-xl space-y-1">
+              <span className="font-bold text-yellow-700 block uppercase font-mono tracking-wide">3. Fats (9 kcal/gram)</span>
+              <p className="text-dark-600 leading-relaxed">
+                Critical for hormone synthesis, cell membrane structure, and absorbing fat-soluble vitamins (A, D, E, K). Sources include avocados, olive oil, nuts, and seeds.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FORMULAS & WORKED EXAMPLES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> Converting Calories to Macro Grams
+          </span>
+        </div>
+
+        <div className="space-y-6 font-sans">
+          <div>
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">The Calculation Equations</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              To convert total daily calories into exact grams for each macronutrient, multiply the total calorie target by each macro's percentage split, and divide by the calorie density per gram:
+            </p>
+            <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-4 font-mono text-[10px] text-dark-900 leading-relaxed">
+              <div>
+                <div className="font-bold text-neutral-500 uppercase mb-1">Mathematical Model</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg text-center font-bold text-xs">
+                  Protein (g) = [Calories × Protein %] / 4 <br />
+                  Carbohydrates (g) = [Calories × Carbs %] / 4 <br />
+                  Fat (g) = [Calories × Fat %] / 9
+                </div>
+              </div>
+              <div className="border-t border-neutral-200 pt-3">
+                <div className="font-bold text-neutral-500 uppercase mb-1">Worked Example</div>
+                <p className="text-[11px] text-neutral-600 font-sans mb-2">
+                  Target = 2,000 kcal, Balanced Diet Preset (30% Protein, 40% Carbs, 30% Fat):
+                </p>
+                <div className="bg-neutral-50 p-2.5 rounded-lg text-neutral-800">
+                  Protein: [2,000 × 0.30] / 4 = 600 / 4 = <strong>150g</strong> (600 kcal) <br />
+                  Carbs: [2,000 × 0.40] / 4 = 800 / 4 = <strong>200g</strong> (800 kcal) <br />
+                  Fat: [2,000 × 0.30] / 9 = 600 / 9 = <strong>67g</strong> (600 kcal)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FOOD DATABASE TABLE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Macronutrient Content in Common Foods</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Use the reference table below to see standard nutrient values (protein, carbs, and fat in grams) per serving size:
+        </p>
+
+        <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+          <table className="w-full text-left border-collapse text-[10px] font-mono">
+            <thead>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="p-2.5 font-bold text-neutral-700">Food Item</th>
+                <th className="p-2.5 font-bold text-neutral-700">Serving Size</th>
+                <th className="p-2.5 font-bold text-neutral-700 text-right">Protein</th>
+                <th className="p-2.5 font-bold text-neutral-700 text-right">Carbs</th>
+                <th className="p-2.5 font-bold text-neutral-700 text-right">Fat</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 text-dark-700">
+              {/* FRUIT */}
+              <tr className="bg-neutral-50/50"><td colSpan={5} className="p-2 font-bold text-neutral-500 uppercase tracking-wider text-[9px]">Fruits</td></tr>
+              <tr><td className="p-2">Apple</td><td className="p-2">1 (4 oz.)</td><td className="p-2 text-right">0.27g</td><td className="p-2 text-right">14.36g</td><td className="p-2 text-right">0.18g</td></tr>
+              <tr><td className="p-2">Banana</td><td className="p-2">1 (6 oz.)</td><td className="p-2 text-right">1.85g</td><td className="p-2 text-right">38.85g</td><td className="p-2 text-right">0.56g</td></tr>
+              <tr><td className="p-2">Grapes</td><td className="p-2">1 cup</td><td className="p-2 text-right">1.15g</td><td className="p-2 text-right">28.96g</td><td className="p-2 text-right">0.26g</td></tr>
+              <tr><td className="p-2">Orange</td><td className="p-2">1 (4 oz.)</td><td className="p-2 text-right">0.79g</td><td className="p-2 text-right">11.79g</td><td className="p-2 text-right">0.23g</td></tr>
+              <tr><td className="p-2">Watermelon</td><td className="p-2">1 cup</td><td className="p-2 text-right">0.93g</td><td className="p-2 text-right">11.48g</td><td className="p-2 text-right">0.23g</td></tr>
+              {/* VEGETABLES */}
+              <tr className="bg-neutral-50/50"><td colSpan={5} className="p-2 font-bold text-neutral-500 uppercase tracking-wider text-[9px]">Vegetables</td></tr>
+              <tr><td className="p-2">Asparagus</td><td className="p-2">1 cup</td><td className="p-2 text-right">2.95g</td><td className="p-2 text-right">5.2g</td><td className="p-2 text-right">0.16g</td></tr>
+              <tr><td className="p-2">Broccoli</td><td className="p-2">1 cup</td><td className="p-2 text-right">2.57g</td><td className="p-2 text-right">6.04g</td><td className="p-2 text-right">0.34g</td></tr>
+              <tr><td className="p-2">Carrots</td><td className="p-2">1 cup</td><td className="p-2 text-right">1.19g</td><td className="p-2 text-right">12.26g</td><td className="p-2 text-right">0.31g</td></tr>
+              <tr><td className="p-2">Cucumber</td><td className="p-2">4 oz.</td><td className="p-2 text-right">0.67g</td><td className="p-2 text-right">2.45g</td><td className="p-2 text-right">0.18g</td></tr>
+              <tr><td className="p-2">Lettuce</td><td className="p-2">1 cup</td><td className="p-2 text-right">0.5g</td><td className="p-2 text-right">1.63g</td><td className="p-2 text-right">0.08g</td></tr>
+              {/* PROTEINS */}
+              <tr className="bg-neutral-50/50"><td colSpan={5} className="p-2 font-bold text-neutral-500 uppercase tracking-wider text-[9px]">Proteins</td></tr>
+              <tr><td className="p-2">Beef, cooked</td><td className="p-2">2 oz.</td><td className="p-2 text-right">14.2g</td><td className="p-2 text-right">0g</td><td className="p-2 text-right">10.4g</td></tr>
+              <tr><td className="p-2">Chicken breast, cooked</td><td className="p-2">2 oz.</td><td className="p-2 text-right">16g</td><td className="p-2 text-right">0g</td><td className="p-2 text-right">1.84g</td></tr>
+              <tr><td className="p-2">Egg</td><td className="p-2">1 large</td><td className="p-2 text-right">6.29g</td><td className="p-2 text-right">0.38g</td><td className="p-2 text-right">4.97g</td></tr>
+              <tr><td className="p-2">Tofu</td><td className="p-2">4 oz.</td><td className="p-2 text-right">7.82g</td><td className="p-2 text-right">2.72g</td><td className="p-2 text-right">3.06g</td></tr>
+              <tr><td className="p-2">Shrimp, cooked</td><td className="p-2">2 oz.</td><td className="p-2 text-right">15.45g</td><td className="p-2 text-right">0.69g</td><td className="p-2 text-right">1.32g</td></tr>
+              {/* SNACKS */}
+              <tr className="bg-neutral-50/50"><td colSpan={5} className="p-2 font-bold text-neutral-500 uppercase tracking-wider text-[9px]">Meals & Snacks</td></tr>
+              <tr><td className="p-2">Bread, white</td><td className="p-2">1 slice (1 oz.)</td><td className="p-2 text-right">1.91g</td><td className="p-2 text-right">12.65g</td><td className="p-2 text-right">0.82g</td></tr>
+              <tr><td className="p-2">Cheeseburger</td><td className="p-2">1 sandwich</td><td className="p-2 text-right">14.77g</td><td className="p-2 text-right">31.75g</td><td className="p-2 text-right">15.15g</td></tr>
+              <tr><td className="p-2">Pizza</td><td className="p-2">1 slice (14")</td><td className="p-2 text-right">13.32g</td><td className="p-2 text-right">33.98g</td><td className="p-2 text-right">12.13g</td></tr>
+              <tr><td className="p-2">Rice, brown, cooked</td><td className="p-2">1 cup</td><td className="p-2 text-right">4.5g</td><td className="p-2 text-right">44.8g</td><td className="p-2 text-right">1.6g</td></tr>
+              {/* DAIRY */}
+              <tr className="bg-neutral-50/50"><td colSpan={5} className="p-2 font-bold text-neutral-500 uppercase tracking-wider text-[9px]">Beverages & Dairy</td></tr>
+              <tr><td className="p-2">Milk (Whole)</td><td className="p-2">1 cup</td><td className="p-2 text-right">7.86g</td><td className="p-2 text-right">11.03g</td><td className="p-2 text-right">7.93g</td></tr>
+              <tr><td className="p-2">Yogurt (low-fat)</td><td className="p-2">1 cup</td><td className="p-2 text-right">12.86g</td><td className="p-2 text-right">17.25g</td><td className="p-2 text-right">3.8g</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "How much protein do I need to build muscle?", a: "To optimize muscle hypertrophy, target 1.6 to 2.2 grams of protein per kilogram of body weight (approx. 0.7 to 1.0 grams per pound) daily. Consuming adequate protein ensures positive nitrogen balance and repairs micro-tears in muscle fibers after resistance training." },
+            { q: "Is a Keto diet safe for weight loss?", a: "Yes, the ketogenic diet (very low carb, high fat) is safe and effective for many people. It triggers a metabolic state called ketosis, where the liver burns fat instead of glycogen for fuel. However, highly active athletes requiring immediate glycolytic power may perform better with higher carbohydrates." },
+            { q: "What happens if I eat too little fat?", a: "Healthy lipids are critical for hormonal balance, joint health, and brain functions. Eating below 15–20% of your daily calories in fats can reduce testosterone/estrogen levels, dry your skin, cause vitamin deficiencies, and cause fatigue." },
+            { q: "Should I track net carbs or total carbs?", a: "For general calorie tracking, total carbohydrates are recommended. For keto or diabetic management, net carbs (total carbs minus fiber and sugar alcohols) are tracked, as fiber is not digested into glucose and does not affect blood insulin levels." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
