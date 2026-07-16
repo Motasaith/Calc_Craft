@@ -224,6 +224,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'macro') {
     return <MacroCustomSEOContent />
   }
+  if (slug === 'one-rep-max') {
+    return <OneRepMaxCustomSEOContent />
+  }
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
@@ -1820,6 +1823,243 @@ function MacroCustomSEOContent() {
             { q: "Is a Keto diet safe for weight loss?", a: "Yes, the ketogenic diet (very low carb, high fat) is safe and effective for many people. It triggers a metabolic state called ketosis, where the liver burns fat instead of glycogen for fuel. However, highly active athletes requiring immediate glycolytic power may perform better with higher carbohydrates." },
             { q: "What happens if I eat too little fat?", a: "Healthy lipids are critical for hormonal balance, joint health, and brain functions. Eating below 15–20% of your daily calories in fats can reduce testosterone/estrogen levels, dry your skin, cause vitamin deficiencies, and cause fatigue." },
             { q: "Should I track net carbs or total carbs?", a: "For general calorie tracking, total carbohydrates are recommended. For keto or diabetic management, net carbs (total carbs minus fiber and sugar alcohols) are tracked, as fiber is not digested into glucose and does not affect blood insulin levels." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function OneRepMaxCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="One Rep Max (1RM) Calculator estimates the maximum weight you can lift for a single repetition using Epley, Brzycki, Lombardi, Mayhew, and Wathan formulas." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> About 1RM Estimation
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What is a One Rep Max (1RM)?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            Your **One Rep Max (1RM)** is the maximum amount of weight you can lift for a single repetition of a given exercise with proper technique. It is the gold standard metric used in powerlifting, Olympic lifting, and general strength training to gauge absolute muscle strength.
+          </p>
+          <p className="text-base text-dark-600 leading-relaxed mt-4">
+            Rather than performing a risky maximal effort lift, which can lead to injury and nervous system fatigue, lifters calculate their 1RM by lifting a lighter submaximal load for multiple repetitions. Mathematical formulas then project your absolute maximum from this submaximal performance, allowing you to design percentage-based strength templates safely and effectively.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── 1RM TRAINING ZONES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Using 1RM to Target Training Zones</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Once you establish your estimated 1RM, strength programs use percentages of this number to target specific neuromuscular adaptions:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs font-mono">
+              <thead>
+                <tr className="bg-neutral-50 border-b border-neutral-200">
+                  <th className="p-3 font-bold text-neutral-700">Intensity Zone</th>
+                  <th className="p-3 font-bold text-neutral-700">% of 1RM</th>
+                  <th className="p-3 font-bold text-neutral-700">Target Reps</th>
+                  <th className="p-3 font-bold text-neutral-700">Adaptation Outcome</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 text-dark-700">
+                <tr><td className="p-3 font-bold">Absolute Strength / Power</td><td className="p-3">85% – 100%</td><td className="p-3">1 – 5 reps</td><td className="p-3">Recruits high-threshold motor units to optimize myofibrillar density.</td></tr>
+                <tr><td className="p-3 font-bold">Hypertrophy / Muscle Growth</td><td className="p-3">65% – 80%</td><td className="p-3">6 – 12 reps</td><td className="p-3">Maximizes metabolic stress and sarcoplasmic volume growth.</td></tr>
+                <tr><td className="p-3 font-bold">Local Muscular Endurance</td><td className="p-3">50% – 60%</td><td className="p-3">15 – 25+ reps</td><td className="p-3">Enhances capillary density, mitochondria concentration, and buffering capacity.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="space-y-2">
+            <img
+              src="/1rm-training-zones.webp"
+              alt="Vector chart mapping One Rep Max percentages to athletic training outcomes: Strength, Hypertrophy, and Endurance."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Percentage of 1RM training zone distributions.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── SAFETY INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Guidelines for Safe Strength Testing</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Directly testing a 1-repetition maximum places extreme tension on joints, tendons, and muscles. Follow these clinical safety principles during your heavy compound sessions:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 lg:order-2">
+            <img
+              src="/1rm-testing-safety.webp"
+              alt="Strength training safety infographic outlining warm-ups, using spotters, setting safety bars, and maintaining strict technique."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Checklist for safety during maximal load testing.
+            </p>
+          </div>
+          <div className="space-y-4 lg:order-1 font-sans text-xs">
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl">
+              <span className="font-bold text-neutral-700 block font-mono uppercase tracking-wider mb-1">1. Set Up Safety Pins</span>
+              <p className="text-dark-600 leading-relaxed">
+                Always adjust the safety racks or pins in a power rack to a level just below the bottom of your range of motion. This allows you to bail out safely if you fail a lift.
+              </p>
+            </div>
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl">
+              <span className="font-bold text-neutral-700 block font-mono uppercase tracking-wider mb-1">2. Recruit a Qualified Spotter</span>
+              <p className="text-dark-600 leading-relaxed">
+                When benching or squatting heavy loads, a spotter provides immediate assistance if you hit a sticking point or fail to complete the concentric phase of the lift.
+              </p>
+            </div>
+            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl">
+              <span className="font-bold text-neutral-700 block font-mono uppercase tracking-wider mb-1">3. Warm-Up Progressively</span>
+              <p className="text-dark-600 leading-relaxed">
+                Never jump straight to a working weight. Perform a thorough general warm-up, followed by specific ramping sets (e.g. 50% for 5, 70% for 3, 85% for 1) to prepare motor unit recruitment.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── MATH & FORMULAS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-gradient-to-br from-neutral-50 to-white border-2 border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider font-mono">
+            <FunctionSquare className="w-3 h-3" /> 1RM Estimation Equations
+          </span>
+        </div>
+
+        <div className="space-y-6 font-sans">
+          <div>
+            <h4 className="text-sm font-bold text-neutral-800 font-mono uppercase tracking-wider mb-2">How 1RM is Projected</h4>
+            <p className="text-xs text-dark-600 leading-relaxed mb-3">
+              The calculator uses submaximal weight ($w$) and repetitions completed ($r$) to project absolute 1RM using six mathematically validated equations:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">1. Epley Formula (1885)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  1RM = w × (1 + r / 30)
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">2. Brzycki Formula (1993)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  1RM = w / (1.0278 - 0.0278 × r)
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">3. Lombardi Formula (1989)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  1RM = w × r^0.10
+                </div>
+              </div>
+              <div className="p-4 bg-white border border-neutral-300 rounded-xl space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 font-mono">4. O'Conner Formula (1989)</div>
+                <div className="bg-neutral-50 p-2.5 rounded-lg font-mono text-[10px] text-dark-900 text-center font-bold">
+                  1RM = w × (1 + 0.025 × r)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "How accurate are submaximal 1RM calculations?", a: "They are highly accurate (typically within 1–3%) when the reps completed are between 1 and 8. As repetitions increase above 10, cardiovascular fatigue, changes in mechanical leverage, and individual muscle fiber composition differences make the formulas significantly less reliable." },
+            { q: "How often should I test my 1RM?", a: "Testing your actual 1RM directly should be done sparingly, such as at the end of a training block (every 8 to 12 weeks) or during a competition. For weekly programming, using submaximal estimates from the calculator is safer and places far less wear and tear on your joints." },
+            { q: "Why do different formulas yield different results?", a: "Each formula was formulated by researchers studying different athletic populations. For example, the Brzycki formula is highly popular and works exceptionally well in intermediate weight ranges, while the Epley formula is often preferred for compound powerlifts (squat, bench, deadlift)." },
+            { q: "Can I use this calculator for bodyweight exercises?", a: "Yes. To estimate 1RM for bodyweight movements like pull-ups or dips, use your total weight (bodyweight + any added plate weight). For exercises like push-ups, the calculator is less accurate because you only lift roughly 60-70% of your body weight in the plank position." }
           ].map((qa, i) => (
             <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
               <summary className="flex items-center justify-between cursor-pointer list-none">
