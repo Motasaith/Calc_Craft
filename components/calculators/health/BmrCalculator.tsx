@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, ChevronDown, ChevronUp, Settings, Activity, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -37,6 +38,57 @@ export default function BmrCalculator() {
   const [calculatedBmr, setCalculatedBmr] = useState<number | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [activeLevelHovered, setActiveLevelHovered] = useState<number | null>(null)
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('a', age)
+    params.set('u', unitSystem)
+    params.set('f', bmrFormula)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('ft', feet)
+      params.set('in', inches)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, age, unitSystem, bmrFormula, weightLbs, feet, inches, weightKg, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const a = params.get('a')
+      const u = params.get('u')
+      const f = params.get('f')
+      const w = params.get('w')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (a) setAge(a)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+      if (f === 'mifflin' || f === 'harris' || f === 'katch') setBmrFormula(f)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        const ft = params.get('ft')
+        if (ft) setFeet(ft)
+        const inch = params.get('in')
+        if (inch) setInches(inch)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        const h = params.get('h')
+        if (h) setHeightCm(h)
+      }
+      if (w) {
+        setHasCalculated(true)
+      }
+    }
+  }, [])
 
   const clearAll = () => {
     setAge('25')
@@ -149,7 +201,7 @@ export default function BmrCalculator() {
     <FormCalculatorShell title="BMR Calculator" subtitle="Basal Metabolic Rate Calculator" badge="HEALTH">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit system tabs */}
           <div className="flex gap-1 bg-neutral-200/80 p-1 rounded-xl border border-neutral-300">
             {(['us', 'metric', 'other'] as const).map((system) => (
@@ -385,7 +437,7 @@ export default function BmrCalculator() {
         </div>
 
         {/* Right Column: Visual Gauge & Metrics Dashboard */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[300px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[300px] print-target">
           {hasCalculated && calculatedBmr !== null ? (
             <div className="space-y-6">
               {/* Headline result */}
@@ -537,6 +589,18 @@ export default function BmrCalculator() {
                   </tbody>
                 </table>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Basal Metabolic Rate (BMR) Results"
+                emailBody={
+                  `Basal Metabolic Rate (BMR) Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age: ${age}\n` +
+                  `- BMR Formula: ${bmrFormula.toUpperCase()}\n` +
+                  `- Calculated BMR: ${calculatedBmr ? Math.round(calculatedBmr * valMultiplier).toLocaleString() : ''} ${labelText}`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

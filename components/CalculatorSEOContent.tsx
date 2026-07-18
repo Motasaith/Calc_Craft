@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare, AlertTriangle, Info } from 'lucide-react'
+import { Calculator as CalcIcon, BookOpen, HelpCircle, Lightbulb, CheckCircle2, ChevronRight, Shield, Zap, Globe, FunctionSquare, AlertTriangle, Info, Baby } from 'lucide-react'
 import Link from 'next/link'
 import { CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
 import { getFormulaRef } from '@/lib/formula-references'
@@ -238,6 +238,12 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   }
   if (slug === 'gfr') {
     return <GfrCustomSEOContent />
+  }
+  if (slug === 'conception') {
+    return <PregnancyConceptionCustomSEOContent />
+  }
+  if (slug === 'waist-hip-ratio') {
+    return <WaistHipCustomSEOContent />
   }
 
   const copy = generateSEOCopy(calc)
@@ -3370,6 +3376,427 @@ function GfrCustomSEOContent() {
           <li>Gaspari, F., Perico, N., Remuzzi, G. 1997. "Measurement of glomerular filtration rate." Kidney International Supplements 63: S151-4. PMID 9407445.</li>
           <li>Hsu, C., Bansal, N. 2011. "Measured GFR as 'Gold Standard' – All that Glitters Is Not Gold?" Clinical Journal of the American Society of Nephrology 6(8): 1813-14. doi:10.2215/CJN.06040611.</li>
           <li>Delgado, C., et al. "Reassessing the Inclusion of Race in Diagnosing Kidney Diseases: An Interim Report from the NKF-ASN Task Force." Am J Kidney Dis 2021.</li>
+        </ol>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function PregnancyConceptionCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Pregnancy Conception Calculator estimates the date of conception and fertile windows using due date, last period, and ultrasound metrics." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-50 border border-pink-100 text-[10px] font-bold uppercase tracking-wider font-mono text-pink-700">
+              <Baby className="w-3 h-3 text-pink-500" /> Pregnancy & Care
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">Understanding Pregnancy Conception Dates</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            The <strong>Pregnancy Conception Calculator</strong> estimates the date of conception based on the expected due date of the pregnancy, the first day of your last menstrual period, or an ultrasound scan. The date of conception is the specific day on which fertilization occurs. This tool also calculates the most probable range of days during which sexual intercourse led to conception, based on sperm being viable for 3 to 5 days within the reproductive tract.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── TIMELINE SEC & INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Timeline of Conception and Implantation</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Biologically, pregnancy begins with fertilization, but clinical gestational age is calculated from the first day of the last period. This is because fertilization usually occurs 11 to 21 days after that date, and pinpointing the exact ovulation day is difficult.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <h4 className="font-extrabold text-dark-900 text-sm">Key Biological Milestones</h4>
+            <ul className="list-disc list-inside text-xs text-dark-600 space-y-2 leading-relaxed">
+              <li><strong>Last Period Start (Week 0):</strong> The uterus sheds its lining, beginning the next menstrual and follicular cycle.</li>
+              <li><strong>Fertile Window (Days 10-16):</strong> Intercourse during this phase provides viable sperm in anticipation of ovulation.</li>
+              <li><strong>Ovulation & Fertilization (Week 2):</strong> An egg is released and fertilized by sperm in the fallopian tube.</li>
+              <li><strong>Implantation (Week 3 / Days 20-26):</strong> The blastocyst implants in the uterine wall, initiating chemical signaling (hCG).</li>
+              <li><strong>Missed Period (Week 4):</strong> The body maintains the progesterone levels, preventing menstruation.</li>
+            </ul>
+          </div>
+          
+          <div className="space-y-2">
+            <img
+              src="/pregnancy-conception-timeline.webp"
+              alt="Visual timeline of early pregnancy milestones from fertilization to uterine wall implantation."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Timeline from ovulation and fertilization to implantation.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── FERTILITY WINDOW & CHART ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">The 6-Day Fertile Window</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          The window of fertility begins 5 days before ovulation and ends on the day of ovulation. This is because sperm can remain viable inside the female body for up to 5 days, while the egg is viable for only 12 to 24 hours after release.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-2 order-2 lg:order-1">
+            <img
+              src="/conception-likelihood-by-cycle-day.webp"
+              alt="Graph showing the likelihood of conception by day relative to the day of ovulation."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 2: Conception probability by day relative to ovulation.
+            </p>
+          </div>
+
+          <div className="space-y-4 order-1 lg:order-2 text-xs text-dark-600 leading-relaxed">
+            <h4 className="font-extrabold text-dark-900 text-sm">How Conception Dates Are Calculated</h4>
+            <p>
+              Depending on the information available, clinicians use three primary dating methods:
+            </p>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>
+                <strong>Estimated Due Date:</strong> Since standard pregnancies average 280 days (40 weeks) from the LMP, the estimated date of conception is calculated by subtracting 266 days (38 weeks) from the due date.
+              </li>
+              <li>
+                <strong>Last Menstrual Period (LMP):</strong> Estimated conception occurs 14 days after the first day of the last period, adjusted for the average cycle duration (LMP + Cycle Length - 14).
+              </li>
+              <li>
+                <strong>Dating Ultrasound:</strong> A sonogram measures fetal crown-rump length (CRL) during early pregnancy to determine gestational age. The conception date is derived by subtracting the estimated gestational age (in weeks and days) from the scan date and adding 14 days.
+              </li>
+            </ol>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── MEDICAL DEFINITIONS DEEP DIVE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-pink-50/40 border border-pink-100 rounded-2xl shadow-sm space-y-4"
+      >
+        <div className="flex items-center gap-2 text-pink-800">
+          <Info className="w-5 h-5 shrink-0" />
+          <h3 className="text-lg font-extrabold tracking-tight">Fertilization vs. Conception: Clinical and Legal Definitions</h3>
+        </div>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          While the terms <strong>fertilization</strong> and <strong>conception</strong> are often used interchangeably in casual conversation, medical science distinguishes them.
+        </p>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          <strong>Fertilization</strong> occurs when a single sperm penetrates a mature egg in the fallopian tube to form a single-celled zygote.
+        </p>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          <strong>Conception</strong> is the broader biological process of becoming pregnant. In medical terminology, this requires both successful fertilization and successful <strong>implantation</strong> of the blastocyst into the vascular wall of the uterus.
+        </p>
+        <p className="text-sm text-dark-750 leading-relaxed">
+          This distinction is clinically relevant. In the United States, federal policies and major medical bodies (such as the American College of Obstetricians and Gynecologists) define pregnancy as beginning only at implantation. A significant percentage of fertilized eggs fail to implant and pass naturally out of the body; therefore, clinical pregnancy is established only once implantation is complete.
+        </p>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "How accurate is an ultrasound for determining conception dates?", a: "Early obstetric ultrasounds (performed in the first trimester, between weeks 6 and 12) are the most accurate clinical tool for pregnancy dating, with an accuracy margin of ±3 to 5 days. Later in pregnancy, biological variation in fetal growth makes ultrasound dating less precise (margin of ±1 to 2 weeks in the second trimester, and ±3 weeks in the third trimester)." },
+            { q: "Is it possible to conceive outside of the fertile window?", a: "No. Conception can only occur if a viable sperm meets a viable egg. Since an egg survives for at most 24 hours after release, and sperm survives up to 5 days, the biological fertile window is strictly limited to the 5 days before ovulation and the day of ovulation itself." },
+            { q: "What is the difference between gestational age and embryonic age?", a: "Gestational age is calculated from the first day of the mother's last menstrual period (LMP) and is the standard timeline used by obstetricians. Embryonic age (or fetal age) is the actual age of the developing embryo from the moment of conception, which is typically 2 weeks shorter than gestational age." },
+            { q: "Why does cycle length affect the estimated due date?", a: "Standard due date calculations assume a default 28-day menstrual cycle where ovulation occurs on day 14. If a woman has a regular 35-day cycle, she ovulates around day 21. Her estimated due date is adjusted accordingly to prevent false diagnoses of post-term or pre-term pregnancy." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── REFERENCES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 bg-neutral-50 border border-neutral-200 rounded-2xl text-xs font-mono text-neutral-600 space-y-3"
+      >
+        <span className="font-bold text-[10px] uppercase text-neutral-800 tracking-wider block">Scientific References & Medical Literature</span>
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Wilcox, A. J., Weinberg, C. R., Baird, D. D. 1995. "Timing of sexual intercourse in relation to ovulation — effects on the probability of conception, survival of the pregnancy, and sex of the baby." New England Journal of Medicine 333(23): 1517-1521.</li>
+          <li>"Methods for Estimating the Due Date," Committee Opinion No. 700. American College of Obstetricians and Gynecologists (ACOG). Obstetrics & Gynecology 129(5): e150-154.</li>
+          <li>O'Rahilly, R., Müller, F. 2001. "Human Embryology & Teratology," 3rd Edition. Wiley-Liss.</li>
+        </ol>
+      </motion.div>
+
+      {/* ────── RELATED ACTIONS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="grid sm:grid-cols-2 gap-3"
+      >
+        <Link href="/builder" className="group p-5 sm:p-6 bg-dark-900 text-white rounded-2xl relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-500/30 rounded-full blur-3xl" />
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary-300 font-mono mb-1.5">
+              <Zap className="w-3.5 h-3.5" /> Want more?
+            </div>
+            <h3 className="text-lg font-extrabold mb-1">Build a custom calculator</h3>
+            <p className="text-sm text-white/70 mb-3 font-normal leading-relaxed font-sans">Need a calculation we don't have? Build your own in minutes, no code required.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold group-hover:gap-2 transition-all">
+              Open the builder <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+        <Link href="/calculators" className="group p-5 sm:p-6 bg-white border border-neutral-200 hover:border-primary-400 rounded-2xl transition-all">
+          <div className="relative font-sans">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-dark-500 font-mono mb-1.5">
+              <CalcIcon className="w-3 h-3" /> More tools
+            </div>
+            <h3 className="text-lg font-extrabold text-dark-900 mb-1">Browse 500+ calculators</h3>
+            <p className="text-sm text-dark-600 mb-3 font-normal leading-relaxed font-sans">Explore the full library across math, finance, health, conversion, and more.</p>
+            <span className="inline-flex items-center gap-1 text-sm font-bold text-dark-700 group-hover:gap-2 group-hover:text-primary-700 transition-all">
+              See all calculators <ChevronRight className="w-4 h-4" />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+function WaistHipCustomSEOContent() {
+  return (
+    <section className="mt-12 sm:mt-16 space-y-12" itemScope itemType="https://schema.org/WebPage">
+      <meta itemProp="description" content="Waist-to-Hip Ratio (WHR) Calculator estimates body fat distribution and cardiovascular health risks using World Health Organization (WHO) standards." />
+
+      {/* ────── INTRO ────── */}
+      <div className="prose prose-slate max-w-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-50 border border-primary-100 text-[10px] font-bold uppercase tracking-wider font-mono text-primary-700">
+              <CalcIcon className="w-3 h-3" /> Body Composition
+            </span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-dark-900 mb-3 tracking-tight">What is Waist-to-Hip Ratio (WHR)?</h2>
+          <p className="text-base text-dark-600 leading-relaxed">
+            The <strong>Waist-to-Hip Ratio (WHR)</strong> is a quick, clinical indicator used to measure body fat distribution and assess general health risk. It compares the circumference of your waist to that of your hips. Unlike Body Mass Index (BMI), which measures total body mass relative to height, WHR evaluates abdominal fat deposition, which correlates highly with visceral fat and cardiovascular complications.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ────── MEASUREMENT GUIDE & INFOGRAPHIC ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">How to Measure Your Waist and Hips</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          For accurate calculations, follow these clinical measurement instructions:
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-4">
+            <ul className="list-disc list-inside text-xs text-dark-600 space-y-3 leading-relaxed">
+              <li><strong>Waist Measurement:</strong> Wrap the tape measure around the narrowest part of your abdomen (typically located just above the navel). Ensure the tape is parallel to the floor, lies flat against your skin, and is snug without pressing into the tissue. Take the measurement at the end of a normal, relaxed exhalation.</li>
+              <li><strong>Hip Measurement:</strong> Wrap the tape measure around the widest part of your hips/buttocks. Keep your feet together and ensure the tape is completely level.</li>
+              <li><strong>Consistency:</strong> Measure in the same unit (centimeters or inches) and avoid wrapping the tape over thick layers of clothing.</li>
+            </ul>
+          </div>
+          
+          <div className="space-y-2">
+            <img
+              src="/waist-to-hip-measurement.webp"
+              alt="Vector illustration demonstrating how to measure the narrowest point of the waist and widest point of the hips."
+              className="w-full h-auto rounded-xl border border-neutral-200 shadow-sm"
+            />
+            <p className="text-[10px] text-neutral-500 text-center mt-2 font-mono">
+              Figure 1: Correct measurement placements for waist and hips.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ────── WHO STANDARDS ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-2xl shadow-sm space-y-6"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">WHO WHR Risk Classifications</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          According to the World Health Organization (WHO), abdominal obesity is defined as a waist-to-hip ratio above <strong>0.90 for men</strong> and above <strong>0.85 for women</strong>.
+        </p>
+
+        <div className="overflow-x-auto border border-neutral-200 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs font-mono">
+            <thead>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="p-3 font-bold text-neutral-700">Gender</th>
+                <th className="p-3 font-bold text-neutral-700">Low Risk (Normal)</th>
+                <th className="p-3 font-bold text-neutral-700">Moderate Risk</th>
+                <th className="p-3 font-bold text-neutral-700">High Risk (Abdominal Obesity)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-200 text-dark-700">
+              <tr>
+                <td className="p-3 font-bold">Females</td>
+                <td className="p-3 text-emerald-600 font-bold">&lt; 0.80</td>
+                <td className="p-3 text-amber-600">0.80 – 0.85</td>
+                <td className="p-3 text-red-650 font-bold">≥ 0.86</td>
+              </tr>
+              <tr>
+                <td className="p-3 font-bold">Males</td>
+                <td className="p-3 text-emerald-600 font-bold">&lt; 0.90</td>
+                <td className="p-3 text-amber-600">0.90 – 0.99</td>
+                <td className="p-3 text-red-655 font-bold">≥ 1.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      {/* ────── HEALTH CLINICAL DEEP DIVE ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 sm:p-8 bg-neutral-50 border border-neutral-200 rounded-2xl shadow-sm space-y-4"
+      >
+        <h3 className="text-xl sm:text-2xl font-extrabold text-dark-900 tracking-tight">Health Implications: Apple vs. Pear Body Shapes</h3>
+        <p className="text-sm text-dark-600 leading-relaxed">
+          Where you carry body fat is as important as how much fat you carry. Fat distribution typically falls into two categories:
+        </p>
+        <ul className="list-disc list-inside text-xs text-dark-600 space-y-2 leading-relaxed">
+          <li>
+            <strong>Apple Shape (Android Obesity):</strong> Represents higher fat storage in the abdominal cavity (visceral fat). Visceral fat coats internal organs and is highly metabolically active, releasing inflammatory cytokines directly into the portal circulation. This shape is associated with a high waist-to-hip ratio and carries elevated risks of type 2 diabetes, coronary heart disease, and hypertension.
+          </li>
+          <li>
+            <strong>Pear Shape (Gynoid Obesity):</strong> Represents fat stored primarily around the hips, buttocks, and thighs (subcutaneous fat). Subcutaneous fat is less metabolically active and acts as a passive storage site, carrying lower cardiovascular risks.
+          </li>
+        </ul>
+      </motion.div>
+
+      {/* ────── FAQ ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        itemScope
+        itemType="https://schema.org/FAQPage"
+        className="space-y-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <HelpCircle className="w-4 h-4 text-dark-500" />
+          <h2 className="text-2xl font-extrabold text-dark-900 tracking-tight">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { q: "What is a healthy waist-to-hip ratio?", a: "A healthy waist-to-hip ratio is below 0.80 for women and below 0.90 for men. Ratios below these cutoffs place individuals in the low-risk category for cardiovascular and metabolic disorders." },
+            { q: "Is WHR better than BMI?", a: "WHR is a better predictor of cardiovascular disease and mortality than BMI because it directly evaluates abdominal visceral fat. BMI cannot differentiate between muscle mass and fat, nor does it account for where fat is stored on the body." },
+            { q: "Can I spot-reduce fat to improve my WHR?", a: "No, spot reduction of fat is a biological myth. To improve your waist-to-hip ratio, focus on overall fat loss through a caloric deficit, resistance training to maintain lean muscle, stress management (to lower cortisol which drives belly fat storage), and proper sleep." },
+            { q: "Does age affect the waist-to-hip ratio?", a: "Yes. As both men and women age, hormonal changes (such as falling estrogen levels after menopause in women and falling testosterone in men) naturally shift fat deposition patterns from the hips and limbs to the abdominal region, which can increase the WHR." }
+          ].map((qa, i) => (
+            <details key={i} className="group p-4 bg-white border border-neutral-200 rounded-2xl hover:border-neutral-300 transition-colors" itemScope itemType="https://schema.org/Question">
+              <summary className="flex items-center justify-between cursor-pointer list-none">
+                <h3 className="text-sm font-extrabold text-dark-900 pr-3" itemProp="name">{qa.q}</h3>
+                <span className="text-dark-400 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+              </summary>
+              <p className="mt-2 text-sm text-dark-600 leading-relaxed" itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer">
+                <span itemProp="text">{qa.a}</span>
+              </p>
+            </details>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ────── REFERENCES ────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="p-6 bg-neutral-50 border border-neutral-200 rounded-2xl text-xs font-mono text-neutral-600 space-y-3"
+      >
+        <span className="font-bold text-[10px] uppercase text-neutral-800 tracking-wider block">Scientific References & Medical Literature</span>
+        <ol className="list-decimal list-inside space-y-2">
+          <li>World Health Organization. 2011. "Waist Circumference and Waist-Hip Ratio: Report of a WHO Expert Consultation." Geneva, Switzerland.</li>
+          <li>Yusuf, S., et al. 2005. "Obesity and the risk of myocardial infarction in 27,000 participants from 52 countries: a case-control study." The Lancet 366(9497): 1640-1649.</li>
+          <li>Welborn, T. A., Dhaliwal, S. S. 2007. "Preferred devices of obesity measurement: waist circumference, waist-to-hip ratio and body mass index." European Journal of Clinical Nutrition 61(12): 1373-1379.</li>
         </ol>
       </motion.div>
 

@@ -119,3 +119,73 @@
   background-color: #f9fafb;
   font-weight: 600;
 }
+
+@media print {
+  /* Force color and background printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide elements marked with no-print or standard layout tags */
+  header, footer, nav, aside, .cta-section, .no-print, .no-print * {
+    display: none !important;
+  }
+
+  /* Make sure grid layouts behave like simple block containers on print */
+  .grid {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide FormCalculatorShell header */
+  .bg-\[\#eae7df\] > div:first-child {
+    display: none !important;
+  }
+
+  /* Remove FormCalculatorShell styled background and border on print */
+  .bg-\[\#eae7df\] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Reset main container layout padding for print pages */
+  main {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 0 !important;
+  }
+
+  /* Style the print-target results dashboard container */
+  .print-target {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    margin: 0 auto !important;
+    padding: 1.5rem !important;
+    background-color: #fcfbfa !important;
+    border: 2px solid #dad6cd !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  body, html {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+
+
+
+

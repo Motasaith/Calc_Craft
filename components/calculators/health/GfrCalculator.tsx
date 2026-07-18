@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, Info, Activity } from 'lucide-react'
 
 export default function GfrCalculator() {
@@ -35,6 +36,49 @@ export default function GfrCalculator() {
   } | null>(null)
   
   const [errorMsg, setErrorMsg] = useState('')
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('m', calculatorMode)
+    params.set('g', sex)
+    params.set('a', age)
+    params.set('cr', creatinine)
+    params.set('u', unit)
+    params.set('f', formula)
+    params.set('r', race)
+    params.set('h', heightCm)
+    setQueryParams(params.toString())
+  }, [calculatorMode, sex, age, creatinine, unit, formula, race, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const m = params.get('m')
+      const g = params.get('g')
+      const a = params.get('a')
+      const cr = params.get('cr')
+      const u = params.get('u')
+      const f = params.get('f')
+      const r = params.get('r')
+      const h = params.get('h')
+
+      if (m === 'adult' || m === 'child') setCalculatorMode(m)
+      if (g === 'male' || g === 'female') setSex(g)
+      if (a) setAge(a)
+      if (cr) setCreatinine(cr)
+      if (u === 'mg' || u === 'umol') setUnit(u)
+      if (f === 'ckd-epi-2021' || f === 'ckd-epi-2009' || f === 'mdrd' || f === 'mayo') setFormula(f)
+      if (r === 'black' || r === 'non-black') setRace(r)
+      if (h) setHeightCm(h)
+
+      if (cr) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   const handleClear = () => {
     setCalculatorMode('adult')
@@ -210,7 +254,7 @@ export default function GfrCalculator() {
     <FormCalculatorShell title="Glomerular Filtration Rate Calculator" badge="HEALTH" subtitle="eGFR Kidney Function Estimator">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Calculator Mode Switcher */}
           <div>
             <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
@@ -391,7 +435,7 @@ export default function GfrCalculator() {
         </div>
 
         {/* Right Column: Visual Stage dial & Comparative breakdown */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated && results ? (
             <div className="space-y-6">
               {/* Highlight GFR and stage card */}
@@ -491,6 +535,20 @@ export default function GfrCalculator() {
                   </table>
                 </div>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Glomerular Filtration Rate (GFR) Results"
+                emailBody={
+                  `Glomerular Filtration Rate (GFR) Calculation Results:\n` +
+                  `- Mode: ${calculatorMode === 'child' ? 'Child' : 'Adult'}\n` +
+                  `- Gender: ${sex === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Serum Creatinine: ${creatinine} ${unit === 'mg' ? 'mg/dL' : 'µmol/L'}\n` +
+                  `- Selected Equation: ${formula.toUpperCase()}\n` +
+                  `- Calculated eGFR GFR: ${results ? results.activeGfr.toFixed(1) : ''} mL/min/1.73m²\n` +
+                  `- Kidney Function Assessment: ${results ? results.stage.name + ' - ' + results.stage.desc : ''}`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

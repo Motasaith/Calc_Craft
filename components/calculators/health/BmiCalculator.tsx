@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { calculateBMI } from '@/lib/calc-engine'
 import Link from 'next/link'
 import { Activity, Info, AlertTriangle, ChevronRight } from 'lucide-react'
@@ -96,6 +97,55 @@ export default function BmiCalculator() {
   // Results State
   const [isCalculated, setIsCalculated] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('a', age)
+    params.set('u', unitSystem)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('ft', feet)
+      params.set('in', inches)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, age, unitSystem, weightLbs, feet, inches, weightKg, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const a = params.get('a')
+      const u = params.get('u')
+      const w = params.get('w')
+      const h = params.get('h')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (a) setAge(a)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        const ft = params.get('ft')
+        if (ft) setFeet(ft)
+        const inch = params.get('in')
+        if (inch) setInches(inch)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        const ht = params.get('h')
+        if (ht) setHeightCm(ht)
+      }
+      if (w) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   // Reset calculator to default inputs
   const handleClear = () => {
@@ -333,7 +383,7 @@ export default function BmiCalculator() {
     <FormCalculatorShell title="BMI Calculator" subtitle="Body Mass Index Calculator" badge="HEALTH">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit System Tabs */}
           <div className="flex gap-1 bg-neutral-200/80 p-1 rounded-xl border border-neutral-300">
             <button
@@ -523,7 +573,7 @@ export default function BmiCalculator() {
         </div>
 
         {/* Right Column: Visual Gauge & Metrics Dashboard */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-5 h-full flex flex-col justify-between">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-5 h-full flex flex-col justify-between print-target">
           {isCalculated && metrics.isValid ? (
             <div className="space-y-4">
               <div className="text-center">
@@ -647,6 +697,19 @@ export default function BmiCalculator() {
                   </p>
                 </div>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Body Mass Index (BMI) Results"
+                emailBody={
+                  `BMI Calculation Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age: ${age}\n` +
+                  `- BMI: ${metrics.isValid ? bmi.toFixed(1) : ''} kg/m²\n` +
+                  `- Classification: ${metrics.isValid ? (isPediatric ? childCategory : adultCategory) : ''}\n` +
+                  `- Healthy Weight Range: ${metrics.isValid ? minHealthyDisp.toFixed(1) + ' - ' + maxHealthyDisp.toFixed(1) + ' ' + displayWeightUnit : ''}`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

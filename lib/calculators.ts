@@ -880,8 +880,8 @@ export const calculators: CalculatorEntry[] = [
   },
   {
     slug: 'conception',
-    name: 'Conception Calculator',
-    shortName: 'Conception',
+    name: 'Pregnancy Conception Calculator',
+    shortName: 'Pregnancy Conception',
     category: 'health',
     description: 'Estimate conception date and fertile window based on due date or LMP.',
     keywords: ['conception calculator', 'conception date', 'fertile window', 'pregnancy'],

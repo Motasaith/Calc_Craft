@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, ChevronDown, ChevronUp, Activity, Info, Beer, Plus, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -45,6 +46,67 @@ export default function BacCalculator() {
 
   // SVG chart hover states
   const [hoveredHour, setHoveredHour] = useState<number | null>(null)
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('w', weight)
+    params.set('u', weightUnit)
+    params.set('h', hours)
+    params.set('m', minutes)
+    params.set('bq', beerQty)
+    params.set('bs', beerSize)
+    params.set('ba', beerAbv)
+    params.set('wq', wineQty)
+    params.set('ws', wineSize)
+    params.set('wa', wineAbv)
+    params.set('lq', liquorQty)
+    params.set('ls', liquorSize)
+    params.set('la', liquorAbv)
+    setQueryParams(params.toString())
+  }, [gender, weight, weightUnit, hours, minutes, beerQty, beerSize, beerAbv, wineQty, wineSize, wineAbv, liquorQty, liquorSize, liquorAbv])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const w = params.get('w')
+      const u = params.get('u')
+      const h = params.get('h')
+      const m = params.get('m')
+      const bq = params.get('bq')
+      const bs = params.get('bs')
+      const ba = params.get('ba')
+      const wq = params.get('wq')
+      const ws = params.get('ws')
+      const wa = params.get('wa')
+      const lq = params.get('lq')
+      const ls = params.get('ls')
+      const la = params.get('la')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (w) setWeight(w)
+      if (u === 'kg' || u === 'lbs') setWeightUnit(u)
+      if (h) setHours(h)
+      if (m) setMinutes(m)
+      if (bq) setBeerQty(bq)
+      if (bs) setBeerSize(bs)
+      if (ba) setBeerAbv(ba)
+      if (wq) setWineQty(wq)
+      if (ws) setWineSize(ws)
+      if (wa) setWineAbv(wa)
+      if (lq) setLiquorQty(lq)
+      if (ls) setLiquorSize(ls)
+      if (la) setLiquorAbv(la)
+
+      if (w) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   const handleClear = () => {
     setGender('male')
@@ -312,7 +374,7 @@ export default function BacCalculator() {
     <FormCalculatorShell title="BAC Calculator" badge="HEALTH" subtitle="Estimate Blood Alcohol Concentration & Sober Timeline">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Gender */}
           <div>
             <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
@@ -646,7 +708,7 @@ export default function BacCalculator() {
         </div>
 
         {/* Right Column: Visual Charts & Impairment Details */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated && currentBAC !== null && hoursToSober !== null && peakBAC !== null ? (
             <div className="space-y-6">
               {/* Headline current BAC Result Card */}
@@ -862,12 +924,26 @@ export default function BacCalculator() {
               )}
 
               {/* Educational Disclaimer */}
-              <div className="p-3 bg-neutral-50 border border-neutral-350 rounded-lg text-[9px] font-mono text-neutral-500 leading-normal flex items-start gap-1.5">
+              <div className="p-3 bg-neutral-50 border border-neutral-355 rounded-lg text-[9px] font-mono text-neutral-500 leading-normal flex items-start gap-1.5">
                 <Info className="w-3.5 h-3.5 shrink-0 text-neutral-400 mt-0.5" />
                 <span>
                   <strong>Legal Disclaimer:</strong> BAC estimates are for educational and entertainment purposes only. This is not medical advice. For proper medical advice, please consult a qualified physician or doctor. Metabolism rates vary wildly based on stomach contents, medication, liver health, and hydration. Never use this calculator to determine fitness to drive.
                 </span>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Blood Alcohol Concentration (BAC) Results"
+                emailBody={
+                  `Blood Alcohol Concentration (BAC) Calculation Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Weight: ${weight} ${weightUnit}\n` +
+                  `- Elapsed Time: ${hours}h ${minutes}m\n` +
+                  `- Calculated peak BAC: ${peakBAC ? peakBAC.toFixed(3) : ''}%\n` +
+                  `- Current BAC: ${currentBAC ? currentBAC.toFixed(3) : ''}%\n` +
+                  `- Time until completely sober: ${hoursToSober ? hoursToSober.toFixed(1) : ''} hours`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

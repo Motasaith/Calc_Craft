@@ -122,7 +122,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
       <main className="min-h-screen pt-28 pb-20 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-dark-400 mb-6 font-medium">
+          <nav className="flex items-center gap-1.5 text-xs text-dark-400 mb-6 font-medium no-print">
             <Link href="/" className="hover:text-dark-700 transition-colors">Home</Link>
             <ChevronRight className="w-3 h-3" />
             <Link href="/calculators" className="hover:text-dark-700 transition-colors">Calculators</Link>
@@ -134,7 +134,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
             {/* Main Calculator Area */}
             <div>
               {/* Page Header */}
-              <div className="mb-6 flex items-start justify-between gap-4">
+              <div className="mb-6 flex items-start justify-between gap-4 no-print">
                 <h1 className="text-2xl lg:text-3xl font-extrabold text-dark-900 mb-2" dangerouslySetInnerHTML={{ __html: calc.title.rendered }} />
                 <div className="flex items-center gap-2">
                   <button
@@ -168,23 +168,25 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
               {/* Educational Article/Content from WordPress */}
               {calc.content?.rendered && (
                 <div 
-                  className="rich-text-content mt-12 pt-8 border-t border-gray-200 font-sans text-dark-800"
+                  className="rich-text-content mt-12 pt-8 border-t border-gray-200 font-sans text-dark-800 no-print"
                   dangerouslySetInnerHTML={{ __html: calc.content.rendered }}
                 />
               )}
 
               {/* SEO Educational Content — formula reference, how-to, FAQ */}
               {localCalc && (
-                <CalculatorSEOContent
-                  slug={calc.slug}
-                  calc={{
-                    name: localCalc.name,
-                    shortName: localCalc.shortName,
-                    description: localCalc.description,
-                    category: localCalc.category,
-                    keywords: localCalc.keywords,
-                  }}
-                />
+                <div className="no-print">
+                  <CalculatorSEOContent
+                    slug={calc.slug}
+                    calc={{
+                      name: localCalc.name,
+                      shortName: localCalc.shortName,
+                      description: localCalc.description,
+                      category: localCalc.category,
+                      keywords: localCalc.keywords,
+                    }}
+                  />
+                </div>
               )}
 
               {/* Mobile Related Calculators Widget (visible on mobile only) */}

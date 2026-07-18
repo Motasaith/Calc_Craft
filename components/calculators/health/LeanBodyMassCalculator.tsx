@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, Info, Activity } from 'lucide-react'
 
 export default function LeanBodyMassCalculator() {
@@ -32,6 +33,57 @@ export default function LeanBodyMassCalculator() {
   
   const [selectedFormula, setSelectedFormula] = useState<'boer' | 'james' | 'hume' | 'peters'>('boer')
   const [errorMsg, setErrorMsg] = useState('')
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('c', isChild ? '1' : '0')
+    params.set('u', unitSystem)
+    params.set('f', selectedFormula)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('ft', feet)
+      params.set('in', inches)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, isChild, unitSystem, selectedFormula, weightLbs, feet, inches, weightKg, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const c = params.get('c')
+      const u = params.get('u')
+      const f = params.get('f')
+      const w = params.get('w')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (c === '1') setIsChild(true)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+      if (f === 'boer' || f === 'james' || f === 'hume' || f === 'peters') setSelectedFormula(f)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        const ft = params.get('ft')
+        if (ft) setFeet(ft)
+        const inch = params.get('in')
+        if (inch) setInches(inch)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        const h = params.get('h')
+        if (h) setHeightCm(h)
+      }
+      if (w) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   const handleClear = () => {
     setGender('male')
@@ -170,7 +222,7 @@ export default function LeanBodyMassCalculator() {
     <FormCalculatorShell title="Lean Body Mass Calculator" badge="HEALTH" subtitle="Calculate LBM via Boer, James, Hume & Peters Formulas">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit System Switcher */}
           <div>
             <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
@@ -350,7 +402,7 @@ export default function LeanBodyMassCalculator() {
         </div>
 
         {/* Right Column: Visual Composition & Formula breakdowns */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated && results && activeFormula ? (
             <div className="space-y-6">
               {/* Highlight LBM Average Card */}
@@ -491,6 +543,20 @@ export default function LeanBodyMassCalculator() {
                   </table>
                 </div>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Lean Body Mass Calculation Results"
+                emailBody={
+                  `Lean Body Mass (LBM) Calculation Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age Group: ${isChild ? 'Child' : 'Adult'}\n` +
+                  `- Formula: ${selectedFormula.toUpperCase()}\n` +
+                  `- LBM: ${results ? formatWeight(results.avgLbm) : ''}\n` +
+                  `- LBM Percentage: ${results ? results.avgLbmPct.toFixed(1) : ''}%\n` +
+                  `- Est. Body Fat Percentage: ${results ? results.avgFatPct.toFixed(1) : ''}%`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

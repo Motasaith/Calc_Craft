@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, ChevronDown, ChevronUp, Activity, Info, Dumbbell } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -38,6 +39,63 @@ export default function ProteinCalculator() {
 
   // Hover states for the SVG bar chart ranges
   const [hoveredRange, setHoveredRange] = useState<string | null>(null)
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('a', age)
+    params.set('u', unitSystem)
+    params.set('ac', activity)
+    params.set('f', formula)
+    params.set('bf', bodyFat)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('ft', feet)
+      params.set('in', inches)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, age, unitSystem, activity, formula, bodyFat, weightLbs, feet, inches, weightKg, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const a = params.get('a')
+      const u = params.get('u')
+      const ac = params.get('ac')
+      const f = params.get('f')
+      const bf = params.get('bf')
+      const w = params.get('w')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (a) setAge(a)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+      if (ac) setActivity(ac)
+      if (f === 'mifflin' || f === 'katch') setFormula(f)
+      if (bf) setBodyFat(bf)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        const ft = params.get('ft')
+        if (ft) setFeet(ft)
+        const inch = params.get('in')
+        if (inch) setInches(inch)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        const h = params.get('h')
+        if (h) setHeightCm(h)
+      }
+      if (w) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   const handleClear = () => {
     setAge('25')
@@ -167,7 +225,7 @@ export default function ProteinCalculator() {
     <FormCalculatorShell title="Protein Calculator" badge="HEALTH" subtitle="Calculate Daily Protein Requirements & Guidelines">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit System Switcher */}
           <div>
             <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
@@ -398,7 +456,7 @@ export default function ProteinCalculator() {
         </div>
 
         {/* Right Column: Visual Charts & Recommendations */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated ? (
             <div className="space-y-6">
               {/* Recommended target card */}
@@ -582,6 +640,20 @@ export default function ProteinCalculator() {
                   </div>
                 </div>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Protein Intake Calculation Results"
+                emailBody={
+                  `Protein Intake Calculation Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age: ${age}\n` +
+                  `- Weight: ${unitSystem === 'us' ? weightLbs + ' lbs' : weightKg + ' kg'}\n` +
+                  `- Recommended Daily Protein Target: ${Math.round(recommendedTarget)} g/day\n` +
+                  `- ADA range recommendation: ${Math.round(adaMin)} - ${Math.round(adaMax)} g/day\n` +
+                  `- CDC range recommendation: ${Math.round(cdcMin)} - ${Math.round(cdcMax)} g/day`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

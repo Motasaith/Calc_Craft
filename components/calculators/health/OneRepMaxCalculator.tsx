@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, ChevronDown, ChevronUp, Settings, Activity, Info, BarChart2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -23,6 +24,40 @@ export default function OneRepMaxCalculator() {
 
   // Interactive SVG chart hover state
   const [hoveredRep, setHoveredRep] = useState<number | null>(null)
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('w', weight)
+    params.set('u', weightUnit)
+    params.set('r', reps)
+    params.set('f', formula)
+    setQueryParams(params.toString())
+  }, [weight, weightUnit, reps, formula])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const w = params.get('w')
+      const u = params.get('u')
+      const r = params.get('r')
+      const f = params.get('f')
+
+      if (w) setWeight(w)
+      if (u === 'kg' || u === 'lbs') {
+        setWeightUnit(u)
+        setResultUnit(u)
+      }
+      if (r) setReps(r)
+      if (f) setFormula(f as any)
+
+      if (w && r) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   const handleClear = () => {
     setWeight('100')
@@ -180,7 +215,7 @@ export default function OneRepMaxCalculator() {
     <FormCalculatorShell title="One Rep Max Calculator" badge="FITNESS" subtitle="Estimate Maximum Strength & Load Distributions">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Weight Lifted with inline Unit Select */}
           <div>
             <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
@@ -324,7 +359,7 @@ export default function OneRepMaxCalculator() {
         </div>
 
         {/* Right Column: Visual Charts & Comparison Tables */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated && calculated1RM !== null ? (
             <div className="space-y-6">
               {/* Headline Result Card */}
@@ -515,6 +550,18 @@ export default function OneRepMaxCalculator() {
                   </div>
                 </div>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="One Rep Max Estimation Results"
+                emailBody={
+                  `One Rep Max (1RM) Results:\n` +
+                  `- Weight Lifted: ${weight} ${weightUnit}\n` +
+                  `- Repetitions: ${reps}\n` +
+                  `- Estimation Formula: ${formula.toUpperCase()}\n` +
+                  `- Calculated 1RM: ${calculated1RM ? calculated1RM.toFixed(1) : ''} ${resultUnit}`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

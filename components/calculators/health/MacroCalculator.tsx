@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { AlertTriangle, ChevronDown, ChevronUp, Settings, Activity, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -45,6 +46,63 @@ export default function MacroCalculator() {
   const [proteinPercent, setProteinPercent] = useState(30)
   const [carbsPercent, setCarbsPercent] = useState(40)
   const [fatPercent, setFatPercent] = useState(30)
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('a', age)
+    params.set('u', unitSystem)
+    params.set('ac', activity)
+    params.set('go', goal)
+    params.set('p', splitPreset)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('ft', feet)
+      params.set('in', inches)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, age, unitSystem, activity, goal, splitPreset, weightLbs, feet, inches, weightKg, heightCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const a = params.get('a')
+      const u = params.get('u')
+      const ac = params.get('ac')
+      const go = params.get('go')
+      const p = params.get('p')
+      const w = params.get('w')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (a) setAge(a)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+      if (ac) setActivity(ac)
+      if (go) setGoal(go)
+      if (p === 'balanced' || p === 'high-protein' || p === 'low-carb' || p === 'keto' || p === 'custom') setSplitPreset(p)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        const ft = params.get('ft')
+        if (ft) setFeet(ft)
+        const inch = params.get('in')
+        if (inch) setInches(inch)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        const h = params.get('h')
+        if (h) setHeightCm(h)
+      }
+      if (w) {
+        setIsCalculated(true)
+      }
+    }
+  }, [])
 
   // Presets configuration
   const presets = {
@@ -255,7 +313,7 @@ export default function MacroCalculator() {
     <FormCalculatorShell title="Macronutrient Calculator" badge="HEALTH" subtitle="Daily Calorie Target & Macro Ratios Split">
       <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit System Tabs */}
           <div className="flex gap-1 bg-neutral-200/80 p-1 rounded-xl border border-neutral-300">
             {(['us', 'metric', 'other'] as const).map((system) => (
@@ -472,7 +530,7 @@ export default function MacroCalculator() {
         </div>
 
         {/* Right Column: Visual Donut Chart & Macronutrient Presets */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px]">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-6 h-full flex flex-col justify-between min-h-[350px] print-target">
           {isCalculated && calculatedCal !== null ? (
             <div className="space-y-6">
               {/* Headline calories result */}
@@ -669,6 +727,20 @@ export default function MacroCalculator() {
               <div className="p-3 bg-neutral-50 border border-neutral-300 rounded-lg text-[9px] font-mono text-neutral-500 leading-normal">
                 Note: Macronutrient calculations are rounded to the nearest gram, using standard values: Protein (4 kcal/g), Carbohydrates (4 kcal/g), and Lipids/Fat (9 kcal/g).
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Macronutrient Calculation Results"
+                emailBody={
+                  `Macronutrient Calculation Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age: ${age}\n` +
+                  `- Daily Energy Target: ${calculatedCal ? Math.round(calculatedCal) : ''} kcal\n` +
+                  `- Protein: ${proteinGrams}g (${proteinPercent}%)\n` +
+                  `- Carbohydrates: ${carbsGrams}g (${carbsPercent}%)\n` +
+                  `- Fats: ${fatGrams}g (${fatPercent}%)`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">

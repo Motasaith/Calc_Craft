@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect, RetroActionButton } from '../shared/FormCalculatorShell'
+import ShareExportPanel from '../shared/ShareExportPanel'
 import { calculateBodyFatNavy } from '@/lib/calc-engine'
 import { Activity, Info, AlertTriangle, ChevronRight } from 'lucide-react'
 
@@ -42,6 +43,78 @@ export default function BodyFatCalculator() {
   // Calculation Trigger
   const [isCalculated, setIsCalculated] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // URL serialization states
+  const [queryParams, setQueryParams] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('g', gender)
+    params.set('a', age)
+    params.set('u', unitSystem)
+    if (unitSystem === 'us') {
+      params.set('w', weightLbs)
+      params.set('h', heightFt)
+      params.set('hi', heightIn)
+      params.set('n', neckFt)
+      params.set('ni', neckIn)
+      params.set('wa', waistFt)
+      params.set('wai', waistIn)
+      params.set('hp', hipFt)
+      params.set('hpi', hipIn)
+    } else if (unitSystem === 'metric') {
+      params.set('w', weightKg)
+      params.set('h', heightCm)
+      params.set('n', neckCm)
+      params.set('wa', waistCm)
+      params.set('hp', hipCm)
+    }
+    setQueryParams(params.toString())
+  }, [gender, age, unitSystem, weightLbs, heightFt, heightIn, neckFt, neckIn, waistFt, waistIn, hipFt, hipIn, weightKg, heightCm, neckCm, waistCm, hipCm])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const g = params.get('g')
+      const a = params.get('a')
+      const u = params.get('u')
+      const w = params.get('w')
+      const h = params.get('h')
+
+      if (g === 'male' || g === 'female') setGender(g)
+      if (a) setAge(a)
+      if (u === 'us' || u === 'metric') setUnitSystem(u)
+
+      if (u === 'us') {
+        if (w) setWeightLbs(w)
+        if (h) setHeightFt(h)
+        const hi = params.get('hi')
+        if (hi) setHeightIn(hi)
+        const n = params.get('n')
+        if (n) setNeckFt(n)
+        const ni = params.get('ni')
+        if (ni) setNeckIn(ni)
+        const wa = params.get('wa')
+        if (wa) setWaistFt(wa)
+        const wai = params.get('wai')
+        if (wai) setWaistIn(wai)
+        const hp = params.get('hp')
+        if (hp) setHipFt(hp)
+        const hpi = params.get('hpi')
+        if (hpi) setHipIn(hpi)
+      } else if (u === 'metric') {
+        if (w) setWeightKg(w)
+        if (h) setHeightCm(h)
+        const n = params.get('n')
+        if (n) setNeckCm(n)
+        const wa = params.get('wa')
+        if (wa) setWaistCm(wa)
+        const hp = params.get('hp')
+        if (hp) setHipCm(hp)
+      }
+      if (w) setIsCalculated(true)
+    }
+  }, [])
 
   const handleClear = () => {
     setAge('25')
@@ -363,7 +436,7 @@ export default function BodyFatCalculator() {
     <FormCalculatorShell title="Body Fat Calculator" subtitle="U.S. Navy Body Fat Percentage Calculator" badge="HEALTH">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-start">
         {/* Left Column: Form Inputs */}
-        <div className="space-y-4">
+        <div className="space-y-4 no-print">
           {/* Unit Tabs */}
           <div className="flex gap-1 bg-neutral-200/80 p-1 rounded-xl border border-neutral-300">
             <button
@@ -621,7 +694,7 @@ export default function BodyFatCalculator() {
         </div>
 
         {/* Right Column: Visual Gauge & Metrics Dashboard */}
-        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-5 h-full flex flex-col justify-between">
+        <div className="bg-[#eae7df]/50 border-2 border-[#dad6cd] rounded-xl p-4 sm:p-5 h-full flex flex-col justify-between print-target">
           {isCalculated && metrics.isValid ? (
             <div className="space-y-4">
               <div className="text-center">
@@ -717,6 +790,20 @@ export default function BodyFatCalculator() {
                   </tbody>
                 </table>
               </div>
+
+              <ShareExportPanel
+                queryParams={queryParams}
+                emailSubject="Body Fat Percentage Calculation Results"
+                emailBody={
+                  `Body Fat Calculator Results:\n` +
+                  `- Gender: ${gender === 'male' ? 'Male' : 'Female'}\n` +
+                  `- Age: ${age}\n` +
+                  `- Body Fat (Navy Method): ${bfNavy.toFixed(1)}%\n` +
+                  `- Body Fat (BMI Method): ${bfBmi.toFixed(1)}%\n` +
+                  `- Category: ${category}\n` +
+                  `- Lean Body Mass: ${lbmDisp.toFixed(1)} ${displayWeightUnit}`
+                }
+              />
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-12 text-center text-neutral-500">
