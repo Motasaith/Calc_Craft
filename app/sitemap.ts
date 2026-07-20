@@ -37,6 +37,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    // AI Math Solver
+    {
+      url: `${baseUrl}/solver`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     // Blog index
     {
       url: `${baseUrl}/blog`,

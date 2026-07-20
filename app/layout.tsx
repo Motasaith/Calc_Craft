@@ -4,6 +4,7 @@ import './globals.css'
 import { BRAND } from '@/lib/brand'
 import { AuthProvider } from '@/components/providers/AuthContext'
 import { UserDataProvider } from '@/components/providers/UserDataContext'
+import ChatWidget from '@/components/ChatWidget'
 
 // Self-hosted fonts via next/font/google — no render-blocking @import,
 // zero layout shift (automatic size-adjust), served from the same origin.
@@ -381,6 +382,7 @@ export default function RootLayout({
         <AuthProvider>
           <UserDataProvider>
             {children}
+            <ChatWidget />
           </UserDataProvider>
         </AuthProvider>
       </body>

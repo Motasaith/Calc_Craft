@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -203,6 +203,17 @@ export default function Navbar() {
 
         {/* Desktop Auth / CTA */}
         <div className="hidden lg:flex items-center gap-3">
+          {/* AI Math Solver — compact icon button, non-invasive (same h-12 + gap-3) */}
+          <Link
+            href="/solver"
+            aria-label="AI Math Solver"
+            title="AI Math Solver — snap a photo, get the answer"
+            className="group relative inline-flex items-center justify-center h-12 px-4 bg-gradient-to-br from-primary-500 to-primary-700 text-white text-[12px] font-extrabold font-mono uppercase tracking-wider rounded-lg border border-primary-700 shadow-[0_3px_0_#7c2d12] hover:from-primary-600 hover:to-primary-800 hover:translate-y-px hover:shadow-[0_1.5px_0_#7c2d12] active:translate-y-[2px] active:shadow-none transition-all"
+          >
+            <Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" />
+            Solver
+          </Link>
+
           {!isLoading && (
             user ? (
               <div className="relative">
@@ -386,6 +397,16 @@ export default function Navbar() {
                     </div>
                   )
                 )}
+
+                <Link
+                  href="/solver"
+                  className="group inline-flex items-center justify-center gap-2 px-5 py-3 text-[13px] font-extrabold font-mono uppercase tracking-wider text-white bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg border border-primary-700 shadow-[0_3px_0_#7c2d12] active:translate-y-[2px] active:shadow-none transition-all"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="AI Math Solver — snap a photo, get the answer"
+                >
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                  AI MATH SOLVER
+                </Link>
 
                 <Link
                   href="/calculators"

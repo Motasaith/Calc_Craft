@@ -35,3 +35,6 @@ yarn-error.log*
 .DS_Store
 
 /scripts
+# Keep the chatbot/search build-time data aggregator committed so it
+# runs on Cloudflare Pages builds (generates public/site-index.json).
+!/scripts/build-site-index.ts

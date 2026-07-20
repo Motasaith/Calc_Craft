@@ -2,10 +2,11 @@
 
 import { useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import gsap from 'gsap'
 import Features from './Features'
 import CalculatorStack from './CalculatorStack'
+import HeroSearch from './HeroSearch'
 
 const MATH_CARDS = [
   { formula: 'E = mc²', top: '15%', left: '10%', delay: 0 },
@@ -135,14 +136,21 @@ export default function Hero() {
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
-          {/* Builder Feature Highlight Badge */}
-          <div ref={badgeRef} className="flex justify-center mb-8">
+          {/* Feature Highlight Badges */}
+          <div ref={badgeRef} className="flex flex-wrap justify-center gap-2 mb-8">
             <span className="inline-flex items-center gap-3 px-1.5 py-1.5 pr-5 rounded-full bg-white/60 backdrop-blur-md border border-gray-200/80 text-gray-700 text-[13px] font-medium shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
               <span className="px-3 py-1 rounded-full bg-gray-900 border border-gray-900 text-[10px] font-extrabold uppercase tracking-widest shadow-sm text-white">
                 New Feature
               </span>
               <span className="text-gray-600">Build your own custom calculators</span>
             </span>
+            <Link
+              href="/solver"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 text-primary-700 text-[12px] font-bold hover:from-primary-100 hover:to-blue-100 transition-colors shadow-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              AI Math Solver — snap a photo
+            </Link>
           </div>
 
           {/* Huge Modern Heading */}
@@ -188,6 +196,9 @@ export default function Hero() {
               Try Classic Casio
             </Link>
           </div>
+
+          {/* Search bar (non-invasive: sits below CTAs, full-width, lazy-loads index) */}
+          <HeroSearch />
         </div>
       </section>
 
