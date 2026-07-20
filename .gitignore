@@ -34,7 +34,10 @@ yarn-error.log*
 *.sw?
 .DS_Store
 
-/scripts
-# Keep the chatbot/search build-time data aggregator committed so it
-# runs on Cloudflare Pages builds (generates public/site-index.json).
+# Ignore everything inside /scripts except the chatbot/search data aggregator
+# (which must be committed so it runs on Cloudflare Pages builds and
+# generates public/site-index.json). Note: git cannot re-include a file
+# whose parent DIR is excluded, so we exclude /scripts/* (contents) not
+# /scripts (the dir itself).
+/scripts/*
 !/scripts/build-site-index.ts
