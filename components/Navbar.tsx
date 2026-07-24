@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Sparkles } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Camera } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -39,10 +39,10 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+      className="fixed top-3 left-0 right-0 z-50 flex justify-center px-3 sm:px-5"
     >
       <div
-        className={`flex items-center justify-between h-20 px-4 pl-5 pr-4 rounded-2xl transition-all duration-300 max-w-7xl w-full hover:border-dark-800/30 shadow-[0_6px_0_rgba(26,32,25,0.9),0_8px_16px_rgba(26,32,25,0.15)] ${
+        className={`flex items-center h-[72px] px-3 sm:px-4 rounded-[20px] transition-all duration-300 max-w-[1440px] w-full hover:border-dark-800/30 shadow-[0_5px_0_rgba(26,32,25,0.9),0_12px_30px_rgba(26,32,25,0.12)] ${
           scrolled
             ? 'bg-[#eae7df]/95 backdrop-blur-xl border border-dark-800/20'
             : 'bg-[#eae7df]/85 backdrop-blur-md border border-dark-800/15'
@@ -51,15 +51,15 @@ export default function Navbar() {
         {/* Logo — matches retro calculator shell style */}
         <Link
           href="/"
-          className="flex items-center gap-3.5 group mr-2"
+          className="flex shrink-0 items-center gap-3 group"
           aria-label={`${BRAND.name} Home`}
         >
-          <Image src="/logo.webp" alt="" width={58} height={58} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" priority />
-          <div className="flex flex-col leading-none">
-            <span className="text-[13px] font-extrabold text-dark-800 tracking-wider uppercase font-mono">
+          <Image src="/logo.webp" alt="" width={52} height={52} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-sm" priority />
+          <div className="hidden sm:flex flex-col leading-none">
+            <span className="text-[12px] font-extrabold text-dark-800 tracking-[0.08em] uppercase font-mono whitespace-nowrap">
               Home<span className="text-primary-700"> of </span>Calculators
             </span>
-            <span className="text-[9px] font-mono text-dark-500 uppercase tracking-[0.18em] mt-1">
+            <span className="hidden 2xl:block text-[8px] font-mono text-dark-500 uppercase tracking-[0.16em] mt-1">
               {BRAND.tagline}
             </span>
           </div>
@@ -67,7 +67,7 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav
-          className="hidden lg:flex items-center gap-3 relative py-1"
+          className="hidden xl:flex flex-1 items-center justify-center gap-0.5 relative py-1 px-3"
           onMouseLeave={() => {
             setHoveredIdx(null)
           }}
@@ -171,7 +171,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href={link.href}
-                className="block relative z-10 px-3.5 py-2 text-[13px] font-bold font-mono uppercase tracking-wider text-dark-700 hover:text-dark-900 transition-colors rounded-lg"
+                className="block relative z-10 px-2.5 2xl:px-3 py-2 text-[12px] font-bold font-mono uppercase tracking-[0.06em] text-dark-700 hover:text-dark-900 transition-colors rounded-lg whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -180,7 +180,7 @@ export default function Navbar() {
             return (
               <div
                 key={link.label}
-                className="relative flex items-center py-1 cursor-pointer"
+                className={`relative items-center py-1 cursor-pointer ${idx > 2 ? 'hidden 2xl:flex' : 'flex'}`}
                 onMouseEnter={() => setHoveredIdx(idx)}
               >
                 <AnimatePresence>
@@ -202,27 +202,16 @@ export default function Navbar() {
         </nav>
 
         {/* Desktop Auth / CTA */}
-        <div className="hidden lg:flex items-center gap-3">
-          {/* AI Math Solver — compact icon button, non-invasive (same h-12 + gap-3) */}
-          <Link
-            href="/solver"
-            aria-label="AI Math Solver"
-            title="AI Math Solver — snap a photo, get the answer"
-            className="group relative inline-flex items-center justify-center h-12 px-4 bg-gradient-to-br from-primary-500 to-primary-700 text-white text-[12px] font-extrabold font-mono uppercase tracking-wider rounded-lg border border-primary-700 shadow-[0_3px_0_#7c2d12] hover:from-primary-600 hover:to-primary-800 hover:translate-y-px hover:shadow-[0_1.5px_0_#7c2d12] active:translate-y-[2px] active:shadow-none transition-all"
-          >
-            <Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" />
-            Solver
-          </Link>
-
+        <div className="hidden xl:flex shrink-0 items-center gap-2">
           {!isLoading && (
             user ? (
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 bg-[#dad6cd]/50 hover:bg-[#dad6cd] border border-dark-800/10 rounded-xl text-xs font-mono font-bold text-dark-800 transition-colors shadow-sm"
+                  className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl text-xs font-mono font-bold text-dark-800 transition-colors shadow-sm"
                 >
                   <UserIcon className="w-4 h-4 text-primary-700" />
-                  <span className="max-w-[100px] truncate">{user.name}</span>
+                  <span className="hidden 2xl:block max-w-[88px] truncate">{user.name}</span>
                   <ChevronDown className="w-3 h-3 text-dark-500" />
                 </button>
 
@@ -269,7 +258,7 @@ export default function Navbar() {
                   setAuthModalTab('login')
                   setAuthModalOpen(true)
                 }}
-                className="px-4 h-12 flex items-center justify-center border border-dark-800/20 bg-[#eae7df]/20 hover:bg-[#dad6cd]/50 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px"
+                className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px"
               >
                 Sign In
               </button>
@@ -277,18 +266,28 @@ export default function Navbar() {
           )}
 
           <Link
+            href="/solver"
+            aria-label="AI Math Solver"
+            title="AI Math Solver — snap a photo, get the answer"
+            className="group relative inline-flex items-center justify-center h-11 px-3.5 bg-primary-700 text-white text-[11px] font-extrabold font-mono uppercase tracking-[0.08em] rounded-xl border border-primary-800 shadow-[0_3px_0_#075985] hover:bg-primary-800 hover:translate-y-px hover:shadow-[0_1.5px_0_#075985] active:translate-y-[2px] active:shadow-none transition-all whitespace-nowrap"
+          >
+            <Camera className="w-4 h-4 mr-1.5" aria-hidden="true" />
+            AI Solver
+          </Link>
+
+          <Link
             href="/calculators"
-            className="group relative inline-flex items-center justify-center gap-2 h-12 px-5 bg-[#dfaa44] text-dark-900 text-[13px] font-extrabold font-mono uppercase tracking-wider rounded-lg border border-[#be8b32] shadow-[0_3px_0_#be8b32] hover:bg-[#e5b44e] hover:translate-y-px hover:shadow-[0_1.5px_0_#be8b32] active:translate-y-[2px] active:shadow-none transition-all"
+            className="group relative inline-flex items-center justify-center gap-2 h-11 px-4 bg-dark-900 text-white text-[11px] font-extrabold font-mono uppercase tracking-[0.08em] rounded-xl border border-black shadow-[0_3px_0_#dfaa44] hover:bg-dark-800 hover:translate-y-px hover:shadow-[0_1.5px_0_#dfaa44] active:translate-y-[2px] active:shadow-none transition-all whitespace-nowrap"
             aria-label="Explore all free online calculators"
           >
-            <span>= EXPLORE</span>
+            <span>Explore</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="lg:hidden p-2 rounded-lg hover:bg-[#dad6cd] transition-colors"
+          className="xl:hidden ml-auto p-2.5 rounded-xl border border-dark-800/10 bg-white/30 hover:bg-[#dad6cd] transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -304,7 +303,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="lg:hidden fixed top-24 left-4 right-4 bg-[#eae7df] rounded-2xl border border-dark-800/20 shadow-xl overflow-hidden z-40 max-h-[75vh] overflow-y-auto"
+            className="xl:hidden fixed top-[92px] left-3 right-3 sm:left-5 sm:right-5 bg-[#eae7df] rounded-2xl border border-dark-800/20 shadow-xl overflow-hidden z-40 max-h-[75vh] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-2">
               {navLinks.map((link) => {
@@ -404,7 +403,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   aria-label="AI Math Solver — snap a photo, get the answer"
                 >
-                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Camera className="w-3.5 h-3.5" aria-hidden="true" />
                   AI MATH SOLVER
                 </Link>
 

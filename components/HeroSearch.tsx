@@ -177,7 +177,7 @@ export default function HeroSearch() {
   )
 
   return (
-    <div ref={wrapRef} className="relative w-full max-w-2xl mx-auto mt-10">
+    <div ref={wrapRef} className="relative w-full">
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
         <input
@@ -194,13 +194,13 @@ export default function HeroSearch() {
             loadIndex()
           }}
           onKeyDown={onKeyDown}
-          placeholder="Search 500+ calculators and articles…"
+          placeholder="Search BMI, mortgage, percentage..."
           aria-label="Search calculators and blog articles"
           aria-expanded={open}
           aria-controls="hero-search-results"
           aria-autocomplete="list"
           role="combobox"
-          className="w-full pl-12 pr-12 py-4 rounded-full bg-white/80 backdrop-blur-md border border-gray-200 text-gray-800 placeholder-gray-400 shadow-[0_4px_20px_rgba(0,0,0,0.05)] focus:outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-100 transition-all"
+          className="w-full rounded-2xl border border-dark-800/15 bg-white py-4 pl-12 pr-12 text-gray-800 placeholder-gray-400 shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all focus:border-primary-400 focus:outline-none focus:ring-4 focus:ring-primary-100"
         />
         {query && (
           <button
@@ -257,7 +257,7 @@ export default function HeroSearch() {
 
       {/* Empty-state quick category chips */}
       {!query && topCategories.length > 0 && (
-        <div className="mt-3 flex flex-wrap justify-center gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {topCategories.map((c) => (
             <a
               key={c.slug}

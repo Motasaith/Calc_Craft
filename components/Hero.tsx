@@ -1,226 +1,104 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Camera, Check } from 'lucide-react'
 import gsap from 'gsap'
 import Features from './Features'
 import CalculatorStack from './CalculatorStack'
 import HeroSearch from './HeroSearch'
 
-const MATH_CARDS = [
-  { formula: 'E = mc²', top: '15%', left: '10%', delay: 0 },
-  { formula: '∫ e^x dx = e^x', bottom: '20%', right: '10%', delay: 1 },
-  { formula: 'a² + b² = c²', top: '25%', right: '15%', delay: 2 },
-  { formula: 'x = (-b±√Δ)/2a', bottom: '25%', left: '12%', delay: 1.5 },
-]
-
-function FloatingMathCards() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!containerRef.current) return
-    const cards = containerRef.current.children
-    
-    gsap.context(() => {
-      Array.from(cards).forEach((card, i) => {
-        gsap.to(card, {
-          y: '+=20',
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-          delay: MATH_CARDS[i].delay,
-        })
-      })
-    }, containerRef)
-  }, [])
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none overflow-hidden hidden md:block" aria-hidden="true">
-      {MATH_CARDS.map((card, i) => (
-        <div
-          key={i}
-          className="absolute bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl px-5 py-3 text-primary-800 font-mono font-bold text-lg select-none"
-          style={{
-            top: card.top,
-            bottom: card.bottom,
-            left: card.left,
-            right: card.right,
-          }}
-        >
-          {card.formula}
-        </div>
-      ))}
-    </div>
-  )
-}
+const trustPoints = ['500+ free tools', 'No sign-up required', 'Private by default']
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
-  const badgeRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const subRef = useRef<HTMLParagraphElement>(null)
-  const ctaRef = useRef<HTMLDivElement>(null)
+  const copyRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-
-      tl.fromTo(
-        badgeRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8 }
-      )
-        .fromTo(
-          titleRef.current,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 1 },
-          '-=0.5'
-        )
-        .fromTo(
-          subRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.6'
-        )
-        .fromTo(
-          ctaRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.5'
-        )
+      gsap.fromTo(copyRef.current, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+      gsap.fromTo(panelRef.current, { opacity: 0, y: 34, rotate: 1 }, { opacity: 1, y: 0, rotate: 0, duration: 0.9, delay: 0.12, ease: 'power3.out' })
     }, sectionRef)
-
     return () => ctx.revert()
   }, [])
 
   return (
     <>
-      <section
-        ref={sectionRef}
-        className="relative pt-24 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-24 lg:pt-48 lg:pb-32 overflow-hidden flex flex-col justify-center min-h-[70vh] bg-white"
-        aria-label="Hero section - Free online calculators"
-      >
-        {/* ===== Sleek Modern Light Background ===== */}
-        
-        {/* Soft pastel glowing Orbs */}
-        <div
-          className="absolute inset-0 -z-20 pointer-events-none overflow-hidden"
-          aria-hidden="true"
-        >
-          {/* Top Left Blue Glow */}
-          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full opacity-40 mix-blend-multiply filter blur-[100px] bg-sky-200 animate-[spin_40s_linear_infinite]" />
-          {/* Bottom Right Purple Glow */}
-          <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full opacity-30 mix-blend-multiply filter blur-[120px] bg-indigo-200 animate-[spin_50s_linear_infinite_reverse]" />
-          {/* Center Subtle Highlight */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full opacity-20 mix-blend-multiply filter blur-[140px] bg-blue-100" />
+      <section ref={sectionRef} className="relative min-h-[760px] overflow-hidden bg-[#f7f5ef] pb-20 pt-32 sm:pt-36 lg:flex lg:min-h-[820px] lg:items-center lg:pb-24 lg:pt-32" aria-label="Hero section - Free online calculators">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute -right-32 top-16 h-[520px] w-[520px] rounded-full bg-sky-200/55 blur-[120px]" />
+          <div className="absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-amber-100/70 blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.24]" style={{ backgroundImage: 'radial-gradient(rgba(15,15,18,.22) 0.8px, transparent 0.8px)', backgroundSize: '22px 22px', maskImage: 'linear-gradient(to bottom, black, transparent 78%)' }} />
         </div>
 
-        {/* Floating Math Cards */}
-        <FloatingMathCards />
+        <div className="relative z-10 mx-auto grid w-full max-w-[1320px] items-center gap-14 px-5 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-16 xl:gap-24">
+          <div ref={copyRef} className="max-w-2xl">
+            <h1 className="text-balance text-[2.8rem] font-extrabold leading-[0.98] tracking-[-0.055em] text-dark-900 sm:text-6xl lg:text-[4.35rem]">
+              The right calculator,
+              <span className="mt-2 block text-primary-700">right when you need it.</span>
+            </h1>
+            <p className="mt-7 max-w-xl text-pretty text-lg leading-8 text-dark-500 sm:text-xl">
+              Search hundreds of accurate calculators, solve a math problem from a photo, or build a tool of your own.
+            </p>
 
-        {/* Crisp grid pattern for a techy feel */}
-        <div
-          className="absolute inset-0 -z-10 pointer-events-none opacity-[0.4]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-            maskImage:
-              'radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 80%)',
-            WebkitMaskImage:
-              'radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 80%)',
-          }}
-          aria-hidden="true"
-        />
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href="/calculators" className="group inline-flex h-14 items-center justify-center gap-3 rounded-2xl bg-dark-900 px-6 text-sm font-extrabold text-white shadow-[0_5px_0_#dfaa44] transition-all hover:-translate-y-0.5 hover:bg-dark-800">
+                Explore calculators
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link href="/solver" className="inline-flex h-14 items-center justify-center gap-3 rounded-2xl border border-primary-700/20 bg-white/70 px-6 text-sm font-extrabold text-primary-800 shadow-sm backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white">
+                <Camera className="h-4 w-4" />
+                Snap & solve with AI
+              </Link>
+            </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
-          {/* Feature Highlight Badges */}
-          <div ref={badgeRef} className="flex flex-wrap justify-center gap-2 mb-8">
-            <span className="inline-flex items-center gap-3 px-1.5 py-1.5 pr-5 rounded-full bg-white/60 backdrop-blur-md border border-gray-200/80 text-gray-700 text-[13px] font-medium shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-              <span className="px-3 py-1 rounded-full bg-gray-900 border border-gray-900 text-[10px] font-extrabold uppercase tracking-widest shadow-sm text-white">
-                New Feature
-              </span>
-              <span className="text-gray-600">Build your own custom calculators</span>
-            </span>
-            <Link
-              href="/solver"
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 text-primary-700 text-[12px] font-bold hover:from-primary-100 hover:to-blue-100 transition-colors shadow-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              AI Math Solver — snap a photo
-            </Link>
+            <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
+              {trustPoints.map((point) => (
+                <span key={point} className="inline-flex items-center gap-1.5 text-xs font-semibold text-dark-500">
+                  <Check className="h-3.5 w-3.5 text-primary-700" />
+                  {point}
+                </span>
+              ))}
+            </div>
           </div>
 
-          {/* Huge Modern Heading */}
-          <h1
-            ref={titleRef}
-            className="text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-extrabold tracking-tight text-gray-900 mb-6 sm:mb-8 leading-[1.1]"
-            itemScope
-            itemType="https://schema.org/WebPageElement"
-          >
-            Calculate Anything. <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-blue-600 to-indigo-600">
-              Instantly & Beautifully.
-            </span>
-          </h1>
+          <div ref={panelRef} className="relative mx-auto w-full max-w-[590px]">
+            <div className="absolute -inset-4 rotate-2 rounded-[34px] border border-dark-800/10 bg-[#dfaa44]/35" aria-hidden="true" />
+            <div className="relative rounded-[30px] border border-dark-800/15 bg-white/90 p-5 shadow-[0_24px_70px_rgba(26,26,31,0.14)] backdrop-blur-xl sm:p-7">
+              <div className="mb-5 flex items-center justify-between border-b border-dark-800/10 pb-5">
+                <div>
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary-700">Quick start</p>
+                  <h2 className="mt-1 text-xl font-extrabold tracking-tight text-dark-900">What do you need to calculate?</h2>
+                </div>
+              </div>
 
-          {/* Subtitle */}
-          <p
-            ref={subRef}
-            className="text-lg sm:text-xl md:text-2xl text-gray-600 leading-relaxed mb-10 max-w-3xl mx-auto font-light"
-            itemProp="description"
-          >
-            A massive library of ready-made calculators, a visual builder to design your own, and powerful widgets for your workflow. Fast, private, and 100% free.
-          </p>
+              <HeroSearch />
 
-          {/* CTAs */}
-          <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
-            <Link
-              href="/calculators"
-              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-900 text-white font-bold rounded-full hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 text-base sm:text-lg overflow-hidden"
-              aria-label="Explore all free online calculators"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                Explore Library
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-              </span>
-            </Link>
-            
-            <Link
-              href="/calculators/casio"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border border-gray-200 text-gray-800 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all text-base sm:text-lg hover:-translate-y-1 shadow-sm"
-              aria-label="Try the classic Casio calculator"
-            >
-              Try Classic Casio
-            </Link>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <Link href="/builder" className="group rounded-2xl border border-dark-800/10 bg-[#f7f5ef] p-4 transition-all hover:border-primary-300 hover:bg-primary-50">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-dark-400">Create your own</span>
+                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-800">Visual Builder<ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" /></span>
+                </Link>
+                <Link href="/calculators/casio" className="group rounded-2xl border border-dark-800/10 bg-[#f7f5ef] p-4 transition-all hover:border-primary-300 hover:bg-primary-50">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-dark-400">Open instantly</span>
+                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-800">Classic Calculator<ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" /></span>
+                </Link>
+              </div>
+              <div className="mt-5 rounded-2xl bg-dark-900 px-4 py-3 text-center font-mono text-sm text-white"><span className="text-primary-300">sin²θ + cos²θ</span> = 1</div>
+            </div>
           </div>
-
-          {/* Search bar (non-invasive: sits below CTAs, full-width, lazy-loads index) */}
-          <HeroSearch />
         </div>
       </section>
 
-      {/* Moving Features Ticker Band */}
-      <div className="w-full bg-white border-y border-gray-100">
-        <Features />
-      </div>
-
-      {/* Separate Section for interactive stacked calculators */}
-      <section className="relative py-16 sm:py-24 bg-gray-50" id="calculators-showcase">
-        <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
+      <div className="w-full border-y border-gray-100 bg-white"><Features /></div>
+      <section className="relative bg-gray-50 py-16 sm:py-24" id="calculators-showcase">
+        <div className="relative z-10 flex w-full flex-col items-center justify-center px-4 sm:px-6">
           <CalculatorStack />
-
-          {/* View All Calculators Link Button */}
-          <div className="mt-12 sm:mt-16 z-20">
-            <Link
-              href="/calculators"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white text-sm sm:text-base font-bold rounded-full hover:bg-gray-800 hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all shadow-md"
-              aria-label="View all available calculators"
-            >
+          <div className="z-20 mt-12 sm:mt-16">
+            <Link href="/calculators" className="group inline-flex items-center gap-2 rounded-full bg-gray-900 px-8 py-4 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-1 hover:bg-gray-800 hover:shadow-xl active:scale-95 sm:text-base">
               View All Calculators
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
@@ -228,4 +106,3 @@ export default function Hero() {
     </>
   )
 }
-
