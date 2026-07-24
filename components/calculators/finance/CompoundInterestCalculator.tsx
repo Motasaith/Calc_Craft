@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
 import { calculateCompoundInterest, formatCurrency } from '@/lib/calc-engine'
 
-export default function CompoundInterestCalculator() {
+export default function CompoundInterestCalculator({ compact = false }: { compact?: boolean }) {
   const [principal, setPrincipal] = useState('10000')
   const [rate, setRate] = useState('5')
   const [time, setTime] = useState('10')
@@ -73,8 +73,8 @@ export default function CompoundInterestCalculator() {
 
   return (
     <FormCalculatorShell title="Compound Interest Calculator" badge="FINANCE">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-        <div className="space-y-3">
+      <div className={`grid grid-cols-1 items-center ${compact ? 'gap-2' : 'gap-4 md:grid-cols-2'}`}>
+        <div className={compact ? 'space-y-2' : 'space-y-3'}>
           <RetroInput label="Principal Amount" value={principal} onChange={setPrincipal} placeholder="10000" id="ci-p" unit="$" />
           <div className="grid grid-cols-2 gap-3">
             <RetroInput label="Annual Rate" value={rate} onChange={setRate} placeholder="5" id="ci-r" unit="%" />
@@ -82,15 +82,15 @@ export default function CompoundInterestCalculator() {
           </div>
           <RetroSelect label="Compounding" value={compound} onChange={setCompound} id="ci-c"
             options={[{ value: '1', label: 'Annually' }, { value: '2', label: 'Semi-Annually' }, { value: '4', label: 'Quarterly' }, { value: '12', label: 'Monthly' }, { value: '365', label: 'Daily' }]} />
-          <div className="pt-2">
+          <div className={compact ? 'pt-0' : 'pt-2'}>
             <RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton>
           </div>
         </div>
 
         {/* Dynamic Area growth projection chart */}
-        <div className="flex flex-col justify-center items-center bg-[#cbd8ca]/30 border border-neutral-300 rounded-xl p-2 h-[210px] w-full">
+        <div className={`flex w-full flex-col items-center justify-center rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-2 ${compact ? 'h-[125px]' : 'h-[210px]'}`}>
           <span className="text-[9px] font-bold text-neutral-600 font-mono mb-1 uppercase tracking-wider">Growth Projection</span>
-          <svg width="100%" height="150" viewBox={`0 0 ${width} ${height}`} className="drop-shadow-sm select-none">
+          <svg width="100%" height={compact ? 90 : 150} viewBox={`0 0 ${width} ${height}`} className="drop-shadow-sm select-none">
             <defs>
               <pattern id="chartGrid" width="20" height="20" patternUnits="userSpaceOnUse">
                 <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />

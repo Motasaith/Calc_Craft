@@ -660,7 +660,7 @@ export default function CalculatorStack() {
     { name: 'Scientific Calculator', render: <ScientificCalculator /> },
     { name: 'BMI Calculator', render: <BMICalculator /> },
     { name: 'Loan EMI Calculator', render: <LoanCalculator /> },
-    { name: 'Compound Interest', render: <CompoundInterestCalculator /> },
+    { name: 'Compound Interest', render: <CompoundInterestCalculator compact /> },
   ]
 
   // Math configurations for fanning out cards (Desktop)
