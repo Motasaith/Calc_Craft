@@ -28,6 +28,17 @@
 }
 
 @layer utilities {
+  /* Keep compact calculator fields readable. Native number steppers consume
+     most of the editable area when a unit suffix is also present. */
+  .retro-number-input::-webkit-inner-spin-button,
+  .retro-number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .retro-number-input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
   .text-balance {
     text-wrap: balance;
   }

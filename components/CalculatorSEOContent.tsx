@@ -21,6 +21,219 @@ interface SEOCopy {
   faq: { q: string; a: string }[]
 }
 
+const RESEARCH_HEALTH_GUIDES = {
+  calorie: {
+    title: 'Calorie Needs, BMR, and TDEE Explained',
+    intro: 'Daily calorie needs are an estimate of the energy required to support basic physiology, movement, digestion, and exercise. This calculator separates basal metabolic rate (BMR) from total daily energy expenditure (TDEE), then shows practical maintenance and gradual weight-change targets.',
+    formula: 'TDEE = BMR × activity factor',
+    methods: [
+      ['Mifflin–St Jeor', 'Uses age, sex, weight, and height. It is a widely used starting point for adults when body-fat percentage is unknown.'],
+      ['Revised Harris–Benedict', 'An updated version of the historic Harris–Benedict equations using age, sex, height, and weight.'],
+      ['Katch–McArdle', 'Uses estimated lean body mass: BMR = 370 + 21.6 × lean mass in kg. It requires a reasonably accurate body-fat estimate.'],
+    ],
+    interpretation: 'Maintenance calories are not a fixed biological constant. Track average body weight and intake for two to four weeks, then adjust the estimate if your real trend differs. A 500-calorie daily deficit is a conventional planning estimate, but actual weight change varies with body size, water balance, adherence, and metabolic adaptation.',
+    limits: 'Pregnancy, breastfeeding, adolescence, illness, eating-disorder history, very high training volume, and certain medications can make general equations inappropriate. Energy intake should not routinely fall below nutritional needs without supervision.',
+    faqs: [
+      ['Are calories and kilocalories the same?', 'On food labels, one capital-C Calorie equals one kilocalorie (kcal), or 4.184 kilojoules.'],
+      ['Which BMR formula should I choose?', 'Use Mifflin–St Jeor as a general default. Katch–McArdle can be useful when body-fat percentage is measured reliably.'],
+      ['Why is my weight not changing at the predicted rate?', 'Food logging error, water changes, activity changes, and individual metabolism all affect the observed result. Use multi-week averages rather than a single weigh-in.'],
+      ['Does exercise-machine calorie burn improve this estimate?', 'Machine and wearable estimates can be imprecise. Avoid automatically eating back every reported exercise calorie.'],
+    ],
+    references: ['Mifflin MD et al. American Journal of Clinical Nutrition. 1990;51:241–247.', 'Roza AM, Shizgal HM. American Journal of Clinical Nutrition. 1984;40:168–182.', 'Academy of Nutrition and Dietetics. Evidence Analysis Library: Energy Needs.'],
+  },
+  'ideal-weight': {
+    title: 'Ideal Body Weight Formulas and Healthy Ranges',
+    intro: 'Ideal body weight (IBW) formulas were created largely for clinical dosing and population estimates—not to define how a person should look. Comparing several formulas is more informative than treating one number as a universal target.',
+    formula: 'Healthy BMI weight range = BMI boundary × height²',
+    methods: [
+      ['Devine', 'Originally proposed for medication dosing; it starts at a base weight at five feet and adds weight for each additional inch.'],
+      ['Robinson and Miller', 'Later formula variants that use different base weights and increments, producing slightly different estimates.'],
+      ['Hamwi', 'A commonly cited clinical rule of thumb based on sex and height above five feet.'],
+    ],
+    interpretation: 'The calculator reports four estimates side by side and a broader BMI-based range. Differences between formulas are expected. Body composition, frame size, ethnicity, disability, age, and athletic development are not fully represented.',
+    limits: 'These adult formulas should not be used as growth targets for children or teenagers. They also cannot distinguish muscle from fat and may be misleading for strength athletes, pregnant people, or people with fluid retention.',
+    faqs: [
+      ['Is there one medically perfect ideal weight?', 'No. Health cannot be reduced to a single weight, and all IBW formulas are approximations.'],
+      ['Why do the four formulas disagree?', 'They were developed from different assumptions and use different base weights and per-inch adjustments.'],
+      ['Does age change ideal body weight?', 'Most classic IBW equations do not include age. Age can still influence muscle mass, bone density, and appropriate health goals.'],
+      ['Should I aim for the middle of the BMI range?', 'Not necessarily. Discuss personal targets with a qualified clinician who can consider body composition and medical history.'],
+    ],
+    references: ['Devine BJ. Drug Intelligence & Clinical Pharmacy. 1974;8:650–655.', 'Robinson JD et al. Journal of Chronic Diseases. 1983;36:271–280.', 'World Health Organization. Physical Status: The Use and Interpretation of Anthropometry.'],
+  },
+  'heart-rate': {
+    title: 'Target Heart Rate and Training Zones',
+    intro: 'Target heart-rate zones translate exercise intensity into beats per minute. They can help structure easy, moderate, threshold, and high-intensity sessions, but estimated maximum heart rate varies substantially between individuals.',
+    formula: 'Karvonen target = resting HR + intensity × (maximum HR − resting HR)',
+    methods: [
+      ['Haskell–Fox', 'The familiar 220 − age equation. It is simple but has wide individual error.'],
+      ['Tanaka', 'Maximum HR = 208 − 0.7 × age, derived from a broad meta-analysis of healthy adults.'],
+      ['Nes', 'Maximum HR = 211 − 0.64 × age, another population-based estimate.'],
+    ],
+    interpretation: 'Karvonen zones use heart-rate reserve and therefore account for resting heart rate. Percentage-of-maximum zones are simpler. Zone 2 supports easier aerobic work, while zones 4 and 5 should generally be used in shorter doses with adequate recovery.',
+    limits: 'Heat, dehydration, altitude, caffeine, stress, illness, and medications can shift heart rate. Beta blockers and some rhythm conditions make standard zone equations unreliable. Stop exercise and seek care for chest pain, faintness, or unusual shortness of breath.',
+    faqs: [
+      ['How should I measure resting heart rate?', 'Measure it after several quiet minutes, ideally after waking, and use an average across several days.'],
+      ['Is a tested maximum better than an age formula?', 'A properly supervised maximal test is more individualized, but it may not be appropriate for everyone.'],
+      ['Why does my wearable show a different zone?', 'Devices may use different maximum-HR formulas, resting values, and zone boundaries.'],
+      ['Do I need to train in all five zones?', 'No. Training distribution depends on health, experience, and goals; most endurance training is usually performed at easier intensities.'],
+    ],
+    references: ['Tanaka H, Monahan KD, Seals DR. Journal of the American College of Cardiology. 2001;37:153–156.', 'Nes BM et al. Scandinavian Journal of Medicine & Science in Sports. 2013;23:697–704.', 'American College of Sports Medicine. Guidelines for Exercise Testing and Prescription.'],
+  },
+  ovulation: {
+    title: 'Ovulation, Fertile Windows, and Cycle Timing',
+    intro: 'An ovulation calculator estimates when ovulation may occur from the first day of the last menstrual period, average cycle length, and luteal-phase length. It is a planning tool for people with reasonably regular cycles, not a test that confirms ovulation.',
+    formula: 'Estimated ovulation day = cycle length − luteal phase length',
+    methods: [
+      ['Calendar method', 'Projects the next period from average cycle length, then counts backward by the estimated luteal phase.'],
+      ['Fertile window', 'Includes the five days before estimated ovulation and approximately one day afterward because sperm and egg survival overlap across this interval.'],
+      ['Other indicators', 'LH urine tests, cervical mucus observations, and basal body temperature can add information that a calendar estimate cannot provide.'],
+    ],
+    interpretation: 'The highlighted fertile window represents higher-probability days, not guaranteed fertile or infertile dates. Ovulation can shift between cycles even when bleeding appears regular. The implantation interval is an approximate biological range rather than a date that can be observed from calendar data.',
+    limits: 'Cycles may change with postpartum recovery, breastfeeding, perimenopause, polycystic ovary syndrome, illness, travel, stress, and hormonal medication. Calendar prediction must not be used as the sole method of contraception.',
+    faqs: [
+      ['Can ovulation happen on a different day?', 'Yes. The common 14-day estimate describes an average luteal phase, and individual timing can vary.'],
+      ['How long is the fertile window?', 'A practical estimate is the five days before ovulation through about one day afterward.'],
+      ['Does a regular period prove ovulation?', 'No. Regular bleeding makes calendar prediction more useful but does not directly confirm egg release.'],
+      ['When should irregular cycles be assessed?', 'Seek clinical advice for persistently irregular or absent periods, significant pain, unusual bleeding, or difficulty conceiving.'],
+    ],
+    references: ['American College of Obstetricians and Gynecologists. Fertility Awareness-Based Methods of Family Planning.', 'Wilcox AJ et al. New England Journal of Medicine. 1995;333:1517–1521.', 'National Institute for Health and Care Excellence. Fertility Problems: Assessment and Treatment.'],
+  },
+  period: {
+    title: 'Menstrual Cycle and Period Prediction',
+    intro: 'Period prediction uses the interval from the first day of one period to the first day of the next. Averaging several recent cycles can provide a useful planning estimate, but future dates remain forecasts because cycle length naturally varies.',
+    formula: 'Next period start = last period start + average cycle length',
+    methods: [
+      ['Cycle length', 'Count from day one of bleeding through the day before the next period begins.'],
+      ['Bleeding length', 'Describes the expected number of bleeding days and does not change the projected start of the following cycle.'],
+      ['Ovulation estimate', 'The visual forecast places ovulation roughly 14 days before the next predicted period and marks the preceding fertile window.'],
+    ],
+    interpretation: 'The three-cycle display is best used for scheduling and pattern awareness. Predictions become less certain farther into the future. Update the calculator whenever an actual period begins so later forecasts reflect the newest information.',
+    limits: 'This tool does not diagnose pregnancy, hormonal conditions, or abnormal bleeding. Hormonal contraception, postpartum changes, perimenopause, illness, and stress can make historical averages unreliable.',
+    faqs: [
+      ['What counts as day one?', 'Day one is the first day of menstrual bleeding, rather than light spotting that occurs beforehand.'],
+      ['What is considered a regular cycle?', 'Consistency matters more than matching 28 days; cycles that vary substantially are harder to predict with a calendar.'],
+      ['Why did my period arrive earlier or later?', 'Ovulation timing can shift with stress, illness, travel, sleep changes, nutrition, and normal biological variation.'],
+      ['When should I seek medical advice?', 'Contact a clinician for very heavy bleeding, severe pain, bleeding between periods, possible pregnancy, or persistent major cycle changes.'],
+    ],
+    references: ['American College of Obstetricians and Gynecologists. Your Menstrual Cycle.', 'FIGO Menstrual Disorders Committee. International terminology for normal and abnormal uterine bleeding.', 'National Health Service. Periods and Fertility in the Menstrual Cycle.'],
+  },
+  pregnancy: {
+    title: 'Pregnancy Dating, Due Dates, and Gestational Age',
+    intro: 'Pregnancy dating provides a shared clinical timeline for prenatal testing, fetal growth, and delivery planning. Gestational age conventionally begins on the first day of the last menstrual period—about two weeks before conception in a typical cycle.',
+    formula: 'LMP due date = LMP + 280 days; conception due date = conception + 266 days',
+    methods: [
+      ['Last menstrual period', 'Adds 280 days and adjusts for cycle length. This is most useful when the LMP is certain and cycles are regular.'],
+      ['Early ultrasound', 'Subtracts the measured gestational age from the scan date. First-trimester ultrasound is often the most accurate clinical dating method.'],
+      ['Conception or IVF', 'Adds 266 days to conception; IVF dating additionally accounts for embryo age at transfer.'],
+    ],
+    interpretation: 'The result includes an estimated due date, current gestational age, trimester boundaries, and a 37–42 week term window. Only a small minority of births occur on the exact estimated date, so the surrounding window is more meaningful than one calendar day.',
+    limits: 'Dating can be revised by a clinician when LMP and ultrasound disagree. This tool cannot assess fetal growth, pregnancy viability, symptoms, or complications. Seek urgent care for heavy bleeding, severe pain, fainting, or other concerning symptoms.',
+    faqs: [
+      ['Why is pregnancy counted before conception?', 'Gestational age uses LMP because it is usually easier to identify than the exact date of ovulation or fertilization.'],
+      ['Which dating method is most accurate?', 'A known IVF timeline is precise; otherwise, an early first-trimester ultrasound is often the strongest clinical estimate.'],
+      ['What does full term mean?', 'Modern clinical terminology distinguishes early term, full term, late term, and postterm within the broader 37–42 week interval.'],
+      ['Can the due date change?', 'Yes. A maternity clinician may revise it based on ultrasound findings and the reliability of the menstrual history.'],
+    ],
+    references: ['American College of Obstetricians and Gynecologists. Methods for Estimating the Due Date. Committee Opinion No. 700.', 'World Health Organization. WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience.', 'Naegele FC. Lehrbuch der Geburtshilfe. 1830.'],
+  },
+  'pregnancy-weight-gain': {
+    title: 'Healthy Weight Gain During Pregnancy',
+    intro: 'Pregnancy weight-gain guidance is based on pre-pregnancy BMI and whether the pregnancy involves one baby or twins. The ranges support prenatal conversations; they do not prescribe a perfectly linear weekly target.',
+    formula: 'Pre-pregnancy BMI = weight in kg ÷ height² in metres',
+    methods: [
+      ['Pre-pregnancy BMI', 'Selects the guideline category used for recommended total and later-trimester gain.'],
+      ['Pregnancy stage', 'First-trimester gain is usually modest; the calculator then applies a category-specific weekly range.'],
+      ['Twin pregnancy', 'Uses wider total-gain ranges because nutritional and fetal-growth demands differ from singleton pregnancy.'],
+    ],
+    interpretation: 'The dynamic band compares current gain with an estimated range for the selected week. Short-term changes can reflect hydration, nausea, constipation, clothing, and measurement timing rather than tissue gain.',
+    limits: 'Clinical assessment should also consider fetal growth, edema, blood pressure, diabetes, severe vomiting, nutrition, and baseline health. Sudden weight gain with swelling, headache, or visual symptoms needs prompt medical assessment.',
+    faqs: [
+      ['Why does pre-pregnancy BMI affect the range?', 'Guidelines balance the risks associated with gaining too little or too much across baseline BMI categories.'],
+      ['Should gain be exactly the same every week?', 'No. The chart is a trajectory, and normal gain is not perfectly linear.'],
+      ['Are twin recommendations different?', 'Yes. Recommended total gain is generally higher for twin pregnancies and varies by baseline BMI.'],
+      ['Should I diet during pregnancy?', 'Intentional weight loss during pregnancy should only occur under individualized medical and nutrition guidance.'],
+    ],
+    references: ['Institute of Medicine and National Research Council. Weight Gain During Pregnancy: Reexamining the Guidelines. 2009.', 'American College of Obstetricians and Gynecologists. Weight Gain During Pregnancy. Committee Opinion.', 'Centers for Disease Control and Prevention. Weight Gain During Pregnancy.'],
+  },
+  pace: {
+    title: 'Pace, Speed, Distance, and Finish Time',
+    intro: 'Pace describes the time required to cover a unit of distance, while speed describes distance covered per unit of time. Runners commonly use minutes per kilometre or mile; cyclists and walkers may prefer speed. This calculator keeps all three quantities connected.',
+    formula: 'Pace = time ÷ distance; time = pace × distance; distance = time ÷ pace',
+    methods: [
+      ['Unit conversion', 'Every distance is converted internally to kilometres before pace, speed, and alternate-unit results are calculated.'],
+      ['Cumulative splits', 'Each split shows the elapsed clock time expected at an even pace, making it easier to plan checkpoints and race execution.'],
+      ['Finish prediction', 'A pace-based finish time assumes the same average pace can be maintained for the entire selected distance.'],
+    ],
+    interpretation: 'Use average pace for planning, but expect individual splits to change with hills, wind, surface, temperature, congestion, fatigue, and hydration. A negative split means completing the second portion faster than the first; it can be more sustainable than starting too quickly.',
+    limits: 'Linear pace prediction does not model fatigue across longer distances. Predictions extrapolated far beyond a recent effort are less reliable. New or returning athletes should increase training load gradually and stop for chest pain, faintness, or unusual shortness of breath.',
+    faqs: [
+      ['What is the difference between pace and speed?', 'Pace is time per distance, such as 5:00/km. Speed is distance per time, such as 12 km/h.'],
+      ['Why are kilometre and mile pace different?', 'A mile is 1.609344 kilometres, so the clock time per mile is longer at the same physical speed.'],
+      ['Are the split times cumulative?', 'Yes. Split 5 shows the total elapsed time expected when reaching kilometre or mile five.'],
+      ['Can I use this for walking or cycling?', 'Yes. The arithmetic is the same, although the descriptive speed scale is only a broad orientation.'],
+    ],
+    references: ['American College of Sports Medicine. Guidelines for Exercise Testing and Prescription.', 'World Athletics. Competition and Technical Rules.', 'Jones AM, Doust JH. Journal of Sports Sciences. 1996;14:321–327.'],
+  },
+  carbohydrate: {
+    title: 'Daily Carbohydrate Intake and Energy Needs', intro: 'Carbohydrates provide four kilocalories per gram and are a major fuel source for the brain, muscles, and higher-intensity activity. This calculator estimates energy needs first, then converts an evidence-based percentage range into grams.',
+    formula: 'Carbohydrate grams = daily calories × carbohydrate percentage ÷ 4',
+    methods: [['Energy estimate', 'Mifflin–St Jeor BMR is multiplied by activity and adjusted for the selected weight goal.'], ['Intake range', 'The result shows 40–65% of calculated energy, with 55% as a practical midpoint.'], ['Food quality', 'Whole grains, legumes, fruit, vegetables, and dairy provide carbohydrate alongside fiber and micronutrients.']],
+    interpretation: 'Training volume, glucose regulation, medication, food preference, and sport demands can justify a different target. Athletes may require more carbohydrate around demanding sessions.', limits: 'People managing diabetes, pregnancy, kidney disease, gastrointestinal disease, or therapeutic diets should use an individualized plan. The calculated added-sugar value is an upper guide, not a target.',
+    faqs: [['Are carbohydrates essential?', 'The body can adapt to lower intake, but carbohydrate-rich foods provide efficient energy, fiber, and nutrients.'], ['Why divide by four?', 'Digestible carbohydrate provides approximately four kilocalories per gram.'], ['Do athletes need more?', 'Often yes, particularly during high-volume endurance or repeated high-intensity training.'], ['Are all carbohydrates equivalent?', 'No. Fiber-rich minimally processed sources generally have different health effects from refined grains and added sugars.']],
+    references: ['National Academies. Dietary Reference Intakes for Energy and Macronutrients.', 'World Health Organization. Guideline: Sugars Intake for Adults and Children.', 'Academy of Nutrition and Dietetics, Dietitians of Canada, and ACSM. Nutrition and Athletic Performance.'],
+  },
+  'fat-intake': {
+    title: 'Dietary Fat Intake, Types, and Daily Ranges', intro: 'Dietary fat provides nine kilocalories per gram and supports cell membranes, hormones, insulation, and absorption of vitamins A, D, E, and K. The calculator converts a percentage of estimated energy into grams.',
+    formula: 'Fat grams = daily calories × fat percentage ÷ 9',
+    methods: [['Total fat range', 'The adult planning range is 20–35% of daily energy.'], ['Saturated fat guide', 'The secondary result converts 10% of energy into grams as an upper planning guide.'], ['Fat quality', 'Replacing saturated fat with unsaturated fats is generally more useful than simply lowering all fat.']],
+    interpretation: 'The midpoint is not a mandatory target. Higher or lower intake can fit a healthy pattern when total energy, food quality, essential fatty acids, and medical context are considered.', limits: 'Children, pregnancy, malabsorption disorders, gallbladder or pancreatic disease, and therapeutic diets require different assessment. Trans fat should be minimized.',
+    faqs: [['Why does fat have more calories?', 'Fat provides about nine kilocalories per gram, compared with four for carbohydrate and protein.'], ['Is dietary fat the same as body fat?', 'No. Body-fat change reflects longer-term energy balance, not one nutrient alone.'], ['Which fats should I prioritize?', 'Foods rich in mono- and polyunsaturated fats, including nuts, seeds, fish, and plant oils.'], ['Is saturated fat a target?', 'No. The displayed value is an upper guide.']],
+    references: ['National Academies. Dietary Reference Intakes for Energy and Macronutrients.', 'World Health Organization. Saturated Fatty Acid and Trans-Fatty Acid Intake for Adults and Children.', 'American Heart Association. Dietary Fats and Cardiovascular Disease.'],
+  },
+  'fiber-intake': {
+    title: 'Daily Fiber Needs and Digestive Health', intro: 'Dietary fiber includes carbohydrate components that resist digestion in the small intestine. A common adequate-intake approach uses approximately 14 grams per 1,000 kilocalories.',
+    formula: 'Fiber target = daily energy ÷ 1,000 × 14 grams',
+    methods: [['Energy-based target', 'Links fiber intake to overall food intake using the 14 g per 1,000 kcal reference.'], ['Age and sex reference', 'The calculator also displays a familiar age- and sex-based adequate-intake comparison.'], ['Gradual progression', 'Increasing fiber over time and drinking adequate fluid can improve tolerance.']],
+    interpretation: 'The target includes fiber from vegetables, fruit, legumes, whole grains, nuts, and seeds. A varied food pattern provides different soluble and insoluble fibers.', limits: 'Sudden increases can cause bloating or discomfort. Bowel obstruction risk, inflammatory bowel disease flares, recent gastrointestinal surgery, or prescribed low-residue diets require clinical guidance.',
+    faqs: [['What is soluble fiber?', 'It dissolves or gels in water and can support cholesterol and glucose management.'], ['What is insoluble fiber?', 'It adds stool bulk and can support regularity.'], ['Should supplements replace food?', 'Supplements can help in some cases, but foods provide a wider mix of nutrients and fiber types.'], ['Why increase fiber slowly?', 'The digestive system and gut microbiota need time to adapt.']],
+    references: ['National Academies. Dietary Reference Intakes for Fiber.', 'U.S. Department of Agriculture and HHS. Dietary Guidelines for Americans.', 'American Gastroenterological Association. Patient guidance on dietary fiber.'],
+  },
+} as const
+
+function ResearchHealthGuide({ kind }: { kind: keyof typeof RESEARCH_HEALTH_GUIDES }) {
+  const guide = RESEARCH_HEALTH_GUIDES[kind]
+  return (
+    <section className="mt-12 space-y-8" itemScope itemType="https://schema.org/Article">
+      <article className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-primary-700">Evidence-based guide</p>
+        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-dark-900" itemProp="headline">{guide.title}</h2>
+        <p className="mt-4 leading-7 text-dark-600" itemProp="description">{guide.intro}</p>
+      </article>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <article className="rounded-2xl border border-neutral-200 bg-white p-6">
+          <h2 className="text-xl font-extrabold text-dark-900">Formula and calculation methods</h2>
+          <div className="my-4 rounded-xl bg-dark-900 p-4 text-center font-mono text-sm text-white">{guide.formula}</div>
+          <div className="space-y-4">{guide.methods.map(([name, body]) => <div key={name}><h3 className="font-bold text-dark-900">{name}</h3><p className="mt-1 text-sm leading-6 text-dark-600">{body}</p></div>)}</div>
+        </article>
+        <article className="rounded-2xl border border-neutral-200 bg-white p-6">
+          <h2 className="text-xl font-extrabold text-dark-900">How to interpret your result</h2>
+          <p className="mt-3 text-sm leading-7 text-dark-600">{guide.interpretation}</p>
+          <h3 className="mt-6 font-extrabold text-dark-900">Limitations and safety</h3>
+          <p className="mt-2 text-sm leading-7 text-dark-600">{guide.limits}</p>
+        </article>
+      </div>
+      <section itemScope itemType="https://schema.org/FAQPage">
+        <h2 className="mb-4 text-2xl font-extrabold text-dark-900">Frequently asked questions</h2>
+        <div className="space-y-2">{guide.faqs.map(([q, a]) => <details key={q} className="rounded-2xl border border-neutral-200 bg-white p-4" itemScope itemType="https://schema.org/Question"><summary className="cursor-pointer font-bold text-dark-900" itemProp="name">{q}</summary><div itemScope itemType="https://schema.org/Answer" itemProp="acceptedAnswer"><p className="mt-2 text-sm leading-6 text-dark-600" itemProp="text">{a}</p></div></details>)}</div>
+      </section>
+      <aside className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 text-xs text-neutral-600">
+        <h2 className="font-bold uppercase tracking-wider text-dark-800">References</h2>
+        <ol className="mt-3 list-decimal space-y-2 pl-5">{guide.references.map((reference) => <li key={reference}>{reference}</li>)}</ol>
+      </aside>
+    </section>
+  )
+}
+
 const CATEGORY_COPY: Record<CalculatorCategory, { heading: string; description: string; useCase: string }> = {
   math: {
     heading: 'Math Calculators',
@@ -245,6 +458,33 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'waist-hip-ratio') {
     return <WaistHipCustomSEOContent />
   }
+  if (slug === 'calorie') {
+    return <ResearchHealthGuide kind="calorie" />
+  }
+  if (slug === 'ideal-weight') {
+    return <ResearchHealthGuide kind="ideal-weight" />
+  }
+  if (slug === 'heart-rate') {
+    return <ResearchHealthGuide kind="heart-rate" />
+  }
+  if (slug === 'ovulation') {
+    return <ResearchHealthGuide kind="ovulation" />
+  }
+  if (slug === 'period') {
+    return <ResearchHealthGuide kind="period" />
+  }
+  if (slug === 'pregnancy') {
+    return <ResearchHealthGuide kind="pregnancy" />
+  }
+  if (slug === 'pregnancy-weight-gain') {
+    return <ResearchHealthGuide kind="pregnancy-weight-gain" />
+  }
+  if (slug === 'pace') {
+    return <ResearchHealthGuide kind="pace" />
+  }
+  if (slug === 'carbohydrate') return <ResearchHealthGuide kind="carbohydrate" />
+  if (slug === 'fat-intake') return <ResearchHealthGuide kind="fat-intake" />
+  if (slug === 'fiber-intake') return <ResearchHealthGuide kind="fiber-intake" />
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
