@@ -17,12 +17,18 @@
 // Env vars (set in Cloudflare Pages dashboard → Settings → Environment):
 //   LLM_BASE_URL       = https://ollama.com/v1
 //   LLM_API_KEY        = <your Ollama Cloud key>
+//   LLM_API_KEY_01     = <optional spare, used when the primary hits its quota>
 //   LLM_MODEL          = gpt-oss:120b   (text descriptions)
 //   VISION_LLM_MODEL   = gemma4:31b     (when an image is attached)
+//
+// Key rotation is handled by functions/_shared/llm.js — see that file for how
+// to add more spare keys.
 //
 // Returns: { config, notes, suggestions, model }
 // The browser re-validates `config` through lib/ai-calc-schema.ts before it is
 // ever rendered — this endpoint is a generator, not a trust boundary.
+
+import { callLLM, extractMessage } from '../_shared/llm.js'
 
 // The schema contract. This has to stay in step with CustomCalculatorConfig in
 // components/calculators/shared/CustomCalculatorRenderer.tsx and with the
@@ -167,14 +173,8 @@ export async function onRequestPost({ request, env }) {
     return new Response(null, { status: 204, headers: CORS })
   }
 
-  const baseUrl = (env && env.LLM_BASE_URL) || 'https://ollama.com/v1'
-  const apiKey = (env && env.LLM_API_KEY) || ''
   const textModel = (env && env.LLM_MODEL) || 'gpt-oss:120b'
   const visionModel = (env && env.VISION_LLM_MODEL) || 'gemma4:31b'
-
-  if (!apiKey) {
-    return json({ error: 'The AI Calculator Builder is not configured (missing LLM_API_KEY on the server).' }, 503)
-  }
 
   let body
   try {
@@ -242,42 +242,24 @@ export async function onRequestPost({ request, env }) {
     { role: 'user', content: userContent },
   ]
 
-  let llmRes
-  try {
-    llmRes = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.25, // low — the maths has to be right, not creative
-        max_tokens: 4000,
-        stream: false,
-        ...(useVision ? { modalities: ['text', 'image'] } : {}),
-      }),
-    })
-  } catch (e) {
-    return json({ error: 'Could not reach the AI service.' }, 502)
+  const result = await callLLM(
+    env,
+    {
+      model,
+      messages,
+      temperature: 0.25, // low — the maths has to be right, not creative
+      max_tokens: 4000,
+      stream: false,
+      ...(useVision ? { modalities: ['text', 'image'] } : {}),
+    },
+    { serviceLabel: 'The AI Calculator Builder', timeoutMs: 90000 }
+  )
+
+  if (!result.ok) {
+    return json({ error: result.error, detail: result.detail }, result.status)
   }
 
-  if (!llmRes.ok) {
-    const text = await llmRes.text().catch(() => '')
-    return json({ error: `AI service error (${llmRes.status}).`, detail: text.slice(0, 500) }, 502)
-  }
-
-  let data
-  try {
-    data = await llmRes.json()
-  } catch {
-    return json({ error: 'Invalid AI response.' }, 502)
-  }
-
-  const choice = data?.choices?.[0]?.message
-  // gpt-oss:120b is a reasoning model and sometimes answers in `reasoning`.
-  const raw = String(choice?.content || choice?.reasoning || '').trim()
+  const raw = extractMessage(result.data)
 
   if (!raw) {
     return json({ error: 'The AI returned an empty response. Please try again.' }, 502)

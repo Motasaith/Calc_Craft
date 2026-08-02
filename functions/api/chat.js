@@ -13,11 +13,17 @@
 // Env vars (set in Cloudflare Pages dashboard):
 //   LLM_BASE_URL    = https://ollama.com/v1
 //   LLM_API_KEY     = <your Ollama Cloud key>
+//   LLM_API_KEY_01  = <optional spare, used when the primary hits its quota>
 //   LLM_MODEL       = gpt-oss:120b   (or any free chat model, e.g. gemma4:31b)
 //
+// Key rotation is handled by functions/_shared/llm.js — see that file for how
+// to add more spare keys.
+//
 // NOTE: gpt-oss:120b is a reasoning model that may return content in the
-// `reasoning` field — we normalize both `content` and `reasoning` so the
-// widget always gets a real answer.
+// `reasoning` field — extractMessage() normalizes both so the widget always
+// gets a real answer.
+
+import { callLLM, extractMessage } from '../_shared/llm.js'
 
 const SITE_BASE = 'https://homeofcalculators.com'
 
@@ -68,13 +74,7 @@ export async function onRequestPost({ request, env }) {
     return new Response(null, { status: 204, headers: CORS })
   }
 
-  const baseUrl = (env && env.LLM_BASE_URL) || 'https://ollama.com/v1'
-  const apiKey = (env && env.LLM_API_KEY) || ''
   const model = (env && env.LLM_MODEL) || 'gpt-oss:120b'
-
-  if (!apiKey) {
-    return json({ error: 'Chat is not configured (missing LLM_API_KEY on the server).' }, 503)
-  }
 
   // Fetch the site index (built into the static export at /site-index.json).
   // We resolve it relative to the current request origin so it works in
@@ -115,44 +115,26 @@ export async function onRequestPost({ request, env }) {
     { role: 'user', content: userMessage },
   ]
 
-  // Call Ollama Cloud OpenAI-compatible /chat/completions.
-  // We request a non-streamed response for simplicity; the widget shows a
-  // typing indicator while waiting.
-  let llmRes
-  try {
-    llmRes = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.4,
-        max_tokens: 800,
-        stream: false,
-      }),
-    })
-  } catch (e) {
-    return json({ error: 'Could not reach the AI service.' }, 502)
+  // Call Ollama Cloud OpenAI-compatible /chat/completions, rotating through the
+  // configured API keys if the primary is rate limited or out of quota.
+  // Non-streamed for simplicity; the widget shows a typing indicator meanwhile.
+  const result = await callLLM(
+    env,
+    {
+      model,
+      messages,
+      temperature: 0.4,
+      max_tokens: 800,
+      stream: false,
+    },
+    { serviceLabel: 'Chat', timeoutMs: 45000 }
+  )
+
+  if (!result.ok) {
+    return json({ error: result.error, detail: result.detail }, result.status)
   }
 
-  if (!llmRes.ok) {
-    const text = await llmRes.text().catch(() => '')
-    return json({ error: `AI service error (${llmRes.status}).`, detail: text.slice(0, 500) }, 502)
-  }
-
-  let data
-  try {
-    data = await llmRes.json()
-  } catch {
-    return json({ error: 'Invalid AI response.' }, 502)
-  }
-
-  const choice = data?.choices?.[0]?.message
-  // gpt-oss:120b may put the answer in `reasoning`; gemma4:31b uses `content`.
-  const reply = String(choice?.content || choice?.reasoning || '').trim()
+  const reply = extractMessage(result.data)
 
   if (!reply) {
     return json({ error: 'The AI returned an empty answer. Please try rephrasing.' }, 502)

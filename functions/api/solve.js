@@ -8,13 +8,19 @@
 // Env vars (set in Cloudflare Pages dashboard):
 //   LLM_BASE_URL        = https://ollama.com/v1
 //   LLM_API_KEY         = <your Ollama Cloud key>
+//   LLM_API_KEY_01      = <optional spare, used when the primary hits its quota>
 //   LLM_MODEL           = gpt-oss:120b  (used for text-only questions)
 //   VISION_LLM_MODEL    = gemma4:31b    (used when an image is attached)
+//
+// Key rotation is handled by functions/_shared/llm.js — see that file for how
+// to add more spare keys.
 //
 // Returns: { answer: string, steps: string, model: string }
 //   - answer:  the final, concise answer (number + units if applicable)
 //   - steps:   detailed step-by-step explanation (markdown)
 // The widget renders both, plus a "AI can make mistakes" disclaimer.
+
+import { callLLM, extractMessage } from '../_shared/llm.js'
 
 const SOLVER_SYSTEM = `You are an expert mathematics tutor. The user gives you a math problem — either as text or a photo of a handwritten/printed question.
 
@@ -50,14 +56,8 @@ export async function onRequestPost({ request, env }) {
     return new Response(null, { status: 204, headers: CORS })
   }
 
-  const baseUrl = (env && env.LLM_BASE_URL) || 'https://ollama.com/v1'
-  const apiKey = (env && env.LLM_API_KEY) || ''
   const textModel = (env && env.LLM_MODEL) || 'gpt-oss:120b'
   const visionModel = (env && env.VISION_LLM_MODEL) || 'gemma4:31b'
-
-  if (!apiKey) {
-    return json({ error: 'Solver is not configured (missing LLM_API_KEY on the server).' }, 503)
-  }
 
   let body
   try {
@@ -92,42 +92,25 @@ export async function onRequestPost({ request, env }) {
     { role: 'user', content: userContent },
   ]
 
-  let llmRes
-  try {
-    llmRes = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature: 0.2, // low temp for accuracy
-        max_tokens: 1600,
-        stream: false,
-        // Some OpenAI-compatible endpoints want this for vision:
-        ...(useVision ? { modalities: ['text', 'image'] } : {}),
-      }),
-    })
-  } catch (e) {
-    return json({ error: 'Could not reach the AI service.' }, 502)
+  const result = await callLLM(
+    env,
+    {
+      model,
+      messages,
+      temperature: 0.2, // low temp for accuracy
+      max_tokens: 1600,
+      stream: false,
+      // Some OpenAI-compatible endpoints want this for vision:
+      ...(useVision ? { modalities: ['text', 'image'] } : {}),
+    },
+    { serviceLabel: 'Solver', timeoutMs: 60000 }
+  )
+
+  if (!result.ok) {
+    return json({ error: result.error, detail: result.detail }, result.status)
   }
 
-  if (!llmRes.ok) {
-    const text = await llmRes.text().catch(() => '')
-    return json({ error: `AI service error (${llmRes.status}).`, detail: text.slice(0, 500) }, 502)
-  }
-
-  let data
-  try {
-    data = await llmRes.json()
-  } catch {
-    return json({ error: 'Invalid AI response.' }, 502)
-  }
-
-  const choice = data?.choices?.[0]?.message
-  const raw = String(choice?.content || choice?.reasoning || '').trim()
+  const raw = extractMessage(result.data)
 
   if (!raw) {
     return json({ error: 'The AI returned an empty answer. Please try again.' }, 502)
