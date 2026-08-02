@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Plus_Jakarta_Sans, Share_Tech_Mono } from 'next/font/google'
 import './globals.css'
 import { BRAND } from '@/lib/brand'
+import { ClerkProvider } from '@clerk/nextjs'
 import { AuthProvider } from '@/components/providers/AuthContext'
 import { UserDataProvider } from '@/components/providers/UserDataContext'
 import ChatWidget from '@/components/ChatWidget'
@@ -379,12 +380,14 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <AuthProvider>
-          <UserDataProvider>
-            {children}
-            <ChatWidget />
-          </UserDataProvider>
-        </AuthProvider>
+        <ClerkProvider>
+          <AuthProvider>
+            <UserDataProvider>
+              {children}
+              <ChatWidget />
+            </UserDataProvider>
+          </AuthProvider>
+        </ClerkProvider>
       </body>
     </html>
   )
