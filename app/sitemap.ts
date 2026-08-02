@@ -44,6 +44,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    // AI Calculator Builder
+    {
+      url: `${baseUrl}/build-ai`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
     // Blog index
     {
       url: `${baseUrl}/blog`,
@@ -64,13 +71,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.6,
-    },
-    // Builder
-    {
-      url: `${baseUrl}/builder`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
     },
     // Blog posts
     ...posts.map((post: any) => ({

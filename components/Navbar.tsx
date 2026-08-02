@@ -12,6 +12,7 @@ import AuthModal from '@/components/AuthModal'
 
 const navLinks = [
   { label: 'Calculators', href: '/calculators', isMega: true },
+  { label: 'AI Builder', href: '/build-ai' },
   { label: 'Visual Builder', href: '/builder' },
   { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },

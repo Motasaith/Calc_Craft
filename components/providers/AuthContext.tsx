@@ -9,6 +9,8 @@ interface User {
   name: string
 }
 
+export type AuthModalTab = 'login' | 'register' | 'forgot'
+
 interface AuthContextType {
   user: User | null
   token: string | null
@@ -16,10 +18,14 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
   register: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<void>
+  /** Emails a reset link. Always reports success so the response can't be used to probe for accounts. */
+  requestPasswordReset: (login: string) => Promise<{ success: boolean; error?: string }>
+  /** Completes the reset using the key + login from the emailed link. */
+  resetPassword: (key: string, login: string, password: string) => Promise<{ success: boolean; error?: string }>
   authModalOpen: boolean
   setAuthModalOpen: (open: boolean) => void
-  authModalTab: 'login' | 'register'
-  setAuthModalTab: (tab: 'login' | 'register') => void
+  authModalTab: AuthModalTab
+  setAuthModalTab: (tab: AuthModalTab) => void
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -29,6 +35,8 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => ({ success: false }),
   register: async () => ({ success: false }),
   logout: async () => {},
+  requestPasswordReset: async () => ({ success: false }),
+  resetPassword: async () => ({ success: false }),
   authModalOpen: false,
   setAuthModalOpen: () => {},
   authModalTab: 'login',
@@ -42,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login')
+  const [authModalTab, setAuthModalTab] = useState<AuthModalTab>('login')
 
   // Verify session on mount
   useEffect(() => {
@@ -119,6 +127,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  /**
+   * Step 1 of the reset: WordPress emails a link to /reset-password carrying a
+   * one-time key. We deliberately do NOT surface "no such account" — that would
+   * turn this form into an account-enumeration oracle — so anything short of a
+   * transport failure reads as success to the user.
+   */
+  const requestPasswordReset = async (loginOrEmail: string) => {
+    try {
+      const res = await fetch(`${WP_API_BASE}/wp/v2/users/lost-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login: loginOrEmail }),
+      })
+
+      if (res.ok) return { success: true }
+
+      const data = await res.json().catch(() => ({}))
+
+      // 404 means the endpoint itself isn't installed on the WordPress side —
+      // that's a deployment problem the user needs to be told about, not a
+      // "check your email" lie.
+      if (res.status === 404) {
+        return {
+          success: false,
+          error: 'Password reset is not available yet. Please email support@homeofcalculators.com and we will reset it for you.',
+        }
+      }
+      if (res.status === 429) {
+        return { success: false, error: 'Too many reset requests. Please wait a few minutes and try again.' }
+      }
+      return { success: false, error: data.message || 'Could not send the reset email. Please try again.' }
+    } catch (err) {
+      return { success: false, error: 'An error occurred while requesting the reset email.' }
+    }
+  }
+
+  /** Step 2: exchange the emailed key for a new password. */
+  const resetPassword = async (key: string, loginName: string, password: string) => {
+    try {
+      const res = await fetch(`${WP_API_BASE}/wp/v2/users/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, login: loginName, password }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (res.ok) return { success: true }
+
+      if (res.status === 404) {
+        return {
+          success: false,
+          error: 'Password reset is not available yet. Please email support@homeofcalculators.com and we will reset it for you.',
+        }
+      }
+      return {
+        success: false,
+        error: data.message || 'That reset link is invalid or has expired. Please request a new one.',
+      }
+    } catch (err) {
+      return { success: false, error: 'An error occurred while resetting your password.' }
+    }
+  }
+
   const logout = async () => {
     setToken(null)
     setUser(null)
@@ -127,7 +198,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isLoading,
+        login,
+        register,
+        logout,
+        requestPasswordReset,
+        resetPassword,
+        authModalOpen,
+        setAuthModalOpen,
+        authModalTab,
+        setAuthModalTab,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

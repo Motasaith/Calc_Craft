@@ -43,6 +43,8 @@ export default function DashboardClient() {
   const [embedSearch, setEmbedSearch] = useState('')
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null)
   const [customSearch, setCustomSearch] = useState('')
+  const [copiedCustomId, setCopiedCustomId] = useState<string | null>(null)
+  const [embeddedCustomId, setEmbeddedCustomId] = useState<string | null>(null)
 
   // ─── Handlers ───
   const handleDeleteCustom = (id: string) => {
@@ -62,6 +64,20 @@ export default function DashboardClient() {
     const serialized = serializeConfig(config)
     const shareUrl = `${window.location.origin}/calculators/custom#${serialized}`
     navigator.clipboard.writeText(shareUrl)
+    setCopiedCustomId(config.id)
+    setTimeout(() => setCopiedCustomId(null), 2000)
+  }
+
+  // Custom calculators carry their whole config in the URL hash, so the embed
+  // snippet is self-contained — no server lookup needed on the customer's site.
+  const handleCopyCustomEmbed = (config: any) => {
+    const serialized = serializeConfig(config)
+    const embedUrl = `${window.location.origin}/embed#config=${serialized}`
+    const iframeCode = `<iframe src="${embedUrl}" width="100%" height="520" style="border:none;border-radius:16px;overflow:hidden;" loading="lazy" title="${config.name}"></iframe>`
+    navigator.clipboard.writeText(iframeCode)
+    setEmbeddedCustomId(config.id)
+    addEmbeddedCalculator({ id: config.id, name: config.name, isCustom: true, embeddedAt: new Date().toISOString() })
+    setTimeout(() => setEmbeddedCustomId(null), 2000)
   }
 
   const handleRemoveSaved = (slug: string) => {
@@ -289,9 +305,14 @@ export default function DashboardClient() {
                         className="w-full h-10 pl-10 pr-4 bg-white border border-neutral-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400"
                       />
                     </div>
-                    <Link href="/builder" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-colors whitespace-nowrap">
-                      <Plus className="w-4 h-4" /> New Calculator
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link href="/build-ai" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-colors whitespace-nowrap">
+                        <Sparkles className="w-4 h-4" /> Build with AI
+                      </Link>
+                      <Link href="/builder" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-100 text-dark-700 font-bold text-sm hover:bg-neutral-200 transition-colors whitespace-nowrap">
+                        <Plus className="w-4 h-4" /> New Calculator
+                      </Link>
+                    </div>
                   </div>
 
                   {filteredCustomCalcs.length === 0 ? (
@@ -300,10 +321,15 @@ export default function DashboardClient() {
                         <Calculator className="w-8 h-8 text-neutral-400" />
                       </div>
                       <h3 className="font-bold text-dark-900 mb-1">No custom calculators yet</h3>
-                      <p className="text-sm text-dark-500 mb-4">Build your first calculator with our visual builder.</p>
-                      <Link href="/builder" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm">
-                        <Plus className="w-4 h-4" /> Start Building
-                      </Link>
+                      <p className="text-sm text-dark-500 mb-4">Describe what you need and let the AI build it, or lay one out yourself.</p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <Link href="/build-ai" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-colors">
+                          <Sparkles className="w-4 h-4" /> Build with AI
+                        </Link>
+                        <Link href="/builder" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-100 text-dark-700 font-bold text-sm hover:bg-neutral-200 transition-colors">
+                          <Plus className="w-4 h-4" /> Visual builder
+                        </Link>
+                      </div>
                     </div>
                   ) : (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -311,7 +337,14 @@ export default function DashboardClient() {
                         <div key={calc.id} className="p-5 bg-white border border-neutral-200 rounded-2xl hover:shadow-md transition-shadow">
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
-                              <h3 className="font-bold text-dark-900 text-sm">{calc.name}</h3>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h3 className="font-bold text-dark-900 text-sm">{calc.name}</h3>
+                                {calc.createdWith === 'ai' && (
+                                  <span className="inline-flex items-center gap-0.5 text-[9px] text-indigo-700 font-mono font-bold uppercase bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded">
+                                    <Sparkles className="w-2.5 h-2.5" /> AI
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-xs text-dark-500 mt-0.5 line-clamp-2">{calc.description || 'No description'}</p>
                             </div>
                             <button onClick={() => handleDeleteCustom(calc.id)} className="text-neutral-400 hover:text-red-500 transition-colors ml-2">
@@ -330,10 +363,25 @@ export default function DashboardClient() {
                               <Eye className="w-3.5 h-3.5" /> Open
                             </Link>
                             <button
+                              onClick={() => handleCopyCustomEmbed(calc)}
+                              className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-colors ${
+                                embeddedCustomId === calc.id
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                              }`}
+                            >
+                              {embeddedCustomId === calc.id ? (
+                                <><CheckCircle2 className="w-3.5 h-3.5" /> Copied!</>
+                              ) : (
+                                <><Code2 className="w-3.5 h-3.5" /> Embed</>
+                              )}
+                            </button>
+                            <button
                               onClick={() => handleCopyShareLink(calc)}
                               className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-neutral-100 text-dark-700 text-xs font-bold hover:bg-neutral-200 transition-colors"
                             >
-                              <Copy className="w-3.5 h-3.5" /> Share
+                              {copiedCustomId === calc.id ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                              {copiedCustomId === calc.id ? 'Copied!' : 'Share'}
                             </button>
                           </div>
                         </div>

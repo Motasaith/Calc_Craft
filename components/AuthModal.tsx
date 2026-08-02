@@ -1,32 +1,43 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Lock, Mail, User, Shield, Sparkles } from 'lucide-react'
-import { useAuth } from '@/components/providers/AuthContext'
+import { X, Lock, Mail, User, Shield, Sparkles, ArrowLeft, KeyRound } from 'lucide-react'
+import { useAuth, type AuthModalTab } from '@/components/providers/AuthContext'
 
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  initialTab?: 'login' | 'register'
+  initialTab?: AuthModalTab
 }
 
 export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: AuthModalProps) {
-  const { login, register } = useAuth()
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>(initialTab)
-  
+  const { login, register, requestPasswordReset } = useAuth()
+  const [activeTab, setActiveTab] = useState<AuthModalTab>(initialTab)
+
   // Form states
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  
+
   // UI states
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-  const handleTabChange = (tab: 'login' | 'register') => {
+  // Callers switch the tab while the modal is already mounted (e.g. a page
+  // opening it straight on "register"), so track the prop rather than only
+  // seeding from it once.
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab)
+      setError(null)
+      setSuccessMsg(null)
+    }
+  }, [isOpen, initialTab])
+
+  const handleTabChange = (tab: AuthModalTab) => {
     setActiveTab(tab)
     setError(null)
     setSuccessMsg(null)
@@ -39,7 +50,16 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
     setLoading(true)
 
     try {
-      if (activeTab === 'login') {
+      if (activeTab === 'forgot') {
+        const res = await requestPasswordReset(username)
+        if (res.success) {
+          setSuccessMsg(
+            "If an account matches that, we've emailed a password reset link. It expires in 24 hours — check your spam folder if it doesn't arrive."
+          )
+        } else {
+          setError(res.error || 'Could not send the reset email.')
+        }
+      } else if (activeTab === 'login') {
         const res = await login(username, password)
         if (res.success) {
           onClose()
@@ -111,41 +131,57 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
             {/* Header */}
             <div className="mb-6 flex flex-col gap-1 items-center text-center">
               <div className="w-12 h-12 rounded-xl bg-primary-100 border border-primary-200 flex items-center justify-center text-primary-700 shadow-sm mb-2">
-                <Shield className="w-6 h-6" />
+                {activeTab === 'forgot' ? <KeyRound className="w-6 h-6" /> : <Shield className="w-6 h-6" />}
               </div>
               <h2 className="text-base sm:text-lg font-mono font-extrabold uppercase tracking-wide text-dark-800 flex items-center gap-1.5">
-                Home of <span className="text-primary-700">Calculators</span>
+                {activeTab === 'forgot' ? (
+                  <>Reset your <span className="text-primary-700">password</span></>
+                ) : (
+                  <>Home of <span className="text-primary-700">Calculators</span></>
+                )}
               </h2>
               <p className="text-xs text-dark-500 font-mono">
-                Manage your saved calculators &amp; settings
+                {activeTab === 'forgot'
+                  ? "We'll email you a link to set a new one"
+                  : 'Manage your saved calculators & settings'}
               </p>
             </div>
 
             {/* Custom Tab Switchers */}
-            <div className="flex bg-[#dad6cd]/40 border border-dark-800/10 rounded-xl p-1 mb-6">
+            {activeTab === 'forgot' ? (
               <button
                 type="button"
                 onClick={() => handleTabChange('login')}
-                className={`flex-1 py-2 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all ${
-                  activeTab === 'login'
-                    ? 'bg-[#dad6cd] shadow-inner text-dark-900 border border-dark-800/10'
-                    : 'text-dark-500 hover:text-dark-700'
-                }`}
+                className="inline-flex items-center gap-1.5 mb-5 text-[11px] font-mono font-bold uppercase tracking-wider text-dark-500 hover:text-dark-800 transition-colors"
               >
-                Log In
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
               </button>
-              <button
-                type="button"
-                onClick={() => handleTabChange('register')}
-                className={`flex-1 py-2 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all ${
-                  activeTab === 'register'
-                    ? 'bg-[#dad6cd] shadow-inner text-dark-900 border border-dark-800/10'
-                    : 'text-dark-500 hover:text-dark-700'
-                }`}
-              >
-                Register
-              </button>
-            </div>
+            ) : (
+              <div className="flex bg-[#dad6cd]/40 border border-dark-800/10 rounded-xl p-1 mb-6">
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('login')}
+                  className={`flex-1 py-2 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all ${
+                    activeTab === 'login'
+                      ? 'bg-[#dad6cd] shadow-inner text-dark-900 border border-dark-800/10'
+                      : 'text-dark-500 hover:text-dark-700'
+                  }`}
+                >
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('register')}
+                  className={`flex-1 py-2 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all ${
+                    activeTab === 'register'
+                      ? 'bg-[#dad6cd] shadow-inner text-dark-900 border border-dark-800/10'
+                      : 'text-dark-500 hover:text-dark-700'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -165,18 +201,22 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
               {/* Username Input */}
               <div className="space-y-1">
                 <label className="text-[10px] font-mono font-bold text-dark-500 uppercase tracking-widest block pl-1">
-                  Username or Email
+                  {activeTab === 'forgot' ? 'Email or Username' : 'Username or Email'}
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-400 pointer-events-none">
-                    <User className="w-4 h-4" />
+                    {activeTab === 'forgot' ? <Mail className="w-4 h-4" /> : <User className="w-4 h-4" />}
                   </span>
                   <input
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username or email"
+                    placeholder={
+                      activeTab === 'forgot'
+                        ? 'The email you signed up with'
+                        : 'Enter your username or email'
+                    }
                     className="w-full h-11 pl-10 pr-4 bg-[#eae7df] border border-dark-800/20 focus:border-primary-600 rounded-xl text-xs font-medium text-dark-800 placeholder:text-dark-400 focus:outline-none shadow-inner transition-colors"
                   />
                 </div>
@@ -205,24 +245,37 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
               )}
 
               {/* Password Input */}
-              <div className="space-y-1">
-                <label className="text-[10px] font-mono font-bold text-dark-500 uppercase tracking-widest block pl-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-400 pointer-events-none">
-                    <Lock className="w-4 h-4" />
-                  </span>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full h-11 pl-10 pr-4 bg-[#eae7df] border border-dark-800/20 focus:border-primary-600 rounded-xl text-xs font-medium text-dark-800 placeholder:text-dark-400 focus:outline-none shadow-inner transition-colors"
-                  />
+              {activeTab !== 'forgot' && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between gap-2 pl-1">
+                    <label className="text-[10px] font-mono font-bold text-dark-500 uppercase tracking-widest block">
+                      Password
+                    </label>
+                    {activeTab === 'login' && (
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('forgot')}
+                        className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary-700 hover:text-primary-900 hover:underline transition-colors"
+                      >
+                        Forgot?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-400 pointer-events-none">
+                      <Lock className="w-4 h-4" />
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full h-11 pl-10 pr-4 bg-[#eae7df] border border-dark-800/20 focus:border-primary-600 rounded-xl text-xs font-medium text-dark-800 placeholder:text-dark-400 focus:outline-none shadow-inner transition-colors"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Confirm Password (Register only) */}
               {activeTab === 'register' && (
@@ -255,9 +308,25 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }: Aut
                 {loading ? (
                   <span className="inline-block w-4 h-4 border-2 border-dark-900/30 border-t-dark-900 rounded-full animate-spin" />
                 ) : (
-                  <span>= {activeTab === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}</span>
+                  <span>
+                    ={' '}
+                    {activeTab === 'login'
+                      ? 'SIGN IN'
+                      : activeTab === 'register'
+                      ? 'CREATE ACCOUNT'
+                      : 'EMAIL ME A RESET LINK'}
+                  </span>
                 )}
               </button>
+
+              {activeTab === 'forgot' && (
+                <p className="text-[10px] text-dark-500 font-mono leading-relaxed text-center pt-1">
+                  Still stuck? Email{' '}
+                  <a href="mailto:support@homeofcalculators.com" className="text-primary-700 hover:underline">
+                    support@homeofcalculators.com
+                  </a>
+                </p>
+              )}
             </form>
           </motion.div>
         </div>

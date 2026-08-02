@@ -42,6 +42,10 @@ export interface CustomCalculatorConfig {
   enableCSVExport?: boolean
   enablePDFExport?: boolean
   createdAt?: string
+  /** Which tool produced this config — set by /build-ai so the dashboard can badge it. */
+  createdWith?: 'ai' | 'builder'
+  /** The description the user gave the AI Calculator Builder, kept for re-editing. */
+  aiPrompt?: string
 }
 
 export interface CustomComponentConfig {

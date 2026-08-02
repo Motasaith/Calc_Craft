@@ -152,6 +152,7 @@ async function main() {
     { slug: 'about', title: 'About Us', url: `${SITE_BASE}/about` },
     { slug: 'contact', title: 'Contact', url: `${SITE_BASE}/contact` },
     { slug: 'solver', title: 'AI Math Solver', url: `${SITE_BASE}/solver` },
+    { slug: 'build-ai', title: 'AI Calculator Builder', url: `${SITE_BASE}/build-ai` },
     { slug: 'categories', title: 'Calculator Categories', url: `${SITE_BASE}/categories` },
     { slug: 'library', title: 'My Calculator Library', url: `${SITE_BASE}/library` },
     { slug: 'dashboard', title: 'User Dashboard', url: `${SITE_BASE}/dashboard` },
