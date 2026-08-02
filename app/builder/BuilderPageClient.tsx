@@ -193,8 +193,8 @@ const THEME_SWATCHES: Record<string, { label: string; primary: string; bg: strin
 }
 
 export default function BuilderPageClient() {
-  const { addCustomCalculator } = useUserData()
-  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
+  const { saveCalculator } = useUserData()
+  const { user, promptSignIn } = useAuth()
 
   // ---- Core state ----
   const [calculator, setCalculator] = useState<CustomCalculatorConfig>(TEMPLATES[0].config)
@@ -592,25 +592,25 @@ export default function BuilderPageClient() {
   // ===================================================================
   const handleSaveToDashboard = async () => {
     if (!user) {
-      setAuthModalTab('login')
-      setAuthModalOpen(true)
+      promptSignIn()
       return
     }
 
-    try {
-      const newCalc = { ...calculator, id: calculator.id || `custom-${Date.now()}` }
-      addCustomCalculator(newCalc)
-      
-      localStorage.removeItem('calc_craft_builder_draft')
+    const newCalc = { ...calculator, id: calculator.id || `custom-${Date.now()}` }
 
+    // Persists to CockroachDB via /api/user/calculators. Previously this only
+    // wrote to localStorage, so a "saved" calculator vanished on another device.
+    const saved = await saveCalculator(newCalc)
 
-      showToast('✅ Saved locally!')
-      showToast('✅ Saved to your dashboard!')
-      setTimeout(() => { window.location.href = '/dashboard' }, 800)
-    } catch (e) {
-      console.error('Failed to save calculator:', e)
-      showToast('❌ Error saving')
+    if (!saved) {
+      showToast('❌ Could not save — please try again')
+      return
     }
+
+    // Only drop the local draft once the server confirmed the write.
+    localStorage.removeItem('calc_craft_builder_draft')
+    showToast('✅ Saved to your dashboard!')
+    setTimeout(() => { window.location.href = '/dashboard' }, 800)
   }
 
   // ===================================================================

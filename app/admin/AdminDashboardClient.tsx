@@ -15,6 +15,10 @@ import {
 import { isAdmin, ADMIN_EMAILS } from '@/lib/clerk'
 import { calculators, CATEGORY_LABELS, type CalculatorCategory } from '@/lib/calculators'
 import { useAuth } from '@/components/providers/AuthContext'
+import { publishToDB, fetchAdminStats } from '@/lib/admin-api'
+import AdminBlog from './components/AdminBlog'
+import AdminUsers from './components/AdminUsers'
+import AdminLogs from './components/AdminLogs'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -209,7 +213,7 @@ const ICON_OPTIONS = [
 // ═════════════════════════════════════════════════════════════════════════════
 
 export default function AdminDashboardClient() {
-  const { user, isLoading } = useAuth()
+  const { user, isLoading, isAdmin: contextIsAdmin, authedFetch } = useAuth()
 
   // ─── State ─────────────────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<AdminTab>('overview')
@@ -227,6 +231,8 @@ export default function AdminDashboardClient() {
   const [newCalc, setNewCalc] = useState<NewCalculator>({ ...emptyCalculator })
   const [calcStep, setCalcStep] = useState(0)
   const [adminCalcs, setAdminCalcs] = useState<NewCalculator[]>([])
+  const [liveStats, setLiveStats] = useState<any>(null)
+  const [statsError, setStatsError] = useState<string | null>(null)
 
   // Audit state
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([])
@@ -297,7 +303,24 @@ export default function AdminDashboardClient() {
   // ─── Admin check ───────────────────────────────────────────────────────────
 
   const userEmail = user?.email || ''
-  const userIsAdmin = isAdmin(userEmail)
+  // Both rules agree; contextIsAdmin also covers Clerk publicMetadata.role.
+  const userIsAdmin = contextIsAdmin || isAdmin(userEmail)
+
+  // Live site numbers, refreshed whenever the dashboard is opened by an admin.
+  useEffect(() => {
+    if (!userIsAdmin) return
+    let cancelled = false
+    fetchAdminStats(authedFetch)
+      .then((data) => {
+        if (!cancelled) setLiveStats(data)
+      })
+      .catch((e) => {
+        if (!cancelled) setStatsError(e.message)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [userIsAdmin, authedFetch])
 
   // ─── Loading state ─────────────────────────────────────────────────────────
 
@@ -419,7 +442,7 @@ export default function AdminDashboardClient() {
       id: generateId(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      author: user?.name || user?.username || 'Admin',
+      author: user?.name || user?.name || 'Admin',
     }
     setEditingPost(newPost)
     setActiveTab('blog-editor')
@@ -458,20 +481,32 @@ export default function AdminDashboardClient() {
     }
   }
 
-  const handlePublishPost = (id: string) => {
+  const handlePublishPost = async (id: string) => {
     const idx = blogPosts.findIndex((p) => p.id === id)
     if (idx >= 0) {
       const newPosts = [...blogPosts]
       const newStatus = newPosts[idx].status === 'published' ? 'draft' : 'published'
       newPosts[idx] = { ...newPosts[idx], status: newStatus, updatedAt: new Date().toISOString() }
       setBlogPosts(newPosts)
+      
+      // Hit our Cloudflare Function Backend!
+      if (newStatus === 'published' && user?.id) {
+        try {
+          await publishToDB(authedFetch, 'blog', newPosts[idx])
+          showNotification('Successfully saved to Database!', 'success')
+        } catch (e: any) {
+          showNotification(`Database Error: ${e.message}`, 'error')
+        }
+      } else {
+        showNotification(newStatus === 'published' ? 'Post published!' : 'Post moved to draft')
+      }
+
       addAuditEntry(
         newStatus === 'published' ? 'Published blog post' : 'Unpublished blog post',
         newPosts[idx].title,
         user?.name || 'Admin',
         'success'
       )
-      showNotification(newStatus === 'published' ? 'Post published!' : 'Post moved to draft')
       setAuditLog(JSON.parse(localStorage.getItem(STORAGE_KEY_AUDIT) || '[]'))
     }
   }
@@ -512,7 +547,7 @@ export default function AdminDashboardClient() {
     })
   }
 
-  const handleSaveCalculator = () => {
+  const handleSaveCalculator = async () => {
     if (!newCalc.name || !newCalc.slug || newCalc.inputs.length === 0) {
       showNotification('Please fill in all required fields', 'error')
       return
@@ -521,7 +556,19 @@ export default function AdminDashboardClient() {
     setAdminCalcs(updated)
     localStorage.setItem(STORAGE_KEY_CALCS, JSON.stringify(updated))
     addAuditEntry('Created calculator', newCalc.name, user?.name || 'Admin', 'success')
-    showNotification(`Calculator "${newCalc.name}" created! Trigger a deploy to make it live.`)
+    
+    // Hit our Cloudflare Function Backend!
+    if (user?.id) {
+      try {
+        await publishToDB(authedFetch, 'calculator', newCalc)
+        showNotification(`Successfully saved ${newCalc.name} to the Database!`, 'success')
+      } catch (e: any) {
+        showNotification(`Database Error: ${e.message}`, 'error')
+      }
+    } else {
+      showNotification(`Calculator "${newCalc.name}" created! Trigger a deploy to make it live.`)
+    }
+    
     setNewCalc({ ...emptyCalculator })
     setCalcStep(0)
     setActiveTab('calculators')
@@ -743,11 +790,11 @@ export default function AdminDashboardClient() {
             {/* Admin avatar */}
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-extrabold">
-                {(user?.name || user?.username || 'A').charAt(0).toUpperCase()}
+                {(user?.name || user?.name || 'A').charAt(0).toUpperCase()}
               </div>
               {sidebarOpen && (
                 <div className="hidden sm:block">
-                  <div className="text-xs font-bold">{user?.name || user?.username}</div>
+                  <div className="text-xs font-bold">{user?.name || user?.name}</div>
                   <div className={`text-[10px] ${darkMode ? 'text-neutral-500' : 'text-gray-400'}`}>
                     Admin
                   </div>
@@ -780,19 +827,53 @@ export default function AdminDashboardClient() {
                       : 'bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200'
                   }`}>
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl" />
-                    <h2 className="text-xl font-extrabold mb-1">Welcome back, {user?.name || user?.username} 👋</h2>
+                    <h2 className="text-xl font-extrabold mb-1">Welcome back, {user?.name || user?.name} 👋</h2>
                     <p className={`text-sm ${darkMode ? 'text-neutral-400' : 'text-gray-500'}`}>
                       Here&apos;s what&apos;s happening on your site today.
                     </p>
                   </div>
 
-                  {/* Stats grid */}
+                  {/* Stats grid — live numbers from /api/admin/stats (WordPress +
+                      CockroachDB). These used to be counted out of localStorage,
+                      so they showed whatever this one browser happened to hold. */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                      { label: 'Total Calculators', value: calculators.length + adminCalcs.length, icon: Calculator, color: 'from-blue-500 to-cyan-500', trend: `+${adminCalcs.length} custom` },
-                      { label: 'Blog Posts', value: blogPosts.length, icon: FileText, color: 'from-emerald-500 to-green-500', trend: `${blogPosts.filter((p) => p.status === 'published').length} published` },
-                      { label: 'Categories', value: Object.keys(CATEGORY_LABELS).length, icon: Tag, color: 'from-amber-500 to-orange-500', trend: '29 active' },
-                      { label: 'Admin Actions', value: auditLog.length, icon: Activity, color: 'from-violet-500 to-purple-500', trend: auditLog.length > 0 ? timeAgo(auditLog[0]?.timestamp) : 'No activity' },
+                      {
+                        label: 'Registered Users',
+                        value: liveStats?.database?.users ?? '—',
+                        icon: Users,
+                        color: 'from-indigo-500 to-violet-500',
+                        trend: liveStats?.database?.newUsersThisWeek != null
+                          ? `+${liveStats.database.newUsersThisWeek} this week`
+                          : 'Loading…',
+                      },
+                      {
+                        label: 'User Calculators',
+                        value: liveStats?.database?.userCalculators ?? '—',
+                        icon: Calculator,
+                        color: 'from-blue-500 to-cyan-500',
+                        trend: liveStats?.database?.aiBuiltCalculators != null
+                          ? `${liveStats.database.aiBuiltCalculators} built with AI`
+                          : `${calculators.length} in catalogue`,
+                      },
+                      {
+                        label: 'Blog Posts',
+                        value: liveStats?.wordpress?.posts ?? '—',
+                        icon: FileText,
+                        color: 'from-emerald-500 to-green-500',
+                        trend: liveStats?.wordpress?.error
+                          ? 'WordPress unreachable'
+                          : `${liveStats?.wordpress?.drafts ?? 0} drafts`,
+                      },
+                      {
+                        label: 'Embeds Taken',
+                        value: liveStats?.database?.embedsTaken ?? '—',
+                        icon: Code2,
+                        color: 'from-amber-500 to-orange-500',
+                        trend: liveStats?.database?.savedBookmarks != null
+                          ? `${liveStats.database.savedBookmarks} bookmarks`
+                          : 'Loading…',
+                      },
                     ].map((stat, i) => (
                       <motion.div
                         key={i}
@@ -1004,6 +1085,9 @@ export default function AdminDashboardClient() {
                     ))}
                   </div>
 
+                  {/* Render Admin Users component */}
+                  {user?.id && <AdminUsers darkMode={darkMode} />}
+
                   {/* Admin emails */}
                   <div className={`p-6 rounded-2xl border ${
                     darkMode ? 'bg-[#12121a] border-white/5' : 'bg-white border-gray-200 shadow-sm'
@@ -1085,130 +1169,12 @@ export default function AdminDashboardClient() {
               {/* ═══════════════════════════════════════════════════════════ */}
               {/* BLOG MANAGEMENT TAB                                        */}
               {/* ═══════════════════════════════════════════════════════════ */}
-              {activeTab === 'blog' && (
-                <div className="space-y-4">
-                  {/* Actions bar */}
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <div className={`relative flex-1 max-w-sm`}>
-                      <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${darkMode ? 'text-neutral-500' : 'text-gray-400'}`} />
-                      <input
-                        type="text"
-                        value={blogSearch}
-                        onChange={(e) => setBlogSearch(e.target.value)}
-                        placeholder="Search posts..."
-                        className={`w-full h-10 pl-10 pr-4 rounded-xl text-sm border focus:outline-none transition-colors ${
-                          darkMode
-                            ? 'bg-[#12121a] border-white/10 text-white placeholder:text-neutral-600 focus:border-indigo-500/50'
-                            : 'bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-indigo-400'
-                        }`}
-                      />
-                    </div>
-                    <button
-                      onClick={handleCreatePost}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition-colors"
-                    >
-                      <Plus className="w-4 h-4" /> New Post
-                    </button>
-                  </div>
+              {/* Blog — WordPress owns articles now, so this panel reports live
+                  counts and links into wp-admin rather than duplicating a second,
+                  worse editor here. The previous localStorage-backed TipTap editor
+                  wrote to a table the public blog never read. */}
+              {activeTab === 'blog' && <AdminBlog darkMode={darkMode} />}
 
-                  {/* Post list */}
-                  {filteredBlogPosts.length === 0 ? (
-                    <div className={`text-center py-16 rounded-2xl border ${
-                      darkMode ? 'bg-[#12121a] border-white/5' : 'bg-white border-gray-200'
-                    }`}>
-                      <FileText className={`w-12 h-12 mx-auto mb-3 ${darkMode ? 'text-neutral-700' : 'text-gray-300'}`} />
-                      <h3 className="font-bold mb-1">No blog posts yet</h3>
-                      <p className={`text-sm mb-4 ${darkMode ? 'text-neutral-500' : 'text-gray-400'}`}>
-                        Create your first post to get started.
-                      </p>
-                      <button
-                        onClick={handleCreatePost}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700"
-                      >
-                        <Plus className="w-4 h-4" /> Create First Post
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {filteredBlogPosts.map((post) => (
-                        <div
-                          key={post.id}
-                          className={`flex items-center gap-4 p-4 rounded-xl border transition-colors ${
-                            darkMode
-                              ? 'bg-[#12121a] border-white/5 hover:border-white/10'
-                              : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
-                          }`}
-                        >
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="text-sm font-bold truncate">{post.title || 'Untitled'}</h4>
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                                post.status === 'published'
-                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                              }`}>
-                                {post.status}
-                              </span>
-                            </div>
-                            <div className={`flex items-center gap-3 text-[10px] font-mono ${darkMode ? 'text-neutral-500' : 'text-gray-400'}`}>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" /> {timeAgo(post.updatedAt || post.createdAt)}
-                              </span>
-                              <span>/{post.slug || '—'}</span>
-                              <span>{post.author}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                              onClick={() => { setEditingPost(post); setActiveTab('blog-editor') }}
-                              className={`p-2 rounded-lg transition-colors ${
-                                darkMode ? 'hover:bg-white/5 text-neutral-400' : 'hover:bg-gray-100 text-gray-400'
-                              }`}
-                              title="Edit"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handlePublishPost(post.id)}
-                              className={`p-2 rounded-lg transition-colors ${
-                                darkMode ? 'hover:bg-white/5 text-neutral-400' : 'hover:bg-gray-100 text-gray-400'
-                              }`}
-                              title={post.status === 'published' ? 'Unpublish' : 'Publish'}
-                            >
-                              {post.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                            <button
-                              onClick={() => handleDeletePost(post.id)}
-                              className={`p-2 rounded-lg transition-colors ${
-                                darkMode ? 'hover:bg-red-500/10 text-neutral-400 hover:text-red-400' : 'hover:bg-red-50 text-gray-400 hover:text-red-500'
-                              }`}
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ═══════════════════════════════════════════════════════════ */}
-              {/* BLOG EDITOR TAB                                            */}
-              {/* ═══════════════════════════════════════════════════════════ */}
-              {activeTab === 'blog-editor' && (
-                <BlogEditorPanel
-                  post={editingPost || { ...emptyBlogPost, id: generateId(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), author: user?.name || 'Admin' }}
-                  darkMode={darkMode}
-                  onSave={handleSavePost}
-                  onCancel={() => { setEditingPost(null); setActiveTab('blog') }}
-                />
-              )}
-
-              {/* ═══════════════════════════════════════════════════════════ */}
-              {/* CALCULATORS TAB                                            */}
-              {/* ═══════════════════════════════════════════════════════════ */}
               {activeTab === 'calculators' && (
                 <div className="space-y-4">
                   {/* Header */}
@@ -1950,6 +1916,10 @@ export default function AdminDashboardClient() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Render Admin Logs component */}
+                  {user?.id && <AdminLogs darkMode={darkMode} />}
+
                 </div>
               )}
 

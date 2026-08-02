@@ -32,17 +32,18 @@ import { serializeConfig } from '@/lib/url-serializer'
 import { CustomCalculatorConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { useUserData } from '@/components/providers/UserDataContext'
 
-import type { WPCalculator } from '@/lib/wp'
-
 type CategoryFilter = CalculatorCategory | 'all' | 'custom'
 type ViewMode = 'grid' | 'list'
 
-export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalculators?: WPCalculator[] }) {
+// Calculators come from the local registry in lib/calculators.ts plus whatever
+// the signed-in user has built. WordPress is no longer consulted — it is the CMS
+// for blog articles only.
+export default function CalculatorsPageClient() {
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all')
   const [search, setSearch] = useState('')
   const [view, setView] = useState<ViewMode>('grid')
   
-  const { customCalculators, removeCustomCalculator } = useUserData()
+  const { myCalculators, deleteCalculator } = useUserData()
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -58,8 +59,8 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
     e.stopPropagation()
 
     if (confirm('Are you sure you want to delete this custom calculator from your site dashboard?')) {
-      removeCustomCalculator(id)
-      if (activeCategory === 'custom' && customCalculators.length <= 1) {
+      deleteCalculator(id)
+      if (activeCategory === 'custom' && myCalculators.length <= 1) {
         setActiveCategory('all')
       }
     }
@@ -67,46 +68,45 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
 
   const categoriesList = useMemo(() => {
     const list: CategoryFilter[] = ['all']
-    if (customCalculators.length > 0) {
+    if (myCalculators.length > 0) {
       list.push('custom')
     }
     const standardCats: CategoryFilter[] = ['math', 'finance', 'health', 'date-time', 'conversion', 'everyday', 'islamic', 'construction', 'engineering', 'geometry', 'statistics', 'trigonometry', 'physics', 'chemistry', 'astronomy', 'agriculture', 'photography', 'environment', 'real-estate', 'tax', 'automotive', 'sports', 'cooking', 'education', 'business', 'science', 'landscaping', 'plumbing', 'electrical', 'misc']
     return [...list, ...standardCats]
-  }, [customCalculators])
+  }, [myCalculators])
 
   // Base combined list of all WP and custom calculators
   const allCalculators = useMemo(() => {
-    let standardList = wpCalculators.map((wpCalc) => {
-      const staticData = calculators.find((c) => c.slug === wpCalc.slug)
-      return {
-        slug: wpCalc.slug,
-        name: wpCalc.title.rendered,
-        shortName: wpCalc.acf?.brand_name || wpCalc.title.rendered,
-        category: staticData?.category || 'misc',
-        description: staticData?.description || 'Use this free online calculator.',
-        keywords: staticData?.keywords || [wpCalc.slug.replace('-', ' ')],
-        mode: staticData?.mode || 'form',
-        icon: staticData?.icon || 'Calculator',
-        isCustom: false,
-        customConfig: null as CustomCalculatorConfig | null,
-      }
-    })
+    let standardList = calculators.map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      shortName: c.shortName,
+      category: c.category,
+      description: c.description,
+      keywords: c.keywords,
+      mode: c.mode,
+      icon: c.icon,
+      isCustom: false,
+      customConfig: null as CustomCalculatorConfig | null,
+    }))
 
-    let customList = customCalculators.map((c) => ({
+    // `myCalculators` rows wrap the renderer config in DB metadata, so the
+    // config itself now lives under `.config`.
+    let customList = myCalculators.map((c) => ({
       slug: `custom-${c.id}`,
       name: c.name,
-      shortName: c.brandName || 'Custom',
+      shortName: c.config?.brandName || 'Custom',
       category: 'everyday' as CalculatorCategory,
       description: c.description,
       keywords: [c.name.toLowerCase(), 'custom calculator'],
       mode: 'form' as const,
       icon: 'Wrench',
       isCustom: true,
-      customConfig: c,
+      customConfig: c.config,
     }))
 
     return [...standardList, ...customList]
-  }, [wpCalculators, customCalculators])
+  }, [myCalculators])
 
   // Filtered calculators
   const filtered = useMemo(() => {
@@ -243,6 +243,19 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
                 <LayoutGrid className="w-4 h-4" />
                 Browse Library
               </a>
+              {/* The Casio hardware replica. It sat on the homepage hero competing
+                  with the search bar; a novelty belongs in the directory, where
+                  someone browsing tools is the right audience for it. */}
+              <Link
+                href="/calculators/casio"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-dark-700 bg-white border border-neutral-200 hover:border-amber-300 hover:bg-amber-50/60 rounded-xl active:scale-95 transition-all shadow-sm"
+              >
+                <Calculator className="w-4 h-4 text-amber-600" />
+                Classic Calculator
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+                  Retro
+                </span>
+              </Link>
             </div>
           </motion.div>
 
@@ -255,7 +268,8 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
           >
             {[
               { label: 'Calculators', value: totalCount, icon: Calculator, color: 'text-indigo-600 bg-indigo-50' },
-              { label: 'Categories', value: 6, icon: Grid3x3, color: 'text-amber-600 bg-amber-50' },
+              // Was hardcoded to 6 while the site actually ships 30 categories.
+              { label: 'Categories', value: Object.keys(CATEGORY_LABELS).length, icon: Grid3x3, color: 'text-amber-600 bg-amber-50' },
               { label: 'Precision', value: '128-bit', icon: Zap, color: 'text-rose-600 bg-rose-50' },
               { label: 'Always Free', value: '100%', icon: Star, color: 'text-emerald-600 bg-emerald-50' },
             ].map((stat) => (
@@ -330,7 +344,7 @@ export default function CalculatorsPageClient({ wpCalculators = [] }: { wpCalcul
                     cat === 'all'
                       ? totalCount
                       : cat === 'custom'
-                        ? customCalculators.length
+                        ? myCalculators.length
                         : allCalculators.filter((c) => !c.isCustom && c.category === cat).length
                   const meta = categoryMeta[cat]
                   return (

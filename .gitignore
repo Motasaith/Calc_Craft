@@ -44,3 +44,7 @@ yarn-error.log*
 
 
 /wordpress
+
+# Local secrets for `wrangler pages dev`, and its cache
+.dev.vars
+.wrangler/

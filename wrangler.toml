@@ -1,0 +1,18 @@
+# Cloudflare Pages configuration.
+#
+# The one setting here that is NOT optional is `nodejs_compat`. The Pages
+# Functions in functions/ talk to CockroachDB through postgres.js, which opens a
+# raw TCP socket. Workers only expose sockets under this flag — without it every
+# database call fails at runtime with "no such module node:net", and the failure
+# only shows up in production, never in `next build`.
+#
+# Keeping it in this file rather than the dashboard means the requirement is
+# version-controlled and survives someone recreating the Pages project.
+#
+# Verified working: postgres.js → CockroachDB Cloud v26.2.1 from workerd,
+# via `wrangler pages dev out --compatibility-flags=nodejs_compat`.
+
+name = "calc-craft"
+pages_build_output_dir = "out"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]

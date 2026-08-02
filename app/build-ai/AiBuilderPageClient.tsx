@@ -80,8 +80,8 @@ interface BuildResponse {
 }
 
 export default function AiBuilderPageClient() {
-  const { user, isLoading: authLoading, setAuthModalOpen, setAuthModalTab } = useAuth()
-  const { addCustomCalculator, addEmbeddedCalculator } = useUserData()
+  const { user, isLoading: authLoading, promptSignIn } = useAuth()
+  const { saveCalculator, addEmbeddedCalculator } = useUserData()
 
   // ── Input state ──
   const [prompt, setPrompt] = useState('')
@@ -101,6 +101,10 @@ export default function AiBuilderPageClient() {
 
   // ── Save / embed ──
   const [saved, setSaved] = useState(false)
+  /** Row id in `user_calculators`, so a second save updates instead of duplicating. */
+  const [savedRowId, setSavedRowId] = useState<string | null>(null)
+  /** Short handle behind /embed/c/<publicId>. Only exists once saved. */
+  const [publicId, setPublicId] = useState<string>('')
   const [embedOpen, setEmbedOpen] = useState(false)
   const [embedWidth, setEmbedWidth] = useState('100%')
   const [embedHeight, setEmbedHeight] = useState('520')
@@ -251,13 +255,13 @@ export default function AiBuilderPageClient() {
   }
 
   // ── Save to the user's profile ──
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!config) return
     if (!user) {
-      setAuthModalTab('login')
-      setAuthModalOpen(true)
+      promptSignIn()
       return
     }
+
     const toSave: CustomCalculatorConfig = {
       ...config,
       id: config.id || `ai-${Date.now()}`,
@@ -265,8 +269,19 @@ export default function AiBuilderPageClient() {
       createdWith: 'ai',
       aiPrompt: prompt.trim() || config.aiPrompt,
     }
-    addCustomCalculator(toSave)
+
+    // Writes to CockroachDB and returns the row, including the publicId that
+    // the short embed URL is built from.
+    const row = await saveCalculator(toSave, { id: savedRowId || undefined, aiPrompt: prompt.trim() })
+
+    if (!row) {
+      setError('Could not save your calculator. Please try again.')
+      return
+    }
+
     setConfig(toSave)
+    setSavedRowId(row.id)
+    setPublicId(row.publicId)
     setSaved(true)
     setEmbedOpen(true)
   }
@@ -294,9 +309,21 @@ export default function AiBuilderPageClient() {
 
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://homeofcalculators.com'
   const configHash = config ? serializeConfig(config) : ''
-  const shareLink = configHash ? `${origin}/calculators/custom#config=${configHash}` : ''
-  const embedCode = configHash
-    ? `<iframe src="${origin}/embed#config=${configHash}" width="${embedWidth}" height="${embedHeight}" style="border:none;border-radius:16px;overflow:hidden;" loading="lazy" title="${config?.name || 'Calculator'}"></iframe>`
+
+  // Once saved, embeds point at /embed/c/<publicId>, which reads the calculator
+  // from the database. That keeps the snippet short and — more importantly —
+  // means editing the calculator updates every site using it, instead of the
+  // customer having to re-paste a URL with the whole config base64'd into it.
+  // Before saving, fall back to the self-contained hash form so the snippet
+  // still works for someone just trying it out.
+  const embedSrc = publicId ? `${origin}/embed/c?id=${publicId}` : `${origin}/embed#config=${configHash}`
+  const shareLink = publicId
+    ? `${origin}/embed/c?id=${publicId}`
+    : configHash
+    ? `${origin}/calculators/custom#config=${configHash}`
+    : ''
+  const embedCode = config
+    ? `<iframe src="${embedSrc}" width="${embedWidth}" height="${embedHeight}" style="border:none;border-radius:16px;overflow:hidden;" loading="lazy" title="${config.name || 'Calculator'}"></iframe>`
     : ''
 
   const copy = (text: string, which: 'embed' | 'link') => {
@@ -304,12 +331,7 @@ export default function AiBuilderPageClient() {
     setCopied(which)
     setTimeout(() => setCopied(null), 2000)
     if (which === 'embed' && config && user) {
-      addEmbeddedCalculator({
-        id: config.id,
-        name: config.name,
-        isCustom: true,
-        embeddedAt: new Date().toISOString(),
-      })
+      addEmbeddedCalculator(publicId || config.id)
     }
   }
 
@@ -350,19 +372,13 @@ export default function AiBuilderPageClient() {
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   <button
-                    onClick={() => {
-                      setAuthModalTab('register')
-                      setAuthModalOpen(true)
-                    }}
+                    onClick={() => promptSignIn('sign-up')}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-colors shadow-sm"
                   >
                     <Sparkles className="w-4 h-4" /> Create a free account
                   </button>
                   <button
-                    onClick={() => {
-                      setAuthModalTab('login')
-                      setAuthModalOpen(true)
-                    }}
+                    onClick={() => promptSignIn('sign-in')}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-colors"
                   >
                     Sign in
@@ -800,8 +816,9 @@ export default function AiBuilderPageClient() {
                   </div>
 
                   <p className="text-[11px] text-gray-500 mt-3 leading-relaxed">
-                    The calculator is encoded directly in the link, so it keeps working even if you edit it here
-                    later — but if you change it, copy the new snippet and replace the old one on your site.
+                    {publicId
+                      ? 'This link points at your saved calculator, so any edit you make here updates every site using it — no need to re-paste the snippet.'
+                      : 'Save the calculator to get a short, permanent link. Until then this snippet carries the whole calculator in the URL, so edits will not reach sites that already have it.'}
                   </p>
                 </motion.div>
               )}

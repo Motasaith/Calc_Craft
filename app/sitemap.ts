@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
-import { getPosts, getCalculators } from '@/lib/wp'
+import { getPosts } from '@/lib/wp'
+import { calculators as localCalculators } from '@/lib/calculators'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -8,11 +9,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://homeofcalculators.com'
   const now = new Date()
   
-  // Fetch with fallback — don't crash the build if WordPress is unreachable
-  const [posts, calculators] = await Promise.all([
-    getPosts().catch(() => []),
-    getCalculators().catch(() => [])
-  ])
+  // Blog posts come from WordPress; an outage there costs the blog URLs, not
+  // the build. Calculators come from the local registry, so they are always
+  // present regardless of the CMS.
+  const posts = await getPosts().catch(() => [])
+  const calculators = localCalculators
 
   return [
     // Homepage

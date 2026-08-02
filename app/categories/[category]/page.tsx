@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import CategoryPageClient from './CategoryPageClient'
-import { getCalculators } from '@/lib/wp'
+
 import { CATEGORY_LABELS, CalculatorCategory } from '@/lib/calculators'
 import { notFound } from 'next/navigation'
 
@@ -37,7 +37,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     notFound()
   }
 
-  const wpCalculators = await getCalculators()
   
-  return <CategoryPageClient categorySlug={categorySlug} wpCalculators={wpCalculators} />
+  return <CategoryPageClient categorySlug={categorySlug} />
 }

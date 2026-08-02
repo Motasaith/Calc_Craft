@@ -7,16 +7,16 @@ import { ChevronRight, ArrowLeft, Calculator as CalculatorIcon, LayoutGrid } fro
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, CalculatorCategory } from '@/lib/calculators'
-import { WPCalculator } from '@/lib/wp'
+
 import CalculatorCard from '@/components/calculators/CalculatorCard'
 import { notFound } from 'next/navigation'
 
 interface Props {
   categorySlug: string
-  wpCalculators: WPCalculator[]
+
 }
 
-export default function CategoryPageClient({ categorySlug, wpCalculators }: Props) {
+export default function CategoryPageClient({ categorySlug }: Props) {
   // Validate category
   if (!CATEGORY_LABELS[categorySlug as CalculatorCategory]) {
     notFound()

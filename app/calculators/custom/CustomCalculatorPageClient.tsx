@@ -12,8 +12,8 @@ import { useUserData } from '@/components/providers/UserDataContext'
 import { useAuth } from '@/components/providers/AuthContext'
 
 export default function CustomCalculatorPageClient() {
-  const { customCalculators, addCustomCalculator, removeCustomCalculator, addEmbeddedCalculator } = useUserData()
-  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
+  const { myCalculators, saveCalculator, deleteCalculator, addEmbeddedCalculator } = useUserData()
+  const { user, promptSignIn } = useAuth()
 
   const [config, setConfig] = useState<CustomCalculatorConfig | null>(null)
   const [loading, setLoading] = useState(true)
@@ -22,20 +22,22 @@ export default function CustomCalculatorPageClient() {
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const isBookmarked = config ? customCalculators.some(c => c.id === config.id) : false
+  // A shared calculator arrives as a config in the URL hash. It counts as
+  // "saved" once a row of ours holds the same underlying config id.
+  const savedRow = config ? myCalculators.find((c) => c.config?.id === config.id) : undefined
+  const isBookmarked = !!savedRow
 
   const handleBookmark = () => {
     if (!config) return
     if (!user) {
-      setAuthModalTab('login')
-      setAuthModalOpen(true)
+      promptSignIn()
       return
     }
 
-    if (isBookmarked) {
-      removeCustomCalculator(config.id)
+    if (savedRow) {
+      deleteCalculator(savedRow.id)
     } else {
-      addCustomCalculator(config)
+      saveCalculator(config)
     }
   }
 
@@ -45,7 +47,7 @@ export default function CustomCalculatorPageClient() {
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopied(true)
-    addEmbeddedCalculator({ id: config.id, name: config.name, isCustom: true, embeddedAt: new Date().toISOString() })
+    addEmbeddedCalculator(config.id)
     setTimeout(() => setCopied(false), 2000)
   }
 

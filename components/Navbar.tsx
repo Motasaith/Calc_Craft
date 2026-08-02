@@ -7,8 +7,8 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, type CalculatorCategory } from '@/lib/calculators'
+import { Show, UserButton } from '@clerk/react'
 import { useAuth } from '@/components/providers/AuthContext'
-import AuthModal from '@/components/AuthModal'
 
 const navLinks = [
   { label: 'Calculators', href: '/calculators', isMega: true },
@@ -20,7 +20,9 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const { user, logout, isLoading, authModalOpen, setAuthModalOpen, authModalTab, setAuthModalTab } = useAuth()
+  // Sign-in/out UI is handled by Clerk's <SignedIn>/<SignedOut>/<UserButton>
+  // below; this only needs the admin flag for the admin nav entry.
+  const { user, isAdmin, isLoading } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -204,67 +206,16 @@ export default function Navbar() {
 
         {/* Desktop Auth / CTA */}
         <div className="hidden xl:flex shrink-0 items-center gap-2">
-          {!isLoading && (
-            user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl text-xs font-mono font-bold text-dark-800 transition-colors shadow-sm"
-                >
-                  <UserIcon className="w-4 h-4 text-primary-700" />
-                  <span className="hidden 2xl:block max-w-[88px] truncate">{user.name}</span>
-                  <ChevronDown className="w-3 h-3 text-dark-500" />
-                </button>
-
-                <AnimatePresence>
-                  {profileDropdownOpen && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setProfileDropdownOpen(false)} />
-                      <motion.div
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className="absolute right-0 mt-2 w-48 bg-[#eae7df] border-2 border-dark-800/15 rounded-xl shadow-lg z-20 py-1 overflow-hidden"
-                      >
-                        <div className="px-4 py-2 border-b border-dark-800/10">
-                          <p className="text-[10px] font-mono text-dark-400 uppercase tracking-wider">Signed in as</p>
-                          <p className="text-xs font-bold text-dark-800 truncate">{user.email}</p>
-                        </div>
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-dark-700 hover:bg-[#dad6cd]/50 transition-colors text-left"
-                        >
-                          <LayoutDashboard className="w-3.5 h-3.5" />
-                          My Dashboard
-                        </Link>
-                        <button
-                          onClick={() => {
-                            logout()
-                            setProfileDropdownOpen(false)
-                          }}
-                          className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors text-left"
-                        >
-                          <LogOut className="w-3.5 h-3.5" />
-                          Logout
-                        </button>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <button
-                onClick={() => {
-                  setAuthModalTab('login')
-                  setAuthModalOpen(true)
-                }}
-                className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px"
-              >
-                Sign In
-              </button>
-            )
-          )}
+          <Show when="signed-out">
+            <Link href="/sign-in" className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px">
+              Sign In
+            </Link>
+          </Show>
+          <Show when="signed-in">
+            <div className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl shadow-sm">
+              <UserButton />
+            </div>
+          </Show>
 
           <Link
             href="/solver"
@@ -349,54 +300,30 @@ export default function Navbar() {
                 )
               })}
               <div className="pt-4 flex flex-col gap-2.5 border-t border-dark-800/10 mt-2">
-                {!isLoading && (
-                  user ? (
-                    <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex flex-col gap-2.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-lg bg-primary-100 border border-primary-200 flex items-center justify-center text-primary-700">
-                          <UserIcon className="w-4 h-4" />
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold text-dark-800 truncate">{user.name}</span>
-                          <span className="text-[10px] text-dark-400 truncate">{user.email}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => {
-                          logout()
-                          setMobileOpen(false)
-                        }}
-                        className="w-full flex items-center justify-center gap-2 py-2 text-xs font-mono font-bold text-red-600 bg-red-50 hover:bg-red-100/70 rounded-lg transition-colors border border-red-200/50"
-                      >
-                        <LogOut className="w-3.5 h-3.5" />
-                        Logout
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setAuthModalTab('login')
-                          setAuthModalOpen(true)
-                          setMobileOpen(false)
-                        }}
-                        className="flex-1 py-2.5 border border-dark-800/20 hover:bg-[#dad6cd]/50 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-700 transition-colors"
-                      >
-                        Sign In
-                      </button>
-                      <button
-                        onClick={() => {
-                          setAuthModalTab('register')
-                          setAuthModalOpen(true)
-                          setMobileOpen(false)
-                        }}
-                        className="flex-1 py-2.5 bg-[#dad6cd]/80 hover:bg-[#dad6cd] border border-dark-800/20 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-900 transition-colors"
-                      >
-                        Register
-                      </button>
-                    </div>
-                  )
-                )}
+                <Show when="signed-in">
+                  <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex items-center justify-between">
+                    <span className="text-xs font-bold text-dark-800">My Account</span>
+                    <UserButton />
+                  </div>
+                </Show>
+                <Show when="signed-out">
+                  <div className="flex gap-2">
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 flex justify-center items-center py-2.5 border border-dark-800/20 hover:bg-[#dad6cd]/50 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-700 transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 flex justify-center items-center py-2.5 bg-[#dad6cd]/80 hover:bg-[#dad6cd] border border-dark-800/20 rounded-lg text-xs font-mono font-bold uppercase tracking-wider text-dark-900 transition-colors"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                </Show>
 
                 <Link
                   href="/solver"
@@ -422,13 +349,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Authentication Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        initialTab={authModalTab}
-      />
     </motion.header>
   )
 }

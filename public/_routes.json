@@ -1,14 +1,21 @@
 {
+  "_comment": [
+    "Which requests are handed to the Pages Functions worker.",
+    "",
+    "This used to be include:['/*'] with a list of asset exclusions, meaning every",
+    "HTML page view woke the worker, found no handler, and fell through to the",
+    "static asset. There is no _middleware in functions/, so that work was pure",
+    "overhead — and on the free plan it spends the 100k/day invocation budget on",
+    "page views instead of actual API calls.",
+    "",
+    "Every Function in this project lives under /api/, so that is the only prefix",
+    "that needs routing. Everything else is served straight from the CDN edge,",
+    "which is also faster.",
+    "",
+    "If a _middleware.js is ever added, widen this back to '/*' or middleware will",
+    "silently stop running on page routes."
+  ],
   "version": 1,
-  "include": ["/*"],
-  "exclude": [
-    "/images/*",
-    "/*.png",
-    "/*.jpg",
-    "/*.jpeg",
-    "/*.svg",
-    "/*.ico",
-    "/*.webmanifest",
-    "/*.xml"
-  ]
+  "include": ["/api/*"],
+  "exclude": []
 }

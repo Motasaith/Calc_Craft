@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Camera, Check } from 'lucide-react'
+import { ArrowRight, Camera, Check, Sparkles } from 'lucide-react'
 import gsap from 'gsap'
 import Features from './Features'
 import CalculatorStack from './CalculatorStack'
@@ -75,14 +75,34 @@ export default function Hero() {
 
               <HeroSearch />
 
+              {/* Two ways to make your own. The AI card leads because describing
+                  a calculator is a far lower barrier than laying one out by hand,
+                  so it gets the accent treatment; the visual builder stays for
+                  people who want direct control. (This slot used to hold a link
+                  to the Casio replica, which duplicated the search below it.) */}
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <Link href="/builder" className="group rounded-2xl border border-dark-800/10 bg-[#f7f5ef] p-4 transition-all hover:border-primary-300 hover:bg-primary-50">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-dark-400">Create your own</span>
-                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-800">Visual Builder<ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" /></span>
+                <Link
+                  href="/build-ai"
+                  className="group rounded-2xl border border-primary-700/25 bg-primary-50/70 p-4 transition-all hover:border-primary-400 hover:bg-primary-50"
+                >
+                  <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-primary-700">
+                    <Sparkles className="h-3 w-3" />
+                    Describe it, we build it
+                  </span>
+                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-900">
+                    AI Calculator Builder
+                    <ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </Link>
-                <Link href="/calculators/casio" className="group rounded-2xl border border-dark-800/10 bg-[#f7f5ef] p-4 transition-all hover:border-primary-300 hover:bg-primary-50">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-dark-400">Open instantly</span>
-                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-800">Classic Calculator<ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" /></span>
+                <Link
+                  href="/builder"
+                  className="group rounded-2xl border border-dark-800/10 bg-[#f7f5ef] p-4 transition-all hover:border-primary-300 hover:bg-primary-50"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-dark-400">Build it by hand</span>
+                  <span className="mt-1 flex items-center justify-between text-sm font-extrabold text-dark-800">
+                    Visual Builder
+                    <ArrowRight className="h-4 w-4 text-primary-700 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </Link>
               </div>
               <div className="mt-5 rounded-2xl bg-dark-900 px-4 py-3 text-center font-mono text-sm text-white"><span className="text-primary-300">sin²θ + cos²θ</span> = 1</div>

@@ -1,217 +1,126 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+/**
+ * AuthContext — a thin, app-shaped wrapper over Clerk.
+ *
+ * REPLACES the previous WordPress implementation, which posted credentials to
+ * custom `/wp-json/wp/v2/users/login` endpoints and kept a token in
+ * localStorage. Clerk is now the sole source of identity; WordPress is gone.
+ *
+ * Why wrap Clerk at all rather than calling useUser()/useAuth() everywhere:
+ *   - The rest of the app already consumes `useAuth()` with a `user` object and
+ *     an `isLoading` flag. Keeping that shape means the migration did not have
+ *     to touch every component.
+ *   - `authedFetch` is the one correct way to call our API: it attaches a fresh
+ *     Clerk session token on every request. Session tokens are short-lived
+ *     (~60s) and refreshed by the SDK, so they must never be cached — having a
+ *     single helper stops that mistake being made per call site.
+ *   - `isAdmin` is a UI convenience only. It gates what is *shown*. Every admin
+ *     API verifies the token signature and the allowlist server-side
+ *     (functions/_shared/admin.js) — the client claim is never trusted.
+ */
+
+import React, { createContext, useContext, useCallback, useMemo } from 'react'
+import { useUser, useAuth as useClerkAuth, useClerk } from '@clerk/react'
 
 interface User {
-  id?: number
-  username: string
+  id: string
   email: string
   name: string
+  imageUrl?: string
 }
-
-export type AuthModalTab = 'login' | 'register' | 'forgot'
 
 interface AuthContextType {
   user: User | null
-  token: string | null
   isLoading: boolean
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  logout: () => Promise<void>
-  /** Emails a reset link. Always reports success so the response can't be used to probe for accounts. */
-  requestPasswordReset: (login: string) => Promise<{ success: boolean; error?: string }>
-  /** Completes the reset using the key + login from the emailed link. */
-  resetPassword: (key: string, login: string, password: string) => Promise<{ success: boolean; error?: string }>
-  authModalOpen: boolean
-  setAuthModalOpen: (open: boolean) => void
-  authModalTab: AuthModalTab
-  setAuthModalTab: (tab: AuthModalTab) => void
+  isAdmin: boolean
+  /** Fetch wrapper that attaches a fresh Clerk session token. Use for all /api calls. */
+  authedFetch: (input: string, init?: RequestInit) => Promise<Response>
+  signOut: () => Promise<void>
+  /** Sends the visitor to the sign-in page, preserving where they were. */
+  promptSignIn: (mode?: 'sign-in' | 'sign-up') => void
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  token: null,
   isLoading: true,
-  login: async () => ({ success: false }),
-  register: async () => ({ success: false }),
-  logout: async () => {},
-  requestPasswordReset: async () => ({ success: false }),
-  resetPassword: async () => ({ success: false }),
-  authModalOpen: false,
-  setAuthModalOpen: () => {},
-  authModalTab: 'login',
-  setAuthModalTab: () => {},
+  isAdmin: false,
+  authedFetch: async () => new Response(null, { status: 401 }),
+  signOut: async () => {},
+  promptSignIn: () => {},
 })
 
-const WP_API_BASE = 'https://cms.homeofcalculators.com/wp-json'
+/**
+ * Admin emails, mirrored to the client so the dashboard can hide admin-only UI.
+ * Not a security boundary — see the note in the file header.
+ */
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [authModalTab, setAuthModalTab] = useState<AuthModalTab>('login')
+  const { isLoaded, isSignedIn, user: clerkUser } = useUser()
+  const { getToken } = useClerkAuth()
+  const clerk = useClerk()
 
-  // Verify session on mount
-  useEffect(() => {
-    async function checkSession() {
-      const storedToken = localStorage.getItem('wp_jwt')
-      const storedUser = localStorage.getItem('wp_user')
-
-      if (storedToken && storedUser) {
-        try {
-          // Validate the token by checking if we can fetch the user profile
-          // Using Basic Auth with the stored token as a simple session check
-          setToken(storedToken)
-          setUser(JSON.parse(storedUser))
-        } catch (err) {
-          console.error('Failed to validate session token:', err)
-          localStorage.removeItem('wp_jwt')
-          localStorage.removeItem('wp_user')
-        }
-      }
-      setIsLoading(false)
+  const user = useMemo<User | null>(() => {
+    if (!isSignedIn || !clerkUser) return null
+    return {
+      id: clerkUser.id,
+      email: clerkUser.primaryEmailAddress?.emailAddress?.toLowerCase() || '',
+      name:
+        clerkUser.fullName ||
+        clerkUser.username ||
+        clerkUser.primaryEmailAddress?.emailAddress ||
+        'there',
+      imageUrl: clerkUser.imageUrl,
     }
-    checkSession()
+  }, [isSignedIn, clerkUser])
+
+  const isAdmin = useMemo(() => {
+    if (!user) return false
+    if (ADMIN_EMAILS.includes(user.email)) return true
+    return (clerkUser?.publicMetadata as any)?.role === 'admin'
+  }, [user, clerkUser])
+
+  const authedFetch = useCallback(
+    async (input: string, init: RequestInit = {}) => {
+      // Always mint a fresh token — they expire in about a minute.
+      const token = await getToken()
+
+      const headers = new Headers(init.headers || {})
+      if (token) headers.set('Authorization', `Bearer ${token}`)
+      if (init.body && !headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json')
+      }
+
+      return fetch(input, { ...init, headers })
+    },
+    [getToken]
+  )
+
+  const signOut = useCallback(async () => {
+    await clerk.signOut()
+  }, [clerk])
+
+  const promptSignIn = useCallback((mode: 'sign-in' | 'sign-up' = 'sign-in') => {
+    if (typeof window === 'undefined') return
+    const here = window.location.pathname + window.location.search
+    // Send them back where they were once Clerk is done.
+    const target = here && here !== '/' ? `?redirect_url=${encodeURIComponent(here)}` : ''
+    window.location.href = `/${mode}${target}`
   }, [])
-
-  const login = async (username: string, password: string) => {
-    try {
-      // Use custom login endpoint (defined in functions.php, no JWT plugin needed)
-      const res = await fetch(`${WP_API_BASE}/wp/v2/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
-      const data = await res.json()
-      
-      if (res.ok && data.token) {
-        const loggedUser = {
-          id: data.user?.id,
-          username: data.user?.username || username,
-          email: data.user?.email || '',
-          name: data.user?.name || username,
-        }
-        
-        setToken(data.token)
-        setUser(loggedUser)
-        
-        localStorage.setItem('wp_jwt', data.token)
-        localStorage.setItem('wp_user', JSON.stringify(loggedUser))
-        
-        return { success: true }
-      }
-      return { success: false, error: data.message || 'Login failed' }
-    } catch (err) {
-      return { success: false, error: 'An error occurred during login.' }
-    }
-  }
-
-  const register = async (username: string, email: string, password: string) => {
-    try {
-      // Calls the public user registration endpoint (WP REST API User Registration plugin)
-      const res = await fetch(`${WP_API_BASE}/wp/v2/users/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-      })
-      const data = await res.json()
-      
-      if (res.ok && data.code === 200) {
-        // Auto log in after registration
-        return await login(username, password)
-      }
-      return { success: false, error: data.message || 'Registration failed' }
-    } catch (err) {
-      return { success: false, error: 'An error occurred during registration.' }
-    }
-  }
-
-  /**
-   * Step 1 of the reset: WordPress emails a link to /reset-password carrying a
-   * one-time key. We deliberately do NOT surface "no such account" — that would
-   * turn this form into an account-enumeration oracle — so anything short of a
-   * transport failure reads as success to the user.
-   */
-  const requestPasswordReset = async (loginOrEmail: string) => {
-    try {
-      const res = await fetch(`${WP_API_BASE}/wp/v2/users/lost-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login: loginOrEmail }),
-      })
-
-      if (res.ok) return { success: true }
-
-      const data = await res.json().catch(() => ({}))
-
-      // 404 means the endpoint itself isn't installed on the WordPress side —
-      // that's a deployment problem the user needs to be told about, not a
-      // "check your email" lie.
-      if (res.status === 404) {
-        return {
-          success: false,
-          error: 'Password reset is not available yet. Please email support@homeofcalculators.com and we will reset it for you.',
-        }
-      }
-      if (res.status === 429) {
-        return { success: false, error: 'Too many reset requests. Please wait a few minutes and try again.' }
-      }
-      return { success: false, error: data.message || 'Could not send the reset email. Please try again.' }
-    } catch (err) {
-      return { success: false, error: 'An error occurred while requesting the reset email.' }
-    }
-  }
-
-  /** Step 2: exchange the emailed key for a new password. */
-  const resetPassword = async (key: string, loginName: string, password: string) => {
-    try {
-      const res = await fetch(`${WP_API_BASE}/wp/v2/users/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key, login: loginName, password }),
-      })
-      const data = await res.json().catch(() => ({}))
-
-      if (res.ok) return { success: true }
-
-      if (res.status === 404) {
-        return {
-          success: false,
-          error: 'Password reset is not available yet. Please email support@homeofcalculators.com and we will reset it for you.',
-        }
-      }
-      return {
-        success: false,
-        error: data.message || 'That reset link is invalid or has expired. Please request a new one.',
-      }
-    } catch (err) {
-      return { success: false, error: 'An error occurred while resetting your password.' }
-    }
-  }
-
-  const logout = async () => {
-    setToken(null)
-    setUser(null)
-    localStorage.removeItem('wp_jwt')
-    localStorage.removeItem('wp_user')
-  }
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
-        isLoading,
-        login,
-        register,
-        logout,
-        requestPasswordReset,
-        resetPassword,
-        authModalOpen,
-        setAuthModalOpen,
-        authModalTab,
-        setAuthModalTab,
+        isLoading: !isLoaded,
+        isAdmin,
+        authedFetch,
+        signOut,
+        promptSignIn,
       }}
     >
       {children}

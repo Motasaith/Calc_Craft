@@ -7,13 +7,13 @@ import { ChevronRight, LayoutGrid } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, CalculatorCategory } from '@/lib/calculators'
-import { WPCalculator } from '@/lib/wp'
+
 
 interface Props {
-  wpCalculators: WPCalculator[]
+
 }
 
-export default function CategoriesPageClient({ wpCalculators }: Props) {
+export default function CategoriesPageClient(_props: Props) {
   const categoryCounts = React.useMemo(() => {
     const counts: Record<string, number> = {}
     
@@ -22,7 +22,7 @@ export default function CategoriesPageClient({ wpCalculators }: Props) {
     })
     
     return counts
-  }, [wpCalculators])
+  }, [])
 
   const categoryKeys = Object.keys(CATEGORY_LABELS) as CalculatorCategory[]
 

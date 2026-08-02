@@ -2,9 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Plus_Jakarta_Sans, Share_Tech_Mono } from 'next/font/google'
 import './globals.css'
 import { BRAND } from '@/lib/brand'
-import { ClerkProvider } from '@clerk/nextjs'
-import { AuthProvider } from '@/components/providers/AuthContext'
-import { UserDataProvider } from '@/components/providers/UserDataContext'
+import Providers from '@/components/providers/Providers'
 import ChatWidget from '@/components/ChatWidget'
 
 // Self-hosted fonts via next/font/google — no render-blocking @import,
@@ -380,14 +378,12 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ClerkProvider>
-          <AuthProvider>
-            <UserDataProvider>
-              {children}
-              <ChatWidget />
-            </UserDataProvider>
-          </AuthProvider>
-        </ClerkProvider>
+        {/* Client boundary — see components/providers/Providers.tsx for why the
+            auth stack cannot be mounted directly from this Server Component. */}
+        <Providers>
+          {children}
+          <ChatWidget />
+        </Providers>
       </body>
     </html>
   )

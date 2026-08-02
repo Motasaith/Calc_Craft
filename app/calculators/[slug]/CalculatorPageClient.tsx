@@ -6,16 +6,43 @@ import { ChevronRight, ArrowLeft, Calculator, Code2, Copy, CheckCircle2, X, Book
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CalculatorSEOContent from '@/components/CalculatorSEOContent'
-import { WPCalculator } from '@/lib/wp'
+/**
+ * The shape this page receives from its Server Component.
+ *
+ * It used to be `WPCalculator` from lib/wp.ts. WordPress is the blog CMS only
+ * now, and app/calculators/[slug]/page.tsx already built this object entirely
+ * from the local registry — it just kept the CMS's field names. Declaring the
+ * type here removes the last dependency on the retired `calculator` post type.
+ *
+ * `calculator_type` is always 'react' as a result, so the ACF-driven branch
+ * below is legacy and no longer reachable in practice.
+ */
+interface CatalogCalculator {
+  id: number
+  slug: string
+  title: { rendered: string }
+  content: { rendered: string }
+  acf: {
+    brand_name?: string
+    theme: string
+    layout: string
+    require_submit: boolean
+    calculator_type: 'react' | 'acf'
+    react_component_id?: string
+    math_formula?: string
+    formula_2?: string
+    [key: string]: any
+  }
+}
 import { getCalculatorBySlug, calculators } from '@/lib/calculators'
 import CustomCalculatorRenderer, { CustomCalculatorConfig, CustomComponentConfig } from '@/components/calculators/shared/CustomCalculatorRenderer'
 import { getCalculatorComponent } from '@/lib/calculator-components'
 import { useUserData } from '@/components/providers/UserDataContext'
 import { useAuth } from '@/components/providers/AuthContext'
 
-export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
+export default function CalculatorPageClient({ calc }: { calc: CatalogCalculator }) {
   const { savedCalculators, addSavedCalculator, removeSavedCalculator, addEmbeddedCalculator } = useUserData()
-  const { user, setAuthModalOpen, setAuthModalTab } = useAuth()
+  const { user, promptSignIn } = useAuth()
   
   const [showEmbedModal, setShowEmbedModal] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -24,8 +51,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
 
   const handleBookmark = () => {
     if (!user) {
-      setAuthModalTab('login')
-      setAuthModalOpen(true)
+      promptSignIn()
       return
     }
 
@@ -41,7 +67,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopied(true)
-    addEmbeddedCalculator({ id: calc.slug, name: calc.title.rendered, isCustom: false, embeddedAt: new Date().toISOString() })
+    addEmbeddedCalculator(calc.slug)
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -74,7 +100,7 @@ export default function CalculatorPageClient({ calc }: { calc: WPCalculator }) {
       if (calc.acf[nameKey]) {
         components.push({
           id: `input_${i}`,
-          name: nameKey,
+          name: nameKey as string,
           label: String(calc.acf[nameKey]),
           type: (calc.acf[typeKey] as any) || 'number',
         })

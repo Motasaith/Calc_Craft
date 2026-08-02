@@ -28,15 +28,16 @@ interface SavedCalculator {
 type Tab = 'overview' | 'custom' | 'embeds' | 'my_embeds' | 'saved' | 'settings'
 
 export default function DashboardClient() {
-  const { user, logout, isLoading } = useAuth()
-  const { 
-    customCalculators: customCalcs, 
-    savedCalculators: savedCalcs, 
+  const { user, signOut, isLoading } = useAuth()
+  const {
+    myCalculators: customCalcs,
+    savedCalculators: savedCalcs,
     embeddedCalculators,
-    removeCustomCalculator, 
+    deleteCalculator,
     removeSavedCalculator,
     addEmbeddedCalculator,
-    isSyncing
+    isSyncing,
+    error: dataError,
   } = useUserData()
   
   const [activeTab, setActiveTab] = useState<Tab>('overview')
@@ -48,7 +49,7 @@ export default function DashboardClient() {
 
   // ─── Handlers ───
   const handleDeleteCustom = (id: string) => {
-    removeCustomCalculator(id)
+    deleteCalculator(id)
   }
 
   const handleCopyEmbed = (slug: string, name: string) => {
@@ -56,29 +57,53 @@ export default function DashboardClient() {
     const iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
     navigator.clipboard.writeText(iframeCode)
     setCopiedSlug(slug)
-    addEmbeddedCalculator({ id: slug, name, isCustom: false, embeddedAt: new Date().toISOString() })
+    addEmbeddedCalculator(slug)
     setTimeout(() => setCopiedSlug(null), 2000)
   }
 
-  const handleCopyShareLink = (config: any) => {
-    const serialized = serializeConfig(config)
-    const shareUrl = `${window.location.origin}/calculators/custom#${serialized}`
+  const handleCopyShareLink = (calc: any) => {
+    const shareUrl = calc.publicId
+      ? `${window.location.origin}/embed/c?id=${calc.publicId}`
+      : `${window.location.origin}/calculators/custom#${serializeConfig(calc.config)}`
     navigator.clipboard.writeText(shareUrl)
-    setCopiedCustomId(config.id)
+    setCopiedCustomId(calc.id)
     setTimeout(() => setCopiedCustomId(null), 2000)
   }
 
-  // Custom calculators carry their whole config in the URL hash, so the embed
-  // snippet is self-contained — no server lookup needed on the customer's site.
-  const handleCopyCustomEmbed = (config: any) => {
-    const serialized = serializeConfig(config)
-    const embedUrl = `${window.location.origin}/embed#config=${serialized}`
-    const iframeCode = `<iframe src="${embedUrl}" width="100%" height="520" style="border:none;border-radius:16px;overflow:hidden;" loading="lazy" title="${config.name}"></iframe>`
+  // Saved calculators are served from the database by their publicId, so the
+  // snippet stays short and keeps reflecting later edits. The hash form is only
+  // a fallback for rows that predate publicId.
+  const handleCopyCustomEmbed = (calc: any) => {
+    const embedUrl = calc.publicId
+      ? `${window.location.origin}/embed/c?id=${calc.publicId}`
+      : `${window.location.origin}/embed#config=${serializeConfig(calc.config)}`
+    const iframeCode = `<iframe src="${embedUrl}" width="100%" height="520" style="border:none;border-radius:16px;overflow:hidden;" loading="lazy" title="${calc.name}"></iframe>`
     navigator.clipboard.writeText(iframeCode)
-    setEmbeddedCustomId(config.id)
-    addEmbeddedCalculator({ id: config.id, name: config.name, isCustom: true, embeddedAt: new Date().toISOString() })
+    setEmbeddedCustomId(calc.id)
+    addEmbeddedCalculator(calc.publicId || calc.id)
     setTimeout(() => setEmbeddedCustomId(null), 2000)
   }
+
+  // `embeddedCalculators` is a list of slugs/ids. Resolve each to something
+  // displayable: a catalogue calculator, one of the user's own, or the raw id.
+  const embeddedEntries = useMemo(() => {
+    return embeddedCalculators.map((id) => {
+      const standard = calculators.find((c) => c.slug === id)
+      if (standard) {
+        return { id, name: standard.name, isCustom: false, href: `/calculators/${id}` }
+      }
+      const mine = customCalcs.find((c) => c.publicId === id || c.id === id)
+      if (mine) {
+        return {
+          id,
+          name: mine.name,
+          isCustom: true,
+          href: mine.publicId ? `/embed/c?id=${mine.publicId}` : '',
+        }
+      }
+      return { id, name: id, isCustom: true, href: '' }
+    })
+  }, [embeddedCalculators, customCalcs])
 
   const handleRemoveSaved = (slug: string) => {
     removeSavedCalculator(slug)
@@ -138,10 +163,10 @@ export default function DashboardClient() {
               Manage your custom calculators, embed widgets, and saved tools — all in one place.
             </p>
             <Link
-              href="/"
+              href="/sign-in?redirect_url=/dashboard"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm hover:opacity-90 transition-opacity"
             >
-              <Sparkles className="w-4 h-4" /> Go to Homepage to Sign In
+              <Sparkles className="w-4 h-4" /> Sign in
             </Link>
           </motion.div>
         </div>
@@ -168,7 +193,7 @@ export default function DashboardClient() {
           {/* ─── Header ─── */}
           <div className="mb-8">
             <h1 className="text-3xl font-extrabold text-dark-900 mb-1">
-              Welcome back, {user.name || user.username} 👋
+              Welcome back, {user.name || user.name} 👋
             </h1>
             <p className="text-dark-500 text-sm">
               Manage your calculators, embeds, and saved tools.
@@ -483,7 +508,7 @@ export default function DashboardClient() {
                     </div>
                   ) : (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {embeddedCalculators.map((embed) => (
+                      {embeddedEntries.map((embed) => (
                         <div key={embed.id} className="p-5 bg-white border border-neutral-200 rounded-2xl flex flex-col justify-between">
                           <div>
                             <div className="flex items-start justify-between mb-2">
@@ -492,15 +517,11 @@ export default function DashboardClient() {
                                 <span className="text-[10px] text-indigo-600 font-mono uppercase bg-indigo-50 px-2 py-0.5 rounded ml-2 shrink-0">Custom</span>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-neutral-400 mb-4">
-                              <Clock className="w-3 h-3" />
-                              Embedded: {new Date(embed.embeddedAt).toLocaleDateString()}
-                            </div>
                           </div>
                           <div className="flex gap-2 mt-auto">
-                            {!embed.isCustom && (
+                            {embed.href && (
                               <Link
-                                href={`/calculators/${embed.id}`}
+                                href={embed.href}
                                 className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-neutral-100 text-dark-700 text-xs font-bold hover:bg-neutral-200 transition-colors"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" /> View
@@ -508,22 +529,25 @@ export default function DashboardClient() {
                             )}
                             <button
                               onClick={() => {
-                                let iframeCode = ''
-                                if (embed.isCustom) {
-                                  // For custom, we just grab it from local if it exists, or they'd need to re-copy from builder
-                                  const c = customCalcs.find(c => c.id === embed.id)
-                                  if (c) {
-                                    const embedUrl = `${window.location.origin}/embed#config=${serializeConfig(c as any)}`
-                                    iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
-                                  } else {
-                                    alert('Custom calculator config no longer exists!')
-                                    return
-                                  }
-                                } else {
-                                  const embedUrl = `https://homeofcalculators.com/embed/${embed.id}`
-                                  iframeCode = `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
+                                const mine = customCalcs.find(
+                                  (c) => c.publicId === embed.id || c.id === embed.id
+                                )
+                                const embedUrl = embed.isCustom
+                                  ? mine?.publicId
+                                    ? `${window.location.origin}/embed/c?id=${mine.publicId}`
+                                    : mine
+                                    ? `${window.location.origin}/embed#config=${serializeConfig(mine.config)}`
+                                    : ''
+                                  : `${window.location.origin}/embed/${embed.id}`
+
+                                if (!embedUrl) {
+                                  alert('That calculator no longer exists in your account.')
+                                  return
                                 }
-                                navigator.clipboard.writeText(iframeCode)
+
+                                navigator.clipboard.writeText(
+                                  `<iframe src="${embedUrl}" width="100%" height="500" frameborder="0" loading="lazy" sandbox="allow-scripts allow-same-origin" style="border-radius:12px;overflow:hidden;"></iframe>`
+                                )
                                 setCopiedSlug(embed.id)
                                 setTimeout(() => setCopiedSlug(null), 2000)
                               }}
@@ -597,17 +621,17 @@ export default function DashboardClient() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold">
-                          {(user.name || user.username).charAt(0).toUpperCase()}
+                          {(user.name || user.name).charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="font-bold text-sm text-dark-900">{user.name || user.username}</div>
+                          <div className="font-bold text-sm text-dark-900">{user.name || user.name}</div>
                           <div className="text-xs text-dark-500">{user.email}</div>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="p-3 bg-neutral-50 rounded-xl">
                           <div className="text-[10px] font-bold uppercase text-neutral-400 mb-1">Username</div>
-                          <div className="text-sm font-bold text-dark-900">{user.username}</div>
+                          <div className="text-sm font-bold text-dark-900">{user.name}</div>
                         </div>
                         <div className="p-3 bg-neutral-50 rounded-xl">
                           <div className="text-[10px] font-bold uppercase text-neutral-400 mb-1">User ID</div>
@@ -625,7 +649,7 @@ export default function DashboardClient() {
                         <div>
                           <div className="font-bold text-sm text-dark-900">Custom Calculators</div>
                           <div className="text-xs text-dark-500">
-                            {isSyncing ? 'Syncing...' : 'Synced to your account'}
+                            Saved locally to your device
                           </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{customCalcs.length}</span>
@@ -634,7 +658,7 @@ export default function DashboardClient() {
                         <div>
                           <div className="font-bold text-sm text-dark-900">Saved Tools</div>
                           <div className="text-xs text-dark-500">
-                            {isSyncing ? 'Syncing...' : 'Synced to your account'}
+                            Saved locally to your device
                           </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{savedCalcs.length}</span>
@@ -643,7 +667,7 @@ export default function DashboardClient() {
                         <div className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
                           <p className="text-xs text-dark-600">
-                            Your data is securely synced to your WordPress account. You can safely access your tools from any device.
+                            Your data is securely saved locally on this device.
                           </p>
                         </div>
                       </div>
@@ -654,7 +678,7 @@ export default function DashboardClient() {
                   <div className="p-6 bg-white border border-neutral-200 rounded-2xl">
                     <h3 className="font-bold text-dark-900 mb-4">Account Actions</h3>
                     <button
-                      onClick={() => logout()}
+                      onClick={() => signOut()}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-colors"
                     >
                       <LogOut className="w-4 h-4" /> Sign Out
