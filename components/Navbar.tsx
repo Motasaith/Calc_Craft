@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Camera } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Camera, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, type CalculatorCategory } from '@/lib/calculators'
 import { UserButton } from '@clerk/react'
+import { clerkAppearance } from '@/lib/clerk-appearance'
 import { useAuth } from '@/components/providers/AuthContext'
 
 const navLinks = [
@@ -18,6 +19,43 @@ const navLinks = [
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ]
+
+/**
+ * The signed-in avatar menu.
+ *
+ * Clerk's <UserButton> is kept for everything it already does well — the avatar,
+ * the popover, sign-out, and multi-session switching — but extended rather than
+ * accepted as-is:
+ *
+ *   • A "My Dashboard" entry, because the menu otherwise offered no route back
+ *     to the user's own calculators.
+ *   • "Manage account" is sent to /account (userProfileMode="navigation")
+ *     instead of opening Clerk's modal, so account settings live on a real page
+ *     with the site's navbar, footer and styling around them.
+ *   • Restyled via clerkAppearance so the popover matches the rest of the site.
+ */
+function AccountMenu() {
+  return (
+    <UserButton
+      appearance={clerkAppearance as any}
+      userProfileMode="navigation"
+      userProfileUrl="/account"
+    >
+      <UserButton.MenuItems>
+        <UserButton.Link
+          label="My Dashboard"
+          labelIcon={<LayoutDashboard className="w-4 h-4" />}
+          href="/dashboard"
+        />
+        <UserButton.Link
+          label="Build with AI"
+          labelIcon={<Sparkles className="w-4 h-4" />}
+          href="/build-ai"
+        />
+      </UserButton.MenuItems>
+    </UserButton>
+  )
+}
 
 export default function Navbar() {
   // Auth UI is driven by our own context, not Clerk's <Show>, so the header
@@ -225,7 +263,7 @@ export default function Navbar() {
               the session resolves, which is normal and self-explanatory. */}
           {user ? (
             <div className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl shadow-sm">
-              <UserButton />
+              <AccountMenu />
             </div>
           ) : (
             <Link
@@ -325,7 +363,7 @@ export default function Navbar() {
                 {user ? (
                   <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-dark-800">My Account</span>
-                    <UserButton />
+                    <AccountMenu />
                   </div>
                 ) : (
                   <div className="flex gap-2">
