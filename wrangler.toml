@@ -1,18 +1,99 @@
 # Cloudflare Pages configuration.
 #
-# The one setting here that is NOT optional is `nodejs_compat`. The Pages
-# Functions in functions/ talk to CockroachDB through postgres.js, which opens a
-# raw TCP socket. Workers only expose sockets under this flag — without it every
-# database call fails at runtime with "no such module node:net", and the failure
-# only shows up in production, never in `next build`.
+# ─────────────────────────────────────────────────────────────────────────────
+#  READ THIS BEFORE EDITING
+# ─────────────────────────────────────────────────────────────────────────────
+#  Once this file exists, Cloudflare Pages takes environment variables FROM HERE
+#  and the dashboard shows:
 #
-# Keeping it in this file rather than the dashboard means the requirement is
-# version-controlled and survives someone recreating the Pages project.
+#      "Environment variables for this project are being managed through
+#       wrangler.toml. Only Secrets (encrypted variables) can be managed via
+#       the Dashboard."
 #
-# Verified working: postgres.js → CockroachDB Cloud v26.2.1 from workerd,
-# via `wrangler pages dev out --compatibility-flags=nodejs_compat`.
+#  This file originally had no [vars] block, which silently emptied every
+#  plaintext variable. The visible symptom was sign-in never loading: the build
+#  inlines NEXT_PUBLIC_* values into the JavaScript at compile time, got an
+#  empty string for the Clerk key, and shipped a bundle with no key in it.
+#
+#  So: every non-secret variable has to live in [vars] below. Adding one in the
+#  dashboard will not work.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  WHAT BELONGS HERE vs. IN THE DASHBOARD
+# ─────────────────────────────────────────────────────────────────────────────
+#  HERE — public values. This file is committed to git, so nothing sensitive.
+#    • NEXT_PUBLIC_* — inlined into client JavaScript by the build, so they are
+#      public by definition and MUST be readable at build time.
+#    • Non-sensitive endpoints and model names.
+#
+#  DASHBOARD SECRETS (Settings → Variables and Secrets → add as "Secret") —
+#  never in this file:
+#    CLERK_SECRET_KEY, DATABASE_URL, DATABASE_URL_UNPOOLED, LLM_API_KEY
+#    (and any LLM_API_KEY_01/_02 spares), SENTRY_AUTH_TOKEN, ADMIN_EMAILS,
+#    WP_USERNAME, WP_APPLICATION_PASSWORD
+#
+#  Secrets still work normally — they are managed separately from this file and
+#  are available to Pages Functions at runtime.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  nodejs_compat IS NOT OPTIONAL
+# ─────────────────────────────────────────────────────────────────────────────
+#  The Pages Functions in functions/ reach CockroachDB through postgres.js,
+#  which opens a raw TCP socket. Workers expose sockets only under this flag.
+#  Without it every database call fails at runtime with "no such module
+#  node:net" — and it never shows up in the build log, only as 500s on the live
+#  site.
+#
+#  Verified working: postgres.js → CockroachDB Cloud v26.2.1 from workerd.
 
 name = "calc-craft"
 pages_build_output_dir = "out"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
+
+# ── Production ───────────────────────────────────────────────────────────────
+[vars]
+# Clerk. The publishable key is public by design — it ships inside the client
+# bundle every visitor downloads, which is why Clerk calls it "publishable".
+# It decodes to the Frontend API host: clerk.homeofcalculators.com
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuaG9tZW9mY2FsY3VsYXRvcnMuY29tJA"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
+
+# Mirrored to the client so the dashboard can hide admin-only UI. Not a security
+# boundary — every admin endpoint re-checks server-side against the non-public
+# ADMIN_EMAILS secret. These addresses are visible in page source either way,
+# because that is what the NEXT_PUBLIC_ prefix means.
+NEXT_PUBLIC_ADMIN_EMAILS = "saithmota@gmail.com,binacodex@gmail.com,tariqdeveloper786@gmail.com"
+
+# Sentry DSNs are public identifiers, not credentials — they only allow sending
+# events in. The credential is SENTRY_AUTH_TOKEN, which stays a secret.
+NEXT_PUBLIC_SENTRY_DSN = "https://7b007b7d373e566ec87739842566294d@o4511814148554752.ingest.de.sentry.io/4511841992048720"
+SENTRY_ORG = "bina-codes"
+SENTRY_PROJECT = "homeofcalculators"
+
+# WordPress is the CMS for blog articles only. The URL is public; the
+# application password is a dashboard secret.
+WP_API_URL = "https://cms.homeofcalculators.com/wp-json"
+
+# Ollama Cloud. The API key(s) are dashboard secrets — see functions/_shared/llm.js
+# for how spare keys are discovered and rotated when one hits its quota.
+LLM_BASE_URL = "https://ollama.com/v1"
+LLM_MODEL = "gpt-oss:120b"
+VISION_LLM_MODEL = "gemma4:31b"
+
+# ── Preview deployments ──────────────────────────────────────────────────────
+# Pages does not inherit [vars] into preview environments, so anything omitted
+# here is empty on preview branches.
+[env.preview.vars]
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_Y2xlcmsuaG9tZW9mY2FsY3VsYXRvcnMuY29tJA"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
+NEXT_PUBLIC_ADMIN_EMAILS = "saithmota@gmail.com,binacodex@gmail.com,tariqdeveloper786@gmail.com"
+NEXT_PUBLIC_SENTRY_DSN = "https://7b007b7d373e566ec87739842566294d@o4511814148554752.ingest.de.sentry.io/4511841992048720"
+SENTRY_ORG = "bina-codes"
+SENTRY_PROJECT = "homeofcalculators"
+WP_API_URL = "https://cms.homeofcalculators.com/wp-json"
+LLM_BASE_URL = "https://ollama.com/v1"
+LLM_MODEL = "gpt-oss:120b"
+VISION_LLM_MODEL = "gemma4:31b"
