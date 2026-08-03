@@ -748,6 +748,25 @@ const LENGTH_TO_M = {
   ft: 0.3048, foot: 0.3048, feet: 0.3048,
   in: 0.0254, inch: 0.0254, inches: 0.0254,
   nm: 1852, nmi: 1852, 'nautical mile': 1852, 'nautical miles': 1852,
+
+  // Sub-millimetre units. LengthConverter offers 'μm' but this table had no
+  // entry for it, so convertUnits() threw `Unknown unit: μm` — which happened
+  // during static export and failed the whole build, not just that calculator.
+  //
+  // Both the Greek mu (U+03BC, what a keyboard produces) and the dedicated
+  // micro sign (U+00B5, what some fonts and copy-paste produce) are included:
+  // they are visually identical but different code points, and findKey() only
+  // lowercases and trims, so it cannot match one against the other.
+  //
+  // Nanometre is spelled out rather than abbreviated on purpose — see the note
+  // about `nm` below.
+  'μm': 0.000001, 'µm': 0.000001, um: 0.000001,
+  micrometer: 0.000001, micrometre: 0.000001,
+  micrometers: 0.000001, micrometres: 0.000001,
+  micron: 0.000001, microns: 0.000001,
+
+  nanometer: 0.000000001, nanometre: 0.000000001,
+  nanometers: 0.000000001, nanometres: 0.000000001,
 } as const
 // Weight (grams)
 const WEIGHT_TO_G = {
