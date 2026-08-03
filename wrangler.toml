@@ -51,6 +51,27 @@ pages_build_output_dir = "out"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  NO DUPLICATES BETWEEN HERE AND DASHBOARD SECRETS
+# ─────────────────────────────────────────────────────────────────────────────
+#  A name defined in both places fails the deploy at the very last step, after
+#  the build and asset upload have already succeeded:
+#
+#      Error: Failed to publish your Function.
+#      Binding name 'LLM_MODEL' already in use.
+#
+#  So this block is kept to the absolute minimum: only values the BUILD must
+#  read. Everything else is left to the dashboard.
+#
+#  Why only NEXT_PUBLIC_*: those are inlined into the client JavaScript by
+#  `next build`, so they have to exist at compile time. Encrypted secrets are
+#  not exposed to the build, which is why they cannot live in the dashboard.
+#
+#  Everything else the app needs — LLM_MODEL, LLM_BASE_URL, VISION_LLM_MODEL,
+#  WP_API_URL, SENTRY_ORG, SENTRY_PROJECT — is only read by Pages Functions at
+#  runtime, where dashboard secrets work fine. Each also has a sensible default
+#  in code, so a missing one degrades rather than breaks.
+
 # ── Production ───────────────────────────────────────────────────────────────
 [vars]
 # Clerk. The publishable key is public by design — it ships inside the client
@@ -67,20 +88,8 @@ NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
 NEXT_PUBLIC_ADMIN_EMAILS = "saithmota@gmail.com,binacodex@gmail.com,tariqdeveloper786@gmail.com"
 
 # Sentry DSNs are public identifiers, not credentials — they only allow sending
-# events in. The credential is SENTRY_AUTH_TOKEN, which stays a secret.
+# events in. The credential is SENTRY_AUTH_TOKEN, which stays a dashboard secret.
 NEXT_PUBLIC_SENTRY_DSN = "https://7b007b7d373e566ec87739842566294d@o4511814148554752.ingest.de.sentry.io/4511841992048720"
-SENTRY_ORG = "bina-codes"
-SENTRY_PROJECT = "homeofcalculators"
-
-# WordPress is the CMS for blog articles only. The URL is public; the
-# application password is a dashboard secret.
-WP_API_URL = "https://cms.homeofcalculators.com/wp-json"
-
-# Ollama Cloud. The API key(s) are dashboard secrets — see functions/_shared/llm.js
-# for how spare keys are discovered and rotated when one hits its quota.
-LLM_BASE_URL = "https://ollama.com/v1"
-LLM_MODEL = "gpt-oss:120b"
-VISION_LLM_MODEL = "gemma4:31b"
 
 # ── Preview deployments ──────────────────────────────────────────────────────
 # Pages does not inherit [vars] into preview environments, so anything omitted
@@ -91,9 +100,3 @@ NEXT_PUBLIC_CLERK_SIGN_IN_URL = "/sign-in"
 NEXT_PUBLIC_CLERK_SIGN_UP_URL = "/sign-up"
 NEXT_PUBLIC_ADMIN_EMAILS = "saithmota@gmail.com,binacodex@gmail.com,tariqdeveloper786@gmail.com"
 NEXT_PUBLIC_SENTRY_DSN = "https://7b007b7d373e566ec87739842566294d@o4511814148554752.ingest.de.sentry.io/4511841992048720"
-SENTRY_ORG = "bina-codes"
-SENTRY_PROJECT = "homeofcalculators"
-WP_API_URL = "https://cms.homeofcalculators.com/wp-json"
-LLM_BASE_URL = "https://ollama.com/v1"
-LLM_MODEL = "gpt-oss:120b"
-VISION_LLM_MODEL = "gemma4:31b"
