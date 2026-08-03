@@ -8,14 +8,15 @@ export const dynamic = 'force-static'
 export const revalidate = false
 
 export const metadata: Metadata = {
-  title: 'Terms of Use - Home of Calculators Calculator Service Agreement | Home of Calculators',
+  title: 'Terms of Use',
   description:
-    'Read the Home of Calculators Terms of Use. Understand your rights and responsibilities when using our free online calculators, the visual builder, and embeddable widgets.',
+    'Terms of Use for Home of Calculators. Understand your rights and responsibilities when using our free online calculators and visual builder.',
   keywords: ['homeofcalculators terms', 'calculator terms of use', 'user agreement', 'service terms'],
   openGraph: {
     title: 'Terms of Use | Home of Calculators',
     description: 'Service agreement governing your use of Home of Calculators calculators and tools.',
     type: 'article',
+    url: 'https://homeofcalculators.com/terms-of-use',
   },
   alternates: { canonical: 'https://homeofcalculators.com/terms-of-use' },
 }

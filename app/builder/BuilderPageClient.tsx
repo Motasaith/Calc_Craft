@@ -722,6 +722,7 @@ export default function BuilderPageClient() {
     <>
       <Navbar />
       <main className="min-h-screen pt-28 bg-gradient-to-b from-neutral-50 to-white flex flex-col">
+        <h1 className="sr-only">Visual Calculator Builder - Design Custom Calculator Widgets</h1>
         {/* ─────────────────── TOOLBAR ─────────────────── */}
         <div className="bg-white/90 backdrop-blur-xl border-b border-neutral-200/80 px-3 sm:px-5 py-2.5 sm:py-3 flex flex-wrap gap-2 sm:gap-3 items-center justify-between shadow-sm sticky top-28 z-30">
           <div className="flex items-center gap-2 min-w-0 flex-1">

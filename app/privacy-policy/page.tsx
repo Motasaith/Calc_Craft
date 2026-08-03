@@ -8,9 +8,9 @@ export const dynamic = 'force-static'
 export const revalidate = false
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - How Home of Calculators Protects Your Data | Home of Calculators',
+  title: 'Privacy Policy',
   description:
-    'Read the Home of Calculators Privacy Policy. Learn how we protect your calculation data, what we collect (and don\'t), your GDPR and CCPA rights, and our zero-tracking approach.',
+    'Privacy Policy for Home of Calculators. Learn how we protect your data, our zero-tracking approach, and your GDPR/CCPA rights.',
   keywords: [
     'homeofcalculators privacy policy',
     'calculator privacy',
@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     title: 'Privacy Policy | Home of Calculators',
     description: 'How Home of Calculators protects your data with browser-only calculations and zero server storage.',
     type: 'article',
+    url: 'https://homeofcalculators.com/privacy-policy',
   },
   alternates: { canonical: 'https://homeofcalculators.com/privacy-policy' },
 }

@@ -15,12 +15,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const localCalc = getLocalCalc(slug)
 
   const title = localCalc?.name || 'Calculator'
-  const description = localCalc?.description || `Use the ${title} to solve your problems instantly. Fast, accurate, and completely free.`
+  const baseDescription = localCalc?.description || `Use the ${title} to solve your problems instantly.`
+  const description = `${baseDescription} Free, accurate, and mobile-friendly with no signup required.`
 
   if (!localCalc) return { title: 'Calculator Not Found' }
 
   return {
-    title: `${title} - Free Online Calculator | Home of Calculators`,
+    title: `${title} - Free Calculator`,
     description,
     openGraph: {
       title: `${title} | Home of Calculators`,

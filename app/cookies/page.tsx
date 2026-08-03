@@ -8,9 +8,9 @@ export const dynamic = 'force-static'
 export const revalidate = false
 
 export const metadata: Metadata = {
-  title: 'Cookies Policy - How Home of Calculators Uses Cookies | Home of Calculators',
+  title: 'Cookies Policy',
   description:
-    'Learn how Home of Calculators uses cookies and browser storage. Minimal, privacy-respecting, GDPR-compliant. No advertising cookies, no third-party tracking.',
+    'Cookies Policy for Home of Calculators. Learn how we use cookies and browser storage. 100% GDPR-compliant, no third-party tracking.',
   keywords: [
     'homeofcalculators cookies',
     'cookie policy',
@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     title: 'Cookies Policy | Home of Calculators',
     description: 'Minimal, privacy-respecting cookie usage; no advertising, no third-party tracking.',
     type: 'article',
+    url: 'https://homeofcalculators.com/cookies',
   },
   alternates: { canonical: 'https://homeofcalculators.com/cookies' },
 }

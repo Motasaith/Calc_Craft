@@ -56,7 +56,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'Loan Calculator',
         short_name: 'Loan',
         description: 'Calculate loan EMI and interest',
-        url: '/calculators/loan',
+        url: '/calculators/loan-emi',
         icons: [{ src: '/icon-loan.png', sizes: '96x96' }],
       },
     ],

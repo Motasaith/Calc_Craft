@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getPosts } from '@/lib/wp'
-import { calculators as localCalculators } from '@/lib/calculators'
+import { calculators as localCalculators, CATEGORY_LABELS } from '@/lib/calculators'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // present regardless of the CMS.
   const posts = await getPosts().catch(() => [])
   const calculators = localCalculators
+  const categories = Object.keys(CATEGORY_LABELS)
 
   return [
     // Homepage
@@ -78,6 +79,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: new Date(post.modified || post.date || now),
       changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+    // Categories
+    ...categories.map((cat: string) => ({
+      url: `${baseUrl}/categories/${cat}`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
     })),
     // Individual calculators

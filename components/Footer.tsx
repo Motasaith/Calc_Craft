@@ -188,7 +188,7 @@ export default function Footer() {
 
               {/* Brand Heading */}
               <Link href="/" className="flex items-center gap-2.5 mb-4 group select-none">
-                <Image src="/footer_logo.webp" alt="" width={120} height={120} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" />
+                <Image src="/footer_logo.webp" alt="Home of Calculators Footer Logo" width={120} height={120} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-md" />
                 <span className="text-lg font-bold text-white tracking-tight group-hover:text-slate-200 transition-colors">
                   {BRAND.name}
                 </span>

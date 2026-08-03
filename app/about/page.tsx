@@ -22,9 +22,9 @@ export const dynamic = 'force-static'
 export const revalidate = false
 
 export const metadata: Metadata = {
-  title: 'About Home of Calculators - Our Mission, Story & the Team Behind Free Calculators | Home of Calculators',
+  title: 'About Us',
   description:
-    'Learn about Home of Calculators: a free, privacy-first calculator platform that gives you 500+ ready-made calculators, a no-code visual builder, and embeddable widgets for any website.',
+    'Learn about Home of Calculators: a free, privacy-first platform with 500+ calculators, a visual builder, and embeddable widgets.',
   keywords: [
     'about homeofcalculators',
     'calculator platform',
@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     title: 'About Home of Calculators | Home of Calculators',
     description: 'Our mission, story, and the team building the world\'s most flexible calculator platform.',
     type: 'website',
+    url: 'https://homeofcalculators.com/about',
   },
   alternates: { canonical: 'https://homeofcalculators.com/about' },
 }

@@ -110,7 +110,7 @@ export default function Navbar() {
           className="flex shrink-0 items-center gap-3 group"
           aria-label={`${BRAND.name} Home`}
         >
-          <Image src="/logo.webp" alt="" width={52} height={52} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-sm" priority />
+          <Image src="/logo.webp" alt="Home of Calculators Logo" width={52} height={52} className="object-contain rounded-xl group-hover:scale-105 transition-transform shadow-sm" priority />
           <div className="hidden sm:flex flex-col leading-none">
             <span className="text-[12px] font-extrabold text-dark-800 tracking-[0.08em] uppercase font-mono whitespace-nowrap">
               Home<span className="text-primary-700"> of </span>Calculators

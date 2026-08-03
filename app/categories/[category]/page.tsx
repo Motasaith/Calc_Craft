@@ -16,10 +16,17 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   }
 
   return {
-    title: `${label} Calculators - Free Online Tools | Home of Calculators`,
-    description: `Browse our collection of free online ${label.toLowerCase()} calculators. Easy to use, highly accurate, and completely free.`,
+    title: `${label} Calculators`,
+    description: `Browse our complete collection of free online ${label.toLowerCase()} calculators. Fast, accurate, mobile-friendly, and completely free to use.`,
     keywords: [`${label.toLowerCase()} calculators`, 'free online calculators', label.toLowerCase()],
     alternates: { canonical: `https://homeofcalculators.com/categories/${categorySlug}` },
+    openGraph: {
+      title: `${label} Calculators | Home of Calculators`,
+      description: `Browse our complete collection of free online ${label.toLowerCase()} calculators. Fast, accurate, mobile-friendly, and completely free to use.`,
+      url: `https://homeofcalculators.com/categories/${categorySlug}`,
+      siteName: 'Home of Calculators',
+      type: 'website',
+    },
   }
 }
 

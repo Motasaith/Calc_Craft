@@ -17,9 +17,9 @@ import { getPosts, plainExcerpt, postAuthor, postImage } from '@/lib/wp'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Home of Calculators Blog - Calculator Tips, Tutorials & Industry Insights | Home of Calculators',
+  title: 'Blog',
   description:
-    'In-depth guides on using calculators for finance, health, math, and everyday life. Plus tutorials on building custom calculators with our visual builder and embedding them anywhere.',
+    'Guides on using calculators for finance, health, math, and life. Plus tutorials on building custom calculator widgets and embedding them.',
   keywords: [
     'calculator blog',
     'finance tips',
@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     title: 'Home of Calculators Blog | Home of Calculators',
     description: 'Tips, tutorials, and industry insights on calculators and custom calculator development.',
     type: 'website',
+    url: 'https://homeofcalculators.com/blog',
   },
   alternates: { canonical: 'https://homeofcalculators.com/blog' },
 }
