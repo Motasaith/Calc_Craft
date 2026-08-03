@@ -1,50 +1,44 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function PipeVolumeCalculator() {
-  const [diameter, setDiameter] = useState('2')
-  const [length, setLength] = useState('10')
+  const [diameterStr, setDiameterStr] = useState('2') // inches
+  const [lengthStr, setLengthStr] = useState('50') // feet
 
-  const d = parseFloat(diameter), l = parseFloat(length)
-  const valid = !isNaN(d) && !isNaN(l) && d > 0 && l > 0
-  // diameter in inches, length in feet → volume in gallons
-  // V (gal) = π × (d/2)² × (l×12) / 231
-  const radiusIn = valid ? d / 2 : 0
-  const lengthIn = valid ? l * 12 : 0
-  const volumeGal = valid ? (Math.PI * radiusIn * radiusIn * lengthIn) / 231 : 0
-  const volumeL = volumeGal * 3.78541
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, gallons: 0, steps: [] as string[] }
+    const d = parseFloat(diameterStr)
+    const l = parseFloat(lengthStr)
+    if (isNaN(d) || isNaN(l) || d <= 0 || l <= 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    // radius in feet
+    const rFt = (d / 2) / 12
+    const volCuFt = Math.PI * rFt * rFt * l
+    const gallons = volCuFt * 7.48052 // 7.48 gallons per cu ft
+    return {
+      error: null,
+      gallons,
+      steps: [
+        `Pipe Radius = ${rFt.toFixed(4)} ft`,
+        `Cubic Feet Volume = π × r² × L = ${volCuFt.toFixed(3)} cu ft`,
+        `Total Gallons = Volume × 7.481 = ${gallons.toFixed(2)} gallons`
+      ]
+    }
+  }, [diameterStr, lengthStr])
 
   return (
-    <FormCalculatorShell title="Pipe Volume Calculator" subtitle="V = π × r² × L" badge="PLUMBING">
-      <RetroInput label="Pipe Diameter" value={diameter} onChange={setDiameter} placeholder="2" id="pv-d" unit="in" />
-      <RetroInput label="Pipe Length" value={length} onChange={setLength} placeholder="10" id="pv-l" unit="ft" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Volume" value={volumeGal.toFixed(2)} unit="gal" large />
-            <ResultDisplay label="Volume" value={volumeL.toFixed(2)} unit="L" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Pipe Cross-Section</span>
-            <svg width="160" height="90" viewBox="0 0 160 90" className="select-none">
-              <defs>
-                <pattern id="pvGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="90" fill="url(#pvGrid)" rx="8" />
-              <path d={wobblyBar(20, 20, 120, 50)} fill="#cbd5e1" fillOpacity="0.3" stroke="#64748b" strokeWidth="2" />
-              <circle cx="80" cy="45" r={Math.min(25, d * 3)} fill="#60a5fa" fillOpacity="0.35" stroke="#2563eb" strokeWidth="1.5" />
-              <text x="80" y="85" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#2563eb" fontWeight="bold">{volumeGal.toFixed(1)} gal</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Pipe Volume Water Solver" subtitle="Calculate water capacity inside plumbing pipes" badge="PLUMBING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Pipe Inside Diameter (inches)" value={diameterStr} onChange={setDiameterStr} id="pv-d" />
+          <RetroInput label="Pipe Length (feet)" value={lengthStr} onChange={setLengthStr} id="pv-l" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Water Volume (gallons)" value={results.gallons.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

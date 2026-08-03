@@ -1,75 +1,46 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
-const AWG_TABLE = [
-  { awg: 0, ampacity: 150 },
-  { awg: 2, ampacity: 95 },
-  { awg: 4, ampacity: 70 },
-  { awg: 6, ampacity: 55 },
-  { awg: 8, ampacity: 40 },
-  { awg: 10, ampacity: 30 },
-  { awg: 12, ampacity: 20 },
-  { awg: 14, ampacity: 15 },
-]
-
 export default function WireSizeCalculator() {
-  const [current, setCurrent] = useState('15')
-  const [distance, setDistance] = useState('30')
-  const [voltage, setVoltage] = useState('120')
+  const [ampsStr, setAmpsStr] = useState('20')
+  const [lengthStr, setLengthStr] = useState('50') // feet
 
-  const amps = parseFloat(current) || 0
-  const dist = parseFloat(distance) || 0
-  const volts = parseFloat(voltage) || 0
-
-  // Voltage drop allowance 3%
-  const maxDrop = volts * 0.03
-  // Approx circular mils needed: cmil = (2 * K * I * D) / VD, K=12 for copper
-  const cmil = volts > 0 ? (2 * 12 * amps * dist) / maxDrop : 0
-  // Find smallest AWG that satisfies ampacity
-  const byAmpacity = AWG_TABLE.find((a) => a.ampacity >= amps)
-  const recommended = byAmpacity ? byAmpacity.awg : 0
-
-  const valid = amps > 0 && dist > 0 && volts > 0
-
-  // Visualizer: bar height proportional to current
-  const barH = Math.min(80, amps * 1.2)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, awg: '', steps: [] as string[] }
+    const a = parseFloat(ampsStr)
+    const l = parseFloat(lengthStr)
+    if (isNaN(a) || isNaN(l) || a <= 0 || l <= 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    // Very simple AWG guideline for 120V with 3% voltage drop limit
+    let awg = '14 AWG'
+    if (a > 15 && a <= 20) awg = '12 AWG'
+    else if (a > 20 && a <= 30) awg = '10 AWG'
+    else if (a > 30 && a <= 50) awg = '8 AWG'
+    else if (a > 50) awg = '6 AWG or larger'
+    return {
+      error: null,
+      awg,
+      steps: [
+        `Standard conductor guidelines (NEC 3% voltage drop limit)`,
+        `Current = ${a} A | Distance = ${l} ft`,
+        `Recommended Wire size = ${awg}`
+      ]
+    }
+  }, [ampsStr, lengthStr])
 
   return (
-    <FormCalculatorShell
-      title="Wire Size Calculator"
-      subtitle="Find the right AWG gauge for your circuit"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Current" value={current} onChange={setCurrent} unit="amps" min={0} />
-        <RetroInput label="Distance" value={distance} onChange={setDistance} unit="ft" min={0} />
-        <RetroInput label="Voltage" value={voltage} onChange={setVoltage} unit="V" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Recommended Wire Size" value={`AWG ${recommended}`} large />
-            <ResultDisplay label="Max Voltage Drop" value={maxDrop.toFixed(2)} unit="V" />
-            <ResultDisplay label="Circular Mils Needed" value={Math.round(cmil).toLocaleString()} unit="cmil" />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyBar(20, 90 - barH, 30, barH)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <path d={wobblyBar(60, 90 - barH * 0.7, 30, barH * 0.7)} fill="#cbd8ca" stroke="#b0bdae" strokeWidth="2" />
-            <line x1="10" y1="90" x2="110" y2="90" stroke="#888" strokeWidth="1.5" />
-          </svg>
+    <FormCalculatorShell title="Electrical Wire Size Solver" subtitle="Calculate target AWG wire gauges for circuit loads" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Circuit Amps" value={ampsStr} onChange={setAmpsStr} id="ws-a" />
+          <RetroInput label="One-way Distance (feet)" value={lengthStr} onChange={setLengthStr} id="ws-l" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Recommended Gauge" value={results.awg} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,48 +1,39 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ConcreteBlockCalculator() {
-  const [wallArea, setWallArea] = useState('50')
-  const [blockType, setBlockType] = useState<'standard' | 'half' | 'jumbo'>('standard')
-  const [result, setResult] = useState<{ blocks: number; mortarBags: number } | null>(null)
+  const [areaStr, setAreaStr] = useState('100') // sq ft
 
-  const blockArea: Record<string, number> = { standard: 0.089, half: 0.044, jumbo: 0.118 }
-
-  const calculate = () => {
-    const wa = parseFloat(wallArea)
-    if (isNaN(wa) || wa <= 0) { setResult(null); return }
-    const blocks = Math.ceil((wa / blockArea[blockType]) * 1.05)
-    const mortarBags = Math.ceil(blocks / 30)
-    setResult({ blocks, mortarBags })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, blocks: 0, steps: [] as string[] }
+    const a = parseFloat(areaStr)
+    if (isNaN(a) || a <= 0) return { ...defaultObj, error: 'Please enter a valid positive area.' }
+    // Standard 8x8x16 block: 1.125 blocks per sq ft
+    const blocks = a * 1.125
+    return {
+      error: null,
+      blocks: Math.ceil(blocks),
+      steps: [
+        `Standard block size (8" x 8" x 16") covers 0.888 sq ft`,
+        `Blocks multiplier = 1.125 blocks/sq ft`,
+        `Total blocks = ${a} × 1.125 = ${Math.ceil(blocks)} blocks`
+      ]
+    }
+  }, [areaStr])
 
   return (
-    <FormCalculatorShell title="Concrete Block Calculator" subtitle="Blocks & mortar bags" badge="CONSTRUCTION">
-      <RetroInput label="Wall Area (m²)" value={wallArea} onChange={setWallArea} placeholder="50" id="cb-wa" />
-      <RetroSelect label="Block Size" value={blockType} onChange={(v) => { setBlockType(v as any); setResult(null) }} options={[{value:'standard',label:'Standard (400x200mm)'},{value:'half',label:'Half (200x200mm)'},{value:'jumbo',label:'Jumbo (590x200mm)'}]} id="cb-type" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Blocks Needed" value={result.blocks} large />
-            <ResultDisplay label="Mortar Bags" value={result.mortarBags} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 70" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 3 }).map((_, r) =>
-                Array.from({ length: 5 }).map((_, c) => (
-                  <path key={`${r}-${c}`} d={wobblyBar(8 + c * 38, 8 + r * 20, 34, 16)} fill="#a0a0a0" stroke="#606060" strokeWidth="0.5" />
-                ))
-              )}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Concrete Block Solver" subtitle="Calculate blocks for masonry walls" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Wall Area (sq ft)" value={areaStr} onChange={setAreaStr} id="cb-a" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Concrete Blocks Needed" value={results.blocks.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

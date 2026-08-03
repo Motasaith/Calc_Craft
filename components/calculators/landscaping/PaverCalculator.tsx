@@ -1,59 +1,44 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function PaverCalculator() {
-  const [patioArea, setPatioArea] = useState('200')
-  const [paverWidth, setPaverWidth] = useState('12')
-  const [paverLength, setPaverLength] = useState('12')
+  const [areaStr, setAreaStr] = useState('200') // sq ft
+  const [paverWStr, setPaverWStr] = useState('4') // inches
+  const [paverLStr, setPaverLStr] = useState('8') // inches
 
-  const area = parseFloat(patioArea) || 0
-  const pw = parseFloat(paverWidth) || 0
-  const pl = parseFloat(paverLength) || 0
-
-  const paverArea = (pw * pl) / 144
-  const basePavers = paverArea > 0 ? Math.ceil(area / paverArea) : 0
-  const withWaste = Math.ceil(basePavers * 1.1)
-  const wasteFactor = withWaste - basePavers
-
-  const valid = area > 0 && paverArea > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, count: 0, steps: [] as string[] }
+    const a = parseFloat(areaStr)
+    const pw = parseFloat(paverWStr)
+    const pl = parseFloat(paverLStr)
+    if (isNaN(a) || isNaN(pw) || isNaN(pl) || a <= 0 || pw <= 0 || pl <= 0) return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    const paverSqFt = (pw * pl) / 144
+    const count = a / paverSqFt
+    return {
+      error: null,
+      count: Math.ceil(count),
+      steps: [
+        `One Paver Area = (${pw} × ${pl}) / 144 = ${paverSqFt.toFixed(4)} sq ft`,
+        `Total Pavers Needed = Area / Paver Area = ${Math.ceil(count)} pavers`
+      ]
+    }
+  }, [areaStr, paverWStr, paverLStr])
 
   return (
-    <FormCalculatorShell
-      title="Paver Calculator"
-      subtitle="Count pavers needed for a patio or path"
-      badge="LANDSCAPING"
-    >
-      <div>
-        <RetroInput label="Patio Area" value={patioArea} onChange={setPatioArea} unit="sq ft" min={0} />
-        <RetroInput label="Paver Width" value={paverWidth} onChange={setPaverWidth} unit="in" min={0} />
-        <RetroInput label="Paver Length" value={paverLength} onChange={setPaverLength} unit="in" min={0} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Pavers Needed" value={withWaste} unit="pavers" large />
-          <ResultDisplay label="Waste Factor (10%)" value={wasteFactor} unit="extra" />
+    <FormCalculatorShell title="Patio Paver Solver" subtitle="Calculate pavers needed for patios and walkways" badge="LANDSCAPING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Patio Area (sq ft)" value={areaStr} onChange={setAreaStr} id="pav-a" />
+          <RetroInput label="Paver Width (inches)" value={paverWStr} onChange={setPaverWStr} id="pav-w" />
+          <RetroInput label="Paver Length (inches)" value={paverLStr} onChange={setPaverLStr} id="pav-l" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <rect x="0" y="0" width="200" height="80" fill="#c8c4bc" />
-        {Array.from({ length: 6 }).map((_, row) =>
-          Array.from({ length: 8 }).map((_, col) => (
-            <path
-              key={`${row}-${col}`}
-              d={wobblyBar(10 + col * 23, 10 + row * 12, 21, 11)}
-              fill={(row + col) % 2 === 0 ? '#9a8a7a' : '#8a7a6a'}
-              opacity={valid ? 0.85 : 0.3}
-            />
-          ))
-        )}
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Pavers Needed" value={results.count.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

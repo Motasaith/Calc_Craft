@@ -1,62 +1,51 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function BrickCalculator() {
-  const [wallLength, setWallLength] = useState('10')
-  const [wallHeight, setWallHeight] = useState('3')
-  const [brickType, setBrickType] = useState<'standard' | 'modular' | 'queen'>('standard')
-  const [mortarGap, setMortarGap] = useState('10')
-  const [result, setResult] = useState<{ bricks: number; courses: number; bricksPerCourse: number } | null>(null)
+  const [areaStr, setAreaStr] = useState('100') // sq ft
+  const [wasteStr, setWasteStr] = useState('10') // % waste
 
-  const brickDims: Record<string, { l: number; h: number }> = {
-    standard: { l: 190, h: 57 },
-    modular: { l: 194, h: 57 },
-    queen: { l: 244, h: 71 },
-  }
-
-  const calculate = () => {
-    const wl = parseFloat(wallLength), wh = parseFloat(wallHeight), mg = parseFloat(mortarGap)
-    if (isNaN(wl) || isNaN(wh) || isNaN(mg) || wl <= 0 || wh <= 0) { setResult(null); return }
-    const dims = brickDims[brickType]
-    const effL = dims.l + mg
-    const effH = dims.h + mg
-    const wallMm = wl * 1000
-    const wallHmm = wh * 1000
-    const bricksPerCourse = Math.ceil(wallMm / effL)
-    const courses = Math.ceil(wallHmm / effH)
-    const bricks = bricksPerCourse * courses
-    setResult({ bricks, courses, bricksPerCourse })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, bricks: 0, steps: [] as string[] }
+    const a = parseFloat(areaStr)
+    const w = parseFloat(wasteStr)
+    if (isNaN(a) || isNaN(w) || a <= 0 || w < 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    // Standard US modular brick: 7.2 bricks per sq ft (with 3/8" mortar joints)
+    const rawBricks = a * 7.2
+    const totalBricks = rawBricks * (1 + w / 100)
+    return {
+      error: null,
+      bricks: Math.ceil(totalBricks),
+      steps: [
+        `Standard brick coverage: 7.2 bricks/sq ft (with mortar)`,
+        `Raw bricks = ${a} sq ft × 7.2 = ${rawBricks.toFixed(1)} bricks`,
+        `Total with ${w}% waste = ${Math.ceil(totalBricks)} bricks`
+      ]
+    }
+  }, [areaStr, wasteStr])
 
   return (
-    <FormCalculatorShell title="Brick Calculator" subtitle="Bricks needed for a wall" badge="CONSTRUCTION">
-      <RetroInput label="Wall Length (m)" value={wallLength} onChange={setWallLength} placeholder="10" id="brick-wl" />
-      <RetroInput label="Wall Height (m)" value={wallHeight} onChange={setWallHeight} placeholder="3" id="brick-wh" />
-      <RetroSelect label="Brick Size" value={brickType} onChange={(v) => { setBrickType(v as any); setResult(null) }} options={[{value:'standard',label:'Standard (190mm)'},{value:'modular',label:'Modular (194mm)'},{value:'queen',label:'Queen (244mm)'}]} id="brick-type" />
-      <RetroInput label="Mortar Gap (mm)" value={mortarGap} onChange={setMortarGap} placeholder="10" id="brick-mg" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Bricks Needed" value={result.bricks} large />
-            <ResultDisplay label="Courses" value={result.courses} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 80" className="w-full h-24 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: Math.min(result.courses, 5) }).map((_, r) =>
-                Array.from({ length: Math.min(result.bricksPerCourse, 10) }).map((_, c) => (
-                  <path key={`${r}-${c}`} d={wobblyBar(2 + c * 19, 2 + r * 15, 17, 12)} fill="#b85c3a" stroke="#7a3a22" strokeWidth="0.5" />
-                ))
-              )}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Brick & Wall Solver" subtitle="Calculate bricks needed for masonry walls" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Wall Area (sq ft)" value={areaStr} onChange={setAreaStr} id="bk-a" />
+          <RetroInput label="Waste Factor (%)" value={wasteStr} onChange={setWasteStr} id="bk-w" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Bricks Needed" value={results.bricks.toLocaleString()} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

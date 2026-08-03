@@ -1,56 +1,50 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ConcreteCalculator() {
-  const [shape, setShape] = useState<'slab' | 'cylinder' | 'footing'>('slab')
-  const [length, setLength] = useState('10')
-  const [width, setWidth] = useState('8')
-  const [depth, setDepth] = useState('0.15')
-  const [diameter, setDiameter] = useState('0.3')
-  const [height, setHeight] = useState('2')
-  const [bagSize, setBagSize] = useState('25')
-  const [result, setResult] = useState<{volume:number,bags:number}|null>(null)
+  const [lengthStr, setLengthStr] = useState('10') // ft
+  const [widthStr, setWidthStr] = useState('10') // ft
+  const [thicknessStr, setThicknessStr] = useState('4') // inches
 
-  const calculate = () => {
-    let volume = 0
-    if (shape === 'slab' || shape === 'footing') {
-      const l = parseFloat(length), w = parseFloat(width), d = parseFloat(depth)
-      if (isNaN(l)||isNaN(w)||isNaN(d)) { setResult(null); return }
-      volume = l * w * d
-    } else {
-      const d = parseFloat(diameter), h = parseFloat(height)
-      if (isNaN(d)||isNaN(h)) { setResult(null); return }
-      volume = Math.PI * Math.pow(d/2, 2) * h
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, cubicYards: 0, bags80: 0, steps: [] as string[] }
+    const l = parseFloat(lengthStr)
+    const w = parseFloat(widthStr)
+    const t = parseFloat(thicknessStr)
+    if (isNaN(l) || isNaN(w) || isNaN(t) || l <= 0 || w <= 0 || t <= 0) return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    const cubicFeet = l * w * (t / 12)
+    const cubicYards = cubicFeet / 27
+    const bags80 = cubicFeet / 0.6 // 80lb bag yields 0.6 cu ft
+    return {
+      error: null,
+      cubicYards,
+      bags80: Math.ceil(bags80),
+      steps: [
+        `Volume = ${l} × ${w} × (${t}/12) = ${cubicFeet.toFixed(2)} cu ft`,
+        `Cubic Yards = ${cubicFeet.toFixed(2)} / 27 = ${cubicYards.toFixed(2)} yd³`,
+        `Bags needed (80 lbs) = ${cubicFeet.toFixed(2)} / 0.6 = ${Math.ceil(bags80)} bags`
+      ]
     }
-    const bs = parseFloat(bagSize)
-    const bags = Math.ceil((volume * 2400 / 1000) / (bs / 1000))
-    setResult({ volume, bags })
-  }
+  }, [lengthStr, widthStr, thicknessStr])
 
   return (
-    <FormCalculatorShell title="Concrete Calculator" badge="CONSTRUCTION">
-      <RetroSelect label="Shape" value={shape} onChange={(v) => { setShape(v as any); setResult(null) }} options={[{value:'slab',label:'Slab'},{value:'cylinder',label:'Column'},{value:'footing',label:'Footing'}]} id="conc-shape" />
-      {(shape === 'slab' || shape === 'footing') && (
-        <>
-          <div className="grid grid-cols-2 gap-3"><RetroInput label="Length (m)" value={length} onChange={setLength} placeholder="10" id="conc-l" /><RetroInput label="Width (m)" value={width} onChange={setWidth} placeholder="8" id="conc-w" /></div>
-          <RetroInput label="Depth (m)" value={depth} onChange={setDepth} placeholder="0.15" id="conc-d" />
-        </>
-      )}
-      {shape === 'cylinder' && (
-        <>
-          <RetroInput label="Diameter (m)" value={diameter} onChange={setDiameter} placeholder="0.3" id="conc-dia" />
-          <RetroInput label="Height (m)" value={height} onChange={setHeight} placeholder="2" id="conc-h" />
-        </>
-      )}
-      <RetroInput label="Bag Size (kg)" value={bagSize} onChange={setBagSize} placeholder="25" id="conc-bag" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Volume" value={`${result.volume.toFixed(2)} m³`} />
-          <ResultDisplay label="Bags Needed" value={result.bags} large />
+    <FormCalculatorShell title="Concrete Volume Solver" subtitle="Calculate cubic yards and concrete bags needed" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Slab Length (ft)" value={lengthStr} onChange={setLengthStr} id="cnc-l" />
+          <RetroInput label="Slab Width (ft)" value={widthStr} onChange={setWidthStr} id="cnc-w" />
+          <RetroInput label="Slab Thickness (inches)" value={thicknessStr} onChange={setThicknessStr} id="cnc-t" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Cubic Yards" value={results.cubicYards.toFixed(2)} large />
+              <ResultDisplay label="80lb Bags" value={results.bags80.toString()} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

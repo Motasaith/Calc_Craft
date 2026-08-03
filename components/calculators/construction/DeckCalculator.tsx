@@ -1,49 +1,38 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DeckCalculator() {
-  const [deckArea, setDeckArea] = useState('20')
-  const [boardWidth, setBoardWidth] = useState('140')
-  const [joistSpacing, setJoistSpacing] = useState('0.4')
-  const [result, setResult] = useState<{ boards: number; joists: number; screws: number } | null>(null)
+  const [wStr, setWStr] = useState('12')
+  const [lStr, setLStr] = useState('16')
 
-  const calculate = () => {
-    const a = parseFloat(deckArea), bw = parseFloat(boardWidth), js = parseFloat(joistSpacing)
-    if (isNaN(a) || isNaN(bw) || isNaN(js) || a <= 0 || bw <= 0 || js <= 0) { setResult(null); return }
-    const sideLen = Math.sqrt(a)
-    const boards = Math.ceil((sideLen * 1000) / bw)
-    const joists = Math.ceil(sideLen / js) + 1
-    const screws = boards * joists * 2
-    setResult({ boards, joists, screws })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, area: 0, steps: [] as string[] }
+    const w = parseFloat(wStr)
+    const l = parseFloat(lStr)
+    if (isNaN(w) || isNaN(l) || w <= 0 || l <= 0) return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    return {
+      error: null,
+      area: w * l,
+      steps: [
+        `Deck Area = Width × Length = ${w} × dots = ${w * l} sq ft`
+      ]
+    }
+  }, [wStr, lStr])
 
   return (
-    <FormCalculatorShell title="Deck Calculator" subtitle="Boards, joists & screws" badge="CONSTRUCTION">
-      <RetroInput label="Deck Area (m²)" value={deckArea} onChange={setDeckArea} placeholder="20" id="deck-area" />
-      <RetroInput label="Board Width (mm)" value={boardWidth} onChange={setBoardWidth} placeholder="140" id="deck-bw" />
-      <RetroInput label="Joist Spacing (m)" value={joistSpacing} onChange={setJoistSpacing} placeholder="0.4" id="deck-js" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-3 gap-2 mt-4">
-            <ResultDisplay label="Boards" value={result.boards} />
-            <ResultDisplay label="Joists" value={result.joists} />
-            <ResultDisplay label="Screws" value={result.screws} large />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 70" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <path key={i} d={wobblyBar(5, 8 + i * 8, 190, 6)} fill="#c89060" stroke="#8a6040" strokeWidth="0.5" />
-              ))}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Deck Area & Estimator" subtitle="Calculate deck surface footprint" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Width (ft)" value={wStr} onChange={setWStr} id="dk-w" />
+          <RetroInput label="Length (ft)" value={lStr} onChange={setLStr} id="dk-l" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Deck Area (sq ft)" value={results.area.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

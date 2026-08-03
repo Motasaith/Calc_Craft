@@ -1,62 +1,48 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0 Z`
-}
-
 export default function LawnAreaCalculator() {
-  const [length, setLength] = useState('80')
-  const [width, setWidth] = useState('60')
-  const [shape, setShape] = useState('rectangle')
+  const [widthStr, setWidthStr] = useState('50')
+  const [lengthStr, setLengthStr] = useState('100')
 
-  const len = parseFloat(length) || 0
-  const wid = parseFloat(width) || 0
-
-  const areaSqFt = shape === 'rectangle' ? len * wid : shape === 'circle' ? Math.PI * (len / 2) ** 2 : (len * wid) / 2
-  const areaSqM = areaSqFt * 0.092903
-
-  const valid = len > 0 && (shape === 'circle' || wid > 0)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, area: 0, steps: [] as string[] }
+    const w = parseFloat(widthStr)
+    const l = parseFloat(lengthStr)
+    if (isNaN(w) || isNaN(l) || w <= 0 || l <= 0) return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    const area = w * l
+    return {
+      error: null,
+      area,
+      steps: [
+        `Lawn Area = Width × Length = ${w} × ${l} = ${area} sq ft`,
+        `Acre equivalent = ${(area / 43560).toFixed(4)} acres`
+      ]
+    }
+  }, [widthStr, lengthStr])
 
   return (
-    <FormCalculatorShell
-      title="Lawn Area Calculator"
-      subtitle="Find lawn area from dimensions and shape"
-      badge="LANDSCAPING"
-    >
-      <div>
-        <RetroInput label={shape === 'circle' ? 'Diameter' : 'Length'} value={length} onChange={setLength} unit="ft" min={0} />
-        {shape !== 'circle' && <RetroInput label="Width" value={width} onChange={setWidth} unit="ft" min={0} />}
-        <div className="mb-3">
-          <label className="block text-[11px] font-bold text-neutral-600 font-mono uppercase tracking-wider mb-1.5">
-            Shape
-          </label>
-          <select
-            value={shape}
-            onChange={(e) => setShape(e.target.value)}
-            className="w-full h-10 px-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg text-sm font-mono font-bold text-neutral-800 focus:outline-none focus:border-neutral-500"
-          >
-            <option value="rectangle">Rectangle</option>
-            <option value="circle">Circle</option>
-            <option value="triangle">Triangle</option>
-          </select>
+    <FormCalculatorShell title="Lawn Area Solver" subtitle="Calculate lawn square footage for seed and weed applications" badge="LANDSCAPING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Width (ft)" value={widthStr} onChange={setWidthStr} id="la-w" />
+          <RetroInput label="Length (ft)" value={lengthStr} onChange={setLengthStr} id="la-l" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Lawn Area (sq ft)" value={results.area.toFixed(1)} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
         </div>
       </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Area" value={areaSqFt.toFixed(1)} unit="sq ft" large />
-          <ResultDisplay label="Area" value={areaSqM.toFixed(2)} unit="sq m" />
-        </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <rect x="0" y="0" width="200" height="80" fill="#cde4c8" />
-        {shape === 'rectangle' && <path d={wobblyCircle(100, 40, 30)} fill="#5a8a4a" opacity={valid ? 0.85 : 0.3} />}
-        {shape === 'circle' && <path d={wobblyCircle(100, 40, 30)} fill="#5a8a4a" opacity={valid ? 0.85 : 0.3} />}
-        {shape === 'triangle' && <path d="M 100 10 L 150 70 L 50 70 Z" fill="#5a8a4a" opacity={valid ? 0.85 : 0.3} />}
-      </svg>
     </FormCalculatorShell>
   )
 }

@@ -1,58 +1,46 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CementMortarCalculator() {
-  const [area, setArea] = useState('10')
-  const [thickness, setThickness] = useState('20')
-  const [mixRatio, setMixRatio] = useState<'1:3' | '1:4' | '1:5'>('1:4')
-  const [result, setResult] = useState<{ cementBags: number; sand: number } | null>(null)
+  const [volStr, setVolStr] = useState('10') // cubic feet
 
-  const ratioParts: Record<string, { cement: number; sand: number }> = {
-    '1:3': { cement: 1, sand: 3 },
-    '1:4': { cement: 1, sand: 4 },
-    '1:5': { cement: 1, sand: 5 },
-  }
-
-  const calculate = () => {
-    const a = parseFloat(area), t = parseFloat(thickness)
-    if (isNaN(a) || isNaN(t) || a <= 0 || t <= 0) { setResult(null); return }
-    const volume = a * (t / 1000)
-    const dryVolume = volume * 1.33
-    const parts = ratioParts[mixRatio]
-    const totalParts = parts.cement + parts.sand
-    const cementVol = (dryVolume * parts.cement) / totalParts
-    const sandVol = (dryVolume * parts.sand) / totalParts
-    const cementBags = Math.ceil((cementVol * 1440) / 50)
-    const sand = sandVol * 1600
-    setResult({ cementBags, sand })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, bagsCement: 0, bagsSand: 0, steps: [] as string[] }
+    const v = parseFloat(volStr)
+    if (isNaN(v) || v <= 0) return { ...defaultObj, error: 'Please enter a valid positive volume.' }
+    // 1:3 mix ratio: approx 22.5 lbs cement, 67.5 lbs sand per cu ft
+    const cementLbs = v * 22.5
+    const sandLbs = v * 67.5
+    const bagsCement = cementLbs / 94 // 94 lb standard bag
+    const bagsSand = sandLbs / 100 // 100 lb bag
+    return {
+      error: null,
+      bagsCement,
+      bagsSand,
+      steps: [
+        `1:3 Mortar mix ratio per cu ft: 22.5 lbs Cement, 67.5 lbs Sand`,
+        `Total Cement = ${cementLbs.toFixed(1)} lbs (${bagsCement.toFixed(2)} bags)`,
+        `Total Sand = ${sandLbs.toFixed(1)} lbs (${bagsSand.toFixed(2)} bags)`
+      ]
+    }
+  }, [volStr])
 
   return (
-    <FormCalculatorShell title="Cement Mortar Calculator" subtitle="Cement bags & sand needed" badge="CONSTRUCTION">
-      <RetroInput label="Area (m²)" value={area} onChange={setArea} placeholder="10" id="cm-area" />
-      <RetroInput label="Thickness (mm)" value={thickness} onChange={setThickness} placeholder="20" id="cm-thk" />
-      <RetroSelect label="Mix Ratio" value={mixRatio} onChange={(v) => { setMixRatio(v as any); setResult(null) }} options={[{value:'1:3',label:'1:3 (Rich)'},{value:'1:4',label:'1:4 (Standard)'},{value:'1:5',label:'1:5 (Lean)'}]} id="cm-ratio" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Cement Bags" value={result.cementBags} large />
-            <ResultDisplay label="Sand" value={result.sand.toFixed(0)} unit="kg" />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 60" className="w-full h-16 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <path key={i} d={wobblyBar(15 + i * 45, 15, 35, 35)} fill="#c8c0a0" stroke="#807060" strokeWidth="0.5" />
-              ))}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Cement Mortar Solver" subtitle="Calculate cement and sand bags for masonry mixes" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Required Volume (cu ft)" value={volStr} onChange={setVolStr} id="cm-v" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Cement Bags (94 lb)" value={results.bagsCement.toFixed(2)} large />
+              <ResultDisplay label="Sand Bags (100 lb)" value={results.bagsSand.toFixed(2)} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,46 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`
-}
-
 export default function AmpCalculator() {
-  const [watts, setWatts] = useState('1200')
-  const [volts, setVolts] = useState('120')
+  const [wattsStr, setWattsStr] = useState('1200')
+  const [voltsStr, setVoltsStr] = useState('120')
 
-  const w = parseFloat(watts) || 0
-  const v = parseFloat(volts) || 0
-
-  const amps = v > 0 ? w / v : 0
-
-  const valid = w > 0 && v > 0
-
-  const radius = Math.min(40, Math.sqrt(amps) * 3)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, amps: 0, steps: [] as string[] }
+    const w = parseFloat(wattsStr)
+    const v = parseFloat(voltsStr)
+    if (isNaN(w) || isNaN(v) || w < 0 || v <= 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    const amps = w / v
+    return {
+      error: null,
+      amps,
+      steps: [
+        `Formula: Amps (I) = Power (P) / Voltage (V)`,
+        `Amps = ${w} W / ${v} V = ${amps.toFixed(2)} A`
+      ]
+    }
+  }, [wattsStr, voltsStr])
 
   return (
-    <FormCalculatorShell
-      title="Amp Calculator"
-      subtitle="Watts ÷ Volts = Amps"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Watts" value={watts} onChange={setWatts} unit="W" min={0} />
-        <RetroInput label="Volts" value={volts} onChange={setVolts} unit="V" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && <ResultDisplay label="Current" value={amps.toFixed(2)} unit="A" large />}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyCircle(60, 50, radius)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-          </svg>
+    <FormCalculatorShell title="Amps Current Solver" subtitle="Calculate electric current from power and voltage" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Power (Watts)" value={wattsStr} onChange={setWattsStr} id="amp-w" />
+          <RetroInput label="Voltage (Volts)" value={voltsStr} onChange={setVoltsStr} id="amp-v" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Amperage (Amps)" value={results.amps.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

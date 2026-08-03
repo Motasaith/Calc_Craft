@@ -1,59 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function KilowattHourCalculator() {
-  const [watts, setWatts] = useState('100')
-  const [hours, setHours] = useState('8')
-  const [rate, setRate] = useState('0.15')
+  const [wattsStr, setWattsStr] = useState('500')
+  const [hoursStr, setHoursStr] = useState('8')
 
-  const w = parseFloat(watts) || 0
-  const h = parseFloat(hours) || 0
-  const r = parseFloat(rate) || 0
-
-  const dailyKwh = (w * h) / 1000
-  const monthlyKwh = dailyKwh * 30
-  const monthlyCost = monthlyKwh * r
-
-  const valid = w > 0 && h > 0
-
-  const barH = Math.min(80, dailyKwh * 20)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, kwh: 0, steps: [] as string[] }
+    const w = parseFloat(wattsStr)
+    const h = parseFloat(hoursStr)
+    if (isNaN(w) || isNaN(h) || w < 0 || h < 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    const kwh = (w * h) / 1000
+    return {
+      error: null,
+      kwh,
+      steps: [
+        `Formula: kWh = (Watts × Hours) / 1000`,
+        `kWh = (${w} × ${h}) / 1000 = ${kwh.toFixed(3)} kWh`
+      ]
+    }
+  }, [wattsStr, hoursStr])
 
   return (
-    <FormCalculatorShell
-      title="Kilowatt-Hour Calculator"
-      subtitle="Estimate energy usage and cost"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Power" value={watts} onChange={setWatts} unit="W" min={0} />
-        <RetroInput label="Hours / Day" value={hours} onChange={setHours} unit="h" min={0} />
-        <RetroInput label="Electricity Rate" value={rate} onChange={setRate} unit="$/kWh" step={0.01} min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Daily Usage" value={dailyKwh.toFixed(3)} unit="kWh" large />
-            <ResultDisplay label="Monthly Usage" value={monthlyKwh.toFixed(2)} unit="kWh" />
-            <ResultDisplay label="Monthly Cost" value={`$${monthlyCost.toFixed(2)}`} />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyBar(20, 90 - barH, 30, barH)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <path d={wobblyBar(60, 90 - barH * 2, 30, Math.min(80, barH * 2))} fill="#cbd8ca" stroke="#b0bdae" strokeWidth="2" />
-            <line x1="10" y1="90" x2="110" y2="90" stroke="#888" strokeWidth="1.5" />
-          </svg>
+    <FormCalculatorShell title="Kilowatt-Hour kWh Solver" subtitle="Calculate electric energy usage consumption rates" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Power Draw (Watts)" value={wattsStr} onChange={setWattsStr} id="kwh-w" />
+          <RetroInput label="Usage Time (Hours/day)" value={hoursStr} onChange={setHoursStr} id="kwh-h" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Daily Consumption" value={`${results.kwh.toFixed(2)} kWh`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }
