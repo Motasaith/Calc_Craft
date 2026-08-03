@@ -33,6 +33,7 @@ export default function CustomSignUpPage() {
   const [code, setCode] = useState('')
   
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
 
   /** Where to land afterwards — honours ?redirect_url= from promptSignIn(). */
@@ -111,11 +112,61 @@ export default function CustomSignUpPage() {
         setError(`Verification could not be completed (${completeSignUp.status}).`)
       }
     } catch (err: any) {
-      const msg = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || 'Invalid verification code.'
-      setError(msg)
+      console.error('[sign-up] verify failed:', err?.errors || err)
+
+      const first = err?.errors?.[0]
+      const errCode = first?.code || ''
+
+      // Clerk locks a verification attempt after a few wrong codes. The raw
+      // message ("Too many failed attempts...") does not tell the user what to
+      // actually do next, and the page has no obvious way forward.
+      if (errCode.includes('too_many') || /too many/i.test(first?.message || '')) {
+        setError(
+          'Too many incorrect codes. Request a new one below, and use the most recent email — earlier codes stop working once a new one is sent.'
+        )
+      } else if (errCode.includes('expired')) {
+        setError('That code has expired. Request a new one below.')
+      } else {
+        setError(first?.longMessage || first?.message || 'That code is not correct.')
+      }
     } finally {
       setLoading(false)
     }
+  }
+
+  /**
+   * Send a fresh verification code.
+   *
+   * Needed because codes expire and Clerk locks a verification attempt after a
+   * few wrong ones ("Too many failed attempts"). Without this the page was a
+   * dead end: the only escape was knowing to reload by hand.
+   */
+  const resendCode = async () => {
+    if (!isLoaded || !signUp) return
+    setLoading(true)
+    setError('')
+    setCode('')
+    try {
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      setNotice('A new code is on its way. Use the newest email — older codes no longer work.')
+    } catch (err: any) {
+      console.error('[sign-up] resend failed:', err?.errors || err)
+      setError(
+        err?.errors?.[0]?.longMessage ||
+          err?.errors?.[0]?.message ||
+          'Could not send a new code. Please start over.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /** Abandon this attempt and return to the form. */
+  const startOver = () => {
+    setPendingVerification(false)
+    setCode('')
+    setError('')
+    setNotice('')
   }
 
   // Handle OAuth Sign Up
@@ -352,6 +403,15 @@ export default function CustomSignUpPage() {
                 </div>
               )}
 
+              {/* Confirmation that a new code was sent — distinct from an error,
+                  so the two are not confused after a failed attempt. */}
+              {notice && (
+                <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5">
+                  <MailCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="leading-relaxed font-medium">{notice}</div>
+                </div>
+              )}
+
               <form onSubmit={handleVerifyCode} className="space-y-4">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-dark-600 mb-1 text-center">
@@ -360,6 +420,8 @@ export default function CustomSignUpPage() {
                   <input
                     type="text"
                     required
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="Enter 6-digit code"
@@ -384,6 +446,29 @@ export default function CustomSignUpPage() {
                     </>
                   )}
                 </button>
+
+                {/* Escape hatches. Without these the verification step is a dead
+                    end once a code expires or the attempt gets locked after a few
+                    wrong tries — the only way out was reloading the page. */}
+                <div className="flex items-center justify-center gap-3 pt-1 text-xs">
+                  <button
+                    type="button"
+                    onClick={resendCode}
+                    disabled={loading || !isLoaded}
+                    className="font-bold text-primary-700 hover:text-primary-800 hover:underline disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Send a new code
+                  </button>
+                  <span className="text-dark-300">·</span>
+                  <button
+                    type="button"
+                    onClick={startOver}
+                    disabled={loading}
+                    className="font-bold text-dark-500 hover:text-dark-800 hover:underline disabled:opacity-40 transition-colors"
+                  >
+                    Use a different email
+                  </button>
+                </div>
               </form>
             </div>
           )}
