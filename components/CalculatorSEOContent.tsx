@@ -245,6 +245,129 @@ const RESEARCH_HEALTH_GUIDES = {
       'Boyd E. The Growth of the Surface Area of the Human Body. University of Minnesota Press. 1935.',
     ],
   },
+  'time': {
+    title: 'Time Calculation and HMS Conversions',
+    intro: 'Time calculators perform math on time values (days, hours, minutes, seconds). Because time uses a base-60 system (60 seconds per minute, 60 minutes per hour) rather than a decimal base-10 system, simple arithmetic like addition or subtraction requires carryover conversion.',
+    formula: 'Total seconds = (Days × 86,400) + (Hours × 3,600) + (Minutes × 60) + Seconds',
+    methods: [
+      ['Time Addition & Subtraction', 'Accumulate hours, minutes, and seconds, then convert carryover (e.g., 90 minutes becomes 1 hour and 30 minutes).'],
+      ['Decimal Conversion', 'Convert a time value to a fraction of a larger unit (e.g., 1 hour and 30 minutes is 1.5 hours) or back to HMS format.'],
+    ],
+    interpretation: 'Summing time intervals is essential for timesheets, payroll, billing, and scheduling. Conversions help translate raw data (like seconds) into human-readable hours and minutes.',
+    limits: 'Simple duration addition does not account for time zones, daylight saving transitions, or leap seconds. For timezone conversions, use the timezone-specific tool.',
+    faqs: [
+      ['Why does adding 45 minutes and 30 minutes result in 1h 15m instead of 1.75?', 'Time is base-60. 45 + 30 = 75 minutes. Dividing 75 by 60 gives 1 hour with a remainder of 15 minutes.'],
+      ['How do I convert decimal hours to minutes?', 'Multiply the decimal portion by 60. For example, 0.25 hours × 60 = 15 minutes.'],
+      ['Does this calculator support subtraction?', 'Yes, you can subtract intervals by changing the operator select dropdown on any entry row.'],
+    ],
+    references: [
+      'ISO 8601. Representation of dates and times.',
+      'NIST Time and Frequency Division. FAQs on time arithmetic.'
+    ],
+  },
+  'time-duration': {
+    title: 'Time Duration and Elapsed Segment Metrics',
+    intro: 'Time Duration calculators measure the elapsed time between two points. This is useful for tracking project work, shift logs, flight times, and general intervals.',
+    formula: 'Duration = End Time − Start Time (+ 24 hours if overnight)',
+    methods: [
+      ['Simple Time Span', 'Calculates hours and minutes elapsed between two times within the same day.'],
+      ['Overnight Calculation', 'Detects if the end time is numerically less than the start time and adds a 24-hour cycle automatically.'],
+      ['Multi-Segment Summation', 'Allows adding multiple start/end pairs to determine total accumulated active time.'],
+    ],
+    interpretation: 'Total elapsed time is displayed both in human-readable hours/minutes and as a decimal value, making it easy to plug into invoicing or payroll systems.',
+    limits: 'Time-only calculations assume standard 24-hour days and do not account for daylight saving changes or date jumps unless dates are explicitly provided.',
+    faqs: [
+      ['What does "overnight" mean in the calculator?', 'If you enter a start time of 10:00 PM and an end time of 6:00 AM, the calculator automatically realizes that the span crosses midnight and adds 24 hours to the end time.'],
+      ['Can I calculate duration across multiple days?', 'Yes. Check the "Use Date" option to input starting and ending dates alongside the times.'],
+      ['How are partial hours represented?', 'Partial hours are shown as decimal values (e.g. 1 hour and 45 minutes is 1.75 hours).'],
+    ],
+    references: [
+      'U.S. Department of Labor. Hours worked guidelines.',
+      'Mathematical Association of America. Calculating time intervals.'
+    ],
+  },
+  'date-difference': {
+    title: 'Date Range Calculation and Calendar Offsets',
+    intro: 'The Date Difference Calculator measures the precise number of years, months, weeks, and days between two specific dates, or adds/subtracts offsets from a target date.',
+    formula: 'Days elapsed = End Date − Start Date',
+    methods: [
+      ['Calendar Range Difference', 'Calculates total days, weeks, and months between two dates using actual calendar month boundaries.'],
+      ['Business Days (Weekdays)', 'Excludes weekends (Saturdays and Sundays) to show active workdays.'],
+      ['Add/Subtract Days', 'Applies positive or negative offset values (years, months, weeks, days) to a starting date to find the target date.'],
+    ],
+    interpretation: 'The outputs break down the range in multiple ways: total days, weeks/days, months/days, and business days vs. weekend days.',
+    limits: 'The calculation uses the standard Gregorian calendar and does not account for time zones or specific regional public holidays unless custom inputs are defined.',
+    faqs: [
+      ['Should I include the end date in the calculation?', 'By default, the end date is excluded. If you want to include both the start and end dates as active days (e.g., for a vacation or contract span), check the "Include end date" box.'],
+      ['How are leap years handled?', 'The calculator dynamically accounts for leap years (including February 29th) based on the specific years spanned.'],
+      ['What is a business day?', 'A business day is defined as any weekday (Monday through Friday). Weekends (Saturday and Sunday) are excluded.'],
+    ],
+    references: [
+      'Gregorian Calendar System and Leap Year Rules.',
+      'IEEE Standards Association. Date and Time Arithmetic.'
+    ],
+  },
+  'age-difference': {
+    title: 'Age Difference Calculations and Birth Timelines',
+    intro: 'The Age Difference Calculator determines the exact gap in years, months, and days between the birthdates of multiple individuals, alongside mapping them on a relative timeline.',
+    formula: 'Age Gap = Date of Birth B − Date of Birth A',
+    methods: [
+      ['Gregorian Age Span', 'Calculates individual ages relative to today or gaps between pairs using calendar month boundaries.'],
+      ['Relative Timelines', 'Plots DOBs on a unified timeline to visualize seniority and historical proximity.'],
+    ],
+    interpretation: 'Outputs display absolute age breakdown for all compared persons as well as relative gaps against a chosen baseline person.',
+    limits: 'Calculation assumes standard calendar years and birthtimes at start of day. Leap years are dynamically factored in.',
+    faqs: [
+      ['Can I compare more than two people?', 'Yes, this upgraded calculator allows adding multiple people to a single comparison, rendering comparative tables and timelines.'],
+      ['Who is the reference person?', 'The reference person is the baseline individual. Every other person\'s age difference is described as "older" or "younger" relative to this person.'],
+      ['Are leap years calculated correctly?', 'Yes. The engine uses full Gregorian date logic, accounting for leap day occurrences between birth dates.']
+    ],
+    references: [
+      'Gregorian Calendar Rules.',
+      'U.S. Census Bureau. Age calculation standards.'
+    ],
+  },
+  'tip': {
+    title: 'Tip Calculation and Fair Bill Splitting Protocols',
+    intro: 'Tip and Bill Splitting calculators divide food, tax, and service charges among dinner parties. Supporting both equal shares and custom itemized allocations ensures fair splitting.',
+    formula: 'Share = (Personal Subtotal + Tax Share + Tip Share) OR (Grand Total ÷ Diners)',
+    methods: [
+      ['Simple Split', 'Divides the final bill evenly between a specified number of diners, with options for rounding and tax inclusions.'],
+      ['Itemized Proportional Split', 'Allocates shared items evenly, charges direct items to specific diners, and splits tax/tips proportionally according to subtotal weight.'],
+    ],
+    interpretation: 'Proportional splitting prevents lighter eaters from overpaying for expensive entrees or drinks, while ensuring waitstaff are tipped accurately.',
+    limits: 'Shared item divisions assume equal splits of those items. Rounds may cause minor penny discrepancies which are allocated dynamically.',
+    faqs: [
+      ['What is proportional tip splitting?', 'It divides tax and tip based on how much each person ordered. If your food was 20% of the subtotal, you pay exactly 20% of the tax and tip.'],
+      ['Why should I use itemized splitting?', 'Equal splits can cause friction if one person orders a small salad and another orders an expensive steak and drinks.'],
+      ['What rounding options are supported?', 'You can choose to round up the tip, the total bill, or the individual share to simplify cash payments.']
+    ],
+    references: [
+      'Cornell University School of Hotel Administration. Gratuity norms and party splits.',
+      'IRS Publication 531. Reporting Tip Income.'
+    ],
+  },
+  'simple-interest': {
+    title: 'Simple Interest Calculations and Accumulation Conventions',
+    intro: 'Simple interest measures the return on an investment or cost of a loan where interest is calculated solely on the initial principal deposit.',
+    formula: 'Interest (I) = Principal (P) × Rate (R) × Time (T)',
+    methods: [
+      ['Exact Interest (365-day)', 'Uses a standard 365-day calendar year for daily calculations. This is standard in most consumer banking.'],
+      ['Ordinary Interest (360-day)', 'Assumes twelve 30-day months (360 days/year). Historically used by financial institutions to simplify arithmetic.'],
+      ['Date Range Mode', 'Computes interest over specific start/end dates using selected day-count conventions.'],
+    ],
+    interpretation: 'Simple interest grows linearly, unlike compound interest which grows exponentially. It is commonly used for short-term loans, auto loans, and simple savings certificates.',
+    limits: 'Simple interest does not compound. For investments where interest is reinvested to earn additional interest, use a compound interest calculator.',
+    faqs: [
+      ['What is the difference between Ordinary and Exact interest?', 'Ordinary interest uses a 360-day year, while Exact interest uses a 365-day year. Ordinary interest results in a slightly higher interest payout.'],
+      ['Can I calculate simple interest in months or weeks?', 'Yes, the calculator converts any chosen time unit (days, weeks, months, quarters, years) into the equivalent fractional year.'],
+      ['What is the Banker\'s Rule?', 'The Banker\'s Rule is another name for ordinary interest (360-day year) combined with exact day counts, which was historically favored by banks.']
+    ],
+    references: [
+      'Financial Management Association. Simple interest standards.',
+      'Banker\'s Association. Interest calculation conventions.'
+    ],
+  },
 } as const
 
 function ResearchHealthGuide({ kind }: { kind: keyof typeof RESEARCH_HEALTH_GUIDES }) {
@@ -536,6 +659,12 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'fat-intake') return <ResearchHealthGuide kind="fat-intake" />
   if (slug === 'fiber-intake') return <ResearchHealthGuide kind="fiber-intake" />
   if (slug === 'body-surface-area') return <ResearchHealthGuide kind="body-surface-area" />
+  if (slug === 'time') return <ResearchHealthGuide kind="time" />
+  if (slug === 'time-duration') return <ResearchHealthGuide kind="time-duration" />
+  if (slug === 'date-difference') return <ResearchHealthGuide kind="date-difference" />
+  if (slug === 'age-difference') return <ResearchHealthGuide kind="age-difference" />
+  if (slug === 'tip') return <ResearchHealthGuide kind="tip" />
+  if (slug === 'simple-interest') return <ResearchHealthGuide kind="simple-interest" />
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
