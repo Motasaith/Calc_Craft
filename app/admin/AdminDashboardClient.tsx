@@ -322,6 +322,54 @@ export default function AdminDashboardClient() {
     }
   }, [userIsAdmin, authedFetch])
 
+  // These memos MUST stay above the early returns below. React requires the
+  // same hooks in the same order on every render; sitting after the returns,
+  // the first render (isLoading=true) ran fewer hooks than the second
+  // (isLoading=false), so React threw "Rendered more hooks than during the
+  // previous render" — which is what was crashing /admin.
+  const filteredBlogPosts = useMemo(() => {
+    if (!blogSearch.trim()) return blogPosts
+    const q = blogSearch.toLowerCase()
+    return blogPosts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.slug.toLowerCase().includes(q) ||
+        p.excerpt.toLowerCase().includes(q)
+    )
+  }, [blogPosts, blogSearch])
+
+  const filteredCalculators = useMemo(() => {
+    let result = [...calculators]
+    if (calcCategoryFilter !== 'all') {
+      result = result.filter((c) => c.category === calcCategoryFilter)
+    }
+    if (calcSearch.trim()) {
+      const q = calcSearch.toLowerCase()
+      result = result.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.slug.toLowerCase().includes(q) ||
+          c.description.toLowerCase().includes(q) ||
+          c.keywords.some((k) => k.includes(q))
+      )
+    }
+    return result
+  }, [calcSearch, calcCategoryFilter])
+
+  const categoryStats = useMemo(() => {
+    const stats: Record<string, number> = {}
+    calculators.forEach((c) => {
+      stats[c.category] = (stats[c.category] || 0) + 1
+    })
+    return Object.entries(stats)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, count]) => ({
+        category,
+        label: CATEGORY_LABELS[category as CalculatorCategory] || category,
+        count,
+      }))
+  }, [])
+
   // ─── Loading state ─────────────────────────────────────────────────────────
 
   if (isLoading) {
@@ -391,48 +439,6 @@ export default function AdminDashboardClient() {
 
   // ─── Computed data ─────────────────────────────────────────────────────────
 
-  const filteredBlogPosts = useMemo(() => {
-    if (!blogSearch.trim()) return blogPosts
-    const q = blogSearch.toLowerCase()
-    return blogPosts.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.slug.toLowerCase().includes(q) ||
-        p.excerpt.toLowerCase().includes(q)
-    )
-  }, [blogPosts, blogSearch])
-
-  const filteredCalculators = useMemo(() => {
-    let result = [...calculators]
-    if (calcCategoryFilter !== 'all') {
-      result = result.filter((c) => c.category === calcCategoryFilter)
-    }
-    if (calcSearch.trim()) {
-      const q = calcSearch.toLowerCase()
-      result = result.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.slug.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q) ||
-          c.keywords.some((k) => k.includes(q))
-      )
-    }
-    return result
-  }, [calcSearch, calcCategoryFilter])
-
-  const categoryStats = useMemo(() => {
-    const stats: Record<string, number> = {}
-    calculators.forEach((c) => {
-      stats[c.category] = (stats[c.category] || 0) + 1
-    })
-    return Object.entries(stats)
-      .sort((a, b) => b[1] - a[1])
-      .map(([category, count]) => ({
-        category,
-        label: CATEGORY_LABELS[category as CalculatorCategory] || category,
-        count,
-      }))
-  }, [])
 
   // ─── Blog handlers ─────────────────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Camera, Sparkles } from 'lucide-react'
+import { Calculator, ChevronDown, Menu, X, ArrowRight, User as UserIcon, LogOut, LayoutDashboard, Camera, Sparkles, Shield } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -34,7 +34,7 @@ const navLinks = [
  *     with the site's navbar, footer and styling around them.
  *   • Restyled via clerkAppearance so the popover matches the rest of the site.
  */
-function AccountMenu() {
+function AccountMenu({ isAdmin }: { isAdmin: boolean }) {
   return (
     <UserButton
       appearance={clerkAppearance as any}
@@ -52,6 +52,19 @@ function AccountMenu() {
           labelIcon={<Sparkles className="w-4 h-4" />}
           href="/build-ai"
         />
+        {/* Admin entry. The navbar previously destructured `isAdmin` and never
+            used it, so an administrator had to know to type /admin by hand.
+            Hiding it is a convenience only — /admin re-checks server-side and
+            every admin API verifies the token signature and the allowlist. */}
+        {isAdmin ? (
+          <UserButton.Link
+            label="Admin Dashboard"
+            labelIcon={<Shield className="w-4 h-4" />}
+            href="/admin"
+          />
+        ) : (
+          <></>
+        )}
       </UserButton.MenuItems>
     </UserButton>
   )
@@ -263,7 +276,7 @@ export default function Navbar() {
               the session resolves, which is normal and self-explanatory. */}
           {user ? (
             <div className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl shadow-sm">
-              <AccountMenu />
+              <AccountMenu isAdmin={isAdmin} />
             </div>
           ) : (
             <Link
@@ -361,10 +374,30 @@ export default function Navbar() {
                 {/* Same reasoning as the desktop block above — our context, not
                     Clerk's <Show>, so the menu never renders empty. */}
                 {user ? (
-                  <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex items-center justify-between">
-                    <span className="text-xs font-bold text-dark-800">My Account</span>
-                    <AccountMenu />
-                  </div>
+                  <>
+                    <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex items-center justify-between">
+                      <span className="text-xs font-bold text-dark-800">My Account</span>
+                      <AccountMenu isAdmin={isAdmin} />
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-dark-800/15 text-xs font-mono font-bold uppercase tracking-wider text-dark-700 hover:bg-[#dad6cd]/50 transition-colors"
+                    >
+                      <LayoutDashboard className="w-3.5 h-3.5" /> My Dashboard
+                    </Link>
+                    {/* Spelled out on mobile rather than tucked into the avatar
+                        popover, which is easy to miss on a small screen. */}
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-violet-300 bg-violet-50 text-xs font-mono font-bold uppercase tracking-wider text-violet-700 hover:bg-violet-100 transition-colors"
+                      >
+                        <Shield className="w-3.5 h-3.5" /> Admin Dashboard
+                      </Link>
+                    )}
+                  </>
                 ) : (
                   <div className="flex gap-2">
                     <Link
