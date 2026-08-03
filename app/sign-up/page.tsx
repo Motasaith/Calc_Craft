@@ -1,6 +1,6 @@
 'use client'
 
-import { useClerk } from '@clerk/react'
+import { useSignUp } from '@clerk/react/legacy'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,7 +17,11 @@ import {
 } from 'lucide-react'
 
 export default function CustomSignUpPage() {
-  const clerk = useClerk()
+  // useSignUp() is the supported hook. The page previously used useClerk() plus
+  // clerk.client.signUp — in @clerk/react v6 that object's `loaded` flag is
+  // undefined, so `disabled={loading || !isLoaded}` left Create Account
+  // permanently greyed out and the form could never be submitted.
+  const { isLoaded, signUp, setActive } = useSignUp()
 
   const [username, setUsername] = useState('')
   const [emailAddress, setEmailAddress] = useState('')
@@ -31,23 +35,31 @@ export default function CustomSignUpPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  /** Where to land afterwards — honours ?redirect_url= from promptSignIn(). */
+  const destination = () => {
+    if (typeof window === 'undefined') return '/dashboard'
+    const target = new URLSearchParams(window.location.search).get('redirect_url')
+    // Same-site paths only; an absolute URL here would be an open redirect.
+    return target && target.startsWith('/') && !target.startsWith('//') ? target : '/dashboard'
+  }
+
   // Handle standard registration form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!clerk.loaded) return
+    if (!isLoaded || !signUp) return
 
     setLoading(true)
     setError('')
 
     try {
-      await clerk.client.signUp.create({
+      await signUp.create({
         username,
         emailAddress,
         password,
       })
 
       // Send the email verification code
-      await clerk.client.signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
       setPendingVerification(true)
     } catch (err: any) {
       const msg = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || 'Failed to create account. Please try again.'
@@ -60,22 +72,25 @@ export default function CustomSignUpPage() {
   // Handle Email Verification Code submit
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!clerk.loaded) return
+    if (!isLoaded || !signUp) return
 
     setLoading(true)
     setError('')
 
     try {
-      const completeSignUp = await clerk.client.signUp.attemptEmailAddressVerification({
-        code,
-      })
+      const completeSignUp = await signUp.attemptEmailAddressVerification({ code })
 
       if (completeSignUp.status === 'complete') {
-        await clerk.setActive({ session: completeSignUp.createdSessionId })
-        window.location.href = '/'
+        // Await activation fully and let Clerk navigate, rather than racing it
+        // with a manual location assignment.
+        await setActive({ session: completeSignUp.createdSessionId, redirectUrl: destination() })
+        return
+      }
+
+      if (completeSignUp.status === 'missing_requirements') {
+        setError('Almost there — some required details are still missing. Check the fields above.')
       } else {
-        console.log('Verification status:', completeSignUp.status)
-        setError('Verification incomplete. Please check your code.')
+        setError(`Verification could not be completed (${completeSignUp.status}).`)
       }
     } catch (err: any) {
       const msg = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || 'Invalid verification code.'
@@ -87,12 +102,12 @@ export default function CustomSignUpPage() {
 
   // Handle OAuth Sign Up
   const handleOAuth = (provider: 'oauth_google' | 'oauth_github' | 'oauth_linkedin') => {
-    if (!clerk.loaded) return
+    if (!isLoaded || !signUp) return
     setError('')
-    clerk.client.signUp.authenticateWithRedirect({
+    signUp.authenticateWithRedirect({
       strategy: provider,
-      redirectUrl: window.location.origin + '/sso-callback',
-      redirectUrlComplete: window.location.origin + '/',
+      redirectUrl: '/sso-callback',
+      redirectUrlComplete: destination(),
     })
   }
 
@@ -256,7 +271,7 @@ export default function CustomSignUpPage() {
 
                 <button
                   type="submit"
-                  disabled={loading || !clerk.loaded}
+                  disabled={loading || !isLoaded}
                   className="w-full mt-2 bg-dark-900 hover:bg-dark-800 text-white font-extrabold text-sm py-3 rounded-2xl shadow-[0_4px_0_#dfaa44] hover:-translate-y-0.5 active:translate-y-px transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
@@ -321,7 +336,7 @@ export default function CustomSignUpPage() {
 
                 <button
                   type="submit"
-                  disabled={loading || !clerk.loaded}
+                  disabled={loading || !isLoaded}
                   className="w-full bg-dark-900 hover:bg-dark-800 text-white font-extrabold text-sm py-3 rounded-2xl shadow-[0_4px_0_#dfaa44] hover:-translate-y-0.5 active:translate-y-px transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
