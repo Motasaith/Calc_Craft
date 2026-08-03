@@ -641,7 +641,13 @@ export default function DashboardClient() {
                     </div>
                   </div>
 
-                  {/* Data management */}
+                  {/* Data management
+                      This whole block used to claim "Saved locally to your
+                      device" — copy left over from when calculators really did
+                      live in localStorage. They now live in the user_calculators
+                      table, which is why they follow you to a different browser.
+                      Telling someone their data is device-local when it is on a
+                      server is exactly the wrong way round for a privacy notice. */}
                   <div className="p-6 bg-white border border-neutral-200 rounded-2xl">
                     <h3 className="font-bold text-dark-900 mb-4">Data & Privacy</h3>
                     <div className="space-y-3">
@@ -649,7 +655,7 @@ export default function DashboardClient() {
                         <div>
                           <div className="font-bold text-sm text-dark-900">Custom Calculators</div>
                           <div className="text-xs text-dark-500">
-                            Saved locally to your device
+                            Stored in your account — available on any device
                           </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{customCalcs.length}</span>
@@ -658,19 +664,33 @@ export default function DashboardClient() {
                         <div>
                           <div className="font-bold text-sm text-dark-900">Saved Tools</div>
                           <div className="text-xs text-dark-500">
-                            Saved locally to your device
+                            Stored in your account — available on any device
                           </div>
                         </div>
                         <span className="text-sm font-bold text-dark-700">{savedCalcs.length}</span>
                       </div>
-                      <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
-                          <p className="text-xs text-dark-600">
-                            Your data is securely saved locally on this device.
-                          </p>
+
+                      {dataError ? (
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                            <p className="text-xs text-dark-600">
+                              {dataError} Changes made now may not be saved.
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                            <p className="text-xs text-dark-600">
+                              {isSyncing
+                                ? 'Saving…'
+                                : 'Saved to your account. Sign in anywhere and your calculators come with you. Calculators you publish are readable by anyone with the embed link; everything else is private to you.'}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 

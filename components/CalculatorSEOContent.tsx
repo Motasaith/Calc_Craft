@@ -174,6 +174,26 @@ const RESEARCH_HEALTH_GUIDES = {
     ],
     references: ['American College of Sports Medicine. Guidelines for Exercise Testing and Prescription.', 'World Athletics. Competition and Technical Rules.', 'Jones AM, Doust JH. Journal of Sports Sciences. 1996;14:321–327.'],
   },
+  tdee: {
+    title: 'Total Daily Energy Expenditure and Maintenance Calories',
+    intro: 'Total Daily Energy Expenditure (TDEE) is the estimated number of calories a person uses in a day. It combines basal metabolic rate, the energy cost of physical activity, and the thermic effect of food. This calculator shows TDEE at every activity level so you can compare sedentary and highly active days side by side.',
+    formula: 'TDEE = BMR × activity factor',
+    methods: [
+      ['Basal Metabolic Rate', 'Mifflin–St Jeor is the default estimate. Revised Harris–Benedict and Katch–McArdle (which uses body-fat percentage) are also available.'],
+      ['Activity factor', 'A standard multiplier scales BMR to daily expenditure. Sedentary uses 1.2; extra active uses 1.9. Moderate corresponds to exercise four or five days per week.'],
+      ['Activity comparison', 'The results table lists expenditure at BMR and all six activity levels, so you can see how much energy a change in routine would add or remove.'],
+    ],
+    interpretation: 'A practical rule of thumb is that a daily deficit of about 500 kcal corresponds to roughly 0.5 kg (1 lb) of body tissue lost per week, and the same surplus to weight gain. Real change is slower and less linear because the body adapts energy use to intake, body composition, sleep, and stress.',
+    limits: 'Activity multipliers are population averages and can over- or under-state true expenditure considerably. People with thyroid disease, eating disorders, pregnancy, metabolic conditions, or recent weight change need individualised assessment. TDEE figures are planning estimates, not medical advice.',
+    faqs: [
+      ['What is the difference between BMR and TDEE?', 'BMR is energy used at complete rest. TDEE adds the calories used for movement, digestion, and daily routines.'],
+      ['Why do I need to enter my age?', 'BMR falls slightly with age in the standard equations, so age affects the activity multipliers applied on top of it.'],
+      ['Which activity level should I pick?', 'Choose the level that matches a typical week, not a single hard workout. Moderate means exercise on most days, not all day movement.'],
+      ['Is 500 kcal a day a safe deficit?', 'For many adults it is a reasonable starting point, but very small bodies, athletes, pregnancy, and medical conditions may need a different plan.'],
+      ['Why does Katch–McArdle need body fat?', 'It estimates lean mass from body fat and bases energy use on that lean mass, so an accurate body-fat figure is essential for a meaningful result.'],
+    ],
+    references: ['Mifflin MD, St Jeor ST, et al. The American Journal of Clinical Nutrition. 1990;51:241–247.', 'Harris JA, Benedict FG. A Biometric Study of Basal Metabolism in Man. 1919 (revised coefficients used).', 'Katch FI, McArdle WD. Nutrition, Weight Control, and Exercise.', 'National Academies. Dietary Reference Intakes for Energy.'],
+  },
   carbohydrate: {
     title: 'Daily Carbohydrate Intake and Energy Needs', intro: 'Carbohydrates provide four kilocalories per gram and are a major fuel source for the brain, muscles, and higher-intensity activity. This calculator estimates energy needs first, then converts an evidence-based percentage range into grams.',
     formula: 'Carbohydrate grams = daily calories × carbohydrate percentage ÷ 4',
@@ -197,6 +217,33 @@ const RESEARCH_HEALTH_GUIDES = {
     interpretation: 'The target includes fiber from vegetables, fruit, legumes, whole grains, nuts, and seeds. A varied food pattern provides different soluble and insoluble fibers.', limits: 'Sudden increases can cause bloating or discomfort. Bowel obstruction risk, inflammatory bowel disease flares, recent gastrointestinal surgery, or prescribed low-residue diets require clinical guidance.',
     faqs: [['What is soluble fiber?', 'It dissolves or gels in water and can support cholesterol and glucose management.'], ['What is insoluble fiber?', 'It adds stool bulk and can support regularity.'], ['Should supplements replace food?', 'Supplements can help in some cases, but foods provide a wider mix of nutrients and fiber types.'], ['Why increase fiber slowly?', 'The digestive system and gut microbiota need time to adapt.']],
     references: ['National Academies. Dietary Reference Intakes for Fiber.', 'U.S. Department of Agriculture and HHS. Dietary Guidelines for Americans.', 'American Gastroenterological Association. Patient guidance on dietary fiber.'],
+  },
+  'body-surface-area': {
+    title: 'Body Surface Area (BSA) Guidelines and Clinical Calculations',
+    intro: 'Body Surface Area (BSA) measures the total surface area of a human body in square meters. It is widely considered a more reliable indicator of metabolic rate and active mass than body weight alone. Clinicians use BSA to index cardiac function, estimate renal clearance, and determine chemotherapy or drug dosages.',
+    formula: 'Mosteller formula: BSA (m²) = √[ (Height in cm × Weight in kg) ÷ 3,600 ]',
+    methods: [
+      ['Mosteller Equation', 'Proposed in 1987, it is the most common clinical formula due to its simplicity: BSA = √[ (H × W) / 3600 ].'],
+      ['Du Bois & Du Bois', 'Published in 1916: BSA = 0.007184 × W^0.425 × H^0.725. Historically the clinical reference standard.'],
+      ['Haycock Equation', 'Particularly suited for infants and children: BSA = 0.024265 × W^0.5378 × H^0.3964.'],
+      ['Boyd Equation', 'Highly accurate for pediatric patients and lower weights, incorporating a variable exponent based on mass.'],
+      ['Schlich Formulas', 'Provide gender-differentiated estimates by using separate scaling constants for male and female body structures.'],
+    ],
+    interpretation: 'Average adult BSA values are approximately 1.6 m² for women and 1.9 m² for men. Differences between formulas are generally minor (within 2-3%), but clinicians often cross-reference them to ensure safety in high-risk dosing situations.',
+    limits: 'Formulas are geometric approximations and can over- or under-estimate BSA in individuals with unusual body compositions, amputations, severe edema, pregnancy, or extreme obesity. Handheld measurements or 3D scans provide precise values but are rarely needed in ordinary practice.',
+    faqs: [
+      ['Why is BSA preferred over BMI or weight for drug dosing?', 'BSA correlates closely with cardiac output, metabolic rate, and blood volume, which govern how drugs are metabolized and cleared by the kidneys and liver.'],
+      ['Which BSA formula is the most accurate?', 'No single formula is perfect. Mosteller is the clinical standard due to its simplicity and accuracy, while Haycock and Boyd are preferred in pediatric medicine.'],
+      ['How much does BSA vary in adults?', 'Most adults fall between 1.4 m² and 2.2 m². Highly muscular athletes or severely obese individuals may exceed 2.5 m².'],
+      ['Are there separate formulas for children?', 'Yes, children have different height-to-weight proportions. Haycock and Boyd formulas were specifically designed and validated for pediatric populations.'],
+      ['Is BSA used to calculate body fat?', 'No. BSA measures outer geometric surface area, not body composition. Use a dedicated body fat calculator for estimating fat-to-lean ratios.'],
+    ],
+    references: [
+      'Mosteller RD. Simplified calculation of body-surface area. N Engl J Med. 1987;317(17):1098.',
+      'Du Bois D, Du Bois EF. A formula to estimate the approximate surface area if height and weight be known. Arch Intern Med. 1916;17:863-871.',
+      'Haycock GB, Chir B, et al. Geometric method for measuring body surface area: A height-weight formula validated in infants, children, and adults. J Pediatr. 1978;93:62-66.',
+      'Boyd E. The Growth of the Surface Area of the Human Body. University of Minnesota Press. 1935.',
+    ],
   },
 } as const
 
@@ -461,6 +508,9 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'calorie') {
     return <ResearchHealthGuide kind="calorie" />
   }
+  if (slug === 'tdee') {
+    return <ResearchHealthGuide kind="tdee" />
+  }
   if (slug === 'ideal-weight') {
     return <ResearchHealthGuide kind="ideal-weight" />
   }
@@ -485,6 +535,7 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'carbohydrate') return <ResearchHealthGuide kind="carbohydrate" />
   if (slug === 'fat-intake') return <ResearchHealthGuide kind="fat-intake" />
   if (slug === 'fiber-intake') return <ResearchHealthGuide kind="fiber-intake" />
+  if (slug === 'body-surface-area') return <ResearchHealthGuide kind="body-surface-area" />
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
