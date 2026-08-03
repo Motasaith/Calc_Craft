@@ -54,7 +54,21 @@ export default function LimitCalculator() {
           </div>
           <div className="mt-4 flex flex-col items-center">
             <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Approach</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
+            {/* Whether the two one-sided approaches agree is the whole question,
+                and that is exactly what the picture shows — so the label says it
+                outright rather than describing two curves. */}
+            <svg
+              width="180"
+              height="80"
+              viewBox="0 0 180 80"
+              className="select-none"
+              role="img"
+              aria-label={`Approach to x equals ${a}. Left-hand limit ${leftVal.toFixed(
+                4
+              )}, right-hand limit ${rightVal.toFixed(4)}. They ${
+                converges ? `agree, so the limit is ${limit.toFixed(6)}` : 'disagree, so the limit may not exist'
+              }.`}
+            >
               <defs>
                 <pattern id="limGrid" width="15" height="15" patternUnits="userSpaceOnUse">
                   <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />

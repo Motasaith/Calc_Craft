@@ -63,14 +63,23 @@ export default function PHCalculator() {
 
               <div className="rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-4 flex flex-col items-center">
                 <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 self-start font-mono">pH Scale Indicator</p>
-                <svg width="200" height="60" viewBox="0 0 200 60" className="bg-white rounded-lg p-2 border border-neutral-300">
+                <svg
+                  width="200"
+                  height="60"
+                  viewBox="0 0 200 60"
+                  className="bg-white rounded-lg p-2 border border-neutral-300"
+                  role="img"
+                  aria-label={`pH scale from 0 to 14. A pH of ${results.ph.toFixed(2)} is marked, classified as ${results.classification.toLowerCase()}.`}
+                >
                   <linearGradient id="phGrad" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor="#dc2626" />
                     <stop offset="50%" stopColor="#22c55e" />
                     <stop offset="100%" stopColor="#1d4ed8" />
                   </linearGradient>
                   <rect x="15" y="20" width="170" height="15" fill="url(#phGrad)" rx="3" />
-                  <circle cx={15 + Math.min(170, (results.ph / 14) * 170)} cy="27" r="6" fill={results.color} stroke="#fff" strokeWidth="2" />
+                  {/* Concentrations above 1 mol/L give a negative pH, which is
+                      real — clamp both ends or the marker leaves the bar. */}
+                  <circle cx={15 + Math.max(0, Math.min(170, (results.ph / 14) * 170))} cy="27" r="6" fill={results.color} stroke="#fff" strokeWidth="2" />
                   <text x="15" y="47" fontSize="7" fontFamily="monospace" fill="#6b7280">0 (Acid)</text>
                   <text x="100" y="47" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#6b7280">7 (Neutral)</text>
                   <text x="185" y="47" textAnchor="end" fontSize="7" fontFamily="monospace" fill="#6b7280">14 (Base)</text>

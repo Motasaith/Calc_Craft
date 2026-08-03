@@ -31,7 +31,7 @@ on its own.
 - **IN PROGRESS:** 16
 - **Dedicated SEO content:** 37 of 488
 - **Data-driven visualisation:** 220 of 488
-- **Unit switching:** 51 present, 244 missing, 193 not applicable
+- **Unit switching:** 51 present, 243 missing, 194 not applicable
 
 The `n/a` unit value marks calculators that take no physical quantity — integers,
 dates, counts or ratios — where a metric/imperial toggle would be a control that
@@ -51,7 +51,7 @@ can be challenged; it is never a silent pass.
 | math | quadratic | `components/calculators/math/QuadraticCalculator` | NOT REVIEWED | — | — | n/a | — | 3522 | missing visualisation, svg a11y, content, depth |
 | math | statistics | `components/calculators/math/StatisticsCalculator` | NOT REVIEWED | — | — | n/a | — | 4690 | missing visualisation, svg a11y, content |
 | math | gcd-lcm | `components/calculators/math/GcdLcmCalculator` | READY-FOR-REVIEW | yes | yes | n/a | yes | 12840 | all measurable signals present; needs Calculator.net verification |
-| math | number-base | `components/calculators/math/NumberBaseConverter` | NOT REVIEWED | — | — | n/a | — | 1863 | missing visualisation, svg a11y, content, depth |
+| math | number-base | `components/calculators/math/NumberBaseConverter` | NOT REVIEWED | — | — | n/a | — | 3384 | missing visualisation, svg a11y, content, depth |
 | math | exponent | `components/calculators/math/ExponentCalculator` | NOT REVIEWED | — | — | — | — | 2740 | missing visualisation, svg a11y, units, content, depth |
 | math | permutation-combination | `components/calculators/math/PermutationCombinationCalculator` | NOT REVIEWED | — | — | n/a | — | 2969 | missing visualisation, svg a11y, content, depth |
 | math | ratio | `components/calculators/math/RatioCalculator` | NOT REVIEWED | — | — | n/a | — | 2781 | missing visualisation, svg a11y, content, depth |
@@ -59,7 +59,7 @@ can be challenged; it is never a silent pass.
 | math | pythagorean | `components/calculators/math/PythagoreanCalculator` | IN PROGRESS | yes | yes | — | yes | 10096 | missing units |
 | math | circle | `components/calculators/math/CircleCalculator` | IN PROGRESS | yes | yes | — | yes | 7468 | missing units |
 | math | triangle | `components/calculators/math/TriangleCalculator` | NOT REVIEWED | — | — | — | — | 3185 | missing visualisation, svg a11y, units, content, depth |
-| math | prime-factorization | `components/calculators/math/PrimeFactorizationCalculator` | NOT REVIEWED | — | — | n/a | — | 1521 | missing visualisation, svg a11y, content, depth |
+| math | prime-factorization | `components/calculators/math/PrimeFactorizationCalculator` | NOT REVIEWED | — | — | n/a | — | 2220 | missing visualisation, svg a11y, content, depth |
 | math | rounding | `components/calculators/math/RoundingCalculator` | NOT REVIEWED | — | — | n/a | — | 2586 | missing visualisation, svg a11y, content, depth |
 | math | scientific-notation | `components/calculators/math/ScientificNotationCalculator` | NOT REVIEWED | — | — | n/a | — | 2831 | missing visualisation, svg a11y, content, depth |
 | math | standard-deviation | `components/calculators/math/StandardDeviationCalculator` | NOT REVIEWED | — | — | n/a | — | 3013 | missing visualisation, svg a11y, content, depth |
@@ -205,7 +205,7 @@ can be challenged; it is never a silent pass.
 | geometry | segment | `components/calculators/geometry/SegmentCalculator` | NOT REVIEWED | yes | — | — | — | 3944 | missing svg a11y, units, content, depth |
 | geometry | distance-2d | `components/calculators/geometry/Distance2dCalculator` | NOT REVIEWED | yes | — | — | — | 5736 | missing svg a11y, units, content |
 | geometry | distance-3d | `components/calculators/geometry/Distance3dCalculator` | NOT REVIEWED | — | — | — | — | 4264 | missing visualisation, svg a11y, units, content |
-| geometry | midpoint | `components/calculators/geometry/MidpointCalculator` | IN PROGRESS | yes | — | n/a | — | 5284 | missing svg a11y, content |
+| geometry | midpoint | `components/calculators/geometry/MidpointCalculator` | IN PROGRESS | yes | yes | n/a | — | 5739 | missing content |
 | statistics | correlation | `components/calculators/statistics/CorrelationCalculator` | NOT REVIEWED | — | — | n/a | — | 1925 | missing visualisation, svg a11y, content, depth |
 | statistics | regression | `components/calculators/statistics/RegressionCalculator` | NOT REVIEWED | — | — | n/a | — | 1956 | missing visualisation, svg a11y, content, depth |
 | statistics | binomial | `components/calculators/statistics/BinomialCalculator` | NOT REVIEWED | — | — | n/a | — | 2393 | missing visualisation, svg a11y, content, depth |
@@ -262,7 +262,7 @@ can be challenged; it is never a silent pass.
 | physics | orbital-velocity | `components/calculators/physics/OrbitalVelocityCalculator` | NOT REVIEWED | yes | — | — | — | 3098 | missing svg a11y, units, content, depth |
 | physics | torque | `components/calculators/physics/TorqueCalculator` | NOT REVIEWED | yes | — | — | — | 3335 | missing svg a11y, units, content, depth |
 | chemistry | molar-mass | `components/calculators/chemistry/MolarMassCalculator` | NOT REVIEWED | yes | — | — | — | 2813 | missing svg a11y, units, content, depth |
-| chemistry | ph | `components/calculators/chemistry/PHCalculator` | IN PROGRESS | yes | — | n/a | — | 4219 | missing svg a11y, content |
+| chemistry | ph | `components/calculators/chemistry/PHCalculator` | IN PROGRESS | yes | yes | n/a | — | 4666 | missing content |
 | chemistry | moles | `components/calculators/chemistry/MolesCalculator` | NOT REVIEWED | — | — | — | — | 4723 | missing visualisation, svg a11y, units, content |
 | chemistry | dilution | `components/calculators/chemistry/DilutionCalculator` | NOT REVIEWED | — | — | — | — | 5399 | missing visualisation, svg a11y, units, content |
 | chemistry | gas-pressure | `components/calculators/chemistry/GasPressureCalculator` | NOT REVIEWED | yes | — | — | — | 3004 | missing svg a11y, units, content, depth |
@@ -442,7 +442,7 @@ can be challenged; it is never a silent pass.
 | electrical | battery-capacity | `components/calculators/electrical/BatteryCapacityCalculator` | NOT REVIEWED | — | — | — | — | 1684 | missing visualisation, svg a11y, units, content, depth |
 | math | derivative | `components/calculators/math/DerivativeCalculator` | NOT REVIEWED | yes | — | n/a | — | 3656 | missing svg a11y, content, depth |
 | math | integral | `components/calculators/math/IntegralCalculator` | NOT REVIEWED | yes | — | — | — | 3826 | missing svg a11y, units, content, depth |
-| math | limit | `components/calculators/math/LimitCalculator` | IN PROGRESS | yes | — | n/a | — | 4069 | missing svg a11y, content |
+| math | limit | `components/calculators/math/LimitCalculator` | IN PROGRESS | yes | yes | n/a | — | 4714 | missing content |
 | math | system-equations | `components/calculators/math/SystemEquationsCalculator` | NOT REVIEWED | yes | — | n/a | — | 3511 | missing svg a11y, content, depth |
 | math | complex-numbers | `components/calculators/math/ComplexNumberCalculator` | NOT REVIEWED | yes | — | n/a | — | 3705 | missing svg a11y, content, depth |
 | math | matrix-determinant | `components/calculators/math/MatrixDeterminantCalculator` | NOT REVIEWED | yes | — | n/a | — | 3572 | missing svg a11y, content, depth |
@@ -450,9 +450,9 @@ can be challenged; it is never a silent pass.
 | math | arithmetic-sequence | `components/calculators/math/ArithmeticSequenceCalculator` | NOT REVIEWED | yes | — | — | — | 2762 | missing svg a11y, units, content, depth |
 | math | geometric-sequence | `components/calculators/math/GeometricSequenceCalculator` | NOT REVIEWED | yes | — | — | — | 2939 | missing svg a11y, units, content, depth |
 | math | combination-repetition | `components/calculators/math/CombinationWithRepetitionCalculator` | NOT REVIEWED | yes | — | — | — | 2803 | missing svg a11y, units, content, depth |
-| math | factorial | `components/calculators/math/FactorialCalculator` | NOT REVIEWED | — | — | n/a | — | 2460 | missing visualisation, svg a11y, content, depth |
-| math | modulo | `components/calculators/math/ModuloCalculator` | NOT REVIEWED | — | — | n/a | — | 2615 | missing visualisation, svg a11y, content, depth |
-| math | absolute-value | `components/calculators/math/AbsoluteValueCalculator` | NOT REVIEWED | — | — | — | — | 2290 | missing visualisation, svg a11y, units, content, depth |
+| math | factorial | `components/calculators/math/FactorialCalculator` | NOT REVIEWED | — | — | n/a | — | 2103 | missing visualisation, svg a11y, content, depth |
+| math | modulo | `components/calculators/math/ModuloCalculator` | NOT REVIEWED | — | — | n/a | — | 2366 | missing visualisation, svg a11y, content, depth |
+| math | absolute-value | `components/calculators/math/AbsoluteValueCalculator` | NOT REVIEWED | — | — | n/a | — | 1966 | missing visualisation, svg a11y, content, depth |
 | math | cube-root | `components/calculators/math/CubeRootCalculator` | NOT REVIEWED | — | — | n/a | — | 2212 | missing visualisation, svg a11y, content, depth |
 | math | nth-root | `components/calculators/math/NthRootCalculator` | NOT REVIEWED | — | — | — | — | 2555 | missing visualisation, svg a11y, units, content, depth |
 | finance | bond-price | `components/calculators/finance/BondPriceCalculator` | NOT REVIEWED | yes | — | n/a | — | 2935 | missing svg a11y, content, depth |

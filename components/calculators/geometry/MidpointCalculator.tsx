@@ -94,7 +94,14 @@ export default function MidpointCalculator() {
               {svgGrid && (
                 <div className="rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-4 flex flex-col items-center">
                   <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 self-start font-mono">Midpoint Visualizer</p>
-                  <svg viewBox="0 0 120 120" className="w-32 h-32 bg-white rounded-lg border border-neutral-300">
+                  {/* "Highlighted in red" below the plot is useless without
+                      sight of it, so the label names the three points instead. */}
+                  <svg
+                    viewBox="0 0 120 120"
+                    className="w-32 h-32 bg-white rounded-lg border border-neutral-300"
+                    role="img"
+                    aria-label={`Plot of the two endpoints and their midpoint. Point 1 at ${x1Str || '0'}, ${y1Str || '0'}; point 2 at ${x2Str || '0'}, ${y2Str || '0'}; midpoint at ${results.midpoint}.`}
+                  >
                     <line x1="10" y1="60" x2="110" y2="60" stroke="#cbd5e1" strokeWidth="1" />
                     <line x1="60" y1="10" x2="60" y2="110" stroke="#cbd5e1" strokeWidth="1" />
                     <line x1={svgGrid.px1} y1={svgGrid.py1} x2={svgGrid.px2} y2={svgGrid.py2} stroke="#b0bdae" strokeWidth="1.5" strokeDasharray="2 2" />
