@@ -41,6 +41,7 @@ yarn-error.log*
 # /scripts (the dir itself).
 /scripts/*
 !/scripts/build-site-index.ts
+!/scripts/db-migrate.mjs
 
 
 /wordpress
