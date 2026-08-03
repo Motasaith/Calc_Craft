@@ -593,7 +593,18 @@ export default function BmiCalculator() {
 
               {/* Speedometer Arc Gauge */}
               <div className="relative w-full max-w-[280px] mx-auto pt-2">
-                <svg viewBox="0 0 100 55" className="w-full overflow-visible">
+                {/* The gauge is the primary result for sighted users, so the
+                    label states the reading and its category rather than naming
+                    the chart type — a screen reader user gets the answer, not a
+                    description of a picture they cannot see. */}
+                <svg
+                  viewBox="0 0 100 55"
+                  className="w-full overflow-visible"
+                  role="img"
+                  aria-label={`BMI of ${bmi > 0 ? bmi.toFixed(1) : 'not yet calculated'}${
+                    bmi > 0 ? `, classified as ${isPediatric ? childCategory : adultCategory}` : ''
+                  }, shown on a gauge from 15 to 40.`}
+                >
                   {/* Background Outer Circle Track */}
                   <path
                     d="M 10 50 A 40 40 0 0 1 90 50"

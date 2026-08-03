@@ -718,7 +718,16 @@ export default function BodyFatCalculator() {
                   <span>{bfNavy.toFixed(1)}%</span>
                   <span className="uppercase text-neutral-400">indicator</span>
                 </div>
-                <svg viewBox="0 0 100 22" className="w-full overflow-visible">
+                {/* States the reading and its band, not the chart type — the
+                    marker position is meaningless to a screen reader. */}
+                <svg
+                  viewBox="0 0 100 22"
+                  className="w-full overflow-visible"
+                  role="img"
+                  aria-label={`Body fat of ${bfNavy.toFixed(1)} percent${
+                    category ? `, classified as ${category}` : ''
+                  }, shown against the essential, athlete, fitness, average and obese bands.`}
+                >
                   {/* Slider background segments */}
                   {/* Segment 1: Essential (2-6% men, 10-14% women) -> 10 to 25 */}
                   <rect x="10" y="8" width="15" height="6" fill="#ef4444" opacity="0.8" rx="1" />

@@ -634,7 +634,15 @@ export default function MacroCalculator() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 {/* SVG Donut Chart */}
                 <div className="flex justify-center">
-                  <svg viewBox="0 0 200 200" className="w-36 h-36 drop-shadow-sm select-none">
+                  {/* A donut conveys proportion visually; the label conveys the
+                      same split in grams and percentages, which is what the user
+                      actually needs to act on. */}
+                  <svg
+                    viewBox="0 0 200 200"
+                    className="w-36 h-36 drop-shadow-sm select-none"
+                    role="img"
+                    aria-label={`Daily macronutrient split for ${totalCal} calories: protein ${proteinGrams} grams (${proteinPercent} percent), carbohydrates ${carbsGrams} grams (${carbsPercent} percent), fat ${fatGrams} grams (${fatPercent} percent).`}
+                  >
                     {/* Background Track Circle */}
                     <circle cx="100" cy="100" r={cRadius} stroke="#f5f4f0" strokeWidth="22" fill="none" />
 

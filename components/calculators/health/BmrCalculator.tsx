@@ -472,7 +472,19 @@ export default function BmrCalculator() {
 
                 {/* Responsive SVG Container */}
                 <div className="overflow-x-auto">
-                  <svg viewBox="0 0 500 280" className="w-full h-auto min-w-[320px] font-mono text-[10px] select-none">
+                  {/* The chart compares daily energy across activity multipliers.
+                      The label gives the base figure and the range it spans, so
+                      the comparison survives without sight of the bars. */}
+                  <svg
+                    viewBox="0 0 500 280"
+                    className="w-full h-auto min-w-[320px] font-mono text-[10px] select-none"
+                    role="img"
+                    aria-label={`Daily energy needs by activity level. Basal rate ${Math.round(
+                      calculatedBmr * valMultiplier
+                    ).toLocaleString()} ${labelText}, rising to ${Math.round(
+                      calculatedBmr * valMultiplier * 1.9
+                    ).toLocaleString()} ${labelText} at the most active level.`}
+                  >
                     {/* Grid Lines */}
                     <line x1="10" y1="15" x2="10" y2="265" stroke="#e5e5e5" strokeWidth="1.5" />
                     <line x1="263" y1="15" x2="263" y2="265" stroke="#7f8c7d" strokeWidth="2" strokeDasharray="4 4" />

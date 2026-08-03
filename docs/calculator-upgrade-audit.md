@@ -27,8 +27,8 @@ on its own.
 
 - **Registered calculators:** 488
 - **NOT REVIEWED:** 458
-- **IN PROGRESS:** 26
-- **READY-FOR-REVIEW:** 4
+- **IN PROGRESS:** 22
+- **READY-FOR-REVIEW:** 8
 - **Dedicated SEO content:** 37 of 488
 - **Data-driven visualisation:** 217 of 488
 - **Unit switching:** 20 of 488
@@ -92,15 +92,15 @@ on its own.
 | finance | depreciation | `components/calculators/finance/DepreciationCalculator` | NOT REVIEWED | — | — | — | — | 1970 | missing visualisation, svg a11y, units, content, depth |
 | finance | gold-price | `components/calculators/finance/GoldPriceCalculator` | NOT REVIEWED | — | — | yes | — | 2416 | missing visualisation, svg a11y, content, depth |
 | finance | crypto-converter | `components/calculators/finance/CryptoConverter` | NOT REVIEWED | — | — | — | — | 2395 | missing visualisation, svg a11y, units, content, depth |
-| health | bmi | `components/calculators/health/BmiCalculator` | IN PROGRESS | yes | — | yes | yes | 28330 | missing svg a11y |
+| health | bmi | `components/calculators/health/BmiCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 28966 | all measurable signals present; needs Calculator.net verification |
 | health | calorie | `components/calculators/health/CalorieCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9173 | all measurable signals present; needs Calculator.net verification |
-| health | body-fat | `components/calculators/health/BodyFatCalculator` | IN PROGRESS | yes | — | yes | yes | 34111 | missing svg a11y |
+| health | body-fat | `components/calculators/health/BodyFatCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 34583 | all measurable signals present; needs Calculator.net verification |
 | health | ideal-weight | `components/calculators/health/IdealWeightCalculator` | IN PROGRESS | — | — | yes | yes | 5163 | missing visualisation, svg a11y |
 | health | water-intake | `components/calculators/health/WaterIntakeCalculator` | IN PROGRESS | yes | — | yes | yes | 19471 | missing svg a11y |
 | health | heart-rate | `components/calculators/health/HeartRateCalculator` | IN PROGRESS | yes | yes | — | yes | 6012 | missing units |
-| health | macro | `components/calculators/health/MacroCalculator` | IN PROGRESS | yes | — | yes | yes | 31892 | missing svg a11y |
+| health | macro | `components/calculators/health/MacroCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 32451 | all measurable signals present; needs Calculator.net verification |
 | health | pregnancy | `components/calculators/health/PregnancyCalculator` | IN PROGRESS | yes | yes | — | yes | 6907 | missing units |
-| health | bmr | `components/calculators/health/BmrCalculator` | IN PROGRESS | yes | — | yes | yes | 26637 | missing svg a11y |
+| health | bmr | `components/calculators/health/BmrCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 27333 | all measurable signals present; needs Calculator.net verification |
 | health | tdee | `components/calculators/health/TdeeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 14653 | all measurable signals present; needs Calculator.net verification |
 | health | one-rep-max | `components/calculators/health/OneRepMaxCalculator` | IN PROGRESS | yes | — | — | yes | 24178 | missing svg a11y, units |
 | health | ovulation | `components/calculators/health/OvulationCalculator` | IN PROGRESS | yes | yes | — | yes | 4867 | missing units |
