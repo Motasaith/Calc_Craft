@@ -42,6 +42,9 @@ yarn-error.log*
 /scripts/*
 !/scripts/build-site-index.ts
 !/scripts/db-migrate.mjs
+# docs/calculator-upgrade-audit.md is committed and tells the reader to rerun
+# this script rather than hand-edit the table, so the script has to ship with it.
+!/scripts/audit-calculators.mjs
 
 
 /wordpress
