@@ -20,8 +20,8 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  // Sign-in/out UI is handled by Clerk's <SignedIn>/<SignedOut>/<UserButton>
-  // below; this only needs the admin flag for the admin nav entry.
+  // Auth UI is driven by our own context, not Clerk's <Show>, so the header
+  // still renders something sensible if Clerk is slow or cannot load at all.
   const { user, isAdmin, isLoading } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -212,14 +212,27 @@ export default function Navbar() {
             context has a load timeout, so it always resolves to signed-in or
             signed-out and the header keeps working. */}
         <div className="hidden xl:flex shrink-0 items-center gap-2">
-          {isLoading ? (
-            <div className="h-11 w-24 rounded-xl bg-white/20 animate-pulse" aria-hidden="true" />
-          ) : user ? (
+          {/* Sign In is the DEFAULT, shown immediately on first paint and kept
+              until Clerk positively confirms a session.
+
+              This previously rendered a faint pulsing skeleton while Clerk
+              loaded. Clerk takes a moment on a cold load, so anyone refreshing
+              saw an empty header and reasonably concluded the site had no
+              accounts at all — the worst possible read.
+
+              Most visitors are signed out, so defaulting to Sign In is right for
+              the common case. A signed-in user sees it swap to their avatar once
+              the session resolves, which is normal and self-explanatory. */}
+          {user ? (
             <div className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl shadow-sm">
               <UserButton />
             </div>
           ) : (
-            <Link href="/sign-in" className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px">
+            <Link
+              href="/sign-in"
+              aria-busy={isLoading}
+              className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px"
+            >
               Sign In
             </Link>
           )}
