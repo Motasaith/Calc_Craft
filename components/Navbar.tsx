@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BRAND } from '@/lib/brand'
 import { calculators, CATEGORY_LABELS, CATEGORY_COLORS, type CalculatorCategory } from '@/lib/calculators'
-import { Show, UserButton } from '@clerk/react'
+import { UserButton } from '@clerk/react'
 import { useAuth } from '@/components/providers/AuthContext'
 
 const navLinks = [
@@ -204,18 +204,25 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop Auth / CTA */}
+        {/* Desktop Auth / CTA
+            Driven by our own auth context rather than Clerk's <Show>. <Show>
+            renders NOTHING until Clerk finishes loading, so if Clerk cannot
+            initialise — a misconfigured domain, a blocked request — the navbar
+            silently loses its sign-in button entirely, with no clue why. Our
+            context has a load timeout, so it always resolves to signed-in or
+            signed-out and the header keeps working. */}
         <div className="hidden xl:flex shrink-0 items-center gap-2">
-          <Show when="signed-out">
-            <Link href="/sign-in" className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px">
-              Sign In
-            </Link>
-          </Show>
-          <Show when="signed-in">
+          {isLoading ? (
+            <div className="h-11 w-24 rounded-xl bg-white/20 animate-pulse" aria-hidden="true" />
+          ) : user ? (
             <div className="flex h-11 items-center gap-2 px-2.5 bg-white/35 hover:bg-white/60 border border-dark-800/10 rounded-xl shadow-sm">
               <UserButton />
             </div>
-          </Show>
+          ) : (
+            <Link href="/sign-in" className="px-3 h-11 flex items-center justify-center border border-dark-800/15 bg-white/30 hover:bg-white/60 rounded-xl text-[11px] font-mono font-bold uppercase tracking-wider text-dark-700 whitespace-nowrap transition-all shadow-sm active:translate-y-px">
+              Sign In
+            </Link>
+          )}
 
           <Link
             href="/solver"
@@ -300,13 +307,14 @@ export default function Navbar() {
                 )
               })}
               <div className="pt-4 flex flex-col gap-2.5 border-t border-dark-800/10 mt-2">
-                <Show when="signed-in">
+                {/* Same reasoning as the desktop block above — our context, not
+                    Clerk's <Show>, so the menu never renders empty. */}
+                {user ? (
                   <div className="bg-[#dad6cd]/30 rounded-xl p-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-dark-800">My Account</span>
                     <UserButton />
                   </div>
-                </Show>
-                <Show when="signed-out">
+                ) : (
                   <div className="flex gap-2">
                     <Link
                       href="/sign-in"
@@ -323,7 +331,7 @@ export default function Navbar() {
                       Register
                     </Link>
                   </div>
-                </Show>
+                )}
 
                 <Link
                   href="/solver"
