@@ -1,46 +1,34 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function GroceryBudgetCalculator() {
-  const [size, setSize] = useState('4')
-  const [weekly, setWeekly] = useState('75')
-  const [result, setResult] = useState<{ monthly: number; yearly: number; weekly: number } | null>(null)
+  const [weeklyStr, setWeeklyStr] = useState('120')
 
-  const calculate = () => {
-    const s = parseInt(size)
-    const w = parseFloat(weekly)
-    if (isNaN(s) || isNaN(w) || s <= 0 || w < 0) return
-    const weeklyTotal = s * w
-    const monthly = weeklyTotal * 4.33
-    const yearly = weeklyTotal * 52
-    setResult({ monthly, yearly, weekly: weeklyTotal })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, monthly: 0, daily: 0 }
+    const w = parseFloat(weeklyStr)
+    if (isNaN(w) || w < 0) return { ...defaultObj, error: 'Please enter a valid amount.' }
+    const daily = w / 7
+    const monthly = w * 4.333
+    return { error: null, monthly, daily }
+  }, [weeklyStr])
 
   return (
-    <FormCalculatorShell title="Grocery Budget Calculator" subtitle="Plan household grocery spending" badge="EVERYDAY">
-      <RetroInput label="Household Size" value={size} onChange={setSize} unit="people" id="grocery-size" />
-      <RetroInput label="Weekly Budget / Person" value={weekly} onChange={setWeekly} unit="$" id="grocery-weekly" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate Budget</RetroActionButton></div>
-      {result && (
-        <div className="mt-4 space-y-2">
-          <ResultDisplay label="Monthly Budget" value={`$${result.monthly.toFixed(2)}`} large />
-          <ResultDisplay label="Weekly Total" value={`$${result.weekly.toFixed(2)}`} />
-          <ResultDisplay label="Yearly Total" value={`$${result.yearly.toFixed(2)}`} />
-          <svg viewBox="0 0 200 50" className="w-full h-12 mt-2">
-            <path d={wobblyBar(10, 40 - 15, 50, 15)} fill="#cbd8ca" stroke="#b0bdae" strokeWidth="2" />
-            <path d={wobblyBar(70, 40 - 30, 50, 30)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <path d={wobblyBar(130, 40 - 40, 50, 40)} fill="#dad6cd" stroke="#b0bdae" strokeWidth="2" />
-            <text x="35" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Wk</text>
-            <text x="95" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Mo</text>
-            <text x="155" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Yr</text>
-          </svg>
+    <FormCalculatorShell title="Grocery Budget Solver" subtitle="Split weekly grocery allowances into monthly and daily rates" badge="EVERYDAY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Weekly Grocery Spending ($)" value={weeklyStr} onChange={setWeeklyStr} id="gb-w" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Daily Rate" value={results.daily.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} />
+              <ResultDisplay label="Monthly Equivalent" value={results.monthly.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

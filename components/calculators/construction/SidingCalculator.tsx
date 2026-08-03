@@ -1,45 +1,31 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function SidingCalculator() {
-  const [wallArea, setWallArea] = useState('150')
-  const [exposure, setExposure] = useState('180')
-  const [result, setResult] = useState<{ squares: number; pieces: number } | null>(null)
+  const [areaStr, setAreaStr] = useState('1200') // sq ft
 
-  const calculate = () => {
-    const wa = parseFloat(wallArea), ex = parseFloat(exposure)
-    if (isNaN(wa) || isNaN(ex) || wa <= 0 || ex <= 0) { setResult(null); return }
-    const squares = Math.ceil((wa / 9.29) * 1.1)
-    const pieceArea = (ex / 1000) * 3.66
-    const pieces = Math.ceil((wa * 1.1) / pieceArea)
-    setResult({ squares, pieces })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, squares: 0 }
+    const a = parseFloat(areaStr)
+    if (isNaN(a) || a <= 0) return { ...defaultObj, error: 'Please enter a valid area.' }
+    // 1 square of siding covers 100 sq ft. Add 10% waste buffer.
+    const squares = (a * 1.1) / 100
+    return { error: null, squares }
+  }, [areaStr])
 
   return (
-    <FormCalculatorShell title="Siding Calculator" subtitle="Squares needed for walls" badge="CONSTRUCTION">
-      <RetroInput label="Wall Area (m²)" value={wallArea} onChange={setWallArea} placeholder="150" id="sid-wa" />
-      <RetroInput label="Siding Exposure (mm)" value={exposure} onChange={setExposure} placeholder="180" id="sid-ex" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Squares" value={result.squares} large />
-            <ResultDisplay label="Pieces" value={result.pieces} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 70" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <path key={i} d={wobblyBar(5, 8 + i * 10, 190, 8)} fill="#a08060" stroke="#604030" strokeWidth="0.5" />
-              ))}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Wall Siding Squares Solver" subtitle="Calculate siding material squares required with 10% waste margins" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Wall Area to Cover (sq ft)" value={areaStr} onChange={setAreaStr} id="sdg-a" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Siding Squares Required" value={results.squares.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

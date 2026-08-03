@@ -1,58 +1,51 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatNumber } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function PriceElasticityCalculator() {
-  const [oldPrice, setOldPrice] = useState('10')
-  const [newPrice, setNewPrice] = useState('12')
-  const [oldQty, setOldQty] = useState('1000')
-  const [newQty, setNewQty] = useState('800')
+  const [p1, setP1] = useState('10')
+  const [p2, setP2] = useState('12')
+  const [q1, setQ1] = useState('100')
+  const [q2, setQ2] = useState('80')
 
-  const p1 = parseFloat(oldPrice)
-  const p2 = parseFloat(newPrice)
-  const q1 = parseFloat(oldQty)
-  const q2 = parseFloat(newQty)
-  const valid = !isNaN(p1) && !isNaN(p2) && !isNaN(q1) && !isNaN(q2) && p1 > 0 && p2 > 0 && q1 > 0 && q2 > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, elasticity: 0 }
+    const valP1 = parseFloat(p1)
+    const valP2 = parseFloat(p2)
+    const valQ1 = parseFloat(q1)
+    const valQ2 = parseFloat(q2)
 
-  const elasticity = valid ? ((q2 - q1) / ((q1 + q2) / 2)) / ((p2 - p1) / ((p1 + p2) / 2)) : 0
-  const absE = Math.abs(elasticity)
-  const classification = absE > 1 ? 'Elastic' : absE === 1 ? 'Unit Elastic' : 'Inelastic'
-  const barW = valid ? Math.min(absE * 60, 140) : 0
+    if (isNaN(valP1) || isNaN(valP2) || isNaN(valQ1) || isNaN(valQ2) || valP1 <= 0 || valP2 <= 0 || valQ1 <= 0 || valQ2 <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const pctQ = (valQ2 - valQ1) / ((valQ1 + valQ2) / 2)
+    const pctP = (valP2 - valP1) / ((valP1 + valP2) / 2)
+    if (pctP === 0) return { ...defaultObj, error: 'Price change cannot be zero.' }
+    const elasticity = Math.abs(pctQ / pctP)
+
+    return { error: null, elasticity }
+  }, [p1, p2, q1, q2])
 
   return (
-    <FormCalculatorShell
-      title="Price Elasticity Calculator"
-      subtitle="Elasticity of demand (midpoint)"
-      badge="FINANCE"
-    >
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Old Price" value={oldPrice} onChange={setOldPrice} placeholder="e.g. 10" id="pe-p1" unit="$" />
-        <RetroInput label="New Price" value={newPrice} onChange={setNewPrice} placeholder="e.g. 12" id="pe-p2" unit="$" />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Old Quantity" value={oldQty} onChange={setOldQty} placeholder="e.g. 1000" id="pe-q1" />
-        <RetroInput label="New Quantity" value={newQty} onChange={setNewQty} placeholder="e.g. 800" id="pe-q2" />
-      </div>
-
-      {valid && (
-        <div className="mt-4 space-y-3">
+    <FormCalculatorShell title="Price Elasticity of Demand Solver" subtitle="Calculate elasticity coefficients using the Midpoint Method" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
-            <ResultDisplay label="Elasticity" value={formatNumber(elasticity, 3)} large />
-            <ResultDisplay label="Classification" value={classification} />
+            <RetroInput label="Initial Price (P₁)" value={p1} onChange={setP1} id="pe-p1" />
+            <RetroInput label="New Price (P₂)" value={p2} onChange={setP2} id="pe-p2" />
           </div>
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill="#dfaa44" stroke="#be8b32" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">0</text>
-            <text x="150" y="58" fontSize="8" fontFamily="monospace" fill="#555">|E|</text>
-          </svg>
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="Initial Quantity (Q₁)" value={q1} onChange={setQ1} id="pe-q1" />
+            <RetroInput label="New Quantity (Q₂)" value={q2} onChange={setQ2} id="pe-q2" />
+          </div>
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Elasticity Coefficient" value={results.elasticity.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

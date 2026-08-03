@@ -1,55 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0 Z`
-}
-
 export default function PlantSpacingCalculator() {
-  const [bedArea, setBedArea] = useState('120')
-  const [spread, setSpread] = useState('12')
+  const [areaStr, setAreaStr] = useState('100') // sq ft
+  const [spacingStr, setSpacingStr] = useState('12') // inches
 
-  const area = parseFloat(bedArea) || 0
-  const s = parseFloat(spread) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, count: 0 }
+    const a = parseFloat(areaStr)
+    const s = parseFloat(spacingStr)
 
-  const spacingFt = s / 12
-  const areaPerPlant = Math.PI * (spacingFt / 2) ** 2
-  const plants = areaPerPlant > 0 ? Math.floor(area / areaPerPlant) : 0
+    if (isNaN(a) || isNaN(s) || a <= 0 || s <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const valid = area > 0 && s > 0
+    const spacingFt = s / 12
+    const plantArea = spacingFt * spacingFt
+    const count = a / plantArea
+
+    return { error: null, count: Math.floor(count) }
+  }, [areaStr, spacingStr])
 
   return (
-    <FormCalculatorShell
-      title="Plant Spacing Calculator"
-      subtitle="Determine plant count from bed area and spread"
-      badge="LANDSCAPING"
-    >
-      <div>
-        <RetroInput label="Bed Area" value={bedArea} onChange={setBedArea} unit="sq ft" min={0} />
-        <RetroInput label="Plant Spread" value={spread} onChange={setSpread} unit="in" min={0} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Number of Plants" value={plants} unit="plants" large />
-          <ResultDisplay label="Spacing" value={spacingFt.toFixed(2)} unit="ft" />
+    <FormCalculatorShell title="Plant Grid Spacing Solver" subtitle="Calculate plant count needed inside spacing grids" badge="LANDSCAPING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Garden Bed Area (sq ft)" value={areaStr} onChange={setAreaStr} id="ps-a" />
+          <RetroInput label="Plant Spacing (inches)" value={spacingStr} onChange={setSpacingStr} id="ps-s" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <rect x="0" y="0" width="200" height="80" fill="#cde4c8" />
-        {Array.from({ length: 5 }).map((_, row) =>
-          Array.from({ length: 9 }).map((_, col) => (
-            <path
-              key={`${row}-${col}`}
-              d={wobblyCircle(15 + col * 21, 15 + row * 16, 5)}
-              fill="#3a7a3a"
-              opacity={valid ? 0.8 : 0.3}
-            />
-          ))
-        )}
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Estimated Plant Count" value={results.count.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,39 +1,53 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RegressionCalculator() {
-  const [xData, setXData] = useState('1,2,3,4,5')
-  const [yData, setYData] = useState('2,3,5,4,6')
-  const [result, setResult] = useState<{slope:number,intercept:number,r2:number}|null>(null)
+  const [xStr, setXStr] = useState('1, 2, 3, 4, 5')
+  const [yStr, setYStr] = useState('2, 4, 5, 4, 5')
 
-  const calculate = () => {
-    const x = xData.split(',').map(Number).filter(n => !isNaN(n))
-    const y = yData.split(',').map(Number).filter(n => !isNaN(n))
-    if (x.length < 2 || x.length !== y.length) { setResult(null); return }
-    const n = x.length
-    const sumX = x.reduce((a,b) => a+b, 0), sumY = y.reduce((a,b) => a+b, 0)
-    const sumXY = x.reduce((s,xi,i) => s + xi*y[i], 0)
-    const sumX2 = x.reduce((s,xi) => s + xi*xi, 0)
-    const sumY2 = y.reduce((s,yi) => s + yi*yi, 0)
-    const slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX)
-    const intercept = (sumY - slope*sumX) / n
-    const r = (n*sumXY - sumX*sumY) / Math.sqrt((n*sumX2 - sumX*sumX)*(n*sumY2 - sumY*sumY))
-    setResult({ slope, intercept, r2: r*r })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, slope: 0, intercept: 0 }
+    const xArr = xStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
+    const yArr = yStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
+
+    if (xArr.length !== yArr.length || xArr.length < 2) {
+      return { ...defaultObj, error: 'Datasets must be of equal size and contain at least 2 points.' }
+    }
+
+    const n = xArr.length
+    const sumX = xArr.reduce((a, b) => a + b, 0)
+    const sumY = yArr.reduce((a, b) => a + b, 0)
+    const sumXY = xArr.reduce((acc, val, i) => acc + val * yArr[i], 0)
+    const sumX2 = xArr.reduce((acc, val) => acc + val * val, 0)
+
+    const num = n * sumXY - sumX * sumY
+    const den = n * sumX2 - sumX * sumX
+
+    if (den === 0) return { ...defaultObj, error: 'Denominator is zero (cannot solve slope).' }
+
+    const slope = num / den
+    const intercept = (sumY - slope * sumX) / n
+
+    return { error: null, slope, intercept }
+  }, [xStr, yStr])
 
   return (
-    <FormCalculatorShell title="Linear Regression" badge="STATISTICS">
-      <RetroInput label="X values" value={xData} onChange={setXData} placeholder="1,2,3,4,5" id="reg-x" />
-      <RetroInput label="Y values" value={yData} onChange={setYData} placeholder="2,3,5,4,6" id="reg-y" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="Slope (m)" value={result.slope.toFixed(4)} />
-          <ResultDisplay label="Intercept (b)" value={result.intercept.toFixed(4)} />
-          <ResultDisplay label="R²" value={result.r2.toFixed(4)} large />
+    <FormCalculatorShell title="Linear Regression Line Solver" subtitle="Determine line coefficients y = m·x + b from datasets" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Independent Variable X" value={xStr} onChange={setXStr} id="rg-x" />
+          <RetroInput label="Dependent Variable Y" value={yStr} onChange={setYStr} id="rg-y" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Slope (m)" value={results.slope.toFixed(4)} />
+              <ResultDisplay label="Y-Intercept (b)" value={results.intercept.toFixed(4)} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

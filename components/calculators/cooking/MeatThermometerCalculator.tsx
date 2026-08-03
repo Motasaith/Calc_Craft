@@ -1,50 +1,37 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
 
 export default function MeatThermometerCalculator() {
-  const [temp, setTemp] = useState('165')
-  const [meat, setMeat] = useState('chicken')
+  const [meatType, setMeatType] = useState('beef')
 
-  const t = parseFloat(temp)
-  const valid = !isNaN(t)
-  const safeTemps: Record<string, number> = {
-    'chicken': 165, 'turkey': 165, 'pork': 145, 'beef': 145, 'ground': 160, 'fish': 145, 'lamb': 145, 'veal': 145,
-  }
-  const safeTemp = safeTemps[meat] || 145
-  const isSafe = valid && t >= safeTemp
+  const results = useMemo(() => {
+    const defaultObj = { temp: '', safety: '' }
+    if (meatType === 'beef') return { temp: '145°F (63°C)', safety: 'Medium rare. Rest for 3 minutes.' }
+    if (meatType === 'poultry') return { temp: '165°F (74°C)', safety: 'Fully cooked and safe.' }
+    if (meatType === 'pork') return { temp: '145°F (63°C)', safety: 'Rest for 3 minutes.' }
+    return defaultObj
+  }, [meatType])
+
+  const options = [
+    { value: 'beef', label: 'Beef & Lamb' },
+    { value: 'poultry', label: 'Poultry (Chicken/Turkey)' },
+    { value: 'pork', label: 'Pork & Ham' }
+  ]
 
   return (
-    <FormCalculatorShell title="Meat Doneness" subtitle="Check safe internal temp" badge="COOKING">
-      <RetroInput label="Internal Temp" value={temp} onChange={setTemp} placeholder="165" id="mt-t" unit="°F" />
-      <RetroInput label="Meat Type" value={meat} onChange={setMeat} placeholder="chicken" id="mt-m" unit="" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Safe Temp" value={`${safeTemp}°F`} large />
-            <ResultDisplay label="Status" value={isSafe ? '✓ Safe' : '⚠ Undercooked'} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Temperature Check</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="mtGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#mtGrid)" rx="8" />
-              <path d={wobblyBar(15, 25, 150, 25)} fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" rx="3" />
-              <path d={wobblyBar(15, 25, Math.min(150, (t / 200) * 150), 25)} fill={isSafe ? '#22c55e' : '#ef4444'} fillOpacity="0.4" stroke={isSafe ? '#16a34a' : '#dc2626'} strokeWidth="1.5" rx="3" />
-              <path d={`M ${15 + (safeTemp / 200) * 150} 20 L ${15 + (safeTemp / 200) * 150} 50`} stroke="#1e1b4b" strokeWidth="2" />
-              <text x="90" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill={isSafe ? '#16a34a' : '#dc2626'} fontWeight="bold">{t}°F — {isSafe ? 'Safe' : 'Undercooked'}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Meat Cooking Temperature Guide" subtitle="Resolve USDA safe internal meat cooking temperatures" badge="COOKING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect label="Select Meat Type" value={meatType} onChange={setMeatType} id="mt-select" options={options} />
+        </div>
+        <div className="min-h-[440px] space-y-4 text-center">
+          <ResultDisplay label="Required Temperature" value={results.temp} large />
+          <p className="font-mono text-xs text-neutral-600 bg-neutral-50 p-4 rounded border border-neutral-300">
+            {results.safety}
+          </p>
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

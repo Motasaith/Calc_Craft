@@ -1,48 +1,35 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function ButterConverterCalculator() {
-  const [cups, setCups] = useState('1')
+  const [sticksStr, setSticksStr] = useState('2')
 
-  const c = parseFloat(cups)
-  const valid = !isNaN(c) && c > 0
-  // 1 cup butter = 227g = 2 sticks = 16 tbsp
-  const grams = valid ? c * 227 : 0
-  const sticks = valid ? c * 2 : 0
-  const tbsp = valid ? c * 16 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, grams: 0, tbsp: 0 }
+    const sticks = parseFloat(sticksStr)
+    if (isNaN(sticks) || sticks < 0) return { ...defaultObj, error: 'Please enter valid values.' }
+    // standard: 1 stick of butter = 113g = 8 tablespoons
+    const grams = sticks * 113
+    const tbsp = sticks * 8
+    return { error: null, grams, tbsp }
+  }, [sticksStr])
 
   return (
-    <FormCalculatorShell title="Butter Converter" subtitle="Cups ↔ grams ↔ sticks ↔ tbsp" badge="COOKING">
-      <RetroInput label="Cups" value={cups} onChange={setCups} placeholder="1" id="bc-c" unit="cups" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <ResultDisplay label="Grams" value={grams.toFixed(0)} unit="g" />
-            <ResultDisplay label="Sticks" value={sticks.toFixed(1)} />
-            <ResultDisplay label="Tbsp" value={tbsp.toFixed(0)} />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Butter Sticks</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="bcGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#bcGrid)" rx="8" />
-              {Array.from({ length: Math.min(4, Math.ceil(sticks)) }).map((_, i) => (
-                <path key={i} d={wobblyBar(20 + i * 40, 25, 35, 20)} fill="#fbbf24" fillOpacity="0.3" stroke="#d97706" strokeWidth="1.5" />
-              ))}
-              <text x="90" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#d97706" fontWeight="bold">{sticks.toFixed(1)} sticks = {grams.toFixed(0)}g</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Butter Weight Converter" subtitle="Convert sticks of butter to grams and tablespoons equivalents" badge="COOKING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Sticks of Butter" value={sticksStr} onChange={setSticksStr} id="bt-s" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Weight (Grams)" value={`${results.grams.toFixed(0)}g`} />
+              <ResultDisplay label="Tablespoons" value={results.tbsp.toString()} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,49 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function EBITDACalculator() {
-  const [revenue, setRevenue] = useState('100000')
-  const [expenses, setExpenses] = useState('60000')
+  const [profitStr, setProfitStr] = useState('100000') // operating profit / EBIT
+  const [depStr, setDepStr] = useState('15000') // depreciation
+  const [amortStr, setAmortStr] = useState('5000') // amortization
 
-  const rev = parseFloat(revenue) || 0
-  const exp = parseFloat(expenses) || 0
-  const ebitda = rev - exp
-  const valid = rev > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ebitda: 0 }
+    const profit = parseFloat(profitStr)
+    const dep = parseFloat(depStr)
+    const amort = parseFloat(amortStr)
 
-  const revW = Math.min(160, Math.max(10, rev / 1000))
-  const expW = Math.min(160, Math.max(10, exp / 1000))
-  const ebitdaW = Math.min(160, Math.max(0, ebitda / 1000))
+    if (isNaN(profit) || isNaN(dep) || isNaN(amort)) {
+      return { ...defaultObj, error: 'Please enter valid values.' }
+    }
+
+    const ebitda = profit + dep + amort
+    return { error: null, ebitda }
+  }, [profitStr, depStr, amortStr])
 
   return (
-    <FormCalculatorShell
-      title="EBITDA Calculator"
-      subtitle="Earnings before interest, tax, depr."
-      badge="BUSINESS"
-    >
-      <div>
-        <RetroInput label="Revenue" value={revenue} onChange={setRevenue} unit="$" />
-        <RetroInput label="Expenses (excl. int/tax/depr)" value={expenses} onChange={setExpenses} unit="$" />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="EBITDA" value={ebitda.toFixed(2)} unit="$" large />
+    <FormCalculatorShell title="EBITDA Profitability Solver" subtitle="Calculate EBITDA cash flow metrics by adding back non-cash expenses" badge="BUSINESS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Operating Profit (EBIT, $)" value={profitStr} onChange={setProfitStr} id="eb-p" />
+          <RetroInput label="Depreciation ($)" value={depStr} onChange={setDepStr} id="eb-d" />
+          <RetroInput label="Amortization ($)" value={amortStr} onChange={setAmortStr} id="eb-a" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <path d={wobblyBar(20, 20, revW, 12)} fill="#5a8a5a" opacity="0.8" />
-        <path d={wobblyBar(20, 38, expW, 12)} fill="#ab3232" opacity="0.8" />
-        <path d={wobblyBar(20, 56, ebitdaW, 12)} fill="#dfaa44" opacity="0.9" />
-        <text x="20" y="14" className="fill-neutral-600" fontSize="7" fontFamily="monospace">REV</text>
-        <text x="20" y="34" className="fill-neutral-600" fontSize="7" fontFamily="monospace">EXP</text>
-        <text x="20" y="78" className="fill-neutral-600" fontSize="7" fontFamily="monospace">EBITDA</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="EBITDA Valuation" value={results.ebitda.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

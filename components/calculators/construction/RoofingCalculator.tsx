@@ -1,41 +1,42 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RoofingCalculator() {
-  const [shape, setShape] = useState<'gable' | 'hip' | 'flat'>('gable')
-  const [length, setLength] = useState('10')
-  const [width, setWidth] = useState('8')
-  const [pitch, setPitch] = useState('30')
-  const [overhang, setOverhang] = useState('0.5')
-  const [waste, setWaste] = useState('10')
-  const [result, setResult] = useState<{area:number,shingles:number}|null>(null)
+  const [areaStr, setAreaStr] = useState('1500') // footprint area
+  const [slopeStr, setSlopeStr] = useState('4') // rise over 12
 
-  const calculate = () => {
-    const l = parseFloat(length), w = parseFloat(width), p = parseFloat(pitch)
-    const o = parseFloat(overhang), ws = parseFloat(waste)
-    if (isNaN(l)||isNaN(w)||isNaN(p)) { setResult(null); return }
-    const baseArea = (l + 2 * o) * (w + 2 * o)
-    const slopeFactor = 1 / Math.cos(p * Math.PI / 180)
-    const area = baseArea * slopeFactor * (shape === 'hip' ? 1.4 : shape === 'gable' ? 1.2 : 1)
-    const shingles = Math.ceil((area / 3) * (1 + ws / 100))
-    setResult({ area, shingles })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, squares: 0 }
+    const a = parseFloat(areaStr)
+    const s = parseFloat(slopeStr)
+
+    if (isNaN(a) || isNaN(s) || a <= 0 || s < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // Slope multiplier factor
+    const pitch = s / 12
+    const factor = Math.sqrt(1 + pitch * pitch)
+    const actualArea = a * factor
+    const squares = actualArea / 100 // 1 shingle square = 100 sq ft
+
+    return { error: null, squares }
+  }, [areaStr, slopeStr])
 
   return (
-    <FormCalculatorShell title="Roofing Calculator" badge="CONSTRUCTION">
-      <RetroSelect label="Roof Type" value={shape} onChange={(v) => { setShape(v as any); setResult(null) }} options={[{value:'gable',label:'Gable'},{value:'hip',label:'Hip'},{value:'flat',label:'Flat'}]} id="roof-type" />
-      <div className="grid grid-cols-2 gap-3"><RetroInput label="Length (m)" value={length} onChange={setLength} placeholder="10" id="roof-l" /><RetroInput label="Width (m)" value={width} onChange={setWidth} placeholder="8" id="roof-w" /></div>
-      <RetroInput label="Pitch (degrees)" value={pitch} onChange={setPitch} placeholder="30" id="roof-p" />
-      <RetroInput label="Overhang (m)" value={overhang} onChange={setOverhang} placeholder="0.5" id="roof-o" />
-      <RetroInput label="Waste %" value={waste} onChange={setWaste} placeholder="10" id="roof-w" unit="%" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Roof Area" value={`${result.area.toFixed(2)} m²`} />
-          <ResultDisplay label="Shingle Bundles" value={result.shingles} large />
+    <FormCalculatorShell title="Roofing Shingle Squares Solver" subtitle="Calculate shingle squares needed based on roof footprint and pitch" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Footprint Area (sq ft)" value={areaStr} onChange={setAreaStr} id="rf-a" />
+          <RetroInput label="Pitch Slope (Rise per 12)" value={slopeStr} onChange={setSlopeStr} id="rf-s" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Roofing Squares Required" value={results.squares.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

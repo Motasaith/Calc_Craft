@@ -1,36 +1,46 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function LawOfSinesCalculator() {
-  const [mode, setMode] = useState<'asa' | 'aas'>('asa')
-  const [a, setA] = useState('5')
-  const [A, setAA] = useState('30')
-  const [B, setBB] = useState('60')
-  const [result, setResult] = useState<{b:number,c:number,C:number}|null>(null)
+  const [sideAStr, setSideAStr] = useState('5')
+  const [angAStr, setAngAStr] = useState('30') // degrees
+  const [angBStr, setAngBStr] = useState('45') // degrees
 
-  const calculate = () => {
-    const av = parseFloat(a), Av = parseFloat(A), Bv = parseFloat(B)
-    if (isNaN(av)||isNaN(Av)||isNaN(Bv) || Av<=0 || Bv<=0 || Av+Bv >= 180) { setResult(null); return }
-    const Ar = Av * Math.PI / 180, Br = Bv * Math.PI / 180, Cr = Math.PI - Ar - Br
-    const b = av * Math.sin(Br) / Math.sin(Ar)
-    const c = av * Math.sin(Cr) / Math.sin(Ar)
-    setResult({ b, c, C: Cr * 180 / Math.PI })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, sideB: 0 }
+    const a = parseFloat(sideAStr)
+    const alpha = parseFloat(angAStr)
+    const beta = parseFloat(angBStr)
+
+    if (isNaN(a) || isNaN(alpha) || isNaN(beta) || a <= 0 || alpha <= 0 || beta <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const alphaRad = (alpha * Math.PI) / 180
+    const betaRad = (beta * Math.PI) / 180
+
+    if (Math.sin(alphaRad) === 0) return { ...defaultObj, error: 'sin(A) cannot be zero.' }
+    // Law of Sines: b = a * sin(B) / sin(A)
+    const sideB = (a * Math.sin(betaRad)) / Math.sin(alphaRad)
+
+    return { error: null, sideB }
+  }, [sideAStr, angAStr, angBStr])
 
   return (
-    <FormCalculatorShell title="Law of Sines" badge="TRIGONOMETRY">
-      <RetroSelect label="Given" value={mode} onChange={(v) => { setMode(v as any); setResult(null) }} options={[{value:'asa',label:'Side a + Angle A + Angle B'},{value:'aas',label:'Angle A + Angle B + Side a'}]} id="los-mode" />
-      <RetroInput label="Side a" value={a} onChange={setA} placeholder="5" id="los-a" />
-      <div className="grid grid-cols-2 gap-3"><RetroInput label="Angle A (°)" value={A} onChange={setAA} placeholder="30" id="los-A" /><RetroInput label="Angle B (°)" value={B} onChange={setBB} placeholder="60" id="los-B" /></div>
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Solve Triangle</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="Side b" value={result.b.toFixed(3)} />
-          <ResultDisplay label="Side c" value={result.c.toFixed(3)} />
-          <ResultDisplay label="Angle C" value={`${result.C.toFixed(2)}°`} />
+    <FormCalculatorShell title="Law of Sines Triangle Solver" subtitle="Calculate unknown side b from side a and opposite angles" badge="TRIGONOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Side a Length" value={sideAStr} onChange={setSideAStr} id="los-a" />
+          <RetroInput label="Angle A (Degrees °)" value={angAStr} onChange={setAngAStr} id="los-aa" />
+          <RetroInput label="Angle B (Degrees °)" value={angBStr} onChange={setAngBStr} id="los-ab" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Side b Length" value={results.sideB.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

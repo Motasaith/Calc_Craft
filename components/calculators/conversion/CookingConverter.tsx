@@ -1,35 +1,36 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
-import { convertCooking } from '@/lib/calc-engine'
-
-const units = ['tsp', 'tbsp', 'fl oz', 'cup', 'pint', 'quart', 'gallon', 'ml', 'l', 'g', 'oz', 'lb']
-const unitLabels: Record<string, string> = {
-  tsp: 'tsp (Teaspoon)', tbsp: 'tbsp (Tablespoon)', 'fl oz': 'fl oz (Fluid Ounce)', cup: 'cup',
-  pint: 'pint', quart: 'quart', gallon: 'gallon', ml: 'ml (Milliliter)', l: 'L (Liter)',
-  g: 'g (Gram)', oz: 'oz (Ounce)', lb: 'lb (Pound)',
-}
-
-const ingredients = ['water', 'milk', 'olive oil', 'vegetable oil', 'flour', 'sugar', 'brown sugar', 'powdered sugar', 'butter', 'salt', 'honey', 'maple syrup']
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CookingConverter() {
-  const [value, setValue] = useState('1'); const [from, setFrom] = useState('cup'); const [to, setTo] = useState('ml')
-  const [ingredient, setIngredient] = useState('water')
-  const v = parseFloat(value)
-  const valid = !isNaN(v)
-  const result = valid ? convertCooking(v, from, to, ingredient) : 0
-  const options = units.map((u) => ({ value: u, label: unitLabels[u] || u }))
+  const [cupsStr, setCupsStr] = useState('2')
+
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, tbsp: 0, tsp: 0, ml: 0 }
+    const cups = parseFloat(cupsStr)
+    if (isNaN(cups) || cups < 0) return { ...defaultObj, error: 'Please enter valid values.' }
+    const tbsp = cups * 16
+    const tsp = cups * 48
+    const ml = cups * 236.588
+    return { error: null, tbsp, tsp, ml }
+  }, [cupsStr])
 
   return (
-    <FormCalculatorShell title="Cooking Converter" badge="CONVERSION">
-      <RetroInput label="Value" value={value} onChange={setValue} placeholder="1" id="cook-val" />
-      <RetroSelect label="Ingredient" value={ingredient} onChange={setIngredient} id="cook-ingr"
-        options={ingredients.map((i) => ({ value: i, label: i.charAt(0).toUpperCase() + i.slice(1) }))} />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroSelect label="From" value={from} onChange={setFrom} options={options} id="cook-from" />
-        <RetroSelect label="To" value={to} onChange={setTo} options={options} id="cook-to" />
+    <FormCalculatorShell title="Culinary Cooking Volume Solver" subtitle="Convert cups to tablespoons, teaspoons, and milliliters" badge="CONVERSION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Cups" value={cupsStr} onChange={setCupsStr} id="ckc-c" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-3 gap-2">
+              <ResultDisplay label="Tablespoons" value={results.tbsp.toFixed(1)} />
+              <ResultDisplay label="Teaspoons" value={results.tsp.toFixed(1)} />
+              <ResultDisplay label="Milliliters (mL)" value={results.ml.toFixed(1)} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && <div className="mt-4"><ResultDisplay label={`${value} ${from} =`} value={`${result} ${to}`} large /></div>}
     </FormCalculatorShell>
   )
 }

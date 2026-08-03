@@ -1,51 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyWave(cx: number, cy: number, amp: number, freq: number, width: number) {
-  const steps = 40
-  let path = `M ${cx} ${cy}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const x = cx + width * t
-    const y = cy + amp * Math.sin(freq * t * Math.PI * 2) + (Math.sin(i * 3.3) - 0.5) * 0.8
-    path += ` L ${x} ${y}`
-  }
-  return path
-}
-
 export default function SoundFrequencyCalculator() {
-  const [speed, setSpeed] = useState('343')
-  const [wavelen, setWavelen] = useState('0.78')
+  const [speedStr, setSpeedStr] = useState('343') // velocity m/s
+  const [waveStr, setWaveStr] = useState('1.5') // wavelength meters
 
-  const s = parseFloat(speed), wl = parseFloat(wavelen)
-  const valid = !isNaN(s) && !isNaN(wl) && s >= 0 && wl > 0
-  const freq = valid ? s / wl : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, freq: 0 }
+    const v = parseFloat(speedStr)
+    const l = parseFloat(waveStr)
+
+    if (isNaN(v) || isNaN(l) || v <= 0 || l <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const freq = v / l
+    return { error: null, freq }
+  }, [speedStr, waveStr])
 
   return (
-    <FormCalculatorShell title="Sound Frequency" subtitle="f = v / λ" badge="PHYSICS">
-      <RetroInput label="Speed of Sound (v)" value={speed} onChange={setSpeed} placeholder="e.g. 343" id="sf-v" unit="m/s" />
-      <RetroInput label="Wavelength (λ)" value={wavelen} onChange={setWavelen} placeholder="e.g. 0.78" id="sf-wl" unit="m" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Frequency" value={freq.toFixed(2)} unit="Hz" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Sound Wave</span>
-            <svg width="200" height="80" viewBox="0 0 200 80" className="select-none">
-              <defs>
-                <pattern id="sfGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="80" fill="url(#sfGrid)" rx="8" />
-              <path d={wobblyWave(15, 40, Math.min(25, 5 + freq / 50), Math.min(4, 1 + freq / 200), 170)} fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round" />
-              <text x="100" y="75" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">f = {freq.toFixed(1)} Hz</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Sound Frequency Solver" subtitle="Calculate sound wave frequencies from velocities and wavelengths" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Propagation Speed (m/s)" value={speedStr} onChange={setSpeedStr} id="sf-s" />
+          <RetroInput label="Wavelength (meters)" value={waveStr} onChange={setWaveStr} id="sf-w" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Frequency (f)" value={`${results.freq.toFixed(2)} Hz`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,56 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function BloodPressureCategoryCalculator() {
-  const [systolic, setSystolic] = useState('')
-  const [diastolic, setDiastolic] = useState('')
+  const [sbpStr, setSbpStr] = useState('120') // systolic
+  const [dbpStr, setDbpStr] = useState('80') // diastolic
 
-  const s = parseFloat(systolic), d = parseFloat(diastolic)
-  const valid = !isNaN(s) && !isNaN(d) && s > 0 && d > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, category: '' }
+    const sbp = parseInt(sbpStr)
+    const dbp = parseInt(dbpStr)
 
-  const getCategory = () => {
-    if (!valid) return ''
-    if (s >= 180 || d >= 120) return 'Crisis (Emergency)'
-    if (s >= 140 || d >= 90) return 'Stage 2 Hypertension'
-    if (s >= 130 || d >= 80) return 'Stage 1 Hypertension'
-    if (s >= 120 && s < 130 && d < 80) return 'Elevated'
-    if (s < 120 && d < 80) return 'Normal'
-    return 'Stage 1 Hypertension'
-  }
+    if (isNaN(sbp) || isNaN(dbp) || sbp <= 0 || dbp <= 0) {
+      return { ...defaultObj, error: 'Please enter valid blood pressures.' }
+    }
 
-  const category = getCategory()
-  const stageIndex = valid
-    ? (s >= 180 || d >= 120 ? 4 : s >= 140 || d >= 90 ? 3 : s >= 130 || d >= 80 ? 2 : s >= 120 ? 1 : 0)
-    : 0
+    let category = ''
+    if (sbp < 120 && dbp < 80) category = 'Normal'
+    else if (sbp >= 120 && sbp <= 129 && dbp < 80) category = 'Elevated'
+    else if ((sbp >= 130 && sbp <= 139) || (dbp >= 80 && dbp <= 89)) category = 'Stage 1 Hypertension'
+    else category = 'Stage 2 Hypertension'
+
+    return { error: null, category }
+  }, [sbpStr, dbpStr])
 
   return (
-    <FormCalculatorShell title="Blood Pressure Category" subtitle="ACC/AHA 2017 guidelines" badge="HEALTH">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Systolic" value={systolic} onChange={setSystolic} placeholder="120" id="bp-s" unit="mmHg" min={50} max={300} />
-        <RetroInput label="Diastolic" value={diastolic} onChange={setDiastolic} placeholder="80" id="bp-d" unit="mmHg" min={30} max={200} />
+    <FormCalculatorShell title="Blood Pressure Guidelines Solver" subtitle="Categorize blood pressure readings based on AHA guidelines" badge="HEALTH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Systolic (mmHg)" value={sbpStr} onChange={setSbpStr} id="bp-sbp" />
+          <RetroInput label="Diastolic (mmHg)" value={dbpStr} onChange={setDbpStr} id="bp-dbp" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="BP Category" value={results.category} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-
-      {valid && (
-        <>
-          <div className="mt-2">
-            <ResultDisplay label="Category" value={category} large />
-          </div>
-          <svg viewBox="0 0 200 60" className="w-full mt-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg">
-            <path d={wobblyBar(10, 25, 180, 20)} fill="#e5e1d8" />
-            <path d={wobblyBar(10 + stageIndex * 36, 25, 36, 20)} fill="#dfaa44" />
-            <text x="10" y="18" fontSize="7" fontFamily="monospace" fill="#555">NORMAL</text>
-            <text x="55" y="18" fontSize="7" fontFamily="monospace" fill="#555">ELEV</text>
-            <text x="85" y="18" fontSize="7" fontFamily="monospace" fill="#555">STG1</text>
-            <text x="120" y="18" fontSize="7" fontFamily="monospace" fill="#555">STG2</text>
-            <text x="155" y="18" fontSize="7" fontFamily="monospace" fill="#555">CRISIS</text>
-          </svg>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

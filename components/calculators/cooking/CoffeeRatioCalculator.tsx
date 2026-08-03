@@ -1,47 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CoffeeRatioCalculator() {
-  const [water, setWater] = useState('300')
-  const [ratio, setRatio] = useState('16')
+  const [waterStr, setWaterStr] = useState('300') // grams/mL
+  const [ratioStr, setRatioStr] = useState('16') // 1:16 default
 
-  const w = parseFloat(water), r = parseFloat(ratio)
-  const valid = !isNaN(w) && !isNaN(r) && w > 0 && r > 0
-  const coffee = valid ? w / r : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, coffee: 0 }
+    const water = parseFloat(waterStr)
+    const ratio = parseFloat(ratioStr)
+
+    if (isNaN(water) || isNaN(ratio) || water <= 0 || ratio <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const coffee = water / ratio
+    return { error: null, coffee }
+  }, [waterStr, ratioStr])
 
   return (
-    <FormCalculatorShell title="Coffee Ratio" subtitle="Coffee = Water / Ratio" badge="COOKING">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Water" value={water} onChange={setWater} placeholder="300" id="cf-w" unit="g" />
-        <RetroInput label="Ratio (1:X)" value={ratio} onChange={setRatio} placeholder="16" id="cf-r" unit="" />
+    <FormCalculatorShell title="Coffee Brewing Ratio Solver" subtitle="Calculate ideal coffee grounds weight from water capacity volumes" badge="COOKING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Water Amount (mL/grams)" value={waterStr} onChange={setWaterStr} id="cfr-w" />
+          <RetroInput label="Brewing Ratio (1:x)" value={ratioStr} onChange={setRatioStr} id="cfr-r" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Coffee Grounds Required" value={`${results.coffee.toFixed(1)} grams`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Coffee Needed" value={coffee.toFixed(1)} unit="g" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Coffee : Water</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="cfGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#cfGrid)" rx="8" />
-              <path d={wobblyBar(25, 15, 40, Math.min(40, coffee * 2))} fill="#78350f" fillOpacity="0.4" stroke="#78350f" strokeWidth="2" />
-              <text x="45" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#78350f">Coffee</text>
-              <path d={wobblyBar(95, 15 + 40 - Math.min(40, w / 10), 40, Math.min(40, w / 10))} fill="#60a5fa" fillOpacity="0.3" stroke="#2563eb" strokeWidth="2" />
-              <text x="115" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#2563eb">Water</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

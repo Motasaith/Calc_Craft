@@ -1,29 +1,40 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function GolfHandicapCalculator() {
-  const [scores, setScores] = useState('85,88,82,90,84')
-  const [courseRating, setCourseRating] = useState('72')
-  const [slope, setSlope] = useState('113')
-  const [result, setResult] = useState('')
+  const [scoreStr, setScoreStr] = useState('85')
+  const [ratingStr, setRatingStr] = useState('71.2') // course rating
+  const [slopeStr, setSlopeStr] = useState('113') // slope rating
 
-  const calculate = () => {
-    const cr = parseFloat(courseRating), sl = parseFloat(slope)
-    const sc = scores.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
-    if (sc.length === 0 || isNaN(cr) || isNaN(sl) || sl === 0) { setResult('Invalid'); return }
-    const diffs = sc.map(s => ((s - cr) * 113) / sl)
-    const best = diffs.sort((a,b) => a-b).slice(0, Math.min(8, diffs.length))
-    const avg = best.reduce((a,b) => a+b, 0) / best.length
-    setResult(`${avg.toFixed(1)}`)
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, differential: 0 }
+    const score = parseFloat(scoreStr)
+    const rating = parseFloat(ratingStr)
+    const slope = parseFloat(slopeStr)
+
+    if (isNaN(score) || isNaN(rating) || isNaN(slope) || slope <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const differential = ((score - rating) * 113) / slope
+    return { error: null, differential }
+  }, [scoreStr, ratingStr, slopeStr])
 
   return (
-    <FormCalculatorShell title="Golf Handicap" badge="MISC">
-      <RetroInput label="Scores (comma sep)" value={scores} onChange={setScores} placeholder="85,88,82,90,84" id="golf-sc" />
-      <div className="grid grid-cols-2 gap-3"><RetroInput label="Course Rating" value={courseRating} onChange={setCourseRating} placeholder="72" id="golf-cr" /><RetroInput label="Slope" value={slope} onChange={setSlope} placeholder="113" id="golf-sl" /></div>
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Handicap Index" value={result} large /></div>}
+    <FormCalculatorShell title="Golf Handicap Differential Solver" subtitle="Calculate your golf score handicap differential index" badge="MISCELLANEOUS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Gross Score" value={scoreStr} onChange={setScoreStr} id="gh-sc" />
+          <RetroInput label="Course Rating" value={ratingStr} onChange={setRatingStr} id="gh-rt" />
+          <RetroInput label="Slope Rating" value={slopeStr} onChange={setSlopeStr} id="gh-sl" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Handicap Differential" value={results.differential.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

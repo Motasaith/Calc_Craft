@@ -1,48 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function IbuprofenDoseCalculator() {
-  const [weight, setWeight] = useState('')
-  const [maxDaily, setMaxDaily] = useState('40')
+  const [weightStr, setWeightStr] = useState('22') // lbs
 
-  const w = parseFloat(weight), md = parseFloat(maxDaily)
-  const valid = !isNaN(w) && !isNaN(md) && w > 0 && w < 200 && md > 0 && md <= 60
-  const singleDose = valid ? Math.round(w * 10) : 0
-  const dailyMax = valid ? Math.min(Math.round(w * md), 3200) : 0
-  const dosesPerDay = valid ? Math.floor(dailyMax / singleDose) : 0
-
-  const barWidth = valid ? Math.min(singleDose / 600, 1) * 180 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, doseMg: 0, liquidMl: 0 }
+    const w = parseFloat(weightStr)
+    if (isNaN(w) || w <= 0) return { ...defaultObj, error: 'Please enter a valid weight.' }
+    // Pediatric dose: 10 mg/kg
+    const kg = w / 2.20462
+    const doseMg = kg * 10
+    // Standard infant drops concentration: 50 mg per 1.25 mL
+    const liquidMl = (doseMg / 50) * 1.25
+    return { error: null, doseMg, liquidMl }
+  }, [weightStr])
 
   return (
-    <FormCalculatorShell title="Ibuprofen Dose Calculator" subtitle="Pediatric dosing by weight" badge="HEALTH">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Weight" value={weight} onChange={setWeight} placeholder="20" id="ibu-w" unit="kg" min={1} max={150} />
-        <RetroInput label="Max Daily Dose" value={maxDaily} onChange={setMaxDaily} placeholder="40" id="ibu-md" unit="mg/kg" min={10} max={60} />
+    <FormCalculatorShell title="Pediatric Ibuprofen Dose Solver" subtitle="Calculate recommended pediatric ibuprofen doses by weight" badge="HEALTH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Child Weight (lbs)" value={weightStr} onChange={setWeightStr} id="ibu-w" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Required Dose (mg)" value={`${results.doseMg.toFixed(0)} mg`} large />
+              <ResultDisplay label="Infant Drops (50mg/1.25mL)" value={`${results.liquidMl.toFixed(2)} mL`} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-
-      {valid && (
-        <>
-          <div className="mt-2">
-            <ResultDisplay label="Single Dose" value={`${singleDose} mg`} large />
-          </div>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            <ResultDisplay label="Daily Max" value={`${dailyMax} mg`} />
-            <ResultDisplay label="Doses/Day" value={dosesPerDay} />
-          </div>
-          <svg viewBox="0 0 200 60" className="w-full mt-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg">
-            <path d={wobblyBar(10, 25, 180, 20)} fill="#e5e1d8" />
-            <path d={wobblyBar(10, 25, barWidth, 20)} fill="#dfaa44" />
-            <text x="10" y="18" fontSize="8" fontFamily="monospace" fill="#555">0 mg</text>
-            <text x="150" y="18" fontSize="8" fontFamily="monospace" fill="#555">600 mg</text>
-          </svg>
-          <p className="text-[9px] text-neutral-500 font-mono mt-2">10 mg/kg per dose, every 6-8 hours. Max 3200 mg/day. Consult a doctor.</p>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

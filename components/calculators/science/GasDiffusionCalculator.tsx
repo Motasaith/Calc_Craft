@@ -1,52 +1,38 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function GasDiffusionCalculator() {
-  const [m1, setM1] = useState('2')
-  const [m2, setM2] = useState('32')
+  const [m1Str, setM1Str] = useState('4') // Helium mass
+  const [m2Str, setM2Str] = useState('32') // Oxygen mass
 
-  const M1 = parseFloat(m1)
-  const M2 = parseFloat(m2)
-  const valid = !isNaN(M1) && !isNaN(M2) && M1 > 0 && M2 > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ratio: 0 }
+    const m1 = parseFloat(m1Str)
+    const m2 = parseFloat(m2Str)
 
-  // Graham's law: rate1 / rate2 = sqrt(M2 / M1)
-  const ratio = valid ? Math.sqrt(M2 / M1) : 0
+    if (isNaN(m1) || isNaN(m2) || m1 <= 0 || m2 <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive molar masses.' }
+    }
 
-  // Visualizer: two bars representing relative diffusion rates
-  const r1 = 1
-  const r2 = valid ? 1 / ratio : 0
-  const maxR = Math.max(r1, r2, 1)
-  const h1 = (r1 / maxR) * 60
-  const h2 = (r2 / maxR) * 60
+    // Graham's Law: r1/r2 = sqrt(m2/m1)
+    const ratio = Math.sqrt(m2 / m1)
+    return { error: null, ratio }
+  }, [m1Str, m2Str])
 
   return (
-    <FormCalculatorShell
-      title="Gas Diffusion (Graham's Law)"
-      subtitle="rate₁ / rate₂ = √(M₂ / M₁)"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Molar Mass Gas 1" value={m1} onChange={setM1} unit="g/mol" placeholder="e.g. 2" />
-        <RetroInput label="Molar Mass Gas 2" value={m2} onChange={setM2} unit="g/mol" placeholder="e.g. 32" />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-1 gap-2 mb-3">
-          <ResultDisplay label="Rate Ratio (1 : 2)" value={ratio.toFixed(4)} large />
+    <FormCalculatorShell title="Graham's Law of Gas Diffusion Solver" subtitle="Calculate gas diffusion rate ratios based on molecular mass" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Molar Mass Gas 1 (g/mol)" value={m1Str} onChange={setM1Str} id="gd-m1" />
+          <RetroInput label="Molar Mass Gas 2 (g/mol)" value={m2Str} onChange={setM2Str} id="gd-m2" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <path d={wobblyBar(40, 70 - h1, 40, h1)} fill="#dfaa44" opacity={0.85} />
-        <path d={wobblyBar(120, 70 - h2, 40, h2)} fill="#4a6fa5" opacity={0.85} />
-        <text x="60" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">gas 1</text>
-        <text x="140" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">gas 2</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Diffusion Rate Ratio (r₁/r₂)" value={results.ratio.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

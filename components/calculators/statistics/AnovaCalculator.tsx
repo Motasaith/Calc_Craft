@@ -1,39 +1,50 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function AnovaCalculator() {
-  const [groups, setGroups] = useState('12,14,16\n10,12,14\n15,17,19')
-  const [result, setResult] = useState<{f:number,ssb:number,ssw:number}|null>(null)
+  const [ssBetweenStr, setSsBetweenStr] = useState('120')
+  const [ssWithinStr, setSsWithinStr] = useState('200')
+  const [dfBetweenStr, setDfBetweenStr] = useState('2')
+  const [dfWithinStr, setDfWithinStr] = useState('27')
 
-  const calculate = () => {
-    const lines = groups.split('\n').map(l => l.split(',').map(Number).filter(n => !isNaN(n))).filter(g => g.length > 0)
-    if (lines.length < 2) { setResult(null); return }
-    const all = lines.flat()
-    const grandMean = all.reduce((a,b) => a+b,0) / all.length
-    let ssb = 0, ssw = 0
-    for (const g of lines) {
-      const gm = g.reduce((a,b) => a+b,0) / g.length
-      ssb += g.length * Math.pow(gm - grandMean, 2)
-      ssw += g.reduce((s,x) => s + Math.pow(x - gm, 2), 0)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, f: 0 }
+    const ssb = parseFloat(ssBetweenStr)
+    const ssw = parseFloat(ssWithinStr)
+    const dfb = parseFloat(dfBetweenStr)
+    const dfw = parseFloat(dfWithinStr)
+
+    if (isNaN(ssb) || isNaN(ssw) || isNaN(dfb) || isNaN(dfw) || dfb <= 0 || dfw <= 0 || ssw <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive inputs.' }
     }
-    const dfb = lines.length - 1
-    const dfw = all.length - lines.length
-    const f = (ssb / dfb) / (ssw / dfw)
-    setResult({ f, ssb, ssw })
-  }
+
+    const msBetween = ssb / dfb
+    const msWithin = ssw / dfw
+    const f = msBetween / msWithin
+
+    return { error: null, f }
+  }, [ssBetweenStr, ssWithinStr, dfBetweenStr, dfWithinStr])
 
   return (
-    <FormCalculatorShell title="One-Way ANOVA" badge="STATISTICS">
-      <RetroInput label="Groups (one per line, comma sep)" value={groups} onChange={setGroups} placeholder="12,14,16\n10,12,14\n15,17,19" id="ano-groups" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="F-statistic" value={result.f.toFixed(4)} large />
-          <ResultDisplay label="SS Between" value={result.ssb.toFixed(2)} />
-          <ResultDisplay label="SS Within" value={result.ssw.toFixed(2)} />
+    <FormCalculatorShell title="One-Way ANOVA F-Statistic Solver" subtitle="Evaluate statistical variance bounds between groups" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="SS Between" value={ssBetweenStr} onChange={setSsBetweenStr} id="an-ssb" />
+            <RetroInput label="SS Within" value={ssWithinStr} onChange={setSsWithinStr} id="an-ssw" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="df Between" value={dfBetweenStr} onChange={setDfBetweenStr} id="an-dfb" />
+            <RetroInput label="df Within" value={dfWithinStr} onChange={setDfWithinStr} id="an-dfw" />
+          </div>
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="F-Statistic Ratio" value={results.f.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

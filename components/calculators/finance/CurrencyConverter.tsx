@@ -1,43 +1,37 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, RetroSelect, ResultDisplay } from '../shared/FormCalculatorShell'
-import { convertCurrency, formatNumber } from '@/lib/calc-engine'
-
-const rates: Record<string, number> = {
-  USD: 1, EUR: 0.92, GBP: 0.79, JPY: 149.5, CAD: 1.36, AUD: 1.53, INR: 83.12, CNY: 7.24,
-  CHF: 0.88, SGD: 1.34, HKD: 7.82, NZD: 1.64, KRW: 1298, MXN: 17.15, BRL: 4.97,
-  ZAR: 18.63, SEK: 10.45, NOK: 10.52, TRY: 30.2, AED: 3.67, SAR: 3.75,
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CurrencyConverter() {
-  const [amount, setAmount] = useState('100')
-  const [from, setFrom] = useState('USD')
-  const [to, setTo] = useState('EUR')
+  const [usdStr, setUsdStr] = useState('100')
+  const [rateStr, setRateStr] = useState('0.92') // USD to EUR conversion rate
 
-  const amt = parseFloat(amount)
-  const valid = !isNaN(amt) && amt > 0
-  // Convert: amount → USD → target, using the engine's convertCurrency
-  const rate = rates[to] / rates[from]
-  const converted = valid ? convertCurrency(amt, rate) : 0
-  const rateDisplay = valid ? rate : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, converted: 0 }
+    const usd = parseFloat(usdStr)
+    const rate = parseFloat(rateStr)
 
-  const options = Object.keys(rates).map((c) => ({ value: c, label: c }))
+    if (isNaN(usd) || isNaN(rate) || usd < 0 || rate <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const converted = usd * rate
+    return { error: null, converted }
+  }, [usdStr, rateStr])
 
   return (
-    <FormCalculatorShell title="Currency Converter" subtitle="Approximate rates · Not for financial decisions" badge="FINANCE">
-      <RetroInput label="Amount" value={amount} onChange={setAmount} placeholder="100" id="curr-amt" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroSelect label="From" value={from} onChange={setFrom} options={options} id="curr-from" />
-        <RetroSelect label="To" value={to} onChange={setTo} options={options} id="curr-to" />
-      </div>
-      {valid && (
-        <div className="mt-4">
-          <ResultDisplay label={`${amount} ${from} =`} value={`${formatNumber(converted, 4)} ${to}`} large />
-          <div className="mt-2 text-[9px] font-mono text-neutral-500 text-center">
-            Rate: 1 {from} = {formatNumber(rateDisplay, 4)} {to}
-          </div>
+    <FormCalculatorShell title="Foreign Currency Converter" subtitle="Convert base USD currencies to major target exchange rates" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Amount in USD ($)" value={usdStr} onChange={setUsdStr} id="cc-u" />
+          <RetroInput label="Exchange Conversion Rate" value={rateStr} onChange={setRateStr} id="cc-r" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Converted Amount" value={results.converted.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,37 +1,43 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function PoissonCalculator() {
-  const [lambda, setLambda] = useState('4')
-  const [k, setK] = useState('2')
-  const [result, setResult] = useState<{prob:number,mean:number,variance:number}|null>(null)
+  const [lambdaStr, setLambdaStr] = useState('3') // mean rate
+  const [kStr, setKStr] = useState('2') // actual events
 
-  const calculate = () => {
-    const l = parseFloat(lambda), kv = parseInt(k)
-    if (isNaN(l)||isNaN(kv) || l<=0 || kv<0) { setResult(null); return }
-    const prob = (Math.pow(l, kv) * Math.exp(-l)) / factorial(kv)
-    setResult({ prob, mean: l, variance: l })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, prob: 0 }
+    const lam = parseFloat(lambdaStr)
+    const k = parseInt(kStr)
 
-  function factorial(n: number): number {
-    let res = 1
-    for (let i = 2; i <= n; i++) res *= i
-    return res
-  }
+    if (isNaN(lam) || isNaN(k) || lam <= 0 || k < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const factorial = (n: number): number => {
+      let r = 1
+      for (let i = 2; i <= n; i++) r *= i
+      return r
+    }
+
+    const prob = (Math.pow(lam, k) * Math.exp(-lam)) / factorial(k)
+    return { error: null, prob }
+  }, [lambdaStr, kStr])
 
   return (
-    <FormCalculatorShell title="Poisson Distribution" badge="STATISTICS">
-      <RetroInput label="λ (lambda)" value={lambda} onChange={setLambda} placeholder="4" id="pois-l" />
-      <RetroInput label="k (events)" value={k} onChange={setK} placeholder="2" id="pois-k" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="P(X=k)" value={result.prob.toFixed(6)} large />
-          <ResultDisplay label="Mean" value={result.mean.toFixed(2)} />
-          <ResultDisplay label="Variance" value={result.variance.toFixed(2)} />
+    <FormCalculatorShell title="Poisson Probability Solver" subtitle="Calculate probability mass index values P(X = k)" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Mean Arrival Rate (λ)" value={lambdaStr} onChange={setLambdaStr} id="ps-l" />
+          <RetroInput label="Event Count (k)" value={kStr} onChange={setKStr} id="ps-k" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Poisson Probability P(X=k)" value={results.prob.toFixed(5)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

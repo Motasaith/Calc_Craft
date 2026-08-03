@@ -1,52 +1,42 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function FenceCalculator() {
-  const [perimeter, setPerimeter] = useState('100')
-  const [postSpacing, setPostSpacing] = useState('2.4')
-  const [fenceHeight, setFenceHeight] = useState('1.8')
-  const [result, setResult] = useState<{ posts: number; rails: number; pickets: number } | null>(null)
+  const [lengthStr, setLengthStr] = useState('120') // feet
+  const [spacingStr, setSpacingStr] = useState('8') // feet post spacing
 
-  const calculate = () => {
-    const p = parseFloat(perimeter), ps = parseFloat(postSpacing), fh = parseFloat(fenceHeight)
-    if (isNaN(p) || isNaN(ps) || isNaN(fh) || p <= 0 || ps <= 0 || fh <= 0) { setResult(null); return }
-    const sections = Math.ceil(p / ps)
-    const posts = sections + 1
-    const rails = sections * 2
-    const picketWidth = 0.1
-    const pickets = Math.ceil(p / picketWidth)
-    setResult({ posts, rails, pickets })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, posts: 0, panels: 0 }
+    const len = parseFloat(lengthStr)
+    const space = parseFloat(spacingStr)
+
+    if (isNaN(len) || isNaN(space) || len <= 0 || space <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const posts = Math.ceil(len / space) + 1
+    const panels = Math.ceil(len / space)
+
+    return { error: null, posts, panels }
+  }, [lengthStr, spacingStr])
 
   return (
-    <FormCalculatorShell title="Fence Calculator" subtitle="Posts, rails & pickets" badge="CONSTRUCTION">
-      <RetroInput label="Perimeter (m)" value={perimeter} onChange={setPerimeter} placeholder="100" id="fence-per" />
-      <RetroInput label="Post Spacing (m)" value={postSpacing} onChange={setPostSpacing} placeholder="2.4" id="fence-ps" />
-      <RetroInput label="Fence Height (m)" value={fenceHeight} onChange={setFenceHeight} placeholder="1.8" id="fence-fh" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-3 gap-2 mt-4">
-            <ResultDisplay label="Posts" value={result.posts} />
-            <ResultDisplay label="Rails" value={result.rails} />
-            <ResultDisplay label="Pickets" value={result.pickets} large />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 70" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <path key={i} d={wobblyBar(8 + i * 19, 10, 14, 50)} fill="#c8a070" stroke="#8a6040" strokeWidth="0.5" />
-              ))}
-              <line x1="5" y1="25" x2="195" y2="25" stroke="#8a6040" strokeWidth="2" />
-              <line x1="5" y1="45" x2="195" y2="45" stroke="#8a6040" strokeWidth="2" />
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Yard Fencing Board Solver" subtitle="Estimate required posts and panels count for perimeter lines" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Fence Line Length (feet)" value={lengthStr} onChange={setLengthStr} id="fn-l" />
+          <RetroInput label="Post Spacing Interval (feet)" value={spacingStr} onChange={setSpacingStr} id="fn-s" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Fence Posts" value={results.posts.toString()} />
+              <ResultDisplay label="Fence Panels" value={results.panels.toString()} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

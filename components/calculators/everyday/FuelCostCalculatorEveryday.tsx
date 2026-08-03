@@ -1,53 +1,40 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function FuelCostCalculatorEveryday() {
-  const [distance, setDistance] = useState('40')
-  const [mpg, setMpg] = useState('28')
-  const [gasPrice, setGasPrice] = useState('3.50')
-  const [days, setDays] = useState('5')
-  const [result, setResult] = useState<{ weekly: number; monthly: number; yearly: number } | null>(null)
+  const [distanceStr, setDistanceStr] = useState('100')
+  const [mpgStr, setMpgStr] = useState('25')
+  const [priceStr, setPriceStr] = useState('3.50')
 
-  const calculate = () => {
-    const d = parseFloat(distance)
-    const m = parseFloat(mpg)
-    const g = parseFloat(gasPrice)
-    const dy = parseInt(days)
-    if (isNaN(d) || isNaN(m) || isNaN(g) || isNaN(dy) || m <= 0 || dy <= 0) return
-    const dailyCost = (d / m) * g
-    const weekly = dailyCost * dy
-    const monthly = weekly * 4.33
-    const yearly = weekly * 52
-    setResult({ weekly, monthly, yearly })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, total: 0 }
+    const dist = parseFloat(distanceStr)
+    const mpg = parseFloat(mpgStr)
+    const pr = parseFloat(priceStr)
+
+    if (isNaN(dist) || isNaN(mpg) || isNaN(pr) || dist <= 0 || mpg <= 0 || pr <= 0) {
+      return { ...defaultObj, error: 'Please enter valid journey parameters.' }
+    }
+
+    const total = (dist / mpg) * pr
+    return { error: null, total }
+  }, [distanceStr, mpgStr, priceStr])
 
   return (
-    <FormCalculatorShell title="Fuel Cost Calculator" subtitle="Estimate commute fuel costs" badge="EVERYDAY">
-      <RetroInput label="Daily Distance" value={distance} onChange={setDistance} unit="mi" id="fuel-dist" />
-      <RetroInput label="MPG" value={mpg} onChange={setMpg} unit="mpg" id="fuel-mpg" />
-      <RetroInput label="Gas Price" value={gasPrice} onChange={setGasPrice} unit="$/gal" id="fuel-price" />
-      <RetroInput label="Days per Week" value={days} onChange={setDays} id="fuel-days" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="mt-4 space-y-2">
-          <ResultDisplay label="Weekly Cost" value={`$${result.weekly.toFixed(2)}`} large />
-          <ResultDisplay label="Monthly Cost" value={`$${result.monthly.toFixed(2)}`} />
-          <ResultDisplay label="Yearly Cost" value={`$${result.yearly.toFixed(2)}`} />
-          <svg viewBox="0 0 200 50" className="w-full h-12 mt-2">
-            <path d={wobblyBar(10, 40 - 10, 40, 10)} fill="#cbd8ca" stroke="#b0bdae" strokeWidth="2" />
-            <path d={wobblyBar(60, 40 - 25, 40, 25)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <path d={wobblyBar(110, 40 - 40, 40, 40)} fill="#dad6cd" stroke="#b0bdae" strokeWidth="2" />
-            <text x="30" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Wk</text>
-            <text x="80" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Mo</text>
-            <text x="130" y="48" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#4c5c4a">Yr</text>
-          </svg>
+    <FormCalculatorShell title="Trip Fuel Cost Solver" subtitle="Calculate total gasoline costs for custom road trips" badge="EVERYDAY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Trip Distance (miles)" value={distanceStr} onChange={setDistanceStr} id="fc-d" />
+          <RetroInput label="Fuel Efficiency (MPG)" value={mpgStr} onChange={setMpgStr} id="fc-m" />
+          <RetroInput label="Gas Price ($/gallon)" value={priceStr} onChange={setPriceStr} id="fc-p" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Total Journey Cost" value={results.total.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,42 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function HoursCalculator() {
-  const [clockIn, setClockIn] = useState('09:00')
-  const [clockOut, setClockOut] = useState('17:00')
-  const [breakMin, setBreakMin] = useState('30')
-  const [result, setResult] = useState<{total:number,regular:number,overtime:number}|null>(null)
+  const [startStr, setStartStr] = useState('09:00')
+  const [endStr, setEndStr] = useState('17:00')
 
-  const calculate = () => {
-    const [ih, im] = clockIn.split(':').map(Number)
-    const [oh, om] = clockOut.split(':').map(Number)
-    const br = parseInt(breakMin)
-    if (isNaN(ih)||isNaN(im)||isNaN(oh)||isNaN(om)||isNaN(br)) { setResult(null); return }
-    let start = ih * 60 + im
-    let end = oh * 60 + om
-    if (end < start) end += 24 * 60
-    const total = (end - start - br) / 60
-    const regular = Math.min(total, 8)
-    const overtime = Math.max(0, total - 8)
-    setResult({ total, regular, overtime })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, hours: 0 }
+    if (!startStr || !endStr) return { ...defaultObj, error: 'Please enter both times.' }
+    const [sh, sm] = startStr.split(':').map(Number)
+    const [eh, em] = endStr.split(':').map(Number)
+    if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) return { ...defaultObj, error: 'Invalid time format.' }
+    
+    let diffMins = (eh * 60 + em) - (sh * 60 + sm)
+    if (diffMins < 0) diffMins += 24 * 60 // wrap next day
+    const hours = diffMins / 60
+    return { error: null, hours }
+  }, [startStr, endStr])
 
   return (
-    <FormCalculatorShell title="Hours Calculator" badge="DATE & TIME">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Clock In" value={clockIn} onChange={setClockIn} type="time" id="hrs-in" />
-        <RetroInput label="Clock Out" value={clockOut} onChange={setClockOut} type="time" id="hrs-out" />
-      </div>
-      <RetroInput label="Break (minutes)" value={breakMin} onChange={setBreakMin} placeholder="30" id="hrs-break" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="Total Hours" value={`${result.total.toFixed(2)}h`} large />
-          <ResultDisplay label="Regular" value={`${result.regular.toFixed(2)}h`} />
-          <ResultDisplay label="Overtime" value={`${result.overtime.toFixed(2)}h`} />
+    <FormCalculatorShell title="Hours Worked Clock Solver" subtitle="Calculate elapsed hours between starting and ending clock times" badge="DATE-TIME">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Start Time (HH:MM)" value={startStr} onChange={setStartStr} id="hr-s" />
+          <RetroInput label="End Time (HH:MM)" value={endStr} onChange={setEndStr} id="hr-e" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Total Hours Worked" value={`${results.hours.toFixed(2)} hours`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

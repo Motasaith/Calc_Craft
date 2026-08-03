@@ -1,49 +1,39 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function MulchCalculator() {
-  const [shape, setShape] = useState<'rectangle' | 'circle'>('rectangle')
-  const [length, setLength] = useState('5')
-  const [width, setWidth] = useState('3')
-  const [diameter, setDiameter] = useState('4')
-  const [depth, setDepth] = useState('0.05')
-  const [bagSize, setBagSize] = useState('0.05')
-  const [result, setResult] = useState<{volume:number,bags:number}|null>(null)
+  const [areaStr, setAreaStr] = useState('150')
+  const [depthStr, setDepthStr] = useState('2') // inches
 
-  const calculate = () => {
-    const d = parseFloat(depth)
-    if (isNaN(d)) { setResult(null); return }
-    let area = 0
-    if (shape === 'rectangle') {
-      const l = parseFloat(length), w = parseFloat(width)
-      if (isNaN(l)||isNaN(w)) { setResult(null); return }
-      area = l * w
-    } else {
-      const dia = parseFloat(diameter)
-      if (isNaN(dia)) { setResult(null); return }
-      area = Math.PI * Math.pow(dia/2, 2)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, yards: 0 }
+    const a = parseFloat(areaStr)
+    const d = parseFloat(depthStr)
+
+    if (isNaN(a) || isNaN(d) || a <= 0 || d <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
     }
-    const volume = area * d
-    const bs = parseFloat(bagSize)
-    const bags = Math.ceil(volume / (bs || 0.05))
-    setResult({ volume, bags })
-  }
+
+    const cubicFeet = a * (d / 12)
+    const yards = cubicFeet / 27 // 27 cubic feet in a cubic yard
+
+    return { error: null, yards }
+  }, [areaStr, depthStr])
 
   return (
-    <FormCalculatorShell title="Mulch Calculator" badge="CONSTRUCTION">
-      <RetroSelect label="Shape" value={shape} onChange={(v) => { setShape(v as any); setResult(null) }} options={[{value:'rectangle',label:'Rectangle'},{value:'circle',label:'Circle'}]} id="mulch-shape" />
-      {shape === 'rectangle' ? <div className="grid grid-cols-2 gap-3"><RetroInput label="Length (m)" value={length} onChange={setLength} placeholder="5" id="mulch-l" /><RetroInput label="Width (m)" value={width} onChange={setWidth} placeholder="3" id="mulch-w" /></div> :
-      <RetroInput label="Diameter (m)" value={diameter} onChange={setDiameter} placeholder="4" id="mulch-dia" />}
-      <RetroInput label="Depth (m)" value={depth} onChange={setDepth} placeholder="0.05" id="mulch-d" />
-      <RetroInput label="Bag Size (m³)" value={bagSize} onChange={setBagSize} placeholder="0.05" id="mulch-bag" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Volume" value={`${result.volume.toFixed(2)} m³`} />
-          <ResultDisplay label="Bags Needed" value={result.bags} large />
+    <FormCalculatorShell title="Garden Mulch Solver" subtitle="Calculate cubic yards of mulch needed for landscaping" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Garden Area (sq ft)" value={areaStr} onChange={setAreaStr} id="mc-a" />
+          <RetroInput label="Depth (inches)" value={depthStr} onChange={setDepthStr} id="mc-d" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Mulch Required (Cubic Yards)" value={results.yards.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

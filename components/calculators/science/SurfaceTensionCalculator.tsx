@@ -1,47 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return 'M ' + points.map(([x, y]) => `${x} ${y}`).join(' L ')
-}
-
 export default function SurfaceTensionCalculator() {
-  const [gamma, setGamma] = useState('0.0728')
-  const [length, setLength] = useState('0.05')
+  const [forceStr, setForceStr] = useState('0.07') // Newtons
+  const [lengthStr, setLengthStr] = useState('1.0') // meters
 
-  const G = parseFloat(gamma)
-  const L = parseFloat(length)
-  const valid = !isNaN(G) && !isNaN(L) && G > 0 && L > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, tension: 0 }
+    const f = parseFloat(forceStr)
+    const l = parseFloat(lengthStr)
 
-  // F = gamma * L  (force along a line on a liquid surface)
-  const F = valid ? G * L : 0
+    if (isNaN(f) || isNaN(l) || f < 0 || l <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  // Visualizer: surface line with force arrow
-  const w = Math.min(180, Math.max(20, L * 1000))
+    const tension = f / l
+    return { error: null, tension }
+  }, [forceStr, lengthStr])
 
   return (
-    <FormCalculatorShell
-      title="Surface Tension"
-      subtitle="F = γ · L"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Surface Tension Coeff." value={gamma} onChange={setGamma} unit="N/m" placeholder="e.g. 0.0728" step={0.0001} />
-        <RetroInput label="Length" value={length} onChange={setLength} unit="m" placeholder="e.g. 0.05" step={0.001} />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-1 gap-2 mb-3">
-          <ResultDisplay label="Surface Tension Force" value={F.toFixed(5)} unit="N" large />
+    <FormCalculatorShell title="Fluid Surface Tension Solver" subtitle="Calculate surface tension coefficient gamma = F / L" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Force Exerted (Newtons)" value={forceStr} onChange={setForceStr} id="st-f" />
+          <RetroInput label="Contact Line Length (meters)" value={lengthStr} onChange={setLengthStr} id="st-l" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <path d={wobblyLine([[100 - w / 2, 40], [100 + w / 2, 40]])} fill="none" stroke="#4a6fa5" strokeWidth="2" />
-        <path d={wobblyLine([[100, 30], [100, 50]])} fill="none" stroke="#ab3232" strokeWidth="2" />
-        <text x="100" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">surface line</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Surface Tension (γ)" value={`${results.tension.toFixed(4)} N/m`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

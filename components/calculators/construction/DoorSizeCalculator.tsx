@@ -1,48 +1,43 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DoorSizeCalculator() {
-  const [openingWidth, setOpeningWidth] = useState('900')
-  const [openingHeight, setOpeningHeight] = useState('2100')
-  const [doorType, setDoorType] = useState<'interior' | 'exterior' | 'sliding'>('interior')
-  const [result, setResult] = useState<{ doorWidth: number; doorHeight: number; clearance: number } | null>(null)
+  const [widthStr, setWidthStr] = useState('36') // inches
+  const [heightStr, setHeightStr] = useState('80') // inches
 
-  const calculate = () => {
-    const ow = parseFloat(openingWidth), oh = parseFloat(openingHeight)
-    if (isNaN(ow) || isNaN(oh) || ow <= 0 || oh <= 0) { setResult(null); return }
-    const clearance = doorType === 'sliding' ? 20 : 10
-    const doorWidth = ow - clearance * 2
-    const doorHeight = oh - clearance
-    setResult({ doorWidth, doorHeight, clearance })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, roughW: 0, roughH: 0 }
+    const w = parseFloat(widthStr)
+    const h = parseFloat(heightStr)
+
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+      return { ...defaultObj, error: 'Please enter valid dimensions.' }
+    }
+
+    // rough opening = door size + 2 inches width + 2.5 inches height
+    const roughW = w + 2
+    const roughH = h + 2.5
+
+    return { error: null, roughW, roughH }
+  }, [widthStr, heightStr])
 
   return (
-    <FormCalculatorShell title="Door Size Calculator" subtitle="Recommended door dimensions" badge="CONSTRUCTION">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Opening Width (mm)" value={openingWidth} onChange={setOpeningWidth} placeholder="900" id="ds-ow" />
-        <RetroInput label="Opening Height (mm)" value={openingHeight} onChange={setOpeningHeight} placeholder="2100" id="ds-oh" />
+    <FormCalculatorShell title="Door Rough Opening Solver" subtitle="Calculate rough framing dimensions required for standard prehung doors" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Standard Door Width (inches)" value={widthStr} onChange={setWidthStr} id="ds-w" />
+          <RetroInput label="Standard Door Height (inches)" value={heightStr} onChange={setHeightStr} id="ds-h" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Rough Opening Width" value={`${results.roughW.toFixed(1)}"`} />
+              <ResultDisplay label="Rough Opening Height" value={`${results.roughH.toFixed(1)}"`} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      <RetroSelect label="Door Type" value={doorType} onChange={(v) => { setDoorType(v as any); setResult(null) }} options={[{value:'interior',label:'Interior'},{value:'exterior',label:'Exterior'},{value:'sliding',label:'Sliding'}]} id="ds-type" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Door Width" value={result.doorWidth.toFixed(0)} unit="mm" large />
-            <ResultDisplay label="Door Height" value={result.doorHeight.toFixed(0)} unit="mm" />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              <path d={wobblyBar(70, 8, 60, 64)} fill="#a08060" stroke="#604030" strokeWidth="1" />
-              <circle cx="120" cy="40" r="3" fill="#403020" />
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

@@ -1,53 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function WaistToHeightCalculator() {
-  const [waist, setWaist] = useState('')
-  const [height, setHeight] = useState('')
+  const [waistStr, setWaistStr] = useState('32') // inches
+  const [heightStr, setHeightStr] = useState('70') // inches
 
-  const w = parseFloat(waist), h = parseFloat(height)
-  const valid = !isNaN(w) && !isNaN(h) && w > 0 && h > 0 && w < 300 && h > 50 && h < 280
-  const ratio = valid ? w / h : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, wthr: 0 }
+    const w = parseFloat(waistStr)
+    const h = parseFloat(heightStr)
 
-  const getCategory = () => {
-    if (!valid) return ''
-    if (ratio < 0.34) return 'Underweight'
-    if (ratio < 0.43) return 'Healthy'
-    if (ratio < 0.53) return 'Overweight'
-    return 'Obese'
-  }
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const category = getCategory()
-  const barWidth = valid ? Math.min(ratio / 0.6, 1) * 180 : 0
+    const wthr = w / h
+    return { error: null, wthr }
+  }, [waistStr, heightStr])
 
   return (
-    <FormCalculatorShell title="Waist-to-Height Ratio" subtitle="Central obesity indicator" badge="HEALTH">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Waist" value={waist} onChange={setWaist} placeholder="80" id="whtr-w" unit="cm" min={30} max={200} />
-        <RetroInput label="Height" value={height} onChange={setHeight} placeholder="170" id="whtr-h" unit="cm" min={50} max={280} />
+    <FormCalculatorShell title="Waist-to-Height Ratio Solver" subtitle="Calculate your waist-to-height index ratio for cardiovascular health checks" badge="HEALTH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Waist Size (inches)" value={waistStr} onChange={setWaistStr} id="wth-w" />
+          <RetroInput label="Height Size (inches)" value={heightStr} onChange={setHeightStr} id="wth-h" />
+        </div>
+        <div className="min-h-[440px] space-y-4 text-center">
+          {!results.error ? (
+            <div className="space-y-4">
+              <ResultDisplay label="Waist-to-Height Ratio (WtHR)" value={results.wthr.toFixed(3)} large />
+              <p className="font-mono text-xs text-neutral-600 bg-neutral-50 p-4 rounded border border-neutral-300">
+                A ratio of 0.5 or less is typically associated with lower health risks.
+              </p>
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-
-      {valid && (
-        <>
-          <div className="mt-2">
-            <ResultDisplay label="Waist-to-Height Ratio" value={ratio.toFixed(2)} large />
-          </div>
-          <div className="mt-2">
-            <ResultDisplay label="Category" value={category} />
-          </div>
-          <svg viewBox="0 0 200 60" className="w-full mt-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg">
-            <path d={wobblyBar(10, 25, 180, 20)} fill="#e5e1d8" />
-            <path d={wobblyBar(10, 25, barWidth, 20)} fill="#dfaa44" />
-            <text x="10" y="18" fontSize="8" fontFamily="monospace" fill="#555">0.34</text>
-            <text x="160" y="18" fontSize="8" fontFamily="monospace" fill="#555">0.53+</text>
-          </svg>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

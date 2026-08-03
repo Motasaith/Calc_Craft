@@ -1,48 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function EstateTaxCalculator() {
-  const [estate, setEstate] = useState('5000000')
-  const [exemption, setExemption] = useState('13610000')
-  const [rate, setRate] = useState('40')
+  const [estateStr, setEstateStr] = useState('15000000') // $ total estate value
+  const [exclusionStr, setExclusionStr] = useState('13610000') // 2024 exclusion
 
-  const e = parseFloat(estate), ex = parseFloat(exemption), r = parseFloat(rate)
-  const valid = !isNaN(e) && !isNaN(ex) && !isNaN(r) && e >= 0 && ex >= 0 && r >= 0
-  const taxable = valid ? Math.max(0, e - ex) : 0
-  const tax = valid ? (taxable * r) / 100 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, taxable: 0, tax: 0 }
+    const estate = parseFloat(estateStr)
+    const exclusion = parseFloat(exclusionStr)
+
+    if (isNaN(estate) || isNaN(exclusion) || estate < 0 || exclusion < 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const taxable = Math.max(0, estate - exclusion)
+    const tax = taxable * 0.40 // 40% top federal rate
+
+    return { error: null, taxable, tax }
+  }, [estateStr, exclusionStr])
 
   return (
-    <FormCalculatorShell title="Estate Tax Calculator" subtitle="Tax = (Estate - Exemption) × Rate" badge="TAX">
-      <RetroInput label="Estate Value" value={estate} onChange={setEstate} placeholder="5000000" id="et-e" unit="$" />
-      <RetroInput label="Exemption" value={exemption} onChange={setExemption} placeholder="13610000" id="et-ex" unit="$" />
-      <RetroInput label="Tax Rate" value={rate} onChange={setRate} placeholder="40" id="et-r" unit="%" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Taxable Estate" value={`$${taxable.toFixed(0)}`} large />
-            <ResultDisplay label="Estate Tax" value={`$${tax.toFixed(0)}`} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Estate Breakdown</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="etGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#etGrid)" rx="8" />
-              <path d={wobblyBar(20, 15, 140, 35)} fill="#a78bfa" fillOpacity="0.15" stroke="#7c3aed" strokeWidth="2" />
-              <path d={wobblyBar(20, 15, (tax / Math.max(e, 1)) * 140, 35)} fill="#ef4444" fillOpacity="0.4" stroke="#dc2626" strokeWidth="2" />
-              <text x="90" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#dc2626" fontWeight="bold">Tax: ${tax.toFixed(0)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Estate Inheritance Tax Solver" subtitle="Estimate federal estate tax liability using exclusion limits" badge="TAX">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Estate Market Value ($)" value={estateStr} onChange={setEstateStr} id="et-v" />
+          <RetroInput label="Unified Exclusion Limit ($)" value={exclusionStr} onChange={setExclusionStr} id="et-e" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Taxable Estate" value={results.taxable.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} />
+              <ResultDisplay label="Est. Estate Tax (40%)" value={results.tax.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

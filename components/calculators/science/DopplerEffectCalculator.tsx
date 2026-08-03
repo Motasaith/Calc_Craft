@@ -1,66 +1,42 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DopplerEffectCalculator() {
-  const [freq, setFreq] = useState('440')
-  const [vel, setVel] = useState('30')
-  const [waveSpeed, setWaveSpeed] = useState('343')
-  const [direction, setDirection] = useState('approach')
+  const [freqStr, setFreqStr] = useState('440') // Hz
+  const [speedStr, setSpeedStr] = useState('343') // v of sound m/s
+  const [vSourceStr, setVSourceStr] = useState('20') // m/s moving source
 
-  const f = parseFloat(freq)
-  const vs = parseFloat(vel)
-  const v = parseFloat(waveSpeed)
-  const valid = !isNaN(f) && !isNaN(vs) && !isNaN(v) && v > 0 && f > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, observed: 0 }
+    const f0 = parseFloat(freqStr)
+    const v = parseFloat(speedStr)
+    const vs = parseFloat(vSourceStr)
 
-  // f' = f * v / (v - vs)  approach ; f * v / (v + vs) recede
-  const denom = direction === 'approach' ? v - vs : v + vs
-  const observed = valid && denom !== 0 ? (f * v) / denom : 0
-  const shift = valid ? observed - f : 0
+    if (isNaN(f0) || isNaN(v) || isNaN(vs) || f0 <= 0 || v <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  // Visualizer: source bar vs observed bar
-  const maxF = Math.max(f, observed, 1)
-  const h1 = (f / maxF) * 60
-  const h2 = (observed / maxF) * 60
+    if (vs >= v) return { ...defaultObj, error: 'Source speed cannot match or exceed wave speed.' }
+    // Approaching source: f = f0 * v / (v - vs)
+    const observed = f0 * (v / (v - vs))
+    return { error: null, observed }
+  }, [freqStr, speedStr, vSourceStr])
 
   return (
-    <FormCalculatorShell
-      title="Doppler Effect"
-      subtitle="Observed frequency from moving source"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Source Frequency" value={freq} onChange={setFreq} unit="Hz" placeholder="e.g. 440" />
-        <RetroInput label="Source Velocity" value={vel} onChange={setVel} unit="m/s" placeholder="e.g. 30" />
-        <RetroInput label="Wave Speed" value={waveSpeed} onChange={setWaveSpeed} unit="m/s" placeholder="e.g. 343" />
-        <RetroSelect
-          label="Direction"
-          value={direction}
-          onChange={setDirection}
-          options={[
-            { value: 'approach', label: 'Approaching' },
-            { value: 'recede', label: 'Receding' },
-          ]}
-        />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <ResultDisplay label="Observed Freq" value={observed.toFixed(2)} unit="Hz" large />
-          <ResultDisplay label="Frequency Shift" value={shift.toFixed(2)} unit="Hz" />
+    <FormCalculatorShell title="Doppler Effect Observed Frequency Solver" subtitle="Calculate observed sound frequencies from moving sources" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Emitted Frequency (Hz)" value={freqStr} onChange={setFreqStr} id="de-f" />
+          <RetroInput label="Sound Speed (v, m/s)" value={speedStr} onChange={setSpeedStr} id="de-v" />
+          <RetroInput label="Source Speed Approaching (m/s)" value={vSourceStr} onChange={setVSourceStr} id="de-vs" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <path d={wobblyBar(40, 70 - h1, 40, h1)} fill="#dfaa44" opacity={0.85} />
-        <path d={wobblyBar(120, 70 - h2, 40, h2)} fill="#4a6fa5" opacity={0.85} />
-        <text x="60" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">source</text>
-        <text x="140" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">observed</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Observed Frequency" value={`${results.observed.toFixed(1)} Hz`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

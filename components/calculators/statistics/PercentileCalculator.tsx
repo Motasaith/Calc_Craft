@@ -1,37 +1,43 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function PercentileCalculator() {
-  const [data, setData] = useState('10,20,30,40,50,60,70,80,90,100')
-  const [value, setValue] = useState('55')
-  const [result, setResult] = useState<{percentile:number,q1:number,median:number,q3:number}|null>(null)
+  const [dataStr, setDataStr] = useState('10, 20, 30, 40, 50')
+  const [percStr, setPercStr] = useState('80') // percentile target
 
-  const calculate = () => {
-    const arr = data.split(',').map(Number).filter(n => !isNaN(n)).sort((a,b) => a-b)
-    const v = parseFloat(value)
-    if (arr.length === 0 || isNaN(v)) { setResult(null); return }
-    const below = arr.filter(x => x <= v).length
-    const percentile = (below / arr.length) * 100
-    const q1 = arr[Math.floor(arr.length * 0.25)]
-    const median = arr.length % 2 === 1 ? arr[Math.floor(arr.length/2)] : (arr[arr.length/2-1] + arr[arr.length/2])/2
-    const q3 = arr[Math.floor(arr.length * 0.75)]
-    setResult({ percentile, q1, median, q3 })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, value: 0 }
+    const arr = dataStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)).sort((a, b) => a - b)
+    const p = parseFloat(percStr)
+
+    if (arr.length < 1 || isNaN(p) || p < 0 || p > 100) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // Percentile index using linear interpolation
+    const idx = (p / 100) * (arr.length - 1)
+    const low = Math.floor(idx)
+    const high = Math.ceil(idx)
+    const weight = idx - low
+    const value = arr[low] + weight * (arr[high] - arr[low])
+
+    return { error: null, value }
+  }, [dataStr, percStr])
 
   return (
-    <FormCalculatorShell title="Percentile Calculator" badge="STATISTICS">
-      <RetroInput label="Data (comma sep)" value={data} onChange={setData} placeholder="10,20,30,40,50,60,70,80,90,100" id="per-d" />
-      <RetroInput label="Value" value={value} onChange={setValue} placeholder="55" id="per-v" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-4 gap-2 mt-4">
-          <ResultDisplay label="Percentile" value={`${result.percentile.toFixed(1)}%`} large />
-          <ResultDisplay label="Q1" value={result.q1} />
-          <ResultDisplay label="Median" value={result.median} />
-          <ResultDisplay label="Q3" value={result.q3} />
+    <FormCalculatorShell title="Percentile Value Solver" subtitle="Calculate target percentile values from a series dataset" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Dataset Array (comma-separated)" value={dataStr} onChange={setDataStr} id="pc-d" />
+          <RetroInput label="Percentile Rank (0 to 100)" value={percStr} onChange={setPercStr} id="pc-r" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Percentile Target Value" value={results.value.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

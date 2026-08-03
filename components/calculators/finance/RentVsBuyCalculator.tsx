@@ -1,51 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RentVsBuyCalculator() {
-  const [monthlyRent, setMonthlyRent] = useState('2000')
-  const [homePrice, setHomePrice] = useState('400000')
-  const [downPayment, setDownPayment] = useState('80000')
-  const [mortgageRate, setMortgageRate] = useState('6.5')
-  const [years, setYears] = useState('10')
-  const [appreciation, setAppreciation] = useState('3')
-  const [result, setResult] = useState<{rentTotal:number,buyTotal:number,equity:number,netBuy:number}|null>(null)
+  const [rentStr, setRentStr] = useState('1500')
+  const [mortgageStr, setMortgageStr] = useState('1800')
 
-  const calculate = () => {
-    const rent = parseFloat(monthlyRent)
-    const price = parseFloat(homePrice)
-    const down = parseFloat(downPayment)
-    const rate = parseFloat(mortgageRate) / 12 / 100
-    const yr = parseInt(years)
-    const appr = parseFloat(appreciation) / 100
-    const months = yr * 12
-    const loan = price - down
-    const payment = rate === 0 ? loan / (yr * 12) : loan * rate * Math.pow(1 + rate, months) / (Math.pow(1 + rate, months) - 1)
-    const rentTotal = rent * months
-    const buyTotal = down + payment * months
-    const futureValue = price * Math.pow(1 + appr, yr)
-    const equity = futureValue - (loan - (payment * months - loan * rate * months))
-    setResult({ rentTotal, buyTotal, equity, netBuy: buyTotal - equity })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ratio: 0 }
+    const rent = parseFloat(rentStr)
+    const mort = parseFloat(mortgageStr)
+
+    if (isNaN(rent) || isNaN(mort) || rent <= 0 || mort <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const ratio = (rent / mort) * 100
+    return { error: null, ratio }
+  }, [rentStr, mortgageStr])
 
   return (
-    <FormCalculatorShell title="Rent vs. Buy" badge="FINANCE">
-      <RetroInput label="Monthly Rent" value={monthlyRent} onChange={setMonthlyRent} placeholder="2000" id="rvb-rent" unit="$" />
-      <RetroInput label="Home Price" value={homePrice} onChange={setHomePrice} placeholder="400000" id="rvb-price" unit="$" />
-      <RetroInput label="Down Payment" value={downPayment} onChange={setDownPayment} placeholder="80000" id="rvb-down" unit="$" />
-      <RetroInput label="Mortgage Rate" value={mortgageRate} onChange={setMortgageRate} placeholder="6.5" id="rvb-rate" unit="%" />
-      <RetroInput label="Years to Compare" value={years} onChange={setYears} placeholder="10" id="rvb-yr" unit="yr" />
-      <RetroInput label="Home Appreciation" value={appreciation} onChange={setAppreciation} placeholder="3" id="rvb-app" unit="%" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Compare</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Total Rent Cost" value={formatCurrency(result.rentTotal)} />
-          <ResultDisplay label="Total Buy Cost" value={formatCurrency(result.buyTotal)} />
-          <ResultDisplay label="Est. Equity" value={formatCurrency(result.equity)} large />
-          <ResultDisplay label="Net Buy Cost" value={formatCurrency(result.netBuy)} />
+    <FormCalculatorShell title="Rent vs Buy Cost Ratio Solver" subtitle="Compare monthly rental expenses to mortgage payments" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Monthly Rental Rate ($)" value={rentStr} onChange={setRentStr} id="rvb-r" />
+          <RetroInput label="Monthly Mortgage Equivalent ($)" value={mortgageStr} onChange={setMortgageStr} id="rvb-m" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Rent-to-Buy Ratio" value={`${results.ratio.toFixed(1)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

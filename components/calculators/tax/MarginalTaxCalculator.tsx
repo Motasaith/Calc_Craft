@@ -1,63 +1,39 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function MarginalTaxCalculator() {
-  const [income, setIncome] = useState('100000')
+  const [incomeStr, setIncomeStr] = useState('85000')
 
-  const inc = parseFloat(income)
-  const valid = !isNaN(inc) && inc >= 0
-  // Simplified US 2024 brackets (single filer)
-  const brackets = [
-    { min: 0, max: 11600, rate: 10 },
-    { min: 11600, max: 47150, rate: 12 },
-    { min: 47150, max: 100525, rate: 22 },
-    { min: 100525, max: 191950, rate: 24 },
-    { min: 191950, max: 243725, rate: 32 },
-    { min: 243725, max: 609350, rate: 35 },
-    { min: 609350, max: Infinity, rate: 37 },
-  ]
-  let tax = 0
-  if (valid) {
-    for (const b of brackets) {
-      if (inc > b.min) {
-        tax += (Math.min(inc, b.max) - b.min) * (b.rate / 100)
-      }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, effective: 0 }
+    const income = parseFloat(incomeStr)
+    if (isNaN(income) || income < 0) return { ...defaultObj, error: 'Please enter a valid income.' }
+    // Single filer simple brackets: 10% up to $11,600, 12% up to $47,150, 22% above
+    let tax = 0
+    if (income <= 11600) {
+      tax = income * 0.10
+    } else if (income <= 47150) {
+      tax = 1160 + (income - 11600) * 0.12
+    } else {
+      tax = 1160 + 4266 + (income - 47150) * 0.22
     }
-  }
-  const effectiveRate = valid && inc > 0 ? (tax / inc) * 100 : 0
+    const effective = income > 0 ? (tax / income) * 100 : 0
+    return { error: null, effective }
+  }, [incomeStr])
 
   return (
-    <FormCalculatorShell title="Marginal Tax Brackets" subtitle="Progressive bracket calculation" badge="TAX">
-      <RetroInput label="Annual Income" value={income} onChange={setIncome} placeholder="100000" id="mt-i" unit="$" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Total Tax" value={`$${tax.toFixed(0)}`} large />
-            <ResultDisplay label="Effective Rate" value={effectiveRate.toFixed(2)} unit="%" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Tax Brackets</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
-              <defs>
-                <pattern id="mtGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#mtGrid)" rx="8" />
-              {/* Bracket bars */}
-              {brackets.slice(0, 5).map((b, i) => (
-                <path key={i} d={wobblyBar(15 + i * 33, 60 - b.rate, 30, b.rate)} fill="#ef4444" fillOpacity={0.2 + i * 0.1} stroke="#dc2626" strokeWidth="1.5" />
-              ))}
-              <text x="90" y="75" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#dc2626" fontWeight="bold">Tax: ${tax.toFixed(0)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Marginal vs Effective Tax Solver" subtitle="Calculate average tax rates based on federal brackets" badge="TAX">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Taxable Income ($)" value={incomeStr} onChange={setIncomeStr} id="mt-i" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Effective Tax Rate" value={`${results.effective.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

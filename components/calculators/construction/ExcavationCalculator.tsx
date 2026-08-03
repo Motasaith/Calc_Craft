@@ -1,48 +1,38 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ExcavationCalculator() {
-  const [length, setLength] = useState('10')
-  const [width, setWidth] = useState('5')
-  const [depth, setDepth] = useState('1.5')
-  const [result, setResult] = useState<{ cubicYards: number; truckLoads: number } | null>(null)
+  const [areaStr, setAreaStr] = useState('500')
+  const [depthStr, setDepthStr] = useState('4') // feet
 
-  const calculate = () => {
-    const l = parseFloat(length), w = parseFloat(width), d = parseFloat(depth)
-    if (isNaN(l) || isNaN(w) || isNaN(d) || l <= 0 || w <= 0 || d <= 0) { setResult(null); return }
-    const cubicMeters = l * w * d
-    const cubicYards = cubicMeters * 1.30795
-    const truckLoads = Math.ceil(cubicYards / 10)
-    setResult({ cubicYards, truckLoads })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, yards: 0 }
+    const a = parseFloat(areaStr)
+    const d = parseFloat(depthStr)
+
+    if (isNaN(a) || isNaN(d) || a <= 0 || d <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const cubicFeet = a * d
+    const yards = cubicFeet / 27
+    return { error: null, yards }
+  }, [areaStr, depthStr])
 
   return (
-    <FormCalculatorShell title="Excavation Calculator" subtitle="Volume & truck loads" badge="CONSTRUCTION">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Length (m)" value={length} onChange={setLength} placeholder="10" id="exc-l" />
-        <RetroInput label="Width (m)" value={width} onChange={setWidth} placeholder="5" id="exc-w" />
+    <FormCalculatorShell title="Excavation Dirt Volume Solver" subtitle="Calculate cubic yards of soil to excavate for foundations" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Foundation Area (sq ft)" value={areaStr} onChange={setAreaStr} id="ex-a" />
+          <RetroInput label="Excavation Depth (feet)" value={depthStr} onChange={setDepthStr} id="ex-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Dirt to Remove (Cubic Yards)" value={results.yards.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      <RetroInput label="Depth (m)" value={depth} onChange={setDepth} placeholder="1.5" id="exc-d" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Cubic Yards" value={result.cubicYards.toFixed(2)} unit="yd³" large />
-            <ResultDisplay label="Truck Loads" value={result.truckLoads} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 70" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              <path d={wobblyBar(20, 15, 160, 45)} fill="#8a6040" stroke="#5a4030" strokeWidth="0.5" />
-              <path d="M 20 15 L 40 5 L 200 5 L 180 15 Z" fill="#a08060" stroke="#5a4030" strokeWidth="0.5" />
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

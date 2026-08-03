@@ -1,49 +1,38 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function InsulationCalculator() {
-  const [area, setArea] = useState('100')
-  const [rValue, setRValue] = useState('13')
-  const [insulationType, setInsulationType] = useState<'fiberglass' | 'cellulose' | 'foam'>('fiberglass')
-  const [result, setResult] = useState<{ thickness: number; bags: number } | null>(null)
+  const [areaStr, setAreaStr] = useState('1000') // sq ft
+  const [rValueStr, setRValueStr] = useState('38') // target R-value
 
-  const rPerInch: Record<string, number> = { fiberglass: 3.2, cellulose: 3.5, foam: 6.0 }
-  const bagCoverage: Record<string, number> = { fiberglass: 40, cellulose: 25, foam: 600 }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, costEst: 0 }
+    const a = parseFloat(areaStr)
+    const r = parseFloat(rValueStr)
 
-  const calculate = () => {
-    const a = parseFloat(area), r = parseFloat(rValue)
-    if (isNaN(a) || isNaN(r) || a <= 0 || r <= 0) { setResult(null); return }
-    const thickness = r / rPerInch[insulationType]
-    const bags = Math.ceil(a / bagCoverage[insulationType])
-    setResult({ thickness, bags })
-  }
+    if (isNaN(a) || isNaN(r) || a <= 0 || r <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // estimated insulation cost: $0.05 per sq ft per R-value unit approx
+    const costEst = a * r * 0.05
+    return { error: null, costEst }
+  }, [areaStr, rValueStr])
 
   return (
-    <FormCalculatorShell title="Insulation Calculator" subtitle="Thickness & bags needed" badge="CONSTRUCTION">
-      <RetroInput label="Area (m²)" value={area} onChange={setArea} placeholder="100" id="ins-area" />
-      <RetroInput label="Target R-Value" value={rValue} onChange={setRValue} placeholder="13" id="ins-r" />
-      <RetroSelect label="Insulation Type" value={insulationType} onChange={(v) => { setInsulationType(v as any); setResult(null) }} options={[{value:'fiberglass',label:'Fiberglass Batts'},{value:'cellulose',label:'Cellulose Loose'},{value:'foam',label:'Spray Foam'}]} id="ins-type" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Thickness" value={result.thickness.toFixed(2)} unit="in" large />
-            <ResultDisplay label="Bags Needed" value={result.bags} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 60" className="w-full h-16 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <path key={i} d={wobblyBar(10 + i * 23, 10, 20, 40)} fill="#e8d8a0" stroke="#a89060" strokeWidth="0.5" />
-              ))}
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Building Insulation R-Value Solver" subtitle="Estimate typical insulation material budget costs for target R-values" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Wall/Attic Area (sq ft)" value={areaStr} onChange={setAreaStr} id="in-a" />
+          <RetroInput label="Target Insulation R-Value" value={rValueStr} onChange={setRValueStr} id="in-r" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Est. Material Cost" value={results.costEst.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

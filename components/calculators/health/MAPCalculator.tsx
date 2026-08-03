@@ -1,54 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function MAPCalculator() {
-  const [systolic, setSystolic] = useState('')
-  const [diastolic, setDiastolic] = useState('')
+  const [sbpStr, setSbpStr] = useState('120')
+  const [dbpStr, setDbpStr] = useState('80')
 
-  const s = parseFloat(systolic), d = parseFloat(diastolic)
-  const valid = !isNaN(s) && !isNaN(d) && s > 0 && d > 0 && s > d
-  const map = valid ? (d + (s - d) / 3) : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, mapVal: 0 }
+    const sbp = parseFloat(sbpStr)
+    const dbp = parseFloat(dbpStr)
 
-  const getCategory = () => {
-    if (!valid) return ''
-    if (map < 70) return 'Low'
-    if (map < 100) return 'Normal'
-    if (map < 120) return 'Elevated'
-    return 'High'
-  }
+    if (isNaN(sbp) || isNaN(dbp) || sbp <= 0 || dbp <= 0) {
+      return { ...defaultObj, error: 'Please enter valid blood pressures.' }
+    }
 
-  const category = getCategory()
-  const barWidth = valid ? Math.min(map / 150, 1) * 180 : 0
+    const mapVal = (sbp + 2 * dbp) / 3
+    return { error: null, mapVal }
+  }, [sbpStr, dbpStr])
 
   return (
-    <FormCalculatorShell title="Mean Arterial Pressure" subtitle="MAP calculator" badge="HEALTH">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Systolic" value={systolic} onChange={setSystolic} placeholder="120" id="map-s" unit="mmHg" min={60} max={300} />
-        <RetroInput label="Diastolic" value={diastolic} onChange={setDiastolic} placeholder="80" id="map-d" unit="mmHg" min={30} max={200} />
+    <FormCalculatorShell title="Mean Arterial Pressure Solver" subtitle="Calculate mean arterial pressure (MAP) from blood pressure" badge="HEALTH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Systolic (mmHg)" value={sbpStr} onChange={setSbpStr} id="map-s" />
+          <RetroInput label="Diastolic (mmHg)" value={dbpStr} onChange={setDbpStr} id="map-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Mean Arterial Pressure (MAP)" value={`${results.mapVal.toFixed(1)} mmHg`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-
-      {valid && (
-        <>
-          <div className="mt-2">
-            <ResultDisplay label="MAP" value={map.toFixed(1)} unit="mmHg" large />
-          </div>
-          <div className="mt-2">
-            <ResultDisplay label="Category" value={category} />
-          </div>
-          <svg viewBox="0 0 200 60" className="w-full mt-3 bg-[#fcfbfa] border-2 border-neutral-300 rounded-lg">
-            <path d={wobblyBar(10, 25, 180, 20)} fill="#e5e1d8" />
-            <path d={wobblyBar(10, 25, barWidth, 20)} fill="#dfaa44" />
-            <text x="10" y="18" fontSize="8" fontFamily="monospace" fill="#555">0</text>
-            <text x="160" y="18" fontSize="8" fontFamily="monospace" fill="#555">150</text>
-          </svg>
-          <p className="text-[9px] text-neutral-500 font-mono mt-2">MAP = DBP + 1/3(SBP - DBP). Normal: 70-100 mmHg.</p>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

@@ -1,38 +1,32 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function TrigIdentitiesCalculator() {
-  const [identity, setIdentity] = useState<'pythagorean' | 'double-angle' | 'half-angle' | 'sum'>('pythagorean')
-  const [angle, setAngle] = useState('30')
-  const [result, setResult] = useState('')
+  const [degStr, setDegStr] = useState('30')
 
-  const calculate = () => {
-    const a = parseFloat(angle) * Math.PI / 180
-    if (isNaN(a)) { setResult('Invalid'); return }
-    switch (identity) {
-      case 'pythagorean':
-        const sin2 = Math.sin(a)**2, cos2 = Math.cos(a)**2
-        setResult(`sin² + cos² = ${(sin2+cos2).toFixed(6)} (should be 1)`)
-        break
-      case 'double-angle':
-        setResult(`sin(2θ)=${Math.sin(2*a).toFixed(6)}, cos(2θ)=${Math.cos(2*a).toFixed(6)}`)
-        break
-      case 'half-angle':
-        setResult(`sin(θ/2)=${Math.sin(a/2).toFixed(6)}, cos(θ/2)=${Math.cos(a/2).toFixed(6)}`)
-        break
-      case 'sum':
-        setResult(`sin(2θ)=${Math.sin(2*a).toFixed(6)}, cos(2θ)=${Math.cos(2*a).toFixed(6)}`)
-        break
-    }
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, sum: 0 }
+    const deg = parseFloat(degStr)
+    if (isNaN(deg)) return { ...defaultObj, error: 'Please enter a valid angle.' }
+    const rad = (deg * Math.PI) / 180
+    // Verify Pythagorean Identity: sin²(x) + cos²(x) = 1
+    const sum = Math.pow(Math.sin(rad), 2) + Math.pow(Math.cos(rad), 2)
+    return { error: null, sum }
+  }, [degStr])
 
   return (
-    <FormCalculatorShell title="Trig Identities" badge="TRIGONOMETRY">
-      <RetroSelect label="Identity" value={identity} onChange={(v) => { setIdentity(v as any); setResult('') }} options={[{value:'pythagorean',label:'Pythagorean'},{value:'double-angle',label:'Double Angle'},{value:'half-angle',label:'Half Angle'},{value:'sum',label:'Sum/Difference'}]} id="ti-id" />
-      <RetroInput label="Angle (°)" value={angle} onChange={setAngle} placeholder="30" id="ti-a" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Verify</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
+    <FormCalculatorShell title="Pythagorean Trig Identity Solver" subtitle="Verify the basic pythagorean trigonometric identity sin²(θ) + cos²(θ)" badge="TRIGONOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Angle (Degrees °)" value={degStr} onChange={setDegStr} id="ti-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Identity Sum Result" value={results.sum.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

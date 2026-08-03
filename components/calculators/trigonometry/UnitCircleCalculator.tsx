@@ -1,33 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function UnitCircleCalculator() {
-  const [unit, setUnit] = useState<'deg' | 'rad'>('deg')
-  const [angle, setAngle] = useState('30')
-  const [result, setResult] = useState<{x:number,y:number,sin:number,cos:number}|null>(null)
+  const [degStr, setDegStr] = useState('45')
 
-  const calculate = () => {
-    const a = parseFloat(angle)
-    if (isNaN(a)) { setResult(null); return }
-    const rad = unit === 'deg' ? a * Math.PI / 180 : a
-    const sin = Math.sin(rad), cos = Math.cos(rad)
-    setResult({ x: cos, y: sin, sin, cos })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, sin: 0, cos: 0, tan: 0 }
+    const deg = parseFloat(degStr)
+    if (isNaN(deg)) return { ...defaultObj, error: 'Please enter a valid angle.' }
+    const rad = (deg * Math.PI) / 180
+    const sin = Math.sin(rad)
+    const cos = Math.cos(rad)
+    const tan = Math.abs(cos) > 1e-9 ? Math.tan(rad) : Infinity
+    return { error: null, sin, cos, tan }
+  }, [degStr])
 
   return (
-    <FormCalculatorShell title="Unit Circle" badge="TRIGONOMETRY">
-      <RetroSelect label="Unit" value={unit} onChange={(v) => { setUnit(v as any); setResult(null) }} options={[{value:'deg',label:'Degrees'},{value:'rad',label:'Radians'}]} id="uc-unit" />
-      <RetroInput label={`Angle (${unit})`} value={angle} onChange={setAngle} placeholder="30" id="uc-a" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="x = cos(θ)" value={result.x.toFixed(6)} />
-          <ResultDisplay label="y = sin(θ)" value={result.y.toFixed(6)} />
-          <ResultDisplay label="sin(θ)" value={result.sin.toFixed(6)} />
-          <ResultDisplay label="cos(θ)" value={result.cos.toFixed(6)} />
+    <FormCalculatorShell title="Unit Circle Angle Values Solver" subtitle="Resolve sine, cosine, and tangent values for unit circle degrees" badge="TRIGONOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Angle (Degrees °)" value={degStr} onChange={setDegStr} id="uc-d" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-3 gap-2">
+              <ResultDisplay label="sin(θ)" value={results.sin.toFixed(4)} />
+              <ResultDisplay label="cos(θ)" value={results.cos.toFixed(4)} />
+              <ResultDisplay label="tan(θ)" value={results.tan === Infinity ? 'Undefined' : results.tan.toFixed(4)} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

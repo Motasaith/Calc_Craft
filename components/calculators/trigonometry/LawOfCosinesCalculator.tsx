@@ -1,38 +1,43 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function LawOfCosinesCalculator() {
-  const [mode, setMode] = useState<'sas' | 'sss'>('sas')
-  const [a, setA] = useState('5')
-  const [b, setB] = useState('7')
-  const [c, setC] = useState('8')
-  const [angle, setAngle] = useState('60')
-  const [result, setResult] = useState('')
+  const [sideAStr, setSideAStr] = useState('5')
+  const [sideBStr, setSideBStr] = useState('7')
+  const [angCStr, setAngCStr] = useState('60') // degrees
 
-  const calculate = () => {
-    if (mode === 'sas') {
-      const av = parseFloat(a), bv = parseFloat(b), ang = parseFloat(angle)
-      if (isNaN(av)||isNaN(bv)||isNaN(ang)) { setResult('Invalid'); return }
-      const rad = ang * Math.PI / 180
-      const cv = Math.sqrt(av*av + bv*bv - 2*av*bv*Math.cos(rad))
-      setResult(`c = ${cv.toFixed(4)}`)
-    } else {
-      const av = parseFloat(a), bv = parseFloat(b), cv = parseFloat(c)
-      if (isNaN(av)||isNaN(bv)||isNaN(cv) || av<=0||bv<=0||cv<=0) { setResult('Invalid'); return }
-      const C = Math.acos((av*av + bv*bv - cv*cv) / (2*av*bv)) * 180 / Math.PI
-      setResult(`Angle C = ${C.toFixed(2)}°`)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, sideC: 0 }
+    const a = parseFloat(sideAStr)
+    const b = parseFloat(sideBStr)
+    const gamma = parseFloat(angCStr)
+
+    if (isNaN(a) || isNaN(b) || isNaN(gamma) || a <= 0 || b <= 0 || gamma <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
     }
-  }
+
+    const gammaRad = (gamma * Math.PI) / 180
+    // Law of Cosines: c² = a² + b² - 2ab cos(C)
+    const sideC = Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(gammaRad))
+
+    return { error: null, sideC }
+  }, [sideAStr, sideBStr, angCStr])
 
   return (
-    <FormCalculatorShell title="Law of Cosines" badge="TRIGONOMETRY">
-      <RetroSelect label="Given" value={mode} onChange={(v) => { setMode(v as any); setResult('') }} options={[{value:'sas',label:'SAS (2 sides + included angle)'},{value:'sss',label:'SSS (3 sides)'}]} id="loc-mode" />
-      <div className="grid grid-cols-2 gap-3"><RetroInput label="Side a" value={a} onChange={setA} placeholder="5" id="loc-a" /><RetroInput label="Side b" value={b} onChange={setB} placeholder="7" id="loc-b" /></div>
-      {mode === 'sas' ? <RetroInput label="Included Angle (°)" value={angle} onChange={setAngle} placeholder="60" id="loc-ang" /> :
-      <RetroInput label="Side c" value={c} onChange={setC} placeholder="8" id="loc-c" />}
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Solve</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
+    <FormCalculatorShell title="Law of Cosines Triangle Solver" subtitle="Calculate unknown side c from adjacent sides and angle C" badge="TRIGONOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Side a Length" value={sideAStr} onChange={setSideAStr} id="loc-a" />
+          <RetroInput label="Side b Length" value={sideBStr} onChange={setSideBStr} id="loc-b" />
+          <RetroInput label="Angle C (Degrees °)" value={angCStr} onChange={setAngCStr} id="loc-c" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Side c Length" value={results.sideC.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

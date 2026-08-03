@@ -1,53 +1,38 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`
-}
-
 export default function LifetimeValueCalculator() {
-  const [avgPurchase, setAvgPurchase] = useState('50')
-  const [frequency, setFrequency] = useState('4')
-  const [lifespan, setLifespan] = useState('5')
-  const [margin, setMargin] = useState('30')
+  const [arpuStr, setArpuStr] = useState('50') // average revenue per user monthly
+  const [churnStr, setChurnStr] = useState('2') // % monthly churn
 
-  const apv = parseFloat(avgPurchase) || 0
-  const freq = parseFloat(frequency) || 0
-  const life = parseFloat(lifespan) || 0
-  const mg = parseFloat(margin) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ltv: 0 }
+    const arpu = parseFloat(arpuStr)
+    const churn = parseFloat(churnStr)
 
-  const customerValue = apv * freq * life
-  const ltv = customerValue * (mg / 100)
-  const valid = apv > 0 && freq > 0 && life > 0
+    if (isNaN(arpu) || isNaN(churn) || arpu < 0 || churn <= 0 || churn > 100) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const circleR = Math.min(35, Math.max(5, ltv / 20))
+    // LTV = ARPU / churn_rate
+    const ltv = arpu / (churn / 100)
+    return { error: null, ltv }
+  }, [arpuStr, churnStr])
 
   return (
-    <FormCalculatorShell
-      title="Lifetime Value (LTV)"
-      subtitle="Customer lifetime value"
-      badge="BUSINESS"
-    >
-      <div>
-        <RetroInput label="Avg Purchase Value" value={avgPurchase} onChange={setAvgPurchase} unit="$" />
-        <RetroInput label="Purchase Frequency / yr" value={frequency} onChange={setFrequency} />
-        <RetroInput label="Customer Lifespan (yrs)" value={lifespan} onChange={setLifespan} />
-        <RetroInput label="Profit Margin" value={margin} onChange={setMargin} unit="%" />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Customer LTV" value={ltv.toFixed(2)} unit="$" large />
-          <ResultDisplay label="Total Customer Value" value={customerValue.toFixed(2)} unit="$" />
+    <FormCalculatorShell title="Customer Lifetime Value LTV Solver" subtitle="Estimate total expected user lifetime revenues using churn rates" badge="BUSINESS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Monthly Average Revenue per User (ARPU, $)" value={arpuStr} onChange={setArpuStr} id="ltv-a" />
+          <RetroInput label="Monthly Churn Rate (%)" value={churnStr} onChange={setChurnStr} id="ltv-c" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <path d={wobblyCircle(100, 40, circleR)} fill="none" stroke="#dfaa44" strokeWidth="3" opacity="0.8" />
-        <path d={wobblyCircle(100, 40, circleR * 0.5)} fill="#dfaa44" opacity="0.3" />
-        <text x="100" y="75" textAnchor="middle" className="fill-neutral-600" fontSize="8" fontFamily="monospace">LTV</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Customer Lifetime Value (LTV)" value={results.ltv.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

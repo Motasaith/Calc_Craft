@@ -1,49 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatPercent } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function CreditUtilizationCalculator() {
-  const [balance, setBalance] = useState('3000')
-  const [limit, setLimit] = useState('10000')
+  const [balanceStr, setBalanceStr] = useState('1500')
+  const [limitStr, setLimitStr] = useState('5000')
 
-  const b = parseFloat(balance)
-  const l = parseFloat(limit)
-  const valid = !isNaN(b) && !isNaN(l) && l > 0 && b >= 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, utilization: 0 }
+    const bal = parseFloat(balanceStr)
+    const lim = parseFloat(limitStr)
 
-  const utilization = valid ? b / l : 0
-  const available = valid ? l - b : 0
-  const barW = valid ? Math.min(utilization * 160, 160) : 0
-  const healthy = utilization <= 0.3
+    if (isNaN(bal) || isNaN(lim) || bal < 0 || lim <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const utilization = (bal / lim) * 100
+    return { error: null, utilization }
+  }, [balanceStr, limitStr])
 
   return (
-    <FormCalculatorShell
-      title="Credit Utilization Calculator"
-      subtitle="Balance vs total credit limit"
-      badge="FINANCE"
-    >
-      <RetroInput label="Total Balance" value={balance} onChange={setBalance} placeholder="e.g. 3000" id="cu-b" unit="$" />
-      <RetroInput label="Total Credit Limit" value={limit} onChange={setLimit} placeholder="e.g. 10000" id="cu-l" unit="$" />
-
-      {valid && (
-        <div className="mt-4 space-y-3">
-          <ResultDisplay label="Utilization Ratio" value={formatPercent(utilization)} large />
-          <ResultDisplay label="Available Credit" value={`$${available.toFixed(2)}`} />
-          <div className={`text-xs font-mono font-bold ${healthy ? 'text-green-700' : 'text-red-600'}`}>
-            {healthy ? '✓ Healthy (≤30%)' : '⚠ High (>30%)'}
-          </div>
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill={healthy ? '#5b8a72' : '#ab3232'} stroke="#3f6a55" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">0%</text>
-            <text x="160" y="58" fontSize="8" fontFamily="monospace" fill="#555">100%</text>
-          </svg>
+    <FormCalculatorShell title="Credit Utilization Ratio Solver" subtitle="Calculate credit utilization percentages" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Credit Card Balance ($)" value={balanceStr} onChange={setBalanceStr} id="cu-b" />
+          <RetroInput label="Total Credit Limit ($)" value={limitStr} onChange={setLimitStr} id="cu-l" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Utilization Ratio" value={`${results.utilization.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

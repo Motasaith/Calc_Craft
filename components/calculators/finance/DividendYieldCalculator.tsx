@@ -1,45 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatPercent } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function DividendYieldCalculator() {
-  const [dividend, setDividend] = useState('2.50')
-  const [price, setPrice] = useState('50')
+  const [dividendStr, setDividendStr] = useState('2.50') // annual dividend per share
+  const [priceStr, setPriceStr] = useState('50.00') // share price
 
-  const d = parseFloat(dividend)
-  const p = parseFloat(price)
-  const valid = !isNaN(d) && !isNaN(p) && p > 0 && d >= 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, yieldPct: 0 }
+    const div = parseFloat(dividendStr)
+    const price = parseFloat(priceStr)
 
-  const yieldPct = valid ? d / p : 0
-  const annualIncome = valid ? d * 100 : 0 // per 100 shares
-  const barW = valid ? Math.min(yieldPct * 600, 140) : 0
+    if (isNaN(div) || isNaN(price) || div < 0 || price <= 0) {
+      return { ...defaultObj, error: 'Please enter valid dividend values.' }
+    }
+
+    const yieldPct = (div / price) * 100
+    return { error: null, yieldPct }
+  }, [dividendStr, priceStr])
 
   return (
-    <FormCalculatorShell
-      title="Dividend Yield Calculator"
-      subtitle="Annual dividend vs share price"
-      badge="FINANCE"
-    >
-      <RetroInput label="Annual Dividend / Share" value={dividend} onChange={setDividend} placeholder="e.g. 2.50" id="dy-div" unit="$" />
-      <RetroInput label="Share Price" value={price} onChange={setPrice} placeholder="e.g. 50" id="dy-price" unit="$" />
-
-      {valid && (
-        <div className="mt-4 space-y-3">
-          <ResultDisplay label="Dividend Yield" value={formatPercent(yieldPct)} large />
-          <ResultDisplay label="Income / 100 Shares" value={`$${annualIncome.toFixed(2)}`} />
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill="#5b8a72" stroke="#3f6a55" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">0%</text>
-            <text x="160" y="58" fontSize="8" fontFamily="monospace" fill="#555">Yield</text>
-          </svg>
+    <FormCalculatorShell title="Dividend Yield Solver" subtitle="Calculate stock dividend yields from share prices" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Annual Dividend per Share ($)" value={dividendStr} onChange={setDividendStr} id="dy-d" />
+          <RetroInput label="Share Price ($)" value={priceStr} onChange={setPriceStr} id="dy-p" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Dividend Yield" value={`${results.yieldPct.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

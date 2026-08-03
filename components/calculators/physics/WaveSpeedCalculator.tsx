@@ -1,51 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyWave(cx: number, cy: number, amp: number, freq: number, width: number) {
-  const steps = 40
-  let path = `M ${cx} ${cy}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const x = cx + width * t
-    const y = cy + amp * Math.sin(freq * t * Math.PI * 2) + (Math.sin(i * 3.3) - 0.5) * 0.8
-    path += ` L ${x} ${y}`
-  }
-  return path
-}
-
 export default function WaveSpeedCalculator() {
-  const [freq, setFreq] = useState('440')
-  const [wavelen, setWavelen] = useState('0.78')
+  const [freqStr, setFreqStr] = useState('100') // Hz
+  const [wStr, setWStr] = useState('3.4') // wavelength meters
 
-  const f = parseFloat(freq), wl = parseFloat(wavelen)
-  const valid = !isNaN(f) && !isNaN(wl) && f >= 0 && wl > 0
-  const speed = valid ? f * wl : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, speed: 0 }
+    const f = parseFloat(freqStr)
+    const l = parseFloat(wStr)
+
+    if (isNaN(f) || isNaN(l) || f <= 0 || l <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const speed = f * l
+    return { error: null, speed }
+  }, [freqStr, wStr])
 
   return (
-    <FormCalculatorShell title="Wave Speed Calculator" subtitle="v = f × λ" badge="PHYSICS">
-      <RetroInput label="Frequency (f)" value={freq} onChange={setFreq} placeholder="e.g. 440" id="ws-f" unit="Hz" />
-      <RetroInput label="Wavelength (λ)" value={wavelen} onChange={setWavelen} placeholder="e.g. 0.78" id="ws-wl" unit="m" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Wave Speed" value={speed.toFixed(2)} unit="m/s" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Waveform</span>
-            <svg width="200" height="80" viewBox="0 0 200 80" className="select-none">
-              <defs>
-                <pattern id="wsGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="80" fill="url(#wsGrid)" rx="8" />
-              <path d={wobblyWave(15, 40, Math.min(25, 5 + f / 50), Math.min(4, 1 + f / 200), 170)} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" />
-              <text x="100" y="75" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#2563eb" fontWeight="bold">v = {speed.toFixed(1)} m/s</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Wave Propagation Speed Solver" subtitle="Calculate wave velocity v = f·λ from frequency and wavelength" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Frequency (Hz)" value={freqStr} onChange={setFreqStr} id="ws-f" />
+          <RetroInput label="Wavelength (meters)" value={wStr} onChange={setWStr} id="ws-l" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Wave Velocity (v)" value={`${results.speed.toFixed(2)} m/s`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

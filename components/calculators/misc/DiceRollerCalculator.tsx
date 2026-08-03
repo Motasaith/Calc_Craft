@@ -1,30 +1,56 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DiceRollerCalculator() {
-  const [count, setCount] = useState('2')
-  const [sides, setSides] = useState('6')
-  const [modifier, setModifier] = useState('0')
-  const [result, setResult] = useState<{rolls:number[],total:number}|null>(null)
+  const [diceStr, setDiceStr] = useState('2') // number of dice
+  const [sidesStr, setSidesStr] = useState('6') // number of sides
+  const [trigger, setTrigger] = useState(0)
 
-  const roll = () => {
-    const c = parseInt(count), s = parseInt(sides), m = parseInt(modifier)
-    if (isNaN(c)||isNaN(s)||isNaN(m) || c<1 || s<2) { setResult(null); return }
-    const rolls = Array.from({length:c}, () => Math.floor(Math.random() * s) + 1)
-    setResult({ rolls, total: rolls.reduce((a,b) => a+b, 0) + m })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, total: 0, rolls: [] as number[] }
+    const d = parseInt(diceStr)
+    const s = parseInt(sidesStr)
+
+    if (isNaN(d) || isNaN(s) || d <= 0 || s <= 1 || d > 20 || s > 100) {
+      return { ...defaultObj, error: 'Please enter valid parameters (max 20 dice, 100 sides).' }
+    }
+
+    let rolls: number[] = []
+    let total = 0
+    for (let i = 0; i < d; i++) {
+      const roll = Math.floor(Math.random() * s) + 1
+      rolls.push(roll)
+      total += roll
+    }
+
+    return { error: null, total, rolls }
+  }, [diceStr, sidesStr, trigger])
 
   return (
-    <FormCalculatorShell title="Dice Roller" badge="MISC">
-      <div className="grid grid-cols-3 gap-3"><RetroInput label="Dice" value={count} onChange={setCount} placeholder="2" id="dice-c" /><RetroInput label="Sides" value={sides} onChange={setSides} placeholder="6" id="dice-s" /><RetroInput label="Modifier" value={modifier} onChange={setModifier} placeholder="0" id="dice-m" /></div>
-      <div className="mt-4"><RetroActionButton onClick={roll} variant="primary" fullWidth>Roll</RetroActionButton></div>
-      {result && (
-        <div className="mt-4">
-          <div className="text-[10px] font-bold text-neutral-500 font-mono uppercase mb-1">Rolls: {result.rolls.join(', ')}</div>
-          <ResultDisplay label="Total" value={result.total} large />
+    <FormCalculatorShell title="Random Dice Roll Solver" subtitle="Roll multiple custom multi-sided dice distributions" badge="MISCELLANEOUS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Number of Dice" value={diceStr} onChange={setDiceStr} id="dr-d" />
+          <RetroInput label="Dice Sides" value={sidesStr} onChange={setSidesStr} id="dr-s" />
+          <button
+            onClick={() => setTrigger(p => p + 1)}
+            className="w-full bg-neutral-900 text-white font-mono p-3 rounded hover:bg-neutral-800 transition"
+          >
+            Roll Dice
+          </button>
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="space-y-4">
+              <ResultDisplay label="Total Sum" value={results.total.toString()} large />
+              <div className="font-mono text-xs text-neutral-600 bg-neutral-50 p-3 rounded border border-neutral-300">
+                Individual Rolls: {results.rolls.join(', ')}
+              </div>
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

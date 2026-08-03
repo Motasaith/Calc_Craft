@@ -1,56 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CircuitLoadCalculator() {
-  const [devices, setDevices] = useState('5')
-  const [wattage, setWattage] = useState('100')
+  const [wattsStr, setWattsStr] = useState('1500')
+  const [voltsStr, setVoltsStr] = useState('120')
 
-  const numDevices = parseFloat(devices) || 0
-  const wattsEach = parseFloat(wattage) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, amps: 0 }
+    const w = parseFloat(wattsStr)
+    const v = parseFloat(voltsStr)
 
-  const totalWatts = numDevices * wattsEach
-  const amps = totalWatts / 120 // assume 120V
-  // Breaker at 125% of load
-  const breaker = Math.ceil((amps * 1.25) / 5) * 5
+    if (isNaN(w) || isNaN(v) || w < 0 || v <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const valid = numDevices > 0 && wattsEach > 0
-
-  const barH = Math.min(80, totalWatts / 25)
+    const amps = w / v
+    return { error: null, amps }
+  }, [wattsStr, voltsStr])
 
   return (
-    <FormCalculatorShell
-      title="Circuit Load Calculator"
-      subtitle="Total load and breaker sizing"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Number of Devices" value={devices} onChange={setDevices} min={0} />
-        <RetroInput label="Wattage Each" value={wattage} onChange={setWattage} unit="W" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Total Watts" value={totalWatts.toLocaleString()} unit="W" large />
-            <ResultDisplay label="Current Draw" value={amps.toFixed(2)} unit="A" />
-            <ResultDisplay label="Breaker Size" value={breaker} unit="A" />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyBar(20, 90 - barH, 80, barH)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <line x1="10" y1="90" x2="110" y2="90" stroke="#888" strokeWidth="1.5" />
-          </svg>
+    <FormCalculatorShell title="Electrical Circuit Amperage Solver" subtitle="Calculate load current draw in Amps from Watts and Volts" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Connected Load (Watts)" value={wattsStr} onChange={setWattsStr} id="cl-w" />
+          <RetroInput label="Circuit Voltage (Volts)" value={voltsStr} onChange={setVoltsStr} id="cl-v" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Current Draw (Amps)" value={`${results.amps.toFixed(2)} Amps`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

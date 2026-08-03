@@ -1,56 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function WaterFeatureCalculator() {
-  const [length, setLength] = useState('10')
-  const [width, setWidth] = useState('6')
-  const [depth, setDepth] = useState('3')
+  const [lengthStr, setLengthStr] = useState('8')
+  const [widthStr, setWidthStr] = useState('6')
+  const [depthStr, setDepthStr] = useState('3') // feet
 
-  const len = parseFloat(length) || 0
-  const wid = parseFloat(width) || 0
-  const dep = parseFloat(depth) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, gallons: 0 }
+    const l = parseFloat(lengthStr)
+    const w = parseFloat(widthStr)
+    const d = parseFloat(depthStr)
 
-  const cubicFeet = len * wid * dep
-  const gallons = cubicFeet * 7.48
-  const liters = cubicFeet * 28.3168
+    if (isNaN(l) || isNaN(w) || isNaN(d) || l <= 0 || w <= 0 || d <= 0) {
+      return { ...defaultObj, error: 'Please enter valid pond dimensions.' }
+    }
 
-  const valid = len > 0 && wid > 0 && dep > 0
+    const volumeCuFt = l * w * d
+    const gallons = volumeCuFt * 7.48052 // 7.48 gallons in 1 cu ft
+
+    return { error: null, gallons }
+  }, [lengthStr, widthStr, depthStr])
 
   return (
-    <FormCalculatorShell
-      title="Water Feature Calculator"
-      subtitle="Compute pond or water feature volume"
-      badge="LANDSCAPING"
-    >
-      <div>
-        <RetroInput label="Length" value={length} onChange={setLength} unit="ft" min={0} />
-        <RetroInput label="Width" value={width} onChange={setWidth} unit="ft" min={0} />
-        <RetroInput label="Depth" value={depth} onChange={setDepth} unit="ft" min={0} step={0.5} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Volume" value={gallons.toFixed(1)} unit="gal" large />
-          <ResultDisplay label="Volume" value={liters.toFixed(1)} unit="L" />
+    <FormCalculatorShell title="Pond Volume Solver" subtitle="Calculate water capacity volume in gallons for garden water ponds" badge="LANDSCAPING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Pond Length (feet)" value={lengthStr} onChange={setLengthStr} id="wf-l" />
+          <RetroInput label="Pond Width (feet)" value={widthStr} onChange={setWidthStr} id="wf-w" />
+          <RetroInput label="Pond Depth (feet)" value={depthStr} onChange={setDepthStr} id="wf-d" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <rect x="0" y="0" width="200" height="80" fill="#c8d8e4" />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <path
-            key={i}
-            d={wobblyBar(20 + i * 35, 25 + (i % 2) * 4, 30, 35)}
-            fill="#3a6a8a"
-            opacity={valid ? 0.7 : 0.3}
-          />
-        ))}
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Water Volume Capacity" value={`${Math.round(results.gallons).toLocaleString()} Gallons`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,51 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(x: number, y: number, w: number) {
-  return `M ${x} ${y} Q ${x + w / 2} ${y - 6} ${x + w} ${y}`
-}
-
 export default function GradeCurveCalculator() {
-  const [raw, setRaw] = useState('72')
-  const [highest, setHighest] = useState('88')
-  const [target, setTarget] = useState('100')
+  const [scoreStr, setScoreStr] = useState('64') // raw score out of 100
 
-  const r = parseFloat(raw)
-  const h = parseFloat(highest)
-  const t = parseFloat(target)
-
-  const valid = !isNaN(r) && !isNaN(h) && !isNaN(t) && h > 0 && t > 0 && r >= 0
-
-  // Linear curve: scale so highest maps to target
-  const curved = valid ? Math.min(t, (r / h) * t) : 0
-  const adjustment = valid ? curved - r : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, curved: 0 }
+    const raw = parseFloat(scoreStr)
+    if (isNaN(raw) || raw < 0 || raw > 100) return { ...defaultObj, error: 'Please enter a raw score between 0 and 100.' }
+    // Square Root Curve: curved = 10 * sqrt(raw)
+    const curved = 10 * Math.sqrt(raw)
+    return { error: null, curved }
+  }, [scoreStr])
 
   return (
-    <FormCalculatorShell
-      title="Grade Curve"
-      subtitle="Adjust scores to a target max"
-      badge="EDUCATION"
-    >
-      <div>
-        <RetroInput label="Your Raw Score" value={raw} onChange={setRaw} unit="pts" />
-        <RetroInput label="Highest in Class" value={highest} onChange={setHighest} unit="pts" />
-        <RetroInput label="Target Max Score" value={target} onChange={setTarget} unit="pts" />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-3">
-          <ResultDisplay label="Curved Score" value={curved.toFixed(1)} unit="pts" large />
-          <ResultDisplay label="Adjustment" value={(adjustment >= 0 ? '+' : '') + adjustment.toFixed(1)} unit="pts" />
+    <FormCalculatorShell title="Square Root Grade Curve Solver" subtitle="Calculate curved test scores using the square root method" badge="EDUCATION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Raw Score (0 to 100)" value={scoreStr} onChange={setScoreStr} id="gc-s" />
         </div>
-      )}
-
-      {valid && (
-        <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-          <path d={wobblyLine(10, 55 - (r / t) * 50, 80)} stroke="#ab3232" strokeWidth="3" fill="none" />
-          <path d={wobblyLine(110, 55 - (curved / t) * 50, 80)} stroke="#dfaa44" strokeWidth="3" fill="none" />
-        </svg>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Curved Grade Score" value={results.curved.toFixed(1)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

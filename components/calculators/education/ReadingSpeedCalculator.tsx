@@ -1,50 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function ReadingSpeedCalculator() {
-  const [words, setWords] = useState('2000')
-  const [minutes, setMinutes] = useState('10')
-  const [otherWords, setOtherWords] = useState('5000')
+  const [wordsStr, setWordsStr] = useState('3000')
+  const [wpmStr, setWpmStr] = useState('250') // words per minute average
 
-  const wd = parseFloat(words)
-  const m = parseFloat(minutes)
-  const ow = parseFloat(otherWords)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, minutes: 0 }
+    const words = parseFloat(wordsStr)
+    const wpm = parseFloat(wpmStr)
 
-  const valid = !isNaN(wd) && !isNaN(m) && m > 0 && wd > 0
+    if (isNaN(words) || isNaN(wpm) || words <= 0 || wpm <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
 
-  const wpm = valid ? wd / m : 0
-  const estTime = valid && !isNaN(ow) && ow > 0 ? ow / wpm : 0
+    const minutes = words / wpm
+    return { error: null, minutes }
+  }, [wordsStr, wpmStr])
 
   return (
-    <FormCalculatorShell
-      title="Reading Speed"
-      subtitle="Words per minute & estimates"
-      badge="EDUCATION"
-    >
-      <div>
-        <RetroInput label="Words Read" value={words} onChange={setWords} unit="words" />
-        <RetroInput label="Time Taken" value={minutes} onChange={setMinutes} unit="min" />
-        <RetroInput label="Other Text Length" value={otherWords} onChange={setOtherWords} unit="words" />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-3">
-          <ResultDisplay label="Reading Speed" value={wpm.toFixed(0)} unit="WPM" large />
-          <ResultDisplay label="Est. Time for Other" value={estTime.toFixed(1)} unit="min" />
+    <FormCalculatorShell title="Reading Duration Time Solver" subtitle="Estimate reading times based on text length and speed rates" badge="EDUCATION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Word Count" value={wordsStr} onChange={setWordsStr} id="rs-w" />
+          <RetroInput label="Reading Speed (WPM)" value={wpmStr} onChange={setWpmStr} id="rs-sp" />
         </div>
-      )}
-
-      {valid && (
-        <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-          <path d={wobblyBar(20, 55 - Math.min(50, (wpm / 500) * 50), 70, Math.min(50, (wpm / 500) * 50))} fill="#dfaa44" stroke="#be8b32" strokeWidth="1" />
-          <path d={wobblyBar(110, 55 - Math.min(50, (estTime / 60) * 50), 70, Math.min(50, (estTime / 60) * 50))} fill="#7a9a7a" stroke="#5a7a5a" strokeWidth="1" />
-        </svg>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Estimated Read Time" value={`${results.minutes.toFixed(1)} minutes`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

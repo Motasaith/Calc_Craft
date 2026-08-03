@@ -1,46 +1,38 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function DrainageCalculator() {
-  const [diameter, setDiameter] = useState('4')
-  const [slope, setSlope] = useState('1')
+  const [fallStr, setFallStr] = useState('2') // inches
+  const [runStr, setRunStr] = useState('10') // feet
 
-  const d = parseFloat(diameter), s = parseFloat(slope)
-  const valid = !isNaN(d) && !isNaN(s) && d > 0 && s > 0
-  // Manning equation approximation for drainage capacity
-  // Q (GPM) ≈ 0.040 × d^2.67 × sqrt(s)  (d in inches, s in %)
-  const gpm = valid ? 0.040 * Math.pow(d, 2.67) * Math.sqrt(s) : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, slope: 0 }
+    const f = parseFloat(fallStr)
+    const r = parseFloat(runStr)
+
+    if (isNaN(f) || isNaN(r) || f < 0 || r <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // slope = fall_inches / (run_feet * 12)
+    const slope = f / (r * 12)
+    return { error: null, slope: slope * 100 }
+  }, [fallStr, runStr])
 
   return (
-    <FormCalculatorShell title="Drainage Calculator" subtitle="Q = 0.040 × d^2.67 × √s" badge="PLUMBING">
-      <RetroInput label="Pipe Diameter" value={diameter} onChange={setDiameter} placeholder="4" id="dr-d" unit="in" />
-      <RetroInput label="Slope" value={slope} onChange={setSlope} placeholder="1" id="dr-s" unit="%" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-1 gap-3">
-            <ResultDisplay label="Drainage Capacity" value={gpm.toFixed(1)} unit="GPM" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Drain Flow</span>
-            <svg width="160" height="90" viewBox="0 0 160 90" className="select-none">
-              <defs>
-                <pattern id="drGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="90" fill="url(#drGrid)" rx="8" />
-              <path d={wobblyBar(15, 50, 130, 20)} fill="#cbd5e1" fillOpacity="0.3" stroke="#64748b" strokeWidth="2" />
-              <path d={wobblyBar(15, 53, Math.min(130, gpm * 2), 14)} fill="#22c55e" fillOpacity="0.4" stroke="#16a34a" strokeWidth="1.5" />
-              <text x="80" y="85" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#16a34a" fontWeight="bold">{gpm.toFixed(0)} GPM</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Drainage Pipe Slope Solver" subtitle="Calculate fall slope ratios for drainage pipes" badge="PLUMBING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Drop Fall (inches)" value={fallStr} onChange={setFallStr} id="dr-f" />
+          <RetroInput label="Horizontal Run (feet)" value={runStr} onChange={setRunStr} id="dr-r" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Slope Percentage" value={`${results.slope.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

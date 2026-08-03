@@ -1,53 +1,43 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy}`
-}
-
 export default function ScholarshipEligibilityCalculator() {
-  const [gpa, setGpa] = useState('3.6')
-  const [sat, setSat] = useState('1280')
-  const [service, setService] = useState('50')
+  const [gpaStr, setGpaStr] = useState('3.5')
+  const [satStr, setSatStr] = useState('1300')
 
-  const g = parseFloat(gpa)
-  const s = parseFloat(sat)
-  const sv = parseFloat(service)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, eligible: '' }
+    const gpa = parseFloat(gpaStr)
+    const sat = parseInt(satStr)
 
-  const valid = !isNaN(g) && !isNaN(s) && !isNaN(sv) && g >= 0 && g <= 4 && s >= 0 && sv >= 0
+    if (isNaN(gpa) || isNaN(sat) || gpa < 0 || gpa > 4.0 || sat < 400 || sat > 1600) {
+      return { ...defaultObj, error: 'Please enter valid GPA (0-4.0) and SAT (400-1600).' }
+    }
 
-  // Score: gpa/4 * 40 + sat/1600 * 40 + min(service,100)/100 * 20
-  const score = valid ? (g / 4) * 40 + (s / 1600) * 40 + Math.min(sv, 100) / 100 * 20 : 0
-  let status = 'Not Eligible'
-  if (score >= 85) status = 'Full Scholarship'
-  else if (score >= 70) status = 'Partial Scholarship'
-  else if (score >= 55) status = 'Honorable Mention'
+    let eligible = 'Needs improvement for standard grants.'
+    if (gpa >= 3.5 && sat >= 1300) {
+      eligible = 'Highly Eligible for Merit Scholarships'
+    } else if (gpa >= 3.0 && sat >= 1100) {
+      eligible = 'Eligible for General Aid and Scholarships'
+    }
+
+    return { error: null, eligible }
+  }, [gpaStr, satStr])
 
   return (
-    <FormCalculatorShell
-      title="Scholarship Eligibility"
-      subtitle="Check eligibility from GPA & scores"
-      badge="EDUCATION"
-    >
-      <div>
-        <RetroInput label="GPA" value={gpa} onChange={setGpa} unit="/4.0" step={0.1} min={0} max={4} />
-        <RetroInput label="SAT Score" value={sat} onChange={setSat} unit="/1600" min={0} max={1600} />
-        <RetroInput label="Community Service" value={service} onChange={setService} unit="hrs" />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-3">
-          <ResultDisplay label="Eligibility Score" value={score.toFixed(1)} unit="/100" large />
-          <ResultDisplay label="Status" value={status} />
+    <FormCalculatorShell title="Scholarship Eligibility Evaluator" subtitle="Check prospective academic award levels using GPA and SAT criteria" badge="EDUCATION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Cumulative GPA (4.0 scale)" value={gpaStr} onChange={setGpaStr} id="se-g" />
+          <RetroInput label="SAT Score (400 to 1600)" value={satStr} onChange={setSatStr} id="se-s" />
         </div>
-      )}
-
-      {valid && (
-        <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-          <path d={wobblyCircle(100, 30, Math.min(25, (score / 100) * 25))} fill="#dfaa44" stroke="#be8b32" strokeWidth="1" opacity="0.7" />
-        </svg>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Award Standing Status" value={results.eligible} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

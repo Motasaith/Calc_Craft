@@ -1,69 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]} ${p[1]}`).join(' ')
-}
-
 export default function NPVCalculator() {
-  const [initial, setInitial] = useState('10000')
-  const [cashFlow, setCashFlow] = useState('3000')
-  const [discount, setDiscount] = useState('10')
-  const [years, setYears] = useState('5')
+  const [discountStr, setDiscountStr] = useState('8') // % discount rate
+  const [flowsStr, setFlowsStr] = useState('-10000, 3000, 4000, 5000')
 
-  const inv = parseFloat(initial) || 0
-  const cf = parseFloat(cashFlow) || 0
-  const dr = parseFloat(discount) || 0
-  const yr = parseInt(years) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, npv: 0 }
+    const rate = parseFloat(discountStr)
+    const flows = flowsStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
 
-  let npv = -inv
-  const yearlyValues: number[] = []
-  for (let t = 1; t <= yr; t++) {
-    const pv = cf / Math.pow(1 + dr / 100, t)
-    npv += pv
-    yearlyValues.push(pv)
-  }
-  const valid = inv > 0 && cf > 0 && yr > 0
+    if (isNaN(rate) || rate < 0 || flows.length < 1) {
+      return { ...defaultObj, error: 'Please enter valid discount rate and cash flows.' }
+    }
 
-  const pts: [number, number][] = yearlyValues.map((v, i) => {
-    const x = 20 + (i * 160) / Math.max(1, yr - 1 || 1)
-    const y = 70 - Math.min(50, Math.max(0, v / inv * 50))
-    return [x, y]
-  })
+    const r = rate / 100
+    let npv = 0
+    for (let t = 0; t < flows.length; t++) {
+      npv += flows[t] / Math.pow(1 + r, t)
+    }
+
+    return { error: null, npv }
+  }, [discountStr, flowsStr])
 
   return (
-    <FormCalculatorShell
-      title="NPV Calculator"
-      subtitle="Net Present Value of cash flows"
-      badge="BUSINESS"
-    >
-      <div>
-        <RetroInput label="Initial Investment" value={initial} onChange={setInitial} unit="$" />
-        <RetroInput label="Annual Cash Flow" value={cashFlow} onChange={setCashFlow} unit="$" />
-        <RetroInput label="Discount Rate" value={discount} onChange={setDiscount} unit="%" />
-        <RetroInput label="Years" value={years} onChange={setYears} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay
-            label="Net Present Value"
-            value={`${npv >= 0 ? '+' : ''}${npv.toFixed(2)}`}
-            unit="$"
-            large
-          />
+    <FormCalculatorShell title="Net Present Value NPV Solver" subtitle="Discount cash flows to evaluate capital investment prospects" badge="BUSINESS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Discount Rate (%)" value={discountStr} onChange={setDiscountStr} id="npv-r" />
+          <RetroInput label="Cash Flows Array (Initial Outlay first)" value={flowsStr} onChange={setFlowsStr} id="npv-f" />
         </div>
-      )}
-
-      {pts.length > 1 && (
-        <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-          <path d={wobblyLine(pts)} fill="none" stroke="#dfaa44" strokeWidth="2" opacity="0.9" />
-          {pts.map((p, i) => (
-            <circle key={i} cx={p[0]} cy={p[1]} r="2" fill="#9ca8af" />
-          ))}
-        </svg>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Net Present Value (NPV)" value={results.npv.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

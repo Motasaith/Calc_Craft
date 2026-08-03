@@ -1,67 +1,44 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]} ${p[1]}`).join(' ')
-}
-
 export default function IRRCalculator() {
-  const [initial, setInitial] = useState('10000')
-  const [cashFlow, setCashFlow] = useState('2500')
-  const [years, setYears] = useState('5')
+  const [flowsStr, setFlowsStr] = useState('-10000, 3000, 4000, 5000')
 
-  const inv = parseFloat(initial) || 0
-  const cf = parseFloat(cashFlow) || 0
-  const yr = parseInt(years) || 0
-  const valid = inv > 0 && cf > 0 && yr > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, irr: 0 }
+    const flows = flowsStr.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n))
+    if (flows.length < 2) return { ...defaultObj, error: 'Please enter at least 2 flows.' }
 
-  // Estimate IRR via bisection: solve inv = sum(cf/(1+r)^t)
-  let lo = -0.99
-  let hi = 10
-  let irr = 0
-  for (let i = 0; i < 100; i++) {
-    const mid = (lo + hi) / 2
-    let npv = -inv
-    for (let t = 1; t <= yr; t++) npv += cf / Math.pow(1 + mid, t)
-    if (npv > 0) lo = mid
-    else hi = mid
-    irr = mid
-  }
+    // Simple brute-force IRR guess (0% to 100%)
+    let bestRate = 0
+    let minNpvAbs = Infinity
+    for (let r = -0.2; r <= 1.0; r += 0.001) {
+      let npv = 0
+      for (let t = 0; t < flows.length; t++) {
+        npv += flows[t] / Math.pow(1 + r, t)
+      }
+      if (Math.abs(npv) < minNpvAbs) {
+        minNpvAbs = Math.abs(npv)
+        bestRate = r
+      }
+    }
 
-  const pts: [number, number][] = []
-  for (let i = 0; i <= 20; i++) {
-    const r = -0.5 + (i / 20) * 1.5
-    let npv = -inv
-    for (let t = 1; t <= yr; t++) npv += cf / Math.pow(1 + r, t)
-    const x = 10 + i * 9
-    const y = 70 - Math.max(-30, Math.min(50, npv / inv * 30))
-    pts.push([x, y])
-  }
+    return { error: null, irr: bestRate * 100 }
+  }, [flowsStr])
 
   return (
-    <FormCalculatorShell
-      title="IRR Calculator"
-      subtitle="Estimate internal rate of return"
-      badge="BUSINESS"
-    >
-      <div>
-        <RetroInput label="Initial Investment" value={initial} onChange={setInitial} unit="$" />
-        <RetroInput label="Annual Cash Flow" value={cashFlow} onChange={setCashFlow} unit="$" />
-        <RetroInput label="Years" value={years} onChange={setYears} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Approx. IRR" value={(irr * 100).toFixed(2)} unit="%" large />
+    <FormCalculatorShell title="Internal Rate of Return IRR Solver" subtitle="Estimate IRR percentage yields on project capital outflows" badge="BUSINESS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Cash Flows Series (Initial Outlay first)" value={flowsStr} onChange={setFlowsStr} id="irr-f" />
         </div>
-      )}
-
-      {pts.length > 1 && (
-        <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-          <path d={wobblyLine(pts)} fill="none" stroke="#dfaa44" strokeWidth="2" opacity="0.9" />
-        </svg>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Estimated IRR Yield" value={`${results.irr.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,53 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`
-}
-
 export default function PowerFactorCalculator() {
-  const [realPower, setRealPower] = useState('8')
-  const [apparentPower, setApparentPower] = useState('10')
+  const [realPowerStr, setRealPowerStr] = useState('800') // Watts
+  const [appPowerStr, setAppPowerStr] = useState('1000') // VA
 
-  const real = parseFloat(realPower) || 0
-  const apparent = parseFloat(apparentPower) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, pf: 0 }
+    const p = parseFloat(realPowerStr)
+    const s = parseFloat(appPowerStr)
 
-  const pf = apparent > 0 ? real / apparent : 0
-  const reactive = apparent > 0 ? Math.sqrt(Math.max(0, apparent * apparent - real * real)) : 0
+    if (isNaN(p) || isNaN(s) || p < 0 || s <= 0 || p > s) {
+      return { ...defaultObj, error: 'Apparent power must be positive and greater than real power.' }
+    }
 
-  const valid = real > 0 && apparent > 0 && apparent >= real
-
-  const radius = Math.min(40, pf * 40)
+    const pf = p / s
+    return { error: null, pf }
+  }, [realPowerStr, appPowerStr])
 
   return (
-    <FormCalculatorShell
-      title="Power Factor Calculator"
-      subtitle="Real power vs apparent power"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Real Power" value={realPower} onChange={setRealPower} unit="kW" min={0} />
-        <RetroInput label="Apparent Power" value={apparentPower} onChange={setApparentPower} unit="kVA" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Power Factor" value={pf.toFixed(3)} large />
-            <ResultDisplay label="Reactive Power" value={reactive.toFixed(3)} unit="kVAR" />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyCircle(60, 50, 40)} fill="none" stroke="#b0bdae" strokeWidth="2" />
-            <path d={wobblyCircle(60, 50, radius)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-          </svg>
+    <FormCalculatorShell title="Electrical Power Factor Solver" subtitle="Calculate system power factor (PF) efficiency ratios" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Real Power (Watts, W)" value={realPowerStr} onChange={setRealPowerStr} id="pf-p" />
+          <RetroInput label="Apparent Power (Volt-Amps, VA)" value={appPowerStr} onChange={setAppPowerStr} id="pf-s" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Power Factor Efficiency" value={results.pf.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

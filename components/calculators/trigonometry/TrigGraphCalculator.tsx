@@ -1,34 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function TrigGraphCalculator() {
-  const [func, setFunc] = useState<'sin' | 'cos' | 'tan' | 'sec' | 'csc' | 'cot'>('sin')
-  const [angle, setAngle] = useState('30')
-  const [result, setResult] = useState('')
+  const [ampStr, setAmpStr] = useState('1') // amplitude A
+  const [freqStr, setFreqStr] = useState('1') // frequency B
 
-  const calculate = () => {
-    const a = parseFloat(angle) * Math.PI / 180
-    if (isNaN(a)) { setResult('Invalid'); return }
-    const sin = Math.sin(a), cos = Math.cos(a), tan = Math.tan(a)
-    let val = 0
-    switch (func) {
-      case 'sin': val = sin; break
-      case 'cos': val = cos; break
-      case 'tan': val = tan; break
-      case 'sec': val = 1/cos; break
-      case 'csc': val = 1/sin; break
-      case 'cot': val = 1/tan; break
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, period: 0 }
+    const a = parseFloat(ampStr)
+    const b = parseFloat(freqStr)
+
+    if (isNaN(a) || isNaN(b) || b === 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters (frequency cannot be zero).' }
     }
-    setResult(`${func}(${angle}°) = ${val.toFixed(6)}`)
-  }
+
+    const period = (2 * Math.PI) / Math.abs(b)
+    return { error: null, period }
+  }, [ampStr, freqStr])
 
   return (
-    <FormCalculatorShell title="Trig Evaluator" badge="TRIGONOMETRY">
-      <RetroSelect label="Function" value={func} onChange={(v) => { setFunc(v as any); setResult('') }} options={[{value:'sin',label:'sin'},{value:'cos',label:'cos'},{value:'tan',label:'tan'},{value:'sec',label:'sec'},{value:'csc',label:'csc'},{value:'cot',label:'cot'}]} id="tg-f" />
-      <RetroInput label="Angle (°)" value={angle} onChange={setAngle} placeholder="30" id="tg-a" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Evaluate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
+    <FormCalculatorShell title="Sine Wave Period Solver" subtitle="Calculate period boundaries of sine curves y = A·sin(B·x)" badge="TRIGONOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Amplitude (A)" value={ampStr} onChange={setAmpStr} id="tg-a" />
+          <RetroInput label="Frequency (B)" value={freqStr} onChange={setFreqStr} id="tg-f" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Wave Period" value={results.period.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

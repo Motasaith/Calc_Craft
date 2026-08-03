@@ -1,47 +1,37 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function ChurnRateCalculator() {
-  const [startCustomers, setStartCustomers] = useState('1000')
-  const [lostCustomers, setLostCustomers] = useState('50')
+  const [lostStr, setLostStr] = useState('5') // lost customers
+  const [startStr, setStartStr] = useState('100') // starting customers
 
-  const start = parseFloat(startCustomers) || 0
-  const lost = parseFloat(lostCustomers) || 0
-  const churnRate = start > 0 ? (lost / start) * 100 : 0
-  const retained = start - lost
-  const valid = start > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, churn: 0 }
+    const lost = parseFloat(lostStr)
+    const start = parseFloat(startStr)
 
-  const lostW = Math.min(160, Math.max(2, (lost / Math.max(1, start)) * 160))
-  const retainedW = 160 - lostW
+    if (isNaN(lost) || isNaN(start) || lost < 0 || start <= 0 || lost > start) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const churn = (lost / start) * 100
+    return { error: null, churn }
+  }, [lostStr, startStr])
 
   return (
-    <FormCalculatorShell
-      title="Churn Rate Calculator"
-      subtitle="Customer churn percentage"
-      badge="BUSINESS"
-    >
-      <div>
-        <RetroInput label="Customers at Start" value={startCustomers} onChange={setStartCustomers} />
-        <RetroInput label="Customers Lost" value={lostCustomers} onChange={setLostCustomers} />
-      </div>
-
-      {valid && (
-        <div className="space-y-2 mb-4">
-          <ResultDisplay label="Churn Rate" value={churnRate.toFixed(2)} unit="%" large />
-          <ResultDisplay label="Retained" value={retained.toFixed(0)} unit="customers" />
+    <FormCalculatorShell title="Customer Churn Rate Solver" subtitle="Calculate percentage customer churn rates over interval periods" badge="BUSINESS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Lost Customers during period" value={lostStr} onChange={setLostStr} id="cr-l" />
+          <RetroInput label="Starting Customers count" value={startStr} onChange={setStartStr} id="cr-s" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 mt-auto">
-        <path d={wobblyBar(20, 30, retainedW, 20)} fill="#5a8a5a" opacity="0.8" />
-        <path d={wobblyBar(20 + retainedW, 30, lostW, 20)} fill="#ab3232" opacity="0.8" />
-        <text x="20" y="22" className="fill-neutral-600" fontSize="8" fontFamily="monospace">RETAINED vs LOST</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Churn Rate Percentage" value={`${results.churn.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

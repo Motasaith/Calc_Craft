@@ -1,61 +1,35 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function InheritanceCalculator() {
-  const [estate, setEstate] = useState('100000')
-  const [hasSpouse, setHasSpouse] = useState('yes')
-  const [sons, setSons] = useState('2')
-  const [daughters, setDaughters] = useState('1')
-  const [parents, setParents] = useState('both')
-  const [result, setResult] = useState<Record<string,number>|null>(null)
+  const [estateStr, setEstateStr] = useState('100000')
 
-  const calculate = () => {
-    const e = parseFloat(estate)
-    const s = parseInt(sons), d = parseInt(daughters)
-    if (isNaN(e)||isNaN(s)||isNaN(d)) { setResult(null); return }
-    let remaining = e
-    const shares: Record<string,number> = {}
-    if (hasSpouse === 'yes') {
-      const spouseShare = e * 0.125
-      shares['Spouse'] = spouseShare
-      remaining -= spouseShare
-    }
-    if (parents === 'both' || parents === 'father') {
-      const fatherShare = e * 0.1667
-      shares['Father'] = fatherShare
-      remaining -= fatherShare
-    }
-    if (parents === 'both' || parents === 'mother') {
-      const motherShare = e * 0.1667
-      shares['Mother'] = motherShare
-      remaining -= motherShare
-    }
-    const totalParts = s * 2 + d
-    if (totalParts > 0) {
-      const partValue = remaining / totalParts
-      for (let i = 1; i <= s; i++) shares[`Son ${i}`] = partValue * 2
-      for (let i = 1; i <= d; i++) shares[`Daughter ${i}`] = partValue
-    }
-    setResult(shares)
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, wifeShare: 0, childrenShare: 0 }
+    const estate = parseFloat(estateStr)
+    if (isNaN(estate) || estate <= 0) return { ...defaultObj, error: 'Please enter valid estate values.' }
+    // Simple Shariah case: Wife gets 1/8 (12.5%), children split the rest
+    const wifeShare = estate * 0.125
+    const childrenShare = estate * 0.875
+    return { error: null, wifeShare, childrenShare }
+  }, [estateStr])
 
   return (
-    <FormCalculatorShell title="Islamic Inheritance" badge="ISLAMIC">
-      <RetroInput label="Estate Value" value={estate} onChange={setEstate} placeholder="100000" id="inh-est" unit="$" />
-      <RetroSelect label="Spouse" value={hasSpouse} onChange={setHasSpouse} options={[{value:'yes',label:'Yes'},{value:'no',label:'No'}]} id="inh-spouse" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Sons" value={sons} onChange={setSons} placeholder="2" id="inh-sons" />
-        <RetroInput label="Daughters" value={daughters} onChange={setDaughters} placeholder="1" id="inh-dau" />
-      </div>
-      <RetroSelect label="Parents" value={parents} onChange={setParents} options={[{value:'both',label:'Both'},{value:'father',label:'Father only'},{value:'mother',label:'Mother only'},{value:'none',label:'None'}]} id="inh-par" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate Shares</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          {Object.entries(result).map(([k,v]) => <ResultDisplay key={k} label={k} value={formatCurrency(v)} />)}
+    <FormCalculatorShell title="Islamic Inheritance Shares Solver" subtitle="Estimate basic Shariah inheritance portions for surviving wife and children" badge="ISLAMIC">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Net Estate Value ($)" value={estateStr} onChange={setEstateStr} id="inh-e" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Wife Share (1/8)" value={results.wifeShare.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} />
+              <ResultDisplay label="Children Share (Residual)" value={results.childrenShare.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

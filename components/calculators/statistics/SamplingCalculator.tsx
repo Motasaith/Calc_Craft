@@ -1,33 +1,45 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function SamplingCalculator() {
-  const [population, setPopulation] = useState('10000')
-  const [confidence, setConfidence] = useState('95')
-  const [margin, setMargin] = useState('5')
-  const [p, setP] = useState('0.5')
-  const [result, setResult] = useState('')
+  const [confidenceStr, setConfidenceStr] = useState('95') // %
+  const [errorStr, setErrorStr] = useState('5') // % margin of error
 
-  const zMap: Record<string,number> = { '90':1.645, '95':1.96, '99':2.576 }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, size: 0 }
+    const conf = parseFloat(confidenceStr)
+    const me = parseFloat(errorStr)
 
-  const calculate = () => {
-    const N = parseFloat(population), m = parseFloat(margin)/100, pv = parseFloat(p)
-    const z = zMap[confidence] || 1.96
-    if (isNaN(N)||isNaN(m)||isNaN(pv) || m<=0 || m>=1) { setResult('Invalid'); return }
-    const n0 = (z*z * pv * (1-pv)) / (m*m)
-    const n = N > 0 ? Math.ceil((n0 * N) / (n0 + N - 1)) : Math.ceil(n0)
-    setResult(`${n.toLocaleString()}`)
-  }
+    if (isNaN(conf) || isNaN(me) || me <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // Z-score lookup for common sizes
+    let z = 1.96 // default 95%
+    if (conf === 90) z = 1.645
+    else if (conf === 99) z = 2.576
+
+    const p = 0.5 // maximum variance assumption
+    const meDec = me / 100
+    const size = (z * z * p * (1 - p)) / (meDec * meDec)
+
+    return { error: null, size: Math.ceil(size) }
+  }, [confidenceStr, errorStr])
 
   return (
-    <FormCalculatorShell title="Sample Size" badge="STATISTICS">
-      <RetroInput label="Population (0 = infinite)" value={population} onChange={setPopulation} placeholder="10000" id="sam-n" />
-      <RetroSelect label="Confidence" value={confidence} onChange={setConfidence} options={[{value:'90',label:'90%'},{value:'95',label:'95%'},{value:'99',label:'99%'}]} id="sam-c" />
-      <RetroInput label="Margin of Error (%)" value={margin} onChange={setMargin} placeholder="5" id="sam-m" />
-      <RetroInput label="Expected Proportion" value={p} onChange={setP} placeholder="0.5" id="sam-p" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Required Sample Size" value={result} large /></div>}
+    <FormCalculatorShell title="Statistical Sample Size Solver" subtitle="Calculate required sample survey respondents count" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Confidence Level (%) (90, 95, or 99)" value={confidenceStr} onChange={setConfidenceStr} id="sm-c" />
+          <RetroInput label="Margin of Error (%)" value={errorStr} onChange={setErrorStr} id="sm-e" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Required Sample Size" value={results.size.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

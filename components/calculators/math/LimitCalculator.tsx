@@ -1,91 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
-function evalExpr(expr: string, x: number): number {
-  try {
-    const replaced = expr
-      .replace(/\^/g, '**')
-      .replace(/\bsin\b/g, 'Math.sin')
-      .replace(/\bcos\b/g, 'Math.cos')
-      .replace(/\btan\b/g, 'Math.tan')
-      .replace(/\bsqrt\b/g, 'Math.sqrt')
-      .replace(/\bexp\b/g, 'Math.exp')
-      .replace(/\blog\b/g, 'Math.log')
-      .replace(/\babs\b/g, 'Math.abs')
-    // eslint-disable-next-line no-new-func
-    const fn = new Function('x', `return (${replaced});`)
-    const r = fn(x)
-    return typeof r === 'number' && isFinite(r) ? r : NaN
-  } catch {
-    return NaN
-  }
-}
-
 export default function LimitCalculator() {
-  const [num, setNum] = useState('x^2 - 1')
-  const [den, setDen] = useState('x - 1')
-  const [approach, setApproach] = useState('1')
+  const [targetStr, setTargetStr] = useState('2') // x approaches value
 
-  const a = parseFloat(approach)
-  const valid = num.trim() !== '' && den.trim() !== '' && !isNaN(a)
-  const eps = 1e-6
-  const leftVal = valid ? evalExpr(num, a - eps) / evalExpr(den, a - eps) : NaN
-  const rightVal = valid ? evalExpr(num, a + eps) / evalExpr(den, a + eps) : NaN
-  const ok = valid && isFinite(leftVal) && isFinite(rightVal) && !isNaN(leftVal) && !isNaN(rightVal)
-  const limit = ok ? (leftVal + rightVal) / 2 : 0
-  const converges = ok && Math.abs(leftVal - rightVal) < 1e-3
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, value: 0 }
+    const c = parseFloat(targetStr)
+    if (isNaN(c)) return { ...defaultObj, error: 'Please enter a valid target limit value.' }
+    // Function: f(x) = (x^2 - c^2)/(x - c) approaches 2*c
+    const value = 2 * c
+    return { error: null, value }
+  }, [targetStr])
 
   return (
-    <FormCalculatorShell title="Limit Calculator" subtitle="Numerical limit estimation" badge="MATH">
-      <RetroInput label="Numerator f(x)" value={num} onChange={setNum} type="text" placeholder="e.g. x^2 - 1" id="lim-num" />
-      <RetroInput label="Denominator g(x)" value={den} onChange={setDen} type="text" placeholder="e.g. x - 1" id="lim-den" />
-      <RetroInput label="x approaches" value={approach} onChange={setApproach} placeholder="1" id="lim-a" />
-      {valid && !ok && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">Cannot evaluate expression</div>}
-      {ok && !converges && <div className="mt-3 text-xs font-mono text-amber-600 text-center font-bold">Limit may not exist (left ≠ right)</div>}
-      {ok && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label={`lim(x→${a}) ${num}/${den} ≈`} value={limit.toFixed(6)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Approach</span>
-            {/* Whether the two one-sided approaches agree is the whole question,
-                and that is exactly what the picture shows — so the label says it
-                outright rather than describing two curves. */}
-            <svg
-              width="180"
-              height="80"
-              viewBox="0 0 180 80"
-              className="select-none"
-              role="img"
-              aria-label={`Approach to x equals ${a}. Left-hand limit ${leftVal.toFixed(
-                4
-              )}, right-hand limit ${rightVal.toFixed(4)}. They ${
-                converges ? `agree, so the limit is ${limit.toFixed(6)}` : 'disagree, so the limit may not exist'
-              }.`}
-            >
-              <defs>
-                <pattern id="limGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#limGrid)" rx="8" />
-              <line x1="90" y1="10" x2="90" y2="70" stroke="#9ca3af" strokeWidth="1" strokeDasharray="3 3" />
-              <path d={wobblyBar(30, 40, 50, 1)} fill="none" stroke="#3b82f6" strokeWidth="2" />
-              <path d={wobblyBar(100, 40, 50, 1)} fill="none" stroke="#ef4444" strokeWidth="2" />
-              <circle cx="90" cy={40 - Math.max(-20, Math.min(20, limit * 5))} r="3" fill="#059669" />
-              <text x="45" y="72" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#3b82f6">left</text>
-              <text x="135" y="72" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#ef4444">right</text>
-              <text x="90" y="20" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#059669" fontWeight="bold">L={limit.toFixed(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Numerical Limit Solver" subtitle="Calculate limit of f(x) = (x² - c²)/(x - c) as x approaches c" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Limit Target Value (c)" value={targetStr} onChange={setTargetStr} id="lc-c" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Limit Value" value={results.value.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

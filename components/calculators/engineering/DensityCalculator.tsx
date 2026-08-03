@@ -1,31 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DensityCalculator() {
-  const [solveFor, setSolveFor] = useState<'density' | 'mass' | 'volume'>('density')
-  const [mass, setMass] = useState('1000')
-  const [volume, setVolume] = useState('1')
-  const [density, setDensity] = useState('1000')
-  const [result, setResult] = useState('')
+  const [massStr, setMassStr] = useState('100') // grams
+  const [volStr, setVolStr] = useState('50') // mL or cm³
 
-  const calculate = () => {
-    const m = parseFloat(mass), v = parseFloat(volume), d = parseFloat(density)
-    switch (solveFor) {
-      case 'density': if (!isNaN(m)&&!isNaN(v) && v!==0) setResult(`${(m/v).toFixed(2)} kg/m³`); else setResult('Invalid'); break
-      case 'mass': if (!isNaN(d)&&!isNaN(v)) setResult(`${(d*v).toFixed(2)} kg`); else setResult('Invalid'); break
-      case 'volume': if (!isNaN(m)&&!isNaN(d) && d!==0) setResult(`${(m/d).toFixed(4)} m³`); else setResult('Invalid'); break
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, density: 0 }
+    const m = parseFloat(massStr)
+    const v = parseFloat(volStr)
+
+    if (isNaN(m) || isNaN(v) || m < 0 || v <= 0) {
+      return { ...defaultObj, error: 'Please enter valid mass and volume values.' }
     }
-  }
+
+    const density = m / v
+    return { error: null, density }
+  }, [massStr, volStr])
 
   return (
-    <FormCalculatorShell title="Density Calculator" badge="ENGINEERING">
-      <RetroSelect label="Solve For" value={solveFor} onChange={(v) => { setSolveFor(v as any); setResult('') }} options={[{value:'density',label:'Density (ρ)'},{value:'mass',label:'Mass (m)'},{value:'volume',label:'Volume (V)'}]} id="den-mode" />
-      {solveFor !== 'mass' && <RetroInput label="Mass (kg)" value={mass} onChange={setMass} placeholder="1000" id="den-m" />}
-      {solveFor !== 'density' && <RetroInput label="Volume (m³)" value={volume} onChange={setVolume} placeholder="1" id="den-v" />}
-      {solveFor !== 'volume' && <RetroInput label="Density (kg/m³)" value={density} onChange={setDensity} placeholder="1000" id="den-d" />}
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label={solveFor.charAt(0).toUpperCase()+solveFor.slice(1)} value={result} large /></div>}
+    <FormCalculatorShell title="Density Solver" subtitle="Calculate density rho = mass / volume" badge="ENGINEERING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Mass (grams)" value={massStr} onChange={setMassStr} id="dns-m" />
+          <RetroInput label="Volume (mL/cm³)" value={volStr} onChange={setVolStr} id="dns-v" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Density (ρ)" value={`${results.density.toFixed(3)} g/cm³`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

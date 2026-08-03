@@ -1,52 +1,41 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(x1: number, y1: number, x2: number, y2: number) {
-  return `M ${x1} ${y1} L ${x2} ${y2}`
-}
-
 export default function TransformerCalculator() {
-  const [primary, setPrimary] = useState('240')
-  const [secondary, setSecondary] = useState('24')
+  const [priVoltsStr, setPriVoltsStr] = useState('240')
+  const [secVoltsStr, setSecVoltsStr] = useState('120')
+  const [priTurnsStr, setPriTurnsStr] = useState('500')
 
-  const vp = parseFloat(primary) || 0
-  const vs = parseFloat(secondary) || 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, secTurns: 0 }
+    const vp = parseFloat(priVoltsStr)
+    const vs = parseFloat(secVoltsStr)
+    const np = parseFloat(priTurnsStr)
 
-  const turnsRatio = vs > 0 ? vp / vs : 0
-  const currentRatio = vp > 0 ? vs / vp : 0
+    if (isNaN(vp) || isNaN(vs) || isNaN(np) || vp <= 0 || vs <= 0 || np <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
 
-  const valid = vp > 0 && vs > 0
+    // Turns Ratio: Ns / Np = Vs / Vp => Ns = Np * Vs / Vp
+    const secTurns = np * (vs / vp)
+    return { error: null, secTurns }
+  }, [priVoltsStr, secVoltsStr, priTurnsStr])
 
   return (
-    <FormCalculatorShell
-      title="Transformer Calculator"
-      subtitle="Turns ratio and current ratio"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Primary Voltage" value={primary} onChange={setPrimary} unit="V" min={0} />
-        <RetroInput label="Secondary Voltage" value={secondary} onChange={setSecondary} unit="V" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Turns Ratio (Np:Ns)" value={`${turnsRatio.toFixed(2)} : 1`} large />
-            <ResultDisplay label="Current Ratio (Is:Ip)" value={`${(1 / turnsRatio).toFixed(3)} : 1`} />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyLine(30, 20, 30, 80)} stroke="#dfaa44" strokeWidth="3" fill="none" />
-            <path d={wobblyLine(90, 20, 90, 80)} stroke="#cbd8ca" strokeWidth="3" fill="none" />
-            <line x1="30" y1="50" x2="90" y2="50" stroke="#888" strokeWidth="1.5" strokeDasharray="4 3" />
-          </svg>
+    <FormCalculatorShell title="Transformer Coil Turns Solver" subtitle="Calculate secondary coil turns from turns ratios" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Primary Voltage (Vp)" value={priVoltsStr} onChange={setPriVoltsStr} id="tr-vp" />
+          <RetroInput label="Secondary Voltage (Vs)" value={secVoltsStr} onChange={setSecVoltsStr} id="tr-vs" />
+          <RetroInput label="Primary Coil Turns (Np)" value={priTurnsStr} onChange={setPriTurnsStr} id="tr-np" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Secondary Coil Turns Required" value={results.secTurns.toFixed(0)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

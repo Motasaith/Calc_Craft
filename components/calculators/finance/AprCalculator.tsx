@@ -1,30 +1,41 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function AprCalculator() {
-  const [fees, setFees] = useState('500')
-  const [principal, setPrincipal] = useState('10000')
-  const [rate, setRate] = useState('6')
-  const [years, setYears] = useState('5')
-  const [result, setResult] = useState('')
+  const [interestStr, setInterestStr] = useState('10') // % interest rate
+  const [feesStr, setFeesStr] = useState('500') // loan fees
+  const [loanStr, setLoanStr] = useState('10000')
 
-  const calculate = () => {
-    const f = parseFloat(fees), p = parseFloat(principal), r = parseFloat(rate) / 100, n = parseInt(years)
-    if (isNaN(f)||isNaN(p)||isNaN(r)||isNaN(n) || p <= 0) { setResult('Invalid'); return }
-    const totalCost = f + (p * r * n)
-    const apr = (totalCost / (p * n)) * 100
-    setResult(`${apr.toFixed(3)}%`)
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, apr: 0 }
+    const rate = parseFloat(interestStr)
+    const fees = parseFloat(feesStr)
+    const principal = parseFloat(loanStr)
+
+    if (isNaN(rate) || isNaN(fees) || isNaN(principal) || principal <= 0 || rate < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // Rough APR = (Interest + Fees) / Principal * 100 approx
+    const apr = ((principal * (rate / 100) + fees) / principal) * 100
+    return { error: null, apr }
+  }, [interestStr, feesStr, loanStr])
 
   return (
-    <FormCalculatorShell title="APR Calculator" badge="FINANCE">
-      <RetroInput label="Loan Amount" value={principal} onChange={setPrincipal} placeholder="10000" id="apr-prin" unit="$" />
-      <RetroInput label="Interest Rate" value={rate} onChange={setRate} placeholder="6" id="apr-rate" unit="%" />
-      <RetroInput label="Fees" value={fees} onChange={setFees} placeholder="500" id="apr-fees" unit="$" />
-      <RetroInput label="Term (years)" value={years} onChange={setYears} placeholder="5" id="apr-yr" unit="yr" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate APR</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Estimated APR" value={result} large /></div>}
+    <FormCalculatorShell title="Annual Percentage Rate APR Solver" subtitle="Estimate actual APR by factoring interest rates and processing fees" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Base Interest Rate (%)" value={interestStr} onChange={setInterestStr} id="apr-i" />
+          <RetroInput label="Additional Financing Fees ($)" value={feesStr} onChange={setFeesStr} id="apr-f" />
+          <RetroInput label="Loan Principal Amount ($)" value={loanStr} onChange={setLoanStr} id="apr-l" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Effective APR Rate" value={`${results.apr.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

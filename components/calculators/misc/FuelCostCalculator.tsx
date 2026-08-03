@@ -1,34 +1,40 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function FuelCostCalculator() {
-  const [distance, setDistance] = useState('500')
-  const [efficiency, setEfficiency] = useState('15')
-  const [price, setPrice] = useState('1.5')
-  const [result, setResult] = useState<{fuel:number,cost:number}|null>(null)
+  const [distStr, setDistStr] = useState('100')
+  const [mpgStr, setMpgStr] = useState('25')
+  const [priceStr, setPriceStr] = useState('3.50')
 
-  const calculate = () => {
-    const d = parseFloat(distance), e = parseFloat(efficiency), p = parseFloat(price)
-    if (isNaN(d)||isNaN(e)||isNaN(p) || e<=0) { setResult(null); return }
-    const fuel = d / e
-    const cost = fuel * p
-    setResult({ fuel, cost })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, total: 0 }
+    const dist = parseFloat(distStr)
+    const mpg = parseFloat(mpgStr)
+    const pr = parseFloat(priceStr)
+
+    if (isNaN(dist) || isNaN(mpg) || isNaN(pr) || dist <= 0 || mpg <= 0 || pr <= 0) {
+      return { ...defaultObj, error: 'Please enter valid journey parameters.' }
+    }
+
+    const total = (dist / mpg) * pr
+    return { error: null, total }
+  }, [distStr, mpgStr, priceStr])
 
   return (
-    <FormCalculatorShell title="Fuel Cost" badge="MISC">
-      <RetroInput label="Distance (km)" value={distance} onChange={setDistance} placeholder="500" id="fuel-d" />
-      <RetroInput label="Efficiency (km/L)" value={efficiency} onChange={setEfficiency} placeholder="15" id="fuel-e" />
-      <RetroInput label="Price per Liter" value={price} onChange={setPrice} placeholder="1.5" id="fuel-p" unit="$" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Fuel Needed" value={`${result.fuel.toFixed(2)} L`} />
-          <ResultDisplay label="Total Cost" value={formatCurrency(result.cost)} large />
+    <FormCalculatorShell title="Road Trip Fuel Cost Solver" subtitle="Calculate total gasoline costs for custom road journeys" badge="MISCELLANEOUS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Trip Distance (miles)" value={distStr} onChange={setDistStr} id="fc-d" />
+          <RetroInput label="Fuel Efficiency (MPG)" value={mpgStr} onChange={setMpgStr} id="fc-m" />
+          <RetroInput label="Gas Price ($/gallon)" value={priceStr} onChange={setPriceStr} id="fc-p" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Total Journey Cost" value={results.total.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,55 +1,38 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RebarCalculator() {
-  const [length, setLength] = useState('6')
-  const [width, setWidth] = useState('4')
-  const [gridSpacing, setGridSpacing] = useState('0.3')
-  const [rebarSize, setRebarSize] = useState<'10' | '13' | '16'>('13')
-  const [result, setResult] = useState<{ totalLength: number; numBars: number } | null>(null)
+  const [lengthStr, setLengthStr] = useState('100') // linear feet
+  const [spacingStr, setSpacingStr] = useState('18') // spacing inches
 
-  const calculate = () => {
-    const l = parseFloat(length), w = parseFloat(width), gs = parseFloat(gridSpacing)
-    if (isNaN(l) || isNaN(w) || isNaN(gs) || l <= 0 || w <= 0 || gs <= 0) { setResult(null); return }
-    const barsAlongL = Math.ceil(l / gs) + 1
-    const barsAlongW = Math.ceil(w / gs) + 1
-    const totalLength = barsAlongL * w + barsAlongW * l
-    const numBars = barsAlongL + barsAlongW
-    setResult({ totalLength, numBars })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, count: 0 }
+    const len = parseFloat(lengthStr)
+    const space = parseFloat(spacingStr)
+
+    if (isNaN(len) || isNaN(space) || len <= 0 || space <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const spacingFeet = space / 12
+    const count = len / spacingFeet
+    return { error: null, count: Math.ceil(count) }
+  }, [lengthStr, spacingStr])
 
   return (
-    <FormCalculatorShell title="Rebar Calculator" subtitle="Total length & bar count" badge="CONSTRUCTION">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Slab Length (m)" value={length} onChange={setLength} placeholder="6" id="rb-l" />
-        <RetroInput label="Slab Width (m)" value={width} onChange={setWidth} placeholder="4" id="rb-w" />
+    <FormCalculatorShell title="Concrete Rebar Grid Solver" subtitle="Calculate required rebar rods count based on mesh spacing" badge="CONSTRUCTION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Slab Perimeter/Length (feet)" value={lengthStr} onChange={setLengthStr} id="rb-l" />
+          <RetroInput label="Grid Spacing (inches)" value={spacingStr} onChange={setSpacingStr} id="rb-s" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Rebar Rods Required" value={results.count.toString()} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      <RetroInput label="Grid Spacing (m)" value={gridSpacing} onChange={setGridSpacing} placeholder="0.3" id="rb-gs" />
-      <RetroSelect label="Rebar Size" value={rebarSize} onChange={(v) => { setRebarSize(v as any); setResult(null) }} options={[{value:'10',label:'#10 (10mm)'},{value:'13',label:'#13 (13mm)'},{value:'16',label:'#16 (16mm)'}]} id="rb-size" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <>
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <ResultDisplay label="Total Length" value={result.totalLength.toFixed(1)} unit="m" large />
-            <ResultDisplay label="Number of Bars" value={result.numBars} />
-          </div>
-          <div className="mt-3">
-            <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#cbd8ca] rounded-lg border-2 border-[#b0bdae]">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <line key={`h${i}`} x1="10" y1={10 + i * 12} x2="190" y2={10 + i * 12} stroke="#6a6a6a" strokeWidth="1.5" />
-              ))}
-              {Array.from({ length: 8 }).map((_, i) => (
-                <line key={`v${i}`} x1={15 + i * 25} y1="5" x2={15 + i * 25} y2="75" stroke="#6a6a6a" strokeWidth="1.5" />
-              ))}
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

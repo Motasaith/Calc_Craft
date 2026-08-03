@@ -1,51 +1,47 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-const ZONES = [
-  {value:'UTC',label:'UTC (GMT)',offset:0},
-  {value:'EST',label:'New York (EST)',offset:-5},
-  {value:'CST',label:'Chicago (CST)',offset:-6},
-  {value:'MST',label:'Denver (MST)',offset:-7},
-  {value:'PST',label:'Los Angeles (PST)',offset:-8},
-  {value:'GMT',label:'London (GMT)',offset:0},
-  {value:'CET',label:'Paris (CET)',offset:1},
-  {value:'EET',label:'Athens (EET)',offset:2},
-  {value:'IST',label:'Mumbai (IST)',offset:5.5},
-  {value:'CST_CN',label:'Beijing (CST)',offset:8},
-  {value:'JST',label:'Tokyo (JST)',offset:9},
-  {value:'AEST',label:'Sydney (AEST)',offset:10},
-]
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function TimeZoneCalculator() {
-  const [time, setTime] = useState('12:00')
-  const [fromZone, setFromZone] = useState('UTC')
-  const [toZone, setToZone] = useState('IST')
-  const [result, setResult] = useState('')
+  const [timeStr, setTimeStr] = useState('12:00')
 
-  const calculate = () => {
-    if (!time) { setResult(''); return }
-    const [h, m] = time.split(':').map(Number)
-    if (isNaN(h)||isNaN(m)) { setResult('Invalid time'); return }
-    const fromOffset = ZONES.find(z=>z.value===fromZone)?.offset || 0
-    const toOffset = ZONES.find(z=>z.value===toZone)?.offset || 0
-    const totalMin = h * 60 + m + (toOffset - fromOffset) * 60
-    const newH = Math.floor(((totalMin % 1440) + 1440) % 1440 / 60)
-    const newM = ((totalMin % 60) + 60) % 60
-    const ampm = newH >= 12 ? 'PM' : 'AM'
-    const displayH = newH === 0 ? 12 : newH > 12 ? newH - 12 : newH
-    setResult(`${displayH}:${newM.toString().padStart(2,'0')} ${ampm}`)
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, est: '', pst: '', gmt: '' }
+    if (!timeStr) return { ...defaultObj, error: 'Please enter a time.' }
+    const [hrs, mins] = timeStr.split(':').map(Number)
+    if (isNaN(hrs) || isNaN(mins)) return { ...defaultObj, error: 'Invalid time format.' }
+    
+    const formatTime = (h: number, m: number) => {
+      const displayH = (h + 24) % 24
+      const ampm = displayH >= 12 ? 'PM' : 'AM'
+      const normH = displayH % 12 || 12
+      return `${normH}:${m < 10 ? '0' : ''}${m} ${ampm}`
+    }
+
+    return {
+      error: null,
+      est: formatTime(hrs, mins),
+      pst: formatTime(hrs - 3, mins),
+      gmt: formatTime(hrs + 5, mins)
+    }
+  }, [timeStr])
 
   return (
-    <FormCalculatorShell title="Time Zone Converter" badge="DATE & TIME">
-      <RetroInput label="Time" value={time} onChange={setTime} type="time" id="tz-time" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroSelect label="From" value={fromZone} onChange={setFromZone} options={ZONES.map(z=>({value:z.value,label:z.label}))} id="tz-from" />
-        <RetroSelect label="To" value={toZone} onChange={setToZone} options={ZONES.map(z=>({value:z.value,label:z.label}))} id="tz-to" />
+    <FormCalculatorShell title="Time Zone Converter" subtitle="Convert local standard times between major time zone meridians" badge="DATE-TIME">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Input Time (24h format, e.g. 12:00)" value={timeStr} onChange={setTimeStr} id="tz-t" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-3 gap-2">
+              <ResultDisplay label="EST (Local)" value={results.est} />
+              <ResultDisplay label="PST (Pacific)" value={results.pst} />
+              <ResultDisplay label="GMT/UTC" value={results.gmt} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Convert</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Converted Time" value={result} large /></div>}
     </FormCalculatorShell>
   )
 }

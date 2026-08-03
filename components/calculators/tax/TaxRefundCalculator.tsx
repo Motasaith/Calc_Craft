@@ -1,46 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function TaxRefundCalculator() {
-  const [withheld, setWithheld] = useState('18000')
-  const [taxOwed, setTaxOwed] = useState('15000')
+  const [withheldStr, setWithheldStr] = useState('12000') // tax withheld
+  const [taxDueStr, setTaxDueStr] = useState('10000') // actual tax due
 
-  const w = parseFloat(withheld), t = parseFloat(taxOwed)
-  const valid = !isNaN(w) && !isNaN(t) && w >= 0 && t >= 0
-  const refund = valid ? w - t : 0
-  const isRefund = refund > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, refund: 0, owed: 0 }
+    const w = parseFloat(withheldStr)
+    const d = parseFloat(taxDueStr)
+
+    if (isNaN(w) || isNaN(d) || w < 0 || d < 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const refund = Math.max(0, w - d)
+    const owed = Math.max(0, d - w)
+
+    return { error: null, refund, owed }
+  }, [withheldStr, taxDueStr])
 
   return (
-    <FormCalculatorShell title="Tax Refund Estimator" subtitle="Refund = Withheld - Tax Owed" badge="TAX">
-      <RetroInput label="Tax Withheld" value={withheld} onChange={setWithheld} placeholder="18000" id="tr-w" unit="$" />
-      <RetroInput label="Tax Owed" value={taxOwed} onChange={setTaxOwed} placeholder="15000" id="tr-t" unit="$" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label={isRefund ? 'Refund' : 'Amount Owed'} value={`$${Math.abs(refund).toFixed(0)}`} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Withheld vs Owed</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="trGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#trGrid)" rx="8" />
-              <path d={wobblyBar(25, 15, 50, Math.min(40, w / 500))} fill={isRefund ? '#22c55e' : '#ef4444'} fillOpacity="0.3" stroke={isRefund ? '#16a34a' : '#dc2626'} strokeWidth="2" />
-              <text x="50" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill={isRefund ? '#16a34a' : '#dc2626'}>Withheld</text>
-              <path d={wobblyBar(105, 15 + 40 - Math.min(40, t / 500), 50, Math.min(40, t / 500))} fill="#a78bfa" fillOpacity="0.3" stroke="#7c3aed" strokeWidth="2" />
-              <text x="130" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#7c3aed">Owed</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Tax Refund Solver" subtitle="Estimate refund amounts or taxes owed based on total withholdings" badge="TAX">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Tax Withheld ($)" value={withheldStr} onChange={setWithheldStr} id="tr-w" />
+          <RetroInput label="Actual Income Tax Due ($)" value={taxDueStr} onChange={setTaxDueStr} id="tr-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Refund Amount" value={results.refund.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+              <ResultDisplay label="Additional Tax Owed" value={results.owed.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

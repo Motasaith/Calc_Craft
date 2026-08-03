@@ -1,49 +1,39 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-
-function toRoman(num: number): string {
-  const map: [number, string][] = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]
-  let res = ''
-  for (const [v, s] of map) { while (num >= v) { res += s; num -= v } }
-  return res
-}
-
-function fromRoman(str: string): number {
-  const map: Record<string, number> = { I:1, V:5, X:10, L:50, C:100, D:500, M:1000 }
-  let total = 0, prev = 0
-  for (const ch of str.toUpperCase().split('').reverse()) {
-    const val = map[ch] || 0
-    if (val < prev) total -= val
-    else total += val
-    prev = val
-  }
-  return total
-}
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RomanNumeralConverter() {
-  const [mode, setMode] = useState<'toRoman' | 'fromRoman'>('toRoman')
-  const [val, setVal] = useState('2024')
-  const [result, setResult] = useState('')
+  const [numStr, setNumStr] = useState('42')
 
-  const calculate = () => {
-    if (mode === 'toRoman') {
-      const n = parseInt(val)
-      if (isNaN(n) || n <= 0 || n > 3999) { setResult('Enter 1–3999'); return }
-      setResult(toRoman(n))
-    } else {
-      const r = fromRoman(val)
-      if (r === 0) { setResult('Invalid Roman numeral'); return }
-      setResult(r.toString())
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, roman: '' }
+    const num = parseInt(numStr)
+    if (isNaN(num) || num <= 0 || num > 3999) return { ...defaultObj, error: 'Please enter an integer between 1 and 3999.' }
+    
+    const lookup: Record<string, number> = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 }
+    let roman = ''
+    let temp = num
+    for (let key in lookup) {
+      while (temp >= lookup[key]) {
+        roman += key
+        temp -= lookup[key]
+      }
     }
-  }
+    return { error: null, roman }
+  }, [numStr])
 
   return (
-    <FormCalculatorShell title="Roman Numeral Converter" badge="CONVERSION">
-      <RetroSelect label="Direction" value={mode} onChange={(v) => { setMode(v as any); setResult('') }} options={[{value:'toRoman',label:'Number → Roman'},{value:'fromRoman',label:'Roman → Number'}]} id="rom-mode" />
-      <RetroInput label={mode === 'toRoman' ? 'Number' : 'Roman Numeral'} value={val} onChange={setVal} placeholder={mode === 'toRoman' ? '2024' : 'MMXXIV'} id="rom-val" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Convert</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
+    <FormCalculatorShell title="Roman Numeral Converter" subtitle="Convert standard decimal integers to Roman numerals" badge="CONVERSION">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Decimal Integer (1-3999)" value={numStr} onChange={setNumStr} id="rnc-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Roman Numeral" value={results.roman} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

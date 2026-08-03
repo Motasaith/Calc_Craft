@@ -1,40 +1,41 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function EffectSizeCalculator() {
-  const [mode, setMode] = useState<'cohensd' | 'correlation'>('cohensd')
-  const [mean1, setMean1] = useState('100')
-  const [mean2, setMean2] = useState('110')
-  const [std, setStd] = useState('15')
-  const [r, setR] = useState('0.5')
-  const [result, setResult] = useState('')
+  const [mean1Str, setMean1Str] = useState('15')
+  const [mean2Str, setMean2Str] = useState('12')
+  const [sdStr, setSdStr] = useState('2.5') // pooled standard deviation
 
-  const calculate = () => {
-    if (mode === 'cohensd') {
-      const m1 = parseFloat(mean1), m2 = parseFloat(mean2), s = parseFloat(std)
-      if (isNaN(m1)||isNaN(m2)||isNaN(s) || s===0) { setResult('Invalid'); return }
-      const d = Math.abs(m1 - m2) / s
-      let size = d < 0.2 ? 'Negligible' : d < 0.5 ? 'Small' : d < 0.8 ? 'Medium' : 'Large'
-      setResult(`d = ${d.toFixed(3)} (${size})`)
-    } else {
-      const rv = parseFloat(r)
-      if (isNaN(rv)) { setResult('Invalid'); return }
-      const d = (2 * rv) / Math.sqrt(1 - rv*rv)
-      setResult(`d = ${d.toFixed(3)}`)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, d: 0 }
+    const m1 = parseFloat(mean1Str)
+    const m2 = parseFloat(mean2Str)
+    const sd = parseFloat(sdStr)
+
+    if (isNaN(m1) || isNaN(m2) || isNaN(sd) || sd <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
     }
-  }
+
+    // Cohen's d = (m1 - m2) / sd
+    const d = (m1 - m2) / sd
+    return { error: null, d }
+  }, [mean1Str, mean2Str, sdStr])
 
   return (
-    <FormCalculatorShell title="Effect Size" badge="STATISTICS">
-      <RetroSelect label="Method" value={mode} onChange={(v) => { setMode(v as any); setResult('') }} options={[{value:'cohensd',label:"Cohen's d"},{value:'correlation',label:'r → d'}]} id="es-mode" />
-      {mode === 'cohensd' && <>
-        <div className="grid grid-cols-2 gap-3"><RetroInput label="Mean 1" value={mean1} onChange={setMean1} placeholder="100" id="es-m1" /><RetroInput label="Mean 2" value={mean2} onChange={setMean2} placeholder="110" id="es-m2" /></div>
-        <RetroInput label="Pooled Std Dev" value={std} onChange={setStd} placeholder="15" id="es-s" />
-      </>}
-      {mode === 'correlation' && <RetroInput label="Correlation (r)" value={r} onChange={setR} placeholder="0.5" id="es-r" />}
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Effect Size" value={result} large /></div>}
+    <FormCalculatorShell title="Cohen's d Effect Size Solver" subtitle="Evaluate standardized magnitude differences between two group means" badge="STATISTICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Mean Group 1" value={mean1Str} onChange={setMean1Str} id="es-m1" />
+          <RetroInput label="Mean Group 2" value={mean2Str} onChange={setMean2Str} id="es-m2" />
+          <RetroInput label="Pooled Standard Deviation" value={sdStr} onChange={setSdStr} id="es-sd" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Cohen's d Value" value={results.d.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

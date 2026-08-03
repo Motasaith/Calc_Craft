@@ -1,75 +1,51 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
-// Simple safe expression evaluator supporting + - * / ^ and Math functions
-function evalExpr(expr: string, x: number): number {
-  try {
-    const replaced = expr
-      .replace(/\^/g, '**')
-      .replace(/\bsin\b/g, 'Math.sin')
-      .replace(/\bcos\b/g, 'Math.cos')
-      .replace(/\btan\b/g, 'Math.tan')
-      .replace(/\bsqrt\b/g, 'Math.sqrt')
-      .replace(/\bexp\b/g, 'Math.exp')
-      .replace(/\blog\b/g, 'Math.log')
-      .replace(/\babs\b/g, 'Math.abs')
-    // eslint-disable-next-line no-new-func
-    const fn = new Function('x', `return (${replaced});`)
-    const r = fn(x)
-    return typeof r === 'number' && isFinite(r) ? r : NaN
-  } catch {
-    return NaN
-  }
-}
-
 export default function DerivativeCalculator() {
-  const [expr, setExpr] = useState('x^2')
-  const [xVal, setXVal] = useState('1')
-  const [hVal, setHVal] = useState('0.001')
+  const [aStr, setAStr] = useState('3') // coefficient
+  const [pStr, setPStr] = useState('2') // exponent
 
-  const x = parseFloat(xVal), h = parseFloat(hVal)
-  const valid = expr.trim() !== '' && !isNaN(x) && !isNaN(h) && h > 0
-  const f = (v: number) => evalExpr(expr, v)
-  const deriv = valid ? (f(x + h) - f(x - h)) / (2 * h) : 0
-  const derivOk = valid && isFinite(deriv) && !isNaN(deriv)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, derivative: '', steps: [] as string[] }
+    const a = parseFloat(aStr)
+    const p = parseFloat(pStr)
+    if (isNaN(a) || isNaN(p)) return { ...defaultObj, error: 'Please enter valid coefficients.' }
+    const coeff = a * p
+    const exp = p - 1
+    const derivative = `${coeff}x^${exp}`
+    return {
+      error: null,
+      derivative,
+      steps: [
+        `Function: f(x) = ${a}x^${p}`,
+        `Power Rule: d/dx[xⁿ] = n·x^(n-1)`,
+        `f'(x) = ${a} × ${p}x^(${p} - 1) = ${derivative}`
+      ]
+    }
+  }, [aStr, pStr])
 
   return (
-    <FormCalculatorShell title="Derivative Calculator" subtitle="Numerical derivative via central difference" badge="MATH">
-      <RetroInput label="Function f(x)" value={expr} onChange={setExpr} type="text" placeholder="e.g. x^2" id="drv-expr" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="x value" value={xVal} onChange={setXVal} placeholder="1" id="drv-x" />
-        <RetroInput label="Step size h" value={hVal} onChange={setHVal} placeholder="0.001" id="drv-h" />
+    <FormCalculatorShell title="Power Rule Derivative Solver" subtitle="Calculate symbolic derivatives using power rules" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Coefficient (a)" value={aStr} onChange={setAStr} id="dc-a" />
+          <RetroInput label="Exponent (n)" value={pStr} onChange={setPStr} id="dc-p" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Derivative f'(x)" value={results.derivative} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && !derivOk && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">Cannot evaluate function</div>}
-      {derivOk && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label={`f'(${x}) ≈`} value={deriv.toFixed(6)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Tangent Slope</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
-              <defs>
-                <pattern id="drvGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#drvGrid)" rx="8" />
-              <line x1="20" y1="60" x2="160" y2="60" stroke="#9ca3af" strokeWidth="1" />
-              <line x1="90" y1="10" x2="90" y2="70" stroke="#9ca3af" strokeWidth="1" />
-              <path d={wobblyBar(40, 50, 100, 1)} fill="none" stroke="#dfaa44" strokeWidth="2" />
-              <line x1="50" y1="55" x2="130" y2={55 - Math.max(-30, Math.min(30, deriv * 10))} stroke="#ab3232" strokeWidth="2" />
-              <circle cx="90" cy="50" r="3" fill="#1a2019" />
-              <text x="150" y="20" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#059669" fontWeight="bold">slope={deriv.toFixed(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

@@ -1,41 +1,49 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function SleepCalculator() {
-  const [mode, setMode] = useState<'wake' | 'bed'>('wake')
-  const [time, setTime] = useState('22:00')
-  const [result, setResult] = useState<string[]>([])
+  const [wakeStr, setWakeStr] = useState('07:00')
 
-  const calculate = () => {
-    const [h, m] = time.split(':').map(Number)
-    if (isNaN(h)||isNaN(m)) { setResult([]); return }
-    const base = new Date()
-    base.setHours(h, m, 0, 0)
-    const times: string[] = []
-    for (let cycles = 4; cycles <= 6; cycles++) {
-      const t = new Date(base)
-      if (mode === 'wake') {
-        t.setMinutes(t.getMinutes() - cycles * 90)
-      } else {
-        t.setMinutes(t.getMinutes() + cycles * 90 + 15)
-      }
-      const label = cycles === 4 ? '6 hrs' : cycles === 5 ? '7.5 hrs' : '9 hrs'
-      times.push(`${label}: ${t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, cycles: [] as string[] }
+    if (!wakeStr) return { ...defaultObj, error: 'Please enter a wakeup time.' }
+    const [wh, wm] = wakeStr.split(':').map(Number)
+    if (isNaN(wh) || isNaN(wm)) return { ...defaultObj, error: 'Invalid time format.' }
+    
+    // Calculate backwards 90 minute REM cycles (6 cycles)
+    let cycles: string[] = []
+    const baseMinutes = wh * 60 + wm
+    for (let i = 6; i >= 3; i--) {
+      const cycleMins = (baseMinutes - i * 90 + 24 * 60) % (24 * 60)
+      const h = Math.floor(cycleMins / 60)
+      const m = Math.round(cycleMins % 60)
+      const ampm = h >= 12 ? 'PM' : 'AM'
+      const displayH = h % 12 || 12
+      cycles.push(`${displayH}:${m < 10 ? '0' : ''}${m} ${ampm}`)
     }
-    setResult(times)
-  }
+    return { error: null, cycles }
+  }, [wakeStr])
 
   return (
-    <FormCalculatorShell title="Sleep Calculator" badge="DATE & TIME">
-      <RetroSelect label="I want to..." value={mode} onChange={(v) => { setMode(v as any); setResult([]) }} options={[{value:'wake',label:'Wake up at...'},{value:'bed',label:'Go to bed at...'}]} id="sleep-mode" />
-      <RetroInput label={mode === 'wake' ? 'Wake-up Time' : 'Bedtime'} value={time} onChange={setTime} type="time" id="sleep-time" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result.length > 0 && (
-        <div className="mt-4 space-y-2">
-          {result.map((r,i) => <ResultDisplay key={i} label={i===0?'Recommended':i===1?'Alternative':'Extra Sleep'} value={r} />)}
+    <FormCalculatorShell title="Sleep Cycles REM Solver" subtitle="Estimate ideal bedtime slots using 90-minute REM cycles" badge="DATE-TIME">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Desired Wakeup Time (HH:MM)" value={wakeStr} onChange={setWakeStr} id="slc-w" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-neutral-600 font-mono">Suggested Bedtimes</p>
+              <div className="grid grid-cols-2 gap-2">
+                {results.cycles.map((t, idx) => (
+                  <ResultDisplay key={idx} label={`Cycle ${idx + 3}`} value={t} />
+                ))}
+              </div>
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

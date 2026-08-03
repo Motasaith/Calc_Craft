@@ -1,45 +1,47 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function EBITDACalculatorFinance() {
-  const [revenue, setRevenue] = useState('500000')
-  const [expenses, setExpenses] = useState('350000')
+  const [netIncomeStr, setNetIncomeStr] = useState('80000')
+  const [interestStr, setInterestStr] = useState('5000')
+  const [taxesStr, setTaxesStr] = useState('15000')
+  const [depAmortStr, setDepAmortStr] = useState('10000')
 
-  const r = parseFloat(revenue)
-  const e = parseFloat(expenses)
-  const valid = !isNaN(r) && !isNaN(e) && r > 0 && e >= 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ebitda: 0 }
+    const net = parseFloat(netIncomeStr)
+    const intr = parseFloat(interestStr)
+    const tax = parseFloat(taxesStr)
+    const da = parseFloat(depAmortStr)
 
-  const ebitda = valid ? r - e : 0
-  const margin = valid ? ebitda / r : 0
-  const barW = valid ? Math.min(Math.abs(margin) * 200, 140) : 0
+    if (isNaN(net) || isNaN(intr) || isNaN(tax) || isNaN(da)) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const ebitda = net + intr + tax + da
+    return { error: null, ebitda }
+  }, [netIncomeStr, interestStr, taxesStr, depAmortStr])
 
   return (
-    <FormCalculatorShell
-      title="EBITDA Calculator"
-      subtitle="Earnings before interest, tax, depr. & amort."
-      badge="FINANCE"
-    >
-      <RetroInput label="Total Revenue" value={revenue} onChange={setRevenue} placeholder="e.g. 500000" id="eb-rev" unit="$" />
-      <RetroInput label="Operating Expenses (excl. ITDA)" value={expenses} onChange={setExpenses} placeholder="e.g. 350000" id="eb-exp" unit="$" />
-
-      {valid && (
-        <div className="mt-4 space-y-3">
-          <ResultDisplay label="EBITDA" value={formatCurrency(ebitda)} large />
-          <ResultDisplay label="EBITDA Margin" value={`${(margin * 100).toFixed(2)}%`} />
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill="#5b8a72" stroke="#3f6a55" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">0%</text>
-            <text x="160" y="58" fontSize="8" fontFamily="monospace" fill="#555">Margin</text>
-          </svg>
+    <FormCalculatorShell title="EBITDA Profitability Solver" subtitle="Calculate core EBITDA earnings by adding back non-operating parameters" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="Net Income ($)" value={netIncomeStr} onChange={setNetIncomeStr} id="ebf-n" />
+            <RetroInput label="Interest Expenses ($)" value={interestStr} onChange={setInterestStr} id="ebf-i" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="Income Taxes Paid ($)" value={taxesStr} onChange={setTaxesStr} id="ebf-t" />
+            <RetroInput label="Depreciation & Amortization ($)" value={depAmortStr} onChange={setDepAmortStr} id="ebf-d" />
+          </div>
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="EBITDA Earnings" value={results.ebitda.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

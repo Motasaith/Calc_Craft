@@ -1,50 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatPercent } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function CompoundAnnualGrowthCalculator() {
-  const [initial, setInitial] = useState('10000')
-  const [final, setFinal] = useState('25000')
-  const [years, setYears] = useState('5')
+  const [startStr, setStartStr] = useState('1000')
+  const [endStr, setEndStr] = useState('2500')
+  const [yearsStr, setYearsStr] = useState('5')
 
-  const i = parseFloat(initial)
-  const f = parseFloat(final)
-  const n = parseFloat(years)
-  const valid = !isNaN(i) && !isNaN(f) && !isNaN(n) && i > 0 && f > 0 && n > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, cagr: 0 }
+    const s = parseFloat(startStr)
+    const e = parseFloat(endStr)
+    const y = parseFloat(yearsStr)
 
-  const cagr = valid ? Math.pow(f / i, 1 / n) - 1 : 0
-  const multiple = valid ? f / i : 0
-  const barW = valid ? Math.min(Math.abs(cagr) * 800, 140) : 0
+    if (isNaN(s) || isNaN(e) || isNaN(y) || s <= 0 || e <= 0 || y <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const cagr = (Math.pow(e / s, 1 / y) - 1) * 100
+    return { error: null, cagr }
+  }, [startStr, endStr, yearsStr])
 
   return (
-    <FormCalculatorShell
-      title="CAGR Calculator"
-      subtitle="Compound Annual Growth Rate"
-      badge="FINANCE"
-    >
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Initial Value" value={initial} onChange={setInitial} placeholder="e.g. 10000" id="cg-i" unit="$" />
-        <RetroInput label="Final Value" value={final} onChange={setFinal} placeholder="e.g. 25000" id="cg-f" unit="$" />
-      </div>
-      <RetroInput label="Number of Years" value={years} onChange={setYears} placeholder="e.g. 5" id="cg-n" unit="yrs" />
-
-      {valid && (
-        <div className="mt-4 space-y-3">
-          <ResultDisplay label="CAGR" value={formatPercent(cagr)} large />
-          <ResultDisplay label="Growth Multiple" value={`${multiple.toFixed(2)}x`} />
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill="#dfaa44" stroke="#be8b32" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">0%</text>
-            <text x="160" y="58" fontSize="8" fontFamily="monospace" fill="#555">CAGR</text>
-          </svg>
+    <FormCalculatorShell title="CAGR Growth Solver" subtitle="Calculate Compound Annual Growth Rates of assets over time" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Initial Value ($)" value={startStr} onChange={setStartStr} id="cagr-s" />
+          <RetroInput label="Ending Value ($)" value={endStr} onChange={setEndStr} id="cagr-e" />
+          <RetroInput label="Duration (Years)" value={yearsStr} onChange={setYearsStr} id="cagr-y" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="CAGR Percentage" value={`${results.cagr.toFixed(2)}%`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

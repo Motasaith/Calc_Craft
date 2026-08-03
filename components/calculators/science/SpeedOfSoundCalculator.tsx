@@ -1,55 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return 'M ' + points.map(([x, y]) => `${x} ${y}`).join(' L ')
-}
-
 export default function SpeedOfSoundCalculator() {
-  const [temp, setTemp] = useState('20')
+  const [tempStr, setTempStr] = useState('20') // Celsius
 
-  const T = parseFloat(temp)
-  const valid = !isNaN(T)
-
-  // v = 331.3 + 0.606 * T  (m/s)
-  const vMs = valid ? 331.3 + 0.606 * T : 0
-  const vKmh = vMs * 3.6
-  const vMph = vMs * 2.23694
-
-  // Visualizer: wobbly wave whose wavelength scales with speed
-  const pts: [number, number][] = []
-  const cycles = Math.max(1, vMs / 100)
-  for (let i = 0; i <= 40; i++) {
-    const x = (i / 40) * 190 + 5
-    const y = 40 + Math.sin((i / 40) * cycles * Math.PI * 2) * 20
-    pts.push([x, y])
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, speed: 0 }
+    const t = parseFloat(tempStr)
+    if (isNaN(t)) return { ...defaultObj, error: 'Please enter a valid temperature.' }
+    // Formula: v = 331.3 * sqrt(1 + t/273.15)
+    const speed = 331.3 * Math.sqrt(1 + t / 273.15)
+    return { error: null, speed }
+  }, [tempStr])
 
   return (
-    <FormCalculatorShell
-      title="Speed of Sound"
-      subtitle="Speed of sound in air from temperature"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Temperature" value={temp} onChange={setTemp} unit="°C" placeholder="e.g. 20" />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-1 gap-2 mb-3">
-          <ResultDisplay label="Speed (m/s)" value={vMs.toFixed(2)} unit="m/s" large />
-          <ResultDisplay label="Speed (km/h)" value={vKmh.toFixed(2)} unit="km/h" />
-          <ResultDisplay label="Speed (mph)" value={vMph.toFixed(2)} unit="mph" />
+    <FormCalculatorShell title="Speed of Sound Solver" subtitle="Calculate acoustic propagation speeds in air based on temperatures" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Air Temperature (°C)" value={tempStr} onChange={setTempStr} id="ss-t" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <path d={wobblyLine(pts)} fill="none" stroke="#4a6fa5" strokeWidth="2" />
-        <text x="100" y="75" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">
-          sound wave
-        </text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Sound Speed (v)" value={`${results.speed.toFixed(1)} m/s`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

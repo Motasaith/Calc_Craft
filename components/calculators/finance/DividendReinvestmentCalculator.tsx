@@ -1,70 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
 
 export default function DividendReinvestmentCalculator() {
-  const [initial, setInitial] = useState('10000')
-  const [yieldRate, setYieldRate] = useState('3')
-  const [growth, setGrowth] = useState('5')
-  const [years, setYears] = useState('20')
+  const [sharesStr, setSharesStr] = useState('100')
+  const [divStr, setDivStr] = useState('3.0') // annual dividend yield %
+  const [yearsStr, setYearsStr] = useState('10')
 
-  const i = parseFloat(initial)
-  const y = parseFloat(yieldRate)
-  const g = parseFloat(growth)
-  const n = parseFloat(years)
-  const valid = !isNaN(i) && !isNaN(y) && !isNaN(g) && !isNaN(n) && i > 0 && n > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, finalShares: 0 }
+    const shares = parseFloat(sharesStr)
+    const yieldRate = parseFloat(divStr)
+    const years = parseFloat(yearsStr)
 
-  let finalValue = 0
-  let totalDividends = 0
-  if (valid) {
-    let value = i
-    const yr = y / 100
-    const gr = g / 100
-    for (let k = 0; k < n; k++) {
-      const dividend = value * yr
-      totalDividends += dividend
-      value += dividend
-      value *= (1 + gr)
+    if (isNaN(shares) || isNaN(yieldRate) || isNaN(years) || shares < 0 || yieldRate < 0 || years < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
     }
-    finalValue = value
-  }
 
-  const gain = valid ? finalValue - i : 0
-  const barW = valid ? Math.min((finalValue / i) * 40, 140) : 0
+    const finalShares = shares * Math.pow(1 + yieldRate / 100, years)
+    return { error: null, finalShares }
+  }, [sharesStr, divStr, yearsStr])
 
   return (
-    <FormCalculatorShell
-      title="Dividend Reinvestment (DRIP)"
-      subtitle="Project reinvested dividend growth"
-      badge="FINANCE"
-    >
-      <RetroInput label="Initial Investment" value={initial} onChange={setInitial} placeholder="e.g. 10000" id="dr-i" unit="$" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Dividend Yield" value={yieldRate} onChange={setYieldRate} placeholder="e.g. 3" id="dr-y" unit="%" />
-        <RetroInput label="Price Growth Rate" value={growth} onChange={setGrowth} placeholder="e.g. 5" id="dr-g" unit="%" />
-      </div>
-      <RetroInput label="Years" value={years} onChange={setYears} placeholder="e.g. 20" id="dr-n" unit="yrs" />
-
-      {valid && (
-        <div className="mt-4 space-y-3">
-          <div className="grid grid-cols-2 gap-2">
-            <ResultDisplay label="Final Value" value={formatCurrency(finalValue)} large />
-            <ResultDisplay label="Total Dividends" value={formatCurrency(totalDividends)} />
-          </div>
-          <ResultDisplay label="Total Gain" value={formatCurrency(gain)} />
-          <svg viewBox="0 0 200 60" className="w-full h-16 mt-2">
-            <path d={wobblyBar(20, 15, barW, 30)} fill="#5b8a72" stroke="#3f6a55" strokeWidth="1.5" />
-            <line x1="20" y1="45" x2="180" y2="45" stroke="#888" strokeWidth="1" />
-            <text x="20" y="58" fontSize="8" fontFamily="monospace" fill="#555">Initial</text>
-            <text x="150" y="58" fontSize="8" fontFamily="monospace" fill="#555">Final</text>
-          </svg>
+    <FormCalculatorShell title="Dividend Reinvestment DRIP Solver" subtitle="Project share count growth via dividend reinvestment compounding" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Initial Share Count" value={sharesStr} onChange={setSharesStr} id="drip-s" />
+          <RetroInput label="Annual Dividend Yield (%)" value={divStr} onChange={setDivStr} id="drip-y" />
+          <RetroInput label="Duration (Years)" value={yearsStr} onChange={setYearsStr} id="drip-t" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Projected Share Count" value={results.finalShares.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

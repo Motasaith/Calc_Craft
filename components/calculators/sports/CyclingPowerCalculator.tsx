@@ -1,48 +1,44 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CyclingPowerCalculator() {
-  const [weight, setWeight] = useState('70')
-  const [power, setPower] = useState('250')
+  const [speedStr, setSpeedStr] = useState('20') // mph
+  const [weightStr, setWeightStr] = useState('170') // rider + bike weight lbs
 
-  const w = parseFloat(weight), p = parseFloat(power)
-  const valid = !isNaN(w) && !isNaN(p) && w > 0 && p > 0
-  const pwrRatio = valid ? p / w : 0
-  const category = valid ? (pwrRatio > 5 ? 'World Class' : pwrRatio > 4 ? 'Pro' : pwrRatio > 3 ? 'Cat 1' : pwrRatio > 2.5 ? 'Cat 2' : pwrRatio > 2 ? 'Cat 3' : 'Recreational') : ''
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, power: 0 }
+    const speed = parseFloat(speedStr)
+    const weight = parseFloat(weightStr)
+
+    if (isNaN(speed) || isNaN(weight) || speed <= 0 || weight <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    // Rough approximation of power output: rolling resistance + aerodynamic drag
+    const vMps = speed * 0.44704
+    const wKg = weight * 0.453592
+    const gravityPower = 0 // assuming flat road
+    const aeroPower = 0.5 * 1.225 * 0.5 * 0.9 * Math.pow(vMps, 3)
+    const rollPower = 0.005 * wKg * 9.81 * vMps
+    const power = (aeroPower + rollPower + gravityPower) / 0.95 // drivetrain loss
+
+    return { error: null, power }
+  }, [speedStr, weightStr])
 
   return (
-    <FormCalculatorShell title="Cycling Power-to-Weight" subtitle="W/kg = Power / Weight" badge="SPORTS">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Body Weight" value={weight} onChange={setWeight} placeholder="70" id="cp-w" unit="kg" />
-        <RetroInput label="Power Output" value={power} onChange={setPower} placeholder="250" id="cp-p" unit="W" />
+    <FormCalculatorShell title="Cycling Power Output Solver" subtitle="Estimate target cycling wattage based on speed and rider weights" badge="SPORTS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Riding Speed (mph)" value={speedStr} onChange={setSpeedStr} id="cp-s" />
+          <RetroInput label="Total Weight (Rider + Bike, lbs)" value={weightStr} onChange={setWeightStr} id="cp-w" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Estimated Power (Watts)" value={`${Math.round(results.power)} W`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Power Ratio" value={pwrRatio.toFixed(2)} unit="W/kg" large />
-            <ResultDisplay label="Category" value={category} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Power Level</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="cpGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#cpGrid)" rx="8" />
-              <path d={wobblyBar(15, 25, 150, 25)} fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" rx="3" />
-              <path d={wobblyBar(15, 25, Math.min(150, (pwrRatio / 6) * 150), 25)} fill="#f97316" fillOpacity="0.4" stroke="#ea580c" strokeWidth="1.5" rx="3" />
-              <text x="90" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#ea580c" fontWeight="bold">{pwrRatio.toFixed(2)} W/kg — {category}</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

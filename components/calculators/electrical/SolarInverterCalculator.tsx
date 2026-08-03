@@ -1,54 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  return `M ${cx - r} ${cy} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`
-}
-
 export default function SolarInverterCalculator() {
-  const [panelWattage, setPanelWattage] = useState('4000')
-  const [systemVoltage, setSystemVoltage] = useState('48')
+  const [arrayStr, setArrayStr] = useState('4000') // Watts DC
 
-  const watts = parseFloat(panelWattage) || 0
-  const volts = parseFloat(systemVoltage) || 0
-
-  // Inverter should be sized at 120% of total panel wattage
-  const inverterWatts = watts * 1.2
-  const inverterKw = inverterWatts / 1000
-  const inverterAmps = volts > 0 ? inverterWatts / volts : 0
-
-  const valid = watts > 0 && volts > 0
-
-  const radius = Math.min(40, inverterKw * 4)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, size: 0 }
+    const array = parseFloat(arrayStr)
+    if (isNaN(array) || array <= 0) return { ...defaultObj, error: 'Please enter a valid array size.' }
+    // standard sizing inverter ratio around 1.15 to 1.25
+    const size = array / 1.2
+    return { error: null, size }
+  }, [arrayStr])
 
   return (
-    <FormCalculatorShell
-      title="Solar Inverter Calculator"
-      subtitle="Size your solar inverter correctly"
-      badge="ELECTRICAL"
-    >
-      <div>
-        <RetroInput label="Total Panel Wattage" value={panelWattage} onChange={setPanelWattage} unit="W" min={0} />
-        <RetroInput label="System Voltage" value={systemVoltage} onChange={setSystemVoltage} unit="V" min={0} />
-      </div>
-
-      <div className="space-y-2 mt-2">
-        {valid && (
-          <>
-            <ResultDisplay label="Inverter Size" value={inverterKw.toFixed(2)} unit="kW" large />
-            <ResultDisplay label="Inverter Current" value={inverterAmps.toFixed(2)} unit="A" />
-          </>
-        )}
-      </div>
-
-      {valid && (
-        <div className="mt-3 flex justify-center">
-          <svg width="120" height="100" viewBox="0 0 120 100">
-            <path d={wobblyCircle(60, 50, radius)} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-          </svg>
+    <FormCalculatorShell title="Solar Inverter Sizing Solver" subtitle="Estimate inverter output capacity sizing based on solar arrays" badge="ELECTRICAL">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Solar Array Rating (Watts DC)" value={arrayStr} onChange={setArrayStr} id="si-a" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Recommended Inverter Size" value={`${Math.round(results.size)} Watts AC`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }
