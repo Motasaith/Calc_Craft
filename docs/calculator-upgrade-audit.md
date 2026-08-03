@@ -5,10 +5,10 @@ This manifest tracks the upgrade status of all registered calculators in the pro
 ## Summary of Audited Calculators
 
 *   **Total Registered Calculators**: 488
-*   **Completed**: 124
+*   **Completed**: 133
 *   **Skipped (No Equivalent)**: 9
 *   **Blocked / File Missing**: 0
-*   **Pending Upgrades**: 355
+*   **Pending Upgrades**: 346
 
 ## Audit Table
 
@@ -22,14 +22,14 @@ This manifest tracks the upgrade status of all registered calculators in the pro
 | Math | volume | [VolumeCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/VolumeCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 4.1 KB |
 | Math | quadratic | [QuadraticCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/QuadraticCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 3.1 KB |
 | Math | statistics | [StatisticsCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/StatisticsCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 4.6 KB |
-| Math | gcd-lcm | [GcdLcmCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/GcdLcmCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.8 KB. Needs upgrade to premium standard. |
+| Math | gcd-lcm | [GcdLcmCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/GcdLcmCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 12.5 KB |
 | Math | number-base | [NumberBaseConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/math/NumberBaseConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.8 KB. Needs upgrade to premium standard. |
 | Math | exponent | [ExponentCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/ExponentCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.8 KB. Needs upgrade to premium standard. |
 | Math | permutation-combination | [PermutationCombinationCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/PermutationCombinationCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.3 KB. Needs upgrade to premium standard. |
 | Math | ratio | [RatioCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/RatioCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 3.2 KB |
 | Math | logarithm | [LogarithmCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/LogarithmCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.3 KB. Needs upgrade to premium standard. |
-| Math | pythagorean | [PythagoreanCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/PythagoreanCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.5 KB. Needs upgrade to premium standard. |
-| Math | circle | [CircleCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/CircleCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.9 KB. Needs upgrade to premium standard. |
+| Math | pythagorean | [PythagoreanCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/PythagoreanCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 9.9 KB |
+| Math | circle | [CircleCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/CircleCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 7.3 KB |
 | Math | triangle | [TriangleCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/TriangleCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.9 KB. Needs upgrade to premium standard. |
 | Math | prime-factorization | [PrimeFactorizationCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/PrimeFactorizationCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.5 KB. Needs upgrade to premium standard. |
 | Math | rounding | [RoundingCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/math/RoundingCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.6 KB. Needs upgrade to premium standard. |
@@ -104,9 +104,9 @@ This manifest tracks the upgrade status of all registered calculators in the pro
 | date-time | sleep | [SleepCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/datetime/SleepCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.8 KB. Needs upgrade to premium standard. |
 | date-time | time-card | [TimeCardCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/datetime/TimeCardCalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 3.5 KB |
 | Conversion | length | [LengthConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/LengthConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.5 KB. Needs upgrade to premium standard. |
-| Conversion | weight | [WeightConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/WeightConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.4 KB. Needs upgrade to premium standard. |
-| Conversion | temperature | [TemperatureConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/TemperatureConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.4 KB. Needs upgrade to premium standard. |
-| Conversion | speed | [SpeedConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/SpeedConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.4 KB. Needs upgrade to premium standard. |
+| Conversion | weight | [WeightConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/WeightConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 6.8 KB |
+| Conversion | temperature | [TemperatureConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/TemperatureConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 7.1 KB |
+| Conversion | speed | [SpeedConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/SpeedConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 6.8 KB |
 | Conversion | data-storage | [DataStorageConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/DataStorageConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.4 KB. Needs upgrade to premium standard. |
 | Conversion | energy | [EnergyConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/EnergyConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.5 KB. Needs upgrade to premium standard. |
 | Conversion | cooking | [CookingConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/CookingConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.9 KB. Needs upgrade to premium standard. |
@@ -457,9 +457,9 @@ This manifest tracks the upgrade status of all registered calculators in the pro
 | Health & Fitness | bp-category | [BloodPressureCategoryCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/health/BloodPressureCategoryCalculator.tsx) | — | SKIPPED — no equivalent | — | PENDING | PENDING | SKIPPED — no Calculator.net equivalent |
 | Health & Fitness | child-bmi | [ChildBMICalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/health/ChildBMICalculator.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 3.8 KB |
 | Health & Fitness | ideal-resting-hr | [IdealHeartRateCalculator.tsx](file:///d:/try/Calc_Craft/components/calculators/health/IdealHeartRateCalculator.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.9 KB. Needs upgrade to premium standard. |
-| Conversion | volume-converter | [VolumeConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/VolumeConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.2 KB. Needs upgrade to premium standard. |
-| Conversion | area-converter | [AreaConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/AreaConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.2 KB. Needs upgrade to premium standard. |
-| Conversion | time-converter | [TimeConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/TimeConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.1 KB. Needs upgrade to premium standard. |
+| Conversion | volume-converter | [VolumeConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/VolumeConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 6.9 KB |
+| Conversion | area-converter | [AreaConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/AreaConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 6.7 KB |
+| Conversion | time-converter | [TimeConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/TimeConverter.tsx) | — | COMPLETED | — | COMPLETED | PASSED | Upgraded component. Size: 6.7 KB |
 | Conversion | density-converter | [DensityConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/DensityConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 2.0 KB. Needs upgrade to premium standard. |
 | Conversion | force-converter | [ForceConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/ForceConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.9 KB. Needs upgrade to premium standard. |
 | Conversion | frequency-converter | [FrequencyConverter.tsx](file:///d:/try/Calc_Craft/components/calculators/conversion/FrequencyConverter.tsx) | — | RESEARCHED | — | PENDING | PENDING | Basic component size: 1.9 KB. Needs upgrade to premium standard. |

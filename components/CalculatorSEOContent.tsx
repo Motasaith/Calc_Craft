@@ -368,6 +368,190 @@ const RESEARCH_HEALTH_GUIDES = {
       'Banker\'s Association. Interest calculation conventions.'
     ],
   },
+  'pythagorean': {
+    title: 'Pythagorean Theorem and Right Triangle Calculations',
+    intro: 'The Pythagorean Theorem is a fundamental principle in geometry stating that in a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides.',
+    formula: 'c² = a² + b²',
+    methods: [
+      ['Finding the Hypotenuse (c)', 'Given two legs (a and b), calculate the hypotenuse: c = √(a² + b²).'],
+      ['Finding a Leg (a or b)', 'Given the hypotenuse (c) and one leg (a), calculate the other leg: b = √(c² − a²).'],
+    ],
+    interpretation: 'In addition to side lengths, the solver computes the area, perimeter, and all interior angles of the right triangle (which sum to 180 degrees).',
+    limits: 'The theorem applies strictly to Euclidean flat-plane geometry and right-angled triangles (where one angle is exactly 90 degrees).',
+    faqs: [
+      ['What is a Pythagorean triple?', 'A Pythagorean triple consists of three positive integers (a, b, c) that satisfy the equation a² + b² = c² (e.g. 3, 4, 5 or 5, 12, 13).'],
+      ['How are angles calculated in the triangle?', 'We use inverse trigonometric functions: α = arcsin(a/c) and β = arcsin(b/c).'],
+      ['Can the leg be longer than the hypotenuse?', 'No. The hypotenuse is always the longest side of a right triangle. If a leg is entered as greater than or equal to the hypotenuse, a validation error is thrown.']
+    ],
+    references: [
+      'Euclid. Elements, Book I, Proposition 47.',
+      'Mathematical Association of America. Proofs of the Pythagorean Theorem.'
+    ],
+  },
+  'circle': {
+    title: 'Circle Geometry Rules and Calculations',
+    intro: 'Circles are defined by all points equidistant from a single center point. The relationship between radius, diameter, area, and circumference is governed by the mathematical constant Pi (π ≈ 3.14159).',
+    formula: 'Area (A) = π × r² | Circumference (c) = 2 × π × r',
+    methods: [
+      ['From Radius (r)', 'Calculates diameter (2r), circumference (2πr), and area (πr²).'],
+      ['From Diameter (d)', 'Calculates radius (d/2), circumference (πd), and area (π(d/2)²).'],
+      ['From Area (A)', 'Calculates radius (√(A/π)), diameter (2r), and circumference (2√(πA)).'],
+      ['From Circumference (c)', 'Calculates radius (c/(2π)), diameter (c/π), and area (c²/(4π)).'],
+    ],
+    interpretation: 'Entering any single parameter allows the solver to calculate the other three dimensions immediately using high-precision calculations.',
+    limits: 'The formulas apply to flat, 2D Euclidean spaces. In curved spaces (like spherical geometry), these relations do not hold.',
+    faqs: [
+      ['What is Pi (π)?', 'Pi is an irrational mathematical constant representing the ratio of a circle\'s circumference to its diameter. It is roughly equal to 3.14159.'],
+      ['What is the difference between radius and diameter?', 'The radius is the distance from the center to the edge. The diameter is the distance from edge to edge passing through the center, which is exactly twice the radius.'],
+      ['Is area or circumference squared?', 'Area is measured in square units (e.g. cm²) as it measures 2D space, while circumference is linear (e.g. cm) as it measures perimeter.']
+    ],
+    references: [
+      'Archimedes. Measurement of a Circle.',
+      'American Mathematical Society. History and properties of Pi.'
+    ],
+  },
+  'gcd-lcm': {
+    title: 'Greatest Common Divisor (GCD) and Least Common Multiple (LCM)',
+    intro: 'GCD (also known as GCF) finds the largest integer that divides all entered numbers without a remainder. LCM finds the smallest positive integer that is a multiple of all entered numbers.',
+    formula: 'LCM(a, b) = |a × b| ÷ GCD(a, b)',
+    methods: [
+      ['Prime Factorization', 'Decompose numbers into prime factor powers. GCD takes the lowest powers of shared primes; LCM takes the highest powers of all primes.'],
+      ['Euclidean Algorithm', 'An efficient method for computing the GCD of two numbers by repeated remainder division.'],
+      ['Venn Diagram Mapping', 'Shows intersection of prime factors of two numbers visually to identify common divisors.'],
+    ],
+    interpretation: 'GCD is useful for simplifying fractions or dividing objects into equal groups. LCM is useful for finding common denominators or scheduling recurring synchronized events.',
+    limits: 'The calculator only operates on positive integers. Fractions, decimals, and negative numbers are excluded.',
+    faqs: [
+      ['How does factorization find the GCD?', 'For example, 12 = 2² × 3 and 18 = 2 × 3². The shared factors are one 2 and one 3. Their product (2 × 3 = 6) is the GCD.'],
+      ['What is the relationship between GCD and LCM?', 'For two numbers, the product of their GCD and LCM equals the product of the numbers themselves: GCD(a, b) × LCM(a, b) = a × b.'],
+      ['Can I calculate GCD/LCM for more than two numbers?', 'Yes. This upgraded calculator supports adding arbitrary rows of inputs or entering a comma-separated list of values.']
+    ],
+    references: [
+      'Euclid. Elements, Book VII, Propositions 1 and 2 (Euclidean Algorithm).',
+      'Number Theory Foundations. Divisibility and Prime Factorization.'
+    ],
+  },
+  'volume-converter': {
+    title: 'Volume Conversions and Space Calculations',
+    intro: 'Volume measures the amount of three-dimensional space enclosed by a closed boundary. Standardizing conversions between metric (liters, milliliters) and imperial (gallons, quarts, pints, cups) systems is essential for science, shipping, cooking, and construction.',
+    formula: 'Target Volume = Source Volume × (Source Base Ratio ÷ Target Base Ratio)',
+    methods: [
+      ['Metric Conversions', 'Converting between liters (L), milliliters (mL), and cubic meters (m³) using simple power-of-10 multipliers.'],
+      ['Imperial Conversions', 'Converting between gallons (gal), quarts (qt), pints (pt), and cups (cup) using fixed fractional ratios (e.g. 4 quarts per gallon).'],
+    ],
+    interpretation: 'Conversions translate a known volume value into its exact mathematical equivalent across various metric and imperial units simultaneously.',
+    limits: 'Formulas assume standard temperature and pressure. The volume of liquids can expand or contract slightly under extreme temperatures, which is rarely needed in standard calculations.',
+    faqs: [
+      ['How many cups are in a gallon?', 'There are exactly 16 cups in 1 US liquid gallon.'],
+      ['What is a cubic meter?', 'A cubic meter (m³) is the SI unit of volume, representing a cube with side lengths of exactly 1 meter. It equals 1,000 liters.'],
+      ['Is this calculator suitable for cooking?', 'Yes. However, cooking units can vary slightly between US Customary and UK Imperial. This calculator uses standard US liquid units.']
+    ],
+    references: [
+      'NIST Guide to the SI: Volume Unit Conversions.',
+      'ISO 80000-3. Quantities and units — Space and time.'
+    ],
+  },
+  'area-converter': {
+    title: 'Area Conversions and Geographic Boundaries',
+    intro: 'Area measures the size of a two-dimensional surface. Converting between metric (square meters, hectares) and imperial (square feet, square yards, acres, square miles) is key to real estate, agriculture, and landscaping.',
+    formula: 'Target Area = Source Area × (Source Base Ratio ÷ Target Base Ratio)',
+    methods: [
+      ['Land Measurement Systems', 'Translating between agricultural units like acres and hectares.'],
+      ['Standard Grid Calculations', 'Converting small-scale grids (square feet, square yards) to large-scale geography (square miles, square kilometers).'],
+    ],
+    interpretation: 'Results represent the exact surface area equivalence, letting you easily compare land sizes, floor plans, or packaging covers.',
+    limits: 'Calculations assume flat (planar) geometry. Real geographic topography (hills and slopes) increases the actual surface area compared to the flat map area.',
+    faqs: [
+      ['What is the difference between an acre and a hectare?', 'An acre is an imperial unit of area (43,560 sq ft), whereas a hectare is a metric unit of area (10,000 sq m). One hectare is approximately equal to 2.471 acres.'],
+      ['How many square feet are in a square yard?', 'Since a yard is 3 feet, a square yard is 3 × 3 = 9 square feet.'],
+      ['How big is a square mile in acres?', 'One square mile contains exactly 640 acres.']
+    ],
+    references: [
+      'Bureau International des Poids et Mesures (BIPM). SI Area Units.',
+      'Royal Institution of Chartered Surveyors (RICS). Code of Measuring Practice.'
+    ],
+  },
+  'time-converter': {
+    title: 'Time Scale Conversions and Intervals',
+    intro: 'Time conversion maps intervals from short increments (seconds, minutes) to larger cycles (days, weeks, months, years) to assist in scheduling, physics, and historical analysis.',
+    formula: 'Target Time = Source Time × (Source Base Ratio ÷ Target Base Ratio)',
+    methods: [
+      ['Chronological Conversions', 'Converting base-60 increments (seconds, minutes, hours) to calendar cycles (days, weeks, years).'],
+      ['Calendar Standardizations', 'Standardizing months (approx. 30.42 days) and years (365 days) for long-term calculations.'],
+    ],
+    interpretation: 'Conversions show the elapsed duration expressed in alternative intervals simultaneously.',
+    limits: 'Calculations use standard averages and do not account for individual leap seconds, timezone offsets, or specific calendar month length fluctuations (like February\'s 28/29 days).',
+    faqs: [
+      ['How many seconds are in a day?', 'There are exactly 86,400 seconds in a standard 24-hour day (60 seconds × 60 minutes × 24 hours).'],
+      ['How many weeks are in a year?', 'A standard year has 365 days, which is exactly 52 weeks and 1 day (or 52.17 weeks).'],
+      ['Why are calendar months variable?', 'Gregorian months have between 28 and 31 days. This converter uses the standard calendar average of 30.42 days per month.']
+    ],
+    references: [
+      'International Earth Rotation and Reference Systems Service (IERS). Standard Timekeeping.',
+      'LERS Time Scale Standards and leap adjustments.'
+    ],
+  },
+  'weight-converter': {
+    title: 'Weight and Mass Standard Unit Conversions',
+    intro: 'Weight is the measure of the gravitational force acting on a body, while mass measures the amount of matter. This guide covers conversions across metric (milligrams, grams, kilograms, metric tons) and imperial (ounces, pounds, stones) units.',
+    formula: 'Target Weight = Source Weight × (Source Base Ratio ÷ Target Base Ratio)',
+    methods: [
+      ['Scientific Conversions', 'Converting between milligrams (mg), grams (g), kilograms (kg), and metric tons (t) using base-10 metrics.'],
+      ['Consumer Systems', 'Converting between imperial ounces (oz), pounds (lb), and stones (st) for body weight and packaging.'],
+    ],
+    interpretation: 'Calculations represent equivalent mass across various international systems.',
+    limits: 'The converter assumes standard Earth gravity (9.80665 m/s²). Under different gravitational fields (such as on the moon), actual weight forces change, though mass remains identical.',
+    faqs: [
+      ['How many pounds are in a stone?', 'One stone is exactly equal to 14 pounds.'],
+      ['What is the difference between a metric ton and an imperial ton?', 'A metric ton (t) is exactly 1,000 kilograms (approx. 2,204.6 lbs). A US short ton is 2,000 pounds, and a UK long ton is 2,240 pounds. This converter uses the standard metric ton.'],
+      ['How many grams are in an ounce?', 'One ounce is approximately equal to 28.3495 grams.']
+    ],
+    references: [
+      'ISO 80000-4. Quantities and units — Mechanics (Mass and Density).',
+      'NIST Guide to Special Publication 811. Weight conversions.'
+    ],
+  },
+  'speed-converter': {
+    title: 'Speed Scales and Velocity Conversions',
+    intro: 'Speed is the rate at which an object covers distance. Translating velocity between metric (meters/second, kilometers/hour), imperial (feet/second, miles/hour), and specialized scales (knots, Mach) is critical for travel, aeronautics, and engineering.',
+    formula: 'Target Speed = Source Speed × (Source Base Ratio ÷ Target Base Ratio)',
+    methods: [
+      ['Terrestrial Scales', 'Converting between km/h and mph for highway speed limits.'],
+      ['Aviation & Marine Scales', 'Converting to knots (nautical miles per hour) and Mach (multiples of the speed of sound).'],
+    ],
+    interpretation: 'Conversions show the equivalent velocity expressed in different scientific and consumer units.',
+    limits: 'Mach speed values assume standard atmospheric conditions (sea level dry air at 15 °C, where speed of sound is approximately 1,225 km/h). Real-world sound speed varies with temperature and altitude.',
+    faqs: [
+      ['What is a Knot?', 'A knot is a unit of speed equal to one nautical mile per hour, which is exactly 1.852 km/h or approximately 1.1508 mph.'],
+      ['How fast is Mach 1?', 'Mach 1 represents the speed of sound, which is about 343 meters per second (767 mph or 1,225 km/h) in standard air.'],
+      ['Why convert to meters per second?', 'Meters per second (m/s) is the SI base unit for velocity and is universally used in scientific and physics calculations.']
+    ],
+    references: [
+      'BIPM Brochure: Speed and velocity standards.',
+      'Federal Aviation Administration (FAA). Speed Measurement in Air Navigation.'
+    ],
+  },
+  'temperature-converter': {
+    title: 'Temperature Scale Relationships',
+    intro: 'Temperature represents the average kinetic energy of particles in a system. Unlike other physical dimensions, temperature scales are not simple linear ratios, requiring specific offsets for conversion.',
+    formula: 'Celsius (°C) | Fahrenheit (°F) | Kelvin (K)',
+    methods: [
+      ['Celsius to Fahrenheit', 'Multiply by 9/5 and add 32: °F = (°C × 1.8) + 32.'],
+      ['Celsius to Kelvin', 'Add 273.15: K = °C + 273.15.'],
+      ['Fahrenheit to Celsius', 'Subtract 32 and multiply by 5/9: °C = (°F - 32) ÷ 1.8.'],
+    ],
+    interpretation: 'Conversions find thermodynamic equilibrium values on alternative measurement scales.',
+    limits: 'The Kelvin scale starts at Absolute Zero (0 K). The calculator does not allow Kelvin inputs below 0 K as negative Kelvin is physically impossible in classical thermodynamics.',
+    faqs: [
+      ['What is Absolute Zero?', 'Absolute Zero is the lowest limit of the thermodynamic temperature scale, representing a state where particles have minimal thermal motion. It is defined as 0 K or -273.15 °C.'],
+      ['At what temperature do Celsius and Fahrenheit meet?', 'Celsius and Fahrenheit scales are equal at exactly -40 degrees (-40 °C = -40 °F).'],
+      ['Why does Kelvin not use a degree symbol?', 'Kelvin is an absolute scale based on physical units of thermodynamic measurement rather than arbitrary increments, so it is referred to simply as "Kelvin" or "K".']
+    ],
+    references: [
+      'CGPM. The International Temperature Scale of 1990 (ITS-90).',
+      'NIST Thermometry standards.'
+    ],
+  },
 } as const
 
 function ResearchHealthGuide({ kind }: { kind: keyof typeof RESEARCH_HEALTH_GUIDES }) {
@@ -665,6 +849,15 @@ export default function CalculatorSEOContent({ calc, slug }: { calc: { name: str
   if (slug === 'age-difference') return <ResearchHealthGuide kind="age-difference" />
   if (slug === 'tip') return <ResearchHealthGuide kind="tip" />
   if (slug === 'simple-interest') return <ResearchHealthGuide kind="simple-interest" />
+  if (slug === 'pythagorean') return <ResearchHealthGuide kind="pythagorean" />
+  if (slug === 'circle') return <ResearchHealthGuide kind="circle" />
+  if (slug === 'gcd-lcm') return <ResearchHealthGuide kind="gcd-lcm" />
+  if (slug === 'volume-converter') return <ResearchHealthGuide kind="volume-converter" />
+  if (slug === 'area-converter') return <ResearchHealthGuide kind="area-converter" />
+  if (slug === 'time-converter') return <ResearchHealthGuide kind="time-converter" />
+  if (slug === 'weight-converter') return <ResearchHealthGuide kind="weight-converter" />
+  if (slug === 'speed-converter') return <ResearchHealthGuide kind="speed-converter" />
+  if (slug === 'temperature-converter') return <ResearchHealthGuide kind="temperature-converter" />
 
   const copy = generateSEOCopy(calc)
   const formulaRef = slug ? getFormulaRef(slug) : null
