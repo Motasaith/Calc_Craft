@@ -760,7 +760,16 @@ export default function BacCalculator() {
                   </div>
 
                   <div className="flex justify-center">
-                    <svg viewBox={`0 0 ${cWidth} ${cHeight}`} className="w-full h-auto select-none overflow-visible">
+                    {/* Peak reading and time to sober are the two figures this
+                        curve exists to communicate; both go in the label. */}
+                    <svg
+                      viewBox={`0 0 ${cWidth} ${cHeight}`}
+                      className="w-full h-auto select-none overflow-visible"
+                      role="img"
+                      aria-label={`Blood alcohol concentration declining over time from a peak of ${peakVal.toFixed(
+                        3
+                      )} percent, reaching zero after approximately ${soberVal.toFixed(1)} hours.`}
+                    >
                       {/* Grid lines */}
                       {[0, 0.25, 0.5, 0.75, 1.0].map((frac, idx) => {
                         const y = paddingTop + graphHeight - frac * graphHeight

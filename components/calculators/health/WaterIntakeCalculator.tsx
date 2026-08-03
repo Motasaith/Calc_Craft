@@ -258,7 +258,19 @@ export default function WaterIntakeCalculator() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                 {/* SVG Water Bottle Tracker */}
                 <div className="flex justify-center">
-                  <svg viewBox="0 0 100 200" className="w-24 h-auto drop-shadow-md select-none">
+                  {/* The fill height is the only thing that moves here, so the
+                      label carries the same two numbers it encodes: how much has
+                      been logged and how much the goal asks for. */}
+                  <svg
+                    viewBox="0 0 100 200"
+                    className="w-24 h-auto drop-shadow-md select-none"
+                    role="img"
+                    aria-label={`Hydration progress: ${progressPercent} percent of the daily goal reached, ${
+                      unitSystem === 'metric'
+                        ? `${loggedMl.toLocaleString()} of ${targetMl.toLocaleString()} millilitres`
+                        : `${Math.round(loggedMl / 29.5735).toLocaleString()} of ${targetOz.toLocaleString()} fluid ounces`
+                    } consumed.`}
+                  >
                     {/* Bottle Clip Path */}
                     <clipPath id="bottle-clip">
                       <rect x="26.5" y="36.5" width="47" height="152" rx="10" />

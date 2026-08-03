@@ -393,7 +393,19 @@ export default function OneRepMaxCalculator() {
                 </div>
 
                 <div className="flex justify-center">
-                  <svg viewBox={`0 0 ${cWidth} ${cHeight}`} className="w-full h-auto select-none overflow-visible">
+                  {/* Hovering a point reveals its weight, which a screen reader
+                      never gets. The label states the curve's endpoints so the
+                      drop-off across the rep range is still readable. */}
+                  <svg
+                    viewBox={`0 0 ${cWidth} ${cHeight}`}
+                    className="w-full h-auto select-none overflow-visible"
+                    role="img"
+                    aria-label={`Estimated max weight by repetitions using the ${formula.toUpperCase()} formula. One rep at ${oneRepMaxVal.toFixed(
+                      1
+                    )} ${resultUnit}, falling to ${computeWeightForReps(oneRepMaxVal, 10, formula).toFixed(
+                      1
+                    )} ${resultUnit} at ten reps.`}
+                  >
                     {/* Grid lines */}
                     {[0, 0.25, 0.5, 0.75, 1.0].map((frac, idx) => {
                       const y = paddingTop + graphHeight - frac * graphHeight

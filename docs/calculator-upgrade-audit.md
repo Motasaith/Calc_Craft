@@ -27,8 +27,8 @@ on its own.
 
 - **Registered calculators:** 488
 - **NOT REVIEWED:** 458
-- **IN PROGRESS:** 22
-- **READY-FOR-REVIEW:** 8
+- **IN PROGRESS:** 19
+- **READY-FOR-REVIEW:** 11
 - **Dedicated SEO content:** 37 of 488
 - **Data-driven visualisation:** 217 of 488
 - **Unit switching:** 20 of 488
@@ -96,23 +96,23 @@ on its own.
 | health | calorie | `components/calculators/health/CalorieCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9173 | all measurable signals present; needs Calculator.net verification |
 | health | body-fat | `components/calculators/health/BodyFatCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 34583 | all measurable signals present; needs Calculator.net verification |
 | health | ideal-weight | `components/calculators/health/IdealWeightCalculator` | IN PROGRESS | — | — | yes | yes | 5163 | missing visualisation, svg a11y |
-| health | water-intake | `components/calculators/health/WaterIntakeCalculator` | IN PROGRESS | yes | — | yes | yes | 19471 | missing svg a11y |
+| health | water-intake | `components/calculators/health/WaterIntakeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 20208 | all measurable signals present; needs Calculator.net verification |
 | health | heart-rate | `components/calculators/health/HeartRateCalculator` | IN PROGRESS | yes | yes | — | yes | 6012 | missing units |
 | health | macro | `components/calculators/health/MacroCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 32451 | all measurable signals present; needs Calculator.net verification |
 | health | pregnancy | `components/calculators/health/PregnancyCalculator` | IN PROGRESS | yes | yes | — | yes | 6907 | missing units |
 | health | bmr | `components/calculators/health/BmrCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 27333 | all measurable signals present; needs Calculator.net verification |
 | health | tdee | `components/calculators/health/TdeeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 14653 | all measurable signals present; needs Calculator.net verification |
-| health | one-rep-max | `components/calculators/health/OneRepMaxCalculator` | IN PROGRESS | yes | — | — | yes | 24178 | missing svg a11y, units |
+| health | one-rep-max | `components/calculators/health/OneRepMaxCalculator` | IN PROGRESS | yes | yes | — | yes | 24860 | missing units |
 | health | ovulation | `components/calculators/health/OvulationCalculator` | IN PROGRESS | yes | yes | — | yes | 4867 | missing units |
-| health | bac | `components/calculators/health/BacCalculator` | IN PROGRESS | yes | — | — | yes | 40186 | missing svg a11y, units |
+| health | bac | `components/calculators/health/BacCalculator` | IN PROGRESS | yes | yes | — | yes | 40686 | missing units |
 | health | pace | `components/calculators/health/PaceCalculator` | IN PROGRESS | yes | yes | — | yes | 12109 | missing units |
-| health | protein | `components/calculators/health/ProteinCalculator` | IN PROGRESS | yes | — | yes | yes | 27852 | missing svg a11y |
+| health | protein | `components/calculators/health/ProteinCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 28371 | all measurable signals present; needs Calculator.net verification |
 | health | carbohydrate | `components/calculators/health/CarbohydrateCalculator` | NOT REVIEWED | — | — | — | yes | 183 | missing visualisation, svg a11y, units, depth |
-| health | lean-body-mass | `components/calculators/health/LeanBodyMassCalculator` | IN PROGRESS | yes | — | yes | yes | 23267 | missing svg a11y |
+| health | lean-body-mass | `components/calculators/health/LeanBodyMassCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 23885 | all measurable signals present; needs Calculator.net verification |
 | health | body-surface-area | `components/calculators/health/BodySurfaceAreaCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 17508 | all measurable signals present; needs Calculator.net verification |
 | health | gfr | `components/calculators/health/GfrCalculator` | IN PROGRESS | — | — | yes | yes | 23115 | missing visualisation, svg a11y |
 | health | pregnancy-weight-gain | `components/calculators/health/PregnancyWeightGainCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9175 | all measurable signals present; needs Calculator.net verification |
-| health | conception | `components/calculators/health/ConceptionCalculator` | IN PROGRESS | yes | — | — | yes | 19255 | missing svg a11y, units |
+| health | conception | `components/calculators/health/ConceptionCalculator` | IN PROGRESS | yes | yes | — | yes | 20412 | missing units |
 | health | period | `components/calculators/health/PeriodCalculator` | IN PROGRESS | yes | yes | — | yes | 4572 | missing units |
 | date-time | age | `components/calculators/datetime/AgeCalculator` | NOT REVIEWED | — | — | — | — | 9736 | missing visualisation, svg a11y, units, content |
 | date-time | date-difference | `components/calculators/datetime/DateDifferenceCalculator` | NOT REVIEWED | — | — | — | yes | 17153 | missing visualisation, svg a11y, units |

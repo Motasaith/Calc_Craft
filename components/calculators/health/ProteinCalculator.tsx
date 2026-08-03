@@ -489,7 +489,17 @@ export default function ProteinCalculator() {
                 </div>
 
                 <div className="space-y-4">
-                  <svg viewBox={`0 0 ${cWidth} 120`} className="w-full h-auto select-none overflow-visible">
+                  {/* The marker line placing your target against the published
+                      ranges is the whole point of the chart, so the label says
+                      where it lands rather than naming the bars. */}
+                  <svg
+                    viewBox={`0 0 ${cWidth} 120`}
+                    className="w-full h-auto select-none overflow-visible"
+                    role="img"
+                    aria-label={`Your target of ${Math.round(
+                      recommendedTarget
+                    )} grams of protein per day marked against institutional guideline ranges.`}
+                  >
                     {/* Scale markers */}
                     {[0, 0.25, 0.5, 0.75, 1.0].map((frac, idx) => {
                       const x = paddingLeft + frac * graphWidth

@@ -402,7 +402,30 @@ export default function ConceptionCalculator() {
 
                 <div className="relative pb-2">
                   {/* Timeline Horizontal Line */}
-                  <svg className="w-full h-24 overflow-visible" xmlns="http://www.w3.org/2000/svg">
+                  {/* The timeline's dates sit in <text> nodes that a screen
+                      reader would announce as bare fragments with no idea which
+                      milestone each belongs to, so the label pairs them up. */}
+                  <svg
+                    className="w-full h-24 overflow-visible"
+                    xmlns="http://www.w3.org/2000/svg"
+                    role="img"
+                    aria-label={`Early pregnancy milestone timeline. ${[
+                      ['Last menstrual period', results.lmpDate],
+                      ['Most probable intercourse', results.mostProbableIntercourseStart],
+                      ['Conception', results.conceptionDate],
+                      ['Implantation', results.implantationStart],
+                      ['Missed period', results.missedPeriodDate],
+                    ]
+                      .map(
+                        ([label, date]) =>
+                          `${label}: ${(date as Date).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}`
+                      )
+                      .join('. ')}.`}
+                  >
                     {/* Background track */}
                     <line x1="10%" y1="40" x2="90%" y2="40" stroke="#dad6cd" strokeWidth="4" strokeLinecap="round" />
                     

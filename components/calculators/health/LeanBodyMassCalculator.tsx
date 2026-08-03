@@ -450,7 +450,18 @@ export default function LeanBodyMassCalculator() {
                 </div>
 
                 <div className="flex justify-center">
-                  <svg viewBox={`0 0 ${cWidth} ${cHeight}`} className="w-full h-auto select-none rounded-lg overflow-hidden border border-neutral-200">
+                  {/* Segment widths encode the split; the label states it in both
+                      percent and absolute mass, matching the legend below. */}
+                  <svg
+                    viewBox={`0 0 ${cWidth} ${cHeight}`}
+                    className="w-full h-auto select-none rounded-lg overflow-hidden border border-neutral-200"
+                    role="img"
+                    aria-label={`Body composition by the ${selectedFormula.toUpperCase()} formula: lean mass ${formatWeight(
+                      activeFormula.lbm
+                    )} at ${leanPct.toFixed(0)} percent, fat mass ${formatWeight(
+                      results.weightVal - activeFormula.lbm
+                    )} at ${fatPct.toFixed(0)} percent.`}
+                  >
                     {/* Lean body mass segment (Teal) */}
                     <rect
                       x="0"
