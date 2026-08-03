@@ -245,10 +245,24 @@ export default function GfrCalculator() {
     }
   }
 
-  // Visual Slider config
+  // Visual scale config. Stage cut-offs are not evenly spaced (15/30/60/90 on a
+  // 0–120 axis), so every position is derived from the value rather than laid
+  // out by flex — otherwise the tick labels drift away from the band edges they
+  // are supposed to be labelling.
   const maxGfrScale = 120
   const activeGfrVal = results ? results.activeGfr : 90
-  const markerPosition = Math.min(100, Math.max(0, (activeGfrVal / maxGfrScale) * 100))
+  const SCALE = { w: 400, h: 78, padX: 8, bandY: 24, bandH: 14 }
+  const scaleW = SCALE.w - SCALE.padX * 2
+  const gfrToX = (gfr: number) =>
+    SCALE.padX + (Math.min(maxGfrScale, Math.max(0, gfr)) / maxGfrScale) * scaleW
+  const GFR_BANDS: { from: number; to: number; fill: string; label: string }[] = [
+    { from: 0, to: 15, fill: '#9333ea', label: 'Failure' },
+    { from: 15, to: 30, fill: '#ef4444', label: 'Severe' },
+    { from: 30, to: 60, fill: '#f59e0b', label: 'Moderate' },
+    { from: 60, to: 90, fill: '#84cc16', label: 'Mild' },
+    { from: 90, to: 120, fill: '#10b981', label: 'Normal' },
+  ]
+  const markerX = gfrToX(activeGfrVal)
 
   return (
     <FormCalculatorShell title="Glomerular Filtration Rate Calculator" badge="HEALTH" subtitle="eGFR Kidney Function Estimator">
@@ -461,33 +475,104 @@ export default function GfrCalculator() {
                   Kidney Function Range Scale
                 </span>
                 
-                <div className="relative pt-4">
-                  {/* Slider background segments */}
-                  <div className="h-3 w-full rounded-full flex overflow-hidden border border-neutral-200">
-                    <div className="bg-purple-600 w-[12.5%]" title="Failure (<15)" />
-                    <div className="bg-red-500 w-[12.5%]" title="Severe (15-29)" />
-                    <div className="bg-amber-500 w-[25%]" title="Moderate (30-59)" />
-                    <div className="bg-lime-500 w-[25%]" title="Mild (60-89)" />
-                    <div className="bg-emerald-500 w-[25%]" title="Normal (90+)" />
-                  </div>
+                <svg
+                  viewBox={`0 0 ${SCALE.w} ${SCALE.h}`}
+                  className="w-full h-auto select-none font-mono"
+                  role="img"
+                  aria-label={`Kidney function scale from 0 to 120 millilitres per minute. Your estimated GFR of ${activeGfrVal.toFixed(
+                    1
+                  )} falls in the ${
+                    GFR_BANDS.find((b) => activeGfrVal >= b.from && activeGfrVal < b.to)?.label ?? 'Normal'
+                  } band.`}
+                >
+                  {/* Rounded ends belong to the bar as a whole, so the segments are
+                      drawn square and clipped rather than individually rounded. */}
+                  <clipPath id="gfr-scale-clip">
+                    <rect x={SCALE.padX} y={SCALE.bandY} width={scaleW} height={SCALE.bandH} rx={SCALE.bandH / 2} />
+                  </clipPath>
+                  <g clipPath="url(#gfr-scale-clip)">
+                    {GFR_BANDS.map((b) => (
+                      <rect
+                        key={b.from}
+                        x={gfrToX(b.from)}
+                        y={SCALE.bandY}
+                        width={gfrToX(b.to) - gfrToX(b.from)}
+                        height={SCALE.bandH}
+                        fill={b.fill}
+                      />
+                    ))}
+                  </g>
+                  <rect
+                    x={SCALE.padX}
+                    y={SCALE.bandY}
+                    width={scaleW}
+                    height={SCALE.bandH}
+                    rx={SCALE.bandH / 2}
+                    fill="none"
+                    stroke="#e5e5e5"
+                    strokeWidth="1"
+                  />
 
-                  {/* Marker pointer */}
-                  <div
-                    className="absolute -top-1.5 transition-all duration-300"
-                    style={{ left: `calc(${markerPosition}% - 4px)` }}
+                  {/* Band names, only where the segment is wide enough to hold one */}
+                  {GFR_BANDS.filter((b) => gfrToX(b.to) - gfrToX(b.from) > 52).map((b) => (
+                    <text
+                      key={`lbl-${b.from}`}
+                      x={(gfrToX(b.from) + gfrToX(b.to)) / 2}
+                      y={SCALE.bandY + SCALE.bandH - 4}
+                      textAnchor="middle"
+                      fontSize="7"
+                      fontWeight="bold"
+                      fill="#ffffff"
+                    >
+                      {b.label.toUpperCase()}
+                    </text>
+                  ))}
+
+                  {/* Marker, with its value pinned inside the viewBox at the extremes */}
+                  <polygon
+                    points={`${markerX},${SCALE.bandY - 2} ${markerX - 5},${SCALE.bandY - 10} ${markerX + 5},${SCALE.bandY - 10}`}
+                    fill="#171717"
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                  />
+                  <text
+                    x={Math.min(SCALE.w - 24, Math.max(24, markerX))}
+                    y={SCALE.bandY - 14}
+                    textAnchor="middle"
+                    fontSize="9"
+                    fontWeight="bold"
+                    fill="#171717"
                   >
-                    <div className="w-2.5 h-2.5 bg-neutral-900 rotate-45 border border-white shadow-sm" />
-                  </div>
-                </div>
+                    {activeGfrVal.toFixed(1)}
+                  </text>
 
-                <div className="flex justify-between text-[8px] font-mono font-bold text-neutral-400 uppercase">
-                  <span>0</span>
-                  <span>15</span>
-                  <span>30</span>
-                  <span>60</span>
-                  <span>90</span>
-                  <span>120+</span>
-                </div>
+                  {/* Ticks at the real stage boundaries */}
+                  {[0, 15, 30, 60, 90, 120].map((tick) => (
+                    <g key={tick}>
+                      <line
+                        x1={gfrToX(tick)}
+                        y1={SCALE.bandY + SCALE.bandH}
+                        x2={gfrToX(tick)}
+                        y2={SCALE.bandY + SCALE.bandH + 4}
+                        stroke="#a3a3a3"
+                        strokeWidth="1"
+                      />
+                      <text
+                        x={gfrToX(tick)}
+                        y={SCALE.bandY + SCALE.bandH + 14}
+                        textAnchor={tick === 0 ? 'start' : tick === 120 ? 'end' : 'middle'}
+                        fontSize="8"
+                        fontWeight="bold"
+                        fill="#737373"
+                      >
+                        {tick === 120 ? '120+' : tick}
+                      </text>
+                    </g>
+                  ))}
+                  <text x={SCALE.w / 2} y={SCALE.h - 2} textAnchor="middle" fontSize="7" fontWeight="bold" fill="#a3a3a3">
+                    eGFR (ML/MIN/1.73M²)
+                  </text>
+                </svg>
               </div>
 
               {/* Detailed tables / Comparative equations */}

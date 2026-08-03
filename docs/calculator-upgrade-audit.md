@@ -27,10 +27,10 @@ on its own.
 
 - **Registered calculators:** 488
 - **NOT REVIEWED:** 458
-- **IN PROGRESS:** 19
-- **READY-FOR-REVIEW:** 11
+- **IN PROGRESS:** 16
+- **READY-FOR-REVIEW:** 14
 - **Dedicated SEO content:** 37 of 488
-- **Data-driven visualisation:** 217 of 488
+- **Data-driven visualisation:** 220 of 488
 - **Unit switching:** 20 of 488
 
 ## Audit table
@@ -95,7 +95,7 @@ on its own.
 | health | bmi | `components/calculators/health/BmiCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 28966 | all measurable signals present; needs Calculator.net verification |
 | health | calorie | `components/calculators/health/CalorieCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9173 | all measurable signals present; needs Calculator.net verification |
 | health | body-fat | `components/calculators/health/BodyFatCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 34583 | all measurable signals present; needs Calculator.net verification |
-| health | ideal-weight | `components/calculators/health/IdealWeightCalculator` | IN PROGRESS | — | — | yes | yes | 5163 | missing visualisation, svg a11y |
+| health | ideal-weight | `components/calculators/health/IdealWeightCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 8584 | all measurable signals present; needs Calculator.net verification |
 | health | water-intake | `components/calculators/health/WaterIntakeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 20208 | all measurable signals present; needs Calculator.net verification |
 | health | heart-rate | `components/calculators/health/HeartRateCalculator` | IN PROGRESS | yes | yes | — | yes | 6012 | missing units |
 | health | macro | `components/calculators/health/MacroCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 32451 | all measurable signals present; needs Calculator.net verification |
@@ -110,7 +110,7 @@ on its own.
 | health | carbohydrate | `components/calculators/health/CarbohydrateCalculator` | NOT REVIEWED | — | — | — | yes | 183 | missing visualisation, svg a11y, units, depth |
 | health | lean-body-mass | `components/calculators/health/LeanBodyMassCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 23885 | all measurable signals present; needs Calculator.net verification |
 | health | body-surface-area | `components/calculators/health/BodySurfaceAreaCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 17508 | all measurable signals present; needs Calculator.net verification |
-| health | gfr | `components/calculators/health/GfrCalculator` | IN PROGRESS | — | — | yes | yes | 23115 | missing visualisation, svg a11y |
+| health | gfr | `components/calculators/health/GfrCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 26827 | all measurable signals present; needs Calculator.net verification |
 | health | pregnancy-weight-gain | `components/calculators/health/PregnancyWeightGainCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9175 | all measurable signals present; needs Calculator.net verification |
 | health | conception | `components/calculators/health/ConceptionCalculator` | IN PROGRESS | yes | yes | — | yes | 20412 | missing units |
 | health | period | `components/calculators/health/PeriodCalculator` | IN PROGRESS | yes | yes | — | yes | 4572 | missing units |
@@ -465,7 +465,7 @@ on its own.
 | finance | fire | `components/calculators/finance/FIRECalculator` | NOT REVIEWED | yes | — | — | — | 3175 | missing svg a11y, units, content, depth |
 | finance | cost-of-living | `components/calculators/finance/CostOfLivingCalculator` | NOT REVIEWED | yes | — | — | — | 2572 | missing svg a11y, units, content, depth |
 | finance | price-elasticity | `components/calculators/finance/PriceElasticityCalculator` | NOT REVIEWED | yes | — | — | — | 2714 | missing svg a11y, units, content, depth |
-| health | waist-hip-ratio | `components/calculators/health/WaistToHipCalculator` | IN PROGRESS | — | — | yes | yes | 16249 | missing visualisation, svg a11y |
+| health | waist-hip-ratio | `components/calculators/health/WaistToHipCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 20021 | all measurable signals present; needs Calculator.net verification |
 | health | waist-height-ratio | `components/calculators/health/WaistToHeightCalculator` | NOT REVIEWED | yes | — | — | — | 2195 | missing svg a11y, units, content, depth |
 | health | ibuprofen-dose | `components/calculators/health/IbuprofenDoseCalculator` | NOT REVIEWED | yes | — | — | — | 2370 | missing svg a11y, units, content, depth |
 | health | acetaminophen-dose | `components/calculators/health/AcetaminophenDoseCalculator` | NOT REVIEWED | yes | — | — | — | 2068 | missing svg a11y, units, content, depth |

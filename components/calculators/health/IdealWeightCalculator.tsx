@@ -19,7 +19,27 @@ export default function IdealWeightCalculator() {
     return calculateIdealWeightAll(gender, cm)
   }, [age, feet, gender, height, inches, units])
 
-  const showWeight = (kg: number) => units === 'metric' ? `${kg.toFixed(1)} kg` : `${(kg * 2.20462262).toFixed(1)} lb`
+  const unitLabel = units === 'metric' ? 'kg' : 'lb'
+  const toDisplay = (kg: number) => units === 'metric' ? kg : kg * 2.20462262
+  const showWeight = (kg: number) => `${toDisplay(kg).toFixed(1)} ${unitLabel}`
+
+  // Chart geometry. The four formulas disagree by several kilograms, and the
+  // useful question is not what each one says in isolation but whether they
+  // land inside the healthy BMI band — so both share one axis.
+  const CHART = { w: 400, h: 132, padL: 58, padR: 54, top: 16, plotBottom: 96 }
+  const plotW = CHART.w - CHART.padL - CHART.padR
+
+  const scale = useMemo(() => {
+    if (!result) return null
+    const values = [result.robinson, result.miller, result.devine, result.hamwi]
+    const lo = Math.min(...values, result.bmiRange.min)
+    const hi = Math.max(...values, result.bmiRange.max)
+    // A flat domain would divide by zero; pad proportionally, never by nothing.
+    const pad = Math.max((hi - lo) * 0.15, 1)
+    const dMin = lo - pad
+    const dMax = hi + pad
+    return { dMin, dMax, x: (kg: number) => CHART.padL + ((kg - dMin) / (dMax - dMin)) * plotW }
+  }, [result, CHART.padL, plotW])
 
   return (
     <FormCalculatorShell title="Ideal Weight Calculator" subtitle="Compare four established adult IBW formulas" badge="HEALTH">
@@ -56,27 +76,67 @@ export default function IdealWeightCalculator() {
           </div>
           <div className="mt-3"><ResultDisplay label="Healthy BMI Weight Range" value={`${showWeight(result.bmiRange.min)} – ${showWeight(result.bmiRange.max)}`} large /></div>
 
-          <div className="mt-4 rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-3">
-            <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600">Formula comparison</p>
-            <div className="space-y-2">
-              {[
-                ['Robinson', result.robinson],
-                ['Miller', result.miller],
-                ['Devine', result.devine],
-                ['Hamwi', result.hamwi],
-              ].map(([label, value]) => {
-                const kg = Number(value)
-                const position = ((kg - result.bmiRange.min) / Math.max(1, result.bmiRange.max - result.bmiRange.min)) * 100
-                return (
-                  <div key={String(label)} className="grid grid-cols-[60px_1fr_64px] items-center gap-2 text-[9px]">
-                    <span className="font-bold text-neutral-600">{label}</span>
-                    <div className="relative h-2 rounded-full bg-neutral-200"><span className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-[#4c5c4a] ring-2 ring-white" style={{ left: `calc(${Math.min(96, Math.max(2, position))}% - 6px)` }} /></div>
-                    <span className="text-right font-mono font-bold">{showWeight(kg)}</span>
-                  </div>
-                )
-              })}
+          {scale && (
+            <div className="mt-4 rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-3">
+              <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600">Formula comparison</p>
+              <svg
+                viewBox={`0 0 ${CHART.w} ${CHART.h}`}
+                className="w-full h-auto select-none font-mono"
+                role="img"
+                aria-label={`The four ideal-weight formulas plotted against the healthy BMI range of ${showWeight(result.bmiRange.min)} to ${showWeight(result.bmiRange.max)}. Robinson ${showWeight(result.robinson)}, Miller ${showWeight(result.miller)}, Devine ${showWeight(result.devine)}, Hamwi ${showWeight(result.hamwi)}.`}
+              >
+                {/* Healthy BMI band, drawn first so the markers sit on top of it */}
+                <rect
+                  x={scale.x(result.bmiRange.min)}
+                  y={CHART.top}
+                  width={Math.max(1, scale.x(result.bmiRange.max) - scale.x(result.bmiRange.min))}
+                  height={CHART.plotBottom - CHART.top}
+                  fill="#4c5c4a"
+                  opacity="0.13"
+                />
+                <text x={(scale.x(result.bmiRange.min) + scale.x(result.bmiRange.max)) / 2} y={CHART.top - 5} textAnchor="middle" fontSize="7" fontWeight="bold" fill="#4c5c4a">
+                  HEALTHY BMI RANGE
+                </text>
+
+                {([
+                  ['Robinson', result.robinson],
+                  ['Miller', result.miller],
+                  ['Devine', result.devine],
+                  ['Hamwi', result.hamwi],
+                ] as [string, number][]).map(([label, kg], idx) => {
+                  const y = CHART.top + 14 + idx * 19
+                  const inRange = kg >= result.bmiRange.min && kg <= result.bmiRange.max
+                  return (
+                    <g key={label}>
+                      <text x={CHART.padL - 8} y={y + 3} textAnchor="end" fontSize="8" fontWeight="bold" fill="#525252">{label}</text>
+                      <line x1={CHART.padL} y1={y} x2={CHART.padL + plotW} y2={y} stroke="#d4d4d4" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx={scale.x(kg)} cy={y} r="5.5" fill={inRange ? '#4c5c4a' : '#b45309'} stroke="#fff" strokeWidth="2" />
+                      <text x={CHART.padL + plotW + 6} y={y + 3} fontSize="8" fontWeight="bold" fill="#262626">{toDisplay(kg).toFixed(1)}</text>
+                    </g>
+                  )
+                })}
+
+                {/* Weight axis */}
+                <line x1={CHART.padL} y1={CHART.plotBottom + 4} x2={CHART.padL + plotW} y2={CHART.plotBottom + 4} stroke="#a3a3a3" strokeWidth="1" />
+                {[0, 0.5, 1].map((frac) => {
+                  const kg = scale.dMin + frac * (scale.dMax - scale.dMin)
+                  const x = CHART.padL + frac * plotW
+                  return (
+                    <g key={frac}>
+                      <line x1={x} y1={CHART.plotBottom + 4} x2={x} y2={CHART.plotBottom + 8} stroke="#a3a3a3" strokeWidth="1" />
+                      <text x={x} y={CHART.plotBottom + 18} textAnchor="middle" fontSize="7" fill="#737373">{toDisplay(kg).toFixed(0)}</text>
+                    </g>
+                  )
+                })}
+                <text x={CHART.padL + plotW / 2} y={CHART.h - 2} textAnchor="middle" fontSize="7" fontWeight="bold" fill="#737373">
+                  BODY WEIGHT ({unitLabel.toUpperCase()})
+                </text>
+              </svg>
+              <p className="mt-1 text-[8px] font-mono uppercase tracking-wider text-neutral-500">
+                Amber marker = formula result falls outside the healthy BMI range
+              </p>
             </div>
-          </div>
+          )}
           <p className="mt-3 text-[10px] leading-relaxed text-neutral-500">Ideal-weight formulas were developed for clinical estimation and do not account for muscle mass, body composition, or frame size. Treat the results as references, not targets.</p>
         </div>
       ) : <div className="flex min-h-[390px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500">Enter valid details to compare formulas.</div>}

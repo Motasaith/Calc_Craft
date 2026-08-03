@@ -180,11 +180,32 @@ export default function WaistToHipCalculator() {
     calculateResults(gender, unit, wVal, hVal)
   }
 
-  // Visual Slider config
+  // Visual scale config. WHO thresholds differ by gender and are not evenly
+  // spaced across the 0.60–1.10 axis, so band edges, ticks and the marker are
+  // all derived from the same ratio-to-x mapping — laying the tick labels out
+  // by flex would place them where the boundaries are not.
   const minScale = 0.60
   const maxScale = 1.10
   const currentRatio = resultRatio || 0.85
-  const markerPosition = Math.min(100, Math.max(0, ((currentRatio - minScale) / (maxScale - minScale)) * 100))
+  const SCALE = { w: 400, h: 74, padX: 8, bandY: 24, bandH: 14 }
+  const scaleW = SCALE.w - SCALE.padX * 2
+  const ratioToX = (r: number) =>
+    SCALE.padX + ((Math.min(maxScale, Math.max(minScale, r)) - minScale) / (maxScale - minScale)) * scaleW
+
+  const WHR_BANDS: { from: number; to: number; fill: string; label: string }[] =
+    gender === 'female'
+      ? [
+          { from: 0.60, to: 0.80, fill: '#10b981', label: 'Low' },
+          { from: 0.80, to: 0.86, fill: '#f59e0b', label: 'Moderate' },
+          { from: 0.86, to: 1.10, fill: '#ef4444', label: 'High' },
+        ]
+      : [
+          { from: 0.60, to: 0.90, fill: '#10b981', label: 'Low' },
+          { from: 0.90, to: 1.00, fill: '#f59e0b', label: 'Moderate' },
+          { from: 1.00, to: 1.10, fill: '#ef4444', label: 'High' },
+        ]
+  const whrTicks = [minScale, WHR_BANDS[1].from, WHR_BANDS[2].from, maxScale]
+  const markerX = ratioToX(currentRatio)
 
   return (
     <FormCalculatorShell title="Waist-to-Hip Ratio Calculator" badge="HEALTH" subtitle="Determine body fat distribution and cardiovascular risk">
@@ -334,40 +355,104 @@ export default function WaistToHipCalculator() {
                   WHO Risk Distribution Scale
                 </span>
                 
-                <div className="relative pt-4">
-                  {/* Background scale ranges */}
-                  <div className="h-3 w-full rounded-full flex overflow-hidden border border-neutral-200">
-                    {/* Female vs Male colored blocks */}
-                    {gender === 'female' ? (
-                      <>
-                        <div className="bg-emerald-500 w-[40%]" title="Low Risk (<0.80)" />
-                        <div className="bg-amber-500 w-[12%]" title="Moderate Risk (0.80 - 0.85)" />
-                        <div className="bg-red-500 w-[48%]" title="High Risk (>=0.86)" />
-                      </>
-                    ) : (
-                      <>
-                        <div className="bg-emerald-500 w-[60%]" title="Low Risk (<0.90)" />
-                        <div className="bg-amber-500 w-[20%]" title="Moderate Risk (0.90 - 0.99)" />
-                        <div className="bg-red-500 w-[20%]" title="High Risk (>=1.00)" />
-                      </>
-                    )}
-                  </div>
+                <svg
+                  viewBox={`0 0 ${SCALE.w} ${SCALE.h}`}
+                  className="w-full h-auto select-none font-mono"
+                  role="img"
+                  aria-label={`World Health Organization risk scale for ${gender === 'female' ? 'women' : 'men'}, from 0.60 to 1.10. Your waist-to-hip ratio of ${currentRatio.toFixed(
+                    2
+                  )} falls in the ${
+                    WHR_BANDS.find((b) => currentRatio >= b.from && currentRatio < b.to)?.label ?? 'High'
+                  } risk band. Moderate risk begins at ${WHR_BANDS[1].from.toFixed(2)} and high risk at ${WHR_BANDS[2].from.toFixed(2)}.`}
+                >
+                  {/* Rounded ends belong to the bar as a whole, so segments are
+                      drawn square and clipped rather than rounded one by one. */}
+                  <clipPath id="whr-scale-clip">
+                    <rect x={SCALE.padX} y={SCALE.bandY} width={scaleW} height={SCALE.bandH} rx={SCALE.bandH / 2} />
+                  </clipPath>
+                  <g clipPath="url(#whr-scale-clip)">
+                    {WHR_BANDS.map((b) => (
+                      <rect
+                        key={b.label}
+                        x={ratioToX(b.from)}
+                        y={SCALE.bandY}
+                        width={ratioToX(b.to) - ratioToX(b.from)}
+                        height={SCALE.bandH}
+                        fill={b.fill}
+                      />
+                    ))}
+                  </g>
+                  <rect
+                    x={SCALE.padX}
+                    y={SCALE.bandY}
+                    width={scaleW}
+                    height={SCALE.bandH}
+                    rx={SCALE.bandH / 2}
+                    fill="none"
+                    stroke="#e5e5e5"
+                    strokeWidth="1"
+                  />
 
-                  {/* Slider marker */}
-                  <div
-                    className="absolute -top-1.5 transition-all duration-300"
-                    style={{ left: `calc(${markerPosition}% - 4px)` }}
+                  {/* Band names, only where the segment is wide enough to hold one */}
+                  {WHR_BANDS.filter((b) => ratioToX(b.to) - ratioToX(b.from) > 56).map((b) => (
+                    <text
+                      key={`lbl-${b.label}`}
+                      x={(ratioToX(b.from) + ratioToX(b.to)) / 2}
+                      y={SCALE.bandY + SCALE.bandH - 4}
+                      textAnchor="middle"
+                      fontSize="7"
+                      fontWeight="bold"
+                      fill="#ffffff"
+                    >
+                      {b.label.toUpperCase()} RISK
+                    </text>
+                  ))}
+
+                  {/* Marker, with its value pinned inside the viewBox at the extremes */}
+                  <polygon
+                    points={`${markerX},${SCALE.bandY - 2} ${markerX - 5},${SCALE.bandY - 10} ${markerX + 5},${SCALE.bandY - 10}`}
+                    fill="#171717"
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                  />
+                  <text
+                    x={Math.min(SCALE.w - 20, Math.max(20, markerX))}
+                    y={SCALE.bandY - 14}
+                    textAnchor="middle"
+                    fontSize="9"
+                    fontWeight="bold"
+                    fill="#171717"
                   >
-                    <div className="w-2.5 h-2.5 bg-neutral-900 rotate-45 border border-white shadow-sm" />
-                  </div>
-                </div>
+                    {currentRatio.toFixed(2)}
+                  </text>
 
-                <div className="flex justify-between text-[8px] font-mono font-bold text-neutral-400 uppercase">
-                  <span>0.60</span>
-                  <span>{gender === 'female' ? '0.80' : '0.90'}</span>
-                  <span>{gender === 'female' ? '0.85' : '1.00'}</span>
-                  <span>1.10+</span>
-                </div>
+                  {/* Ticks at the real WHO thresholds */}
+                  {whrTicks.map((tick, idx) => (
+                    <g key={tick}>
+                      <line
+                        x1={ratioToX(tick)}
+                        y1={SCALE.bandY + SCALE.bandH}
+                        x2={ratioToX(tick)}
+                        y2={SCALE.bandY + SCALE.bandH + 4}
+                        stroke="#a3a3a3"
+                        strokeWidth="1"
+                      />
+                      <text
+                        x={ratioToX(tick)}
+                        y={SCALE.bandY + SCALE.bandH + 14}
+                        textAnchor={idx === 0 ? 'start' : idx === whrTicks.length - 1 ? 'end' : 'middle'}
+                        fontSize="8"
+                        fontWeight="bold"
+                        fill="#737373"
+                      >
+                        {tick === maxScale ? '1.10+' : tick.toFixed(2)}
+                      </text>
+                    </g>
+                  ))}
+                  <text x={SCALE.w / 2} y={SCALE.h - 2} textAnchor="middle" fontSize="7" fontWeight="bold" fill="#a3a3a3">
+                    WAIST-TO-HIP RATIO
+                  </text>
+                </svg>
               </div>
 
               {/* Classification list details */}
