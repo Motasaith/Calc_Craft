@@ -62,8 +62,26 @@ export default function CustomSignUpPage() {
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
       setPendingVerification(true)
     } catch (err: any) {
-      const msg = err.errors?.[0]?.longMessage || err.errors?.[0]?.message || 'Failed to create account. Please try again.'
-      setError(msg)
+      // Log the whole thing — Clerk's failures are far more specific than the
+      // banner can show, and a silent one is impossible to debug from a report
+      // of "the button does nothing".
+      console.error('[sign-up] create failed:', err?.errors || err)
+
+      const first = err?.errors?.[0]
+      const code = first?.code || ''
+
+      if (code.includes('captcha')) {
+        setError(
+          'Verification could not be completed. Please refresh the page and try again — if it keeps happening, disable any ad blocker for this site.'
+        )
+      } else {
+        setError(
+          first?.longMessage ||
+            first?.message ||
+            err?.message ||
+            'Failed to create account. Please try again.'
+        )
+      }
     } finally {
       setLoading(false)
     }
@@ -268,6 +286,21 @@ export default function CustomSignUpPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Clerk mounts its bot-protection widget (Cloudflare Turnstile)
+                    into this element. It is REQUIRED for custom sign-up flows:
+                    production instances enable captcha by default, and without
+                    this node signUp.create() is rejected before it reaches the
+                    account-creation step.
+
+                    It never appeared in development because Clerk disables bot
+                    protection on dev instances — the failure only shows up once
+                    you move to a pk_live_ key.
+
+                    "smart" widget type means it renders invisibly for ordinary
+                    visitors and only shows a challenge when a request looks
+                    suspicious, so this usually occupies no visible space. */}
+                <div id="clerk-captcha" className="mt-2 empty:hidden" />
 
                 <button
                   type="submit"
