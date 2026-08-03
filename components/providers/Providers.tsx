@@ -15,27 +15,33 @@
 
 import React from 'react'
 import { ClerkProvider } from '@clerk/react'
-import { AuthProvider } from '@/components/providers/AuthContext'
+import { AuthProvider, AuthUnavailableProvider } from '@/components/providers/AuthContext'
 import { UserDataProvider } from '@/components/providers/UserDataContext'
 
 const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  // Without a key Clerk throws on mount and takes the whole app down. A missing
-  // key is a deployment mistake, not a user error — render the app signed-out
-  // rather than a white screen, and say so loudly in the console.
+  // NEXT_PUBLIC_* values are inlined at build time, so an empty key here means
+  // the variable was missing when the deploy was built — adding it afterwards
+  // does nothing until a rebuild.
+  //
+  // This branch previously rendered <AuthProvider> (which calls Clerk hooks)
+  // without a <ClerkProvider> above it. With no Clerk context `isLoaded` never
+  // became true, so every gated page span on a loader forever instead of
+  // showing its signed-out state. AuthUnavailableProvider serves a static
+  // "signed out, done loading" context instead.
   if (!publishableKey) {
     if (typeof window !== 'undefined') {
       console.error(
-        '[auth] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set. ' +
+        '[auth] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY was not set when this build was created. ' +
           'Sign-in is disabled and saved calculators will not load. ' +
-          'Set it in the Cloudflare Pages environment variables and redeploy.'
+          'Set it in Cloudflare Pages → Settings → Variables and redeploy (a rebuild is required).'
       )
     }
     return (
-      <AuthProvider>
+      <AuthUnavailableProvider>
         <UserDataProvider>{children}</UserDataProvider>
-      </AuthProvider>
+      </AuthUnavailableProvider>
     )
   }
 

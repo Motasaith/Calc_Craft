@@ -20,7 +20,7 @@
  *     (functions/_shared/admin.js) — the client claim is never trusted.
  */
 
-import React, { createContext, useContext, useCallback, useMemo } from 'react'
+import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react'
 import { useUser, useAuth as useClerkAuth, useClerk } from '@clerk/react'
 
 interface User {
@@ -59,10 +59,73 @@ const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean)
 
+/**
+ * Auth context for when Clerk cannot run at all — no publishable key was present
+ * at build time.
+ *
+ * This exists because the previous fallback rendered <AuthProvider> outside
+ * <ClerkProvider> while AuthProvider unconditionally calls useUser(). With no
+ * Clerk context `isLoaded` never becomes true, so `isLoading` stayed true
+ * forever and every gated page (/build-ai, /dashboard) span on a loader with no
+ * error and no way out. Hooks cannot be called conditionally, so the two cases
+ * have to be separate components.
+ *
+ * Here the answer is simply "signed out, and finished deciding that" — pages
+ * render their signed-out state instead of hanging.
+ */
+export function AuthUnavailableProvider({ children }: { children: React.ReactNode }) {
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user: null,
+      isLoading: false,
+      isAdmin: false,
+      authedFetch: async () =>
+        new Response(JSON.stringify({ error: 'Sign-in is not configured on this deployment.' }), {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      signOut: async () => {},
+      promptSignIn: () => {
+        // eslint-disable-next-line no-alert
+        alert(
+          'Sign-in is temporarily unavailable on this site. Please try again later, or contact support@homeofcalculators.com.'
+        )
+      },
+    }),
+    []
+  )
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+/** How long to wait for Clerk before giving up and rendering as signed-out. */
+const CLERK_LOAD_TIMEOUT_MS = 12000
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, user: clerkUser } = useUser()
   const { getToken } = useClerkAuth()
   const clerk = useClerk()
+
+  // Watchdog. Clerk can fail to initialise for reasons the page cannot detect —
+  // a revoked key, an origin the instance does not allow, a blocked network
+  // request. `isLoaded` simply stays false in all of them. Without this, the
+  // whole app sits on a spinner indefinitely; with it, the visitor gets the
+  // signed-out UI, which is at least usable and honest.
+  const [timedOut, setTimedOut] = useState(false)
+
+  useEffect(() => {
+    if (isLoaded) return
+    const timer = setTimeout(() => {
+      setTimedOut(true)
+      console.error(
+        '[auth] Clerk did not finish loading within ' +
+          CLERK_LOAD_TIMEOUT_MS / 1000 +
+          's. Rendering signed-out. Check that NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is set for this ' +
+          'deployment and that this domain is an allowed origin on the Clerk instance.'
+      )
+    }, CLERK_LOAD_TIMEOUT_MS)
+    return () => clearTimeout(timer)
+  }, [isLoaded])
 
   const user = useMemo<User | null>(() => {
     if (!isSignedIn || !clerkUser) return null
@@ -116,7 +179,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isLoading: !isLoaded,
+        // Once the watchdog fires, stop claiming to be loading.
+        isLoading: !isLoaded && !timedOut,
         isAdmin,
         authedFetch,
         signOut,
