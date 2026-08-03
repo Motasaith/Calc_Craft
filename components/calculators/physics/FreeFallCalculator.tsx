@@ -1,65 +1,72 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(x1: number, y1: number, x2: number, y2: number) {
-  const dx = x2 - x1, dy = y2 - y1
-  const dist = Math.sqrt(dx * dx + dy * dy)
-  if (dist < 5) return `M ${x1} ${y1} L ${x2} ${y2}`
-  const steps = Math.max(3, Math.floor(dist / 10))
-  let path = `M ${x1} ${y1}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jx = (Math.sin(i * 2.7) - 0.5) * 1.0
-    path += ` L ${x1 + dx * t + jx} ${y1 + dy * t}`
-  }
-  return path
-}
-
 export default function FreeFallCalculator() {
-  const [height, setHeight] = useState('45')
-  const g = 9.81
+  const [timeStr, setTimeStr] = useState('3') // seconds
+  const [gStr, setGStr] = useState('9.80665') // m/s²
 
-  const h = parseFloat(height)
-  const valid = !isNaN(h) && h >= 0
-  const t = valid ? Math.sqrt((2 * h) / g) : 0
-  const vFinal = valid ? g * t : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      distance: 0,
+      velocity: 0,
+      steps: [] as string[]
+    }
 
-  // Object position in SVG (falls from top to bottom)
-  const fallPct = Math.min(1, h / 100)
-  const objY = 15 + fallPct * 85
+    const t = parseFloat(timeStr)
+    const g = parseFloat(gStr)
+
+    if (isNaN(t) || isNaN(g) || t < 0 || g <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const distance = 0.5 * g * t * t
+    const velocity = g * t
+
+    const steps = [
+      `Distance = 0.5 × g × t² = 0.5 × ${g} × ${t}² = ${distance.toFixed(4)} m`,
+      `Velocity = g × t = ${g} × ${t} = ${velocity.toFixed(4)} m/s`
+    ]
+
+    return {
+      error: null,
+      distance,
+      velocity,
+      steps
+    }
+  }, [timeStr, gStr])
 
   return (
-    <FormCalculatorShell title="Free Fall Calculator" subtitle="t = √(2h/g), v = g×t" badge="PHYSICS">
-      <RetroInput label="Height (h)" value={height} onChange={setHeight} placeholder="e.g. 45" id="ff-h" unit="m" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Fall Time" value={t.toFixed(2)} unit="s" large />
-            <ResultDisplay label="Final Velocity" value={vFinal.toFixed(2)} unit="m/s" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Free Fall Path</span>
-            <svg width="120" height="120" viewBox="0 0 120 120" className="select-none">
-              <defs>
-                <pattern id="ffGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="120" height="120" fill="url(#ffGrid)" rx="8" />
-              {/* Start position */}
-              <circle cx="60" cy="15" r="6" fill="#fbbf24" stroke="#d97706" strokeWidth="2" opacity="0.4" />
-              {/* Fall path */}
-              <path d={wobblyLine(60, 15, 60, objY)} stroke="#2563eb" strokeWidth="2" strokeDasharray="3 3" />
-              {/* Current object */}
-              <circle cx="60" cy={objY} r="7" fill="#fbbf24" stroke="#d97706" strokeWidth="2" />
-              {/* Ground */}
-              <path d={wobblyLine(15, 108, 105, 108)} stroke="#4c5c4a" strokeWidth="2.5" />
-              <text x="60" y="118" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#78350f" fontWeight="bold">t={t.toFixed(2)}s</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Free Fall Calculator" subtitle="Solve distance and velocity of a falling object" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Fall Time (seconds)" value={timeStr} onChange={setTimeStr} id="ff-t" />
+          <RetroInput label="Gravity g (m/s²)" value={gStr} onChange={setGStr} id="ff-g" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Distance Fallen" value={`${results.distance.toFixed(2)} m`} large />
+                <ResultDisplay label="Terminal Velocity" value={`${results.velocity.toFixed(2)} m/s`} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

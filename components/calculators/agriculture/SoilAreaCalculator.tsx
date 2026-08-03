@@ -1,49 +1,54 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function SoilAreaCalculator() {
-  const [length, setLength] = useState('100')
-  const [width, setWidth] = useState('50')
+  const [widthStr, setWidthStr] = useState('20')
+  const [lengthStr, setLengthStr] = useState('10')
+  const [depthStr, setDepthStr] = useState('3') // inches
 
-  const l = parseFloat(length), w = parseFloat(width)
-  const valid = !isNaN(l) && !isNaN(w) && l > 0 && w > 0
-  const areaM2 = valid ? l * w : 0
-  const areaHa = valid ? areaM2 / 10000 : 0
-  const areaAcre = valid ? areaM2 / 4047 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, cubicYards: 0, steps: [] as string[] }
+    const w = parseFloat(widthStr)
+    const l = parseFloat(lengthStr)
+    const d = parseFloat(depthStr)
+    if (isNaN(w) || isNaN(l) || isNaN(d) || w <= 0 || l <= 0 || d <= 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    const sqFt = w * l
+    const cubicFeet = sqFt * (d / 12)
+    const cubicYards = cubicFeet / 27
+    return {
+      error: null,
+      cubicYards,
+      steps: [
+        `Area = ${w} × ${l} = ${sqFt} sq ft`,
+        `Volume = ${sqFt} × (${d}/12) = ${cubicFeet.toFixed(2)} cu ft`,
+        `Cubic Yards = Volume / 27 = ${cubicYards.toFixed(2)} cubic yards`
+      ]
+    }
+  }, [widthStr, lengthStr, depthStr])
 
   return (
-    <FormCalculatorShell title="Soil Area Calculator" subtitle="A = L × W" badge="AGRICULTURE">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Length" value={length} onChange={setLength} placeholder="100" id="sa-l" unit="m" />
-        <RetroInput label="Width" value={width} onChange={setWidth} placeholder="50" id="sa-w" unit="m" />
+    <FormCalculatorShell title="Soil Volume & Area Solver" subtitle="Calculate soil/mulch cubic yards needed" badge="AGRICULTURE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Width (ft)" value={widthStr} onChange={setWidthStr} id="soil-w" />
+          <RetroInput label="Length (ft)" value={lengthStr} onChange={setLengthStr} id="soil-l" />
+          <RetroInput label="Soil Depth (inches)" value={depthStr} onChange={setDepthStr} id="soil-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Soil Needed (Cubic Yards)" value={results.cubicYards.toFixed(2)} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <ResultDisplay label="m²" value={areaM2.toFixed(0)} large />
-            <ResultDisplay label="hectares" value={areaHa.toFixed(4)} large />
-            <ResultDisplay label="acres" value={areaAcre.toFixed(4)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Field Plot</span>
-            <svg width="160" height="90" viewBox="0 0 160 90" className="select-none">
-              <defs>
-                <pattern id="saGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="90" fill="url(#saGrid)" rx="8" />
-              <path d={wobblyRect(20, 15, Math.min(120, (l / Math.max(l, w)) * 120), Math.min(60, (w / Math.max(l, w)) * 60))} fill="#a16207" fillOpacity="0.15" stroke="#a16207" strokeWidth="2" />
-              <text x="80" y="85" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#a16207" fontWeight="bold">{areaM2.toFixed(0)} m²</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

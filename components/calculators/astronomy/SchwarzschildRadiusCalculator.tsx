@@ -1,56 +1,69 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  const steps = 28
-  let path = ''
-  for (let i = 0; i <= steps; i++) {
-    const theta = (i / steps) * Math.PI * 2
-    const jitter = (Math.sin(i * 3.1) - 0.5) * 1.0
-    const x = cx + (r + jitter) * Math.cos(theta)
-    const y = cy + (r + jitter) * Math.sin(theta)
-    path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`
-  }
-  return path + ' Z'
-}
-
 export default function SchwarzschildRadiusCalculator() {
-  const [mass, setMass] = useState('1.989e30')
-  const G = 6.674e-11
-  const c = 3e8
+  const [massStr, setMassStr] = useState('1.989e30') // Sun mass (kg)
 
-  const m = parseFloat(mass)
-  const valid = !isNaN(m) && m > 0
-  const rs = valid ? (2 * G * m) / (c * c) : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      radius: 0,
+      steps: [] as string[]
+    }
+
+    const m = parseFloat(massStr)
+    if (isNaN(m) || m <= 0) {
+      return { ...defaultObj, error: 'Please enter a valid positive mass.' }
+    }
+
+    const G = 6.6743e-11
+    const c = 299792458
+    const radius = (2 * G * m) / (c * c)
+
+    const steps = [
+      `G = 6.6743 × 10⁻¹¹ N·m²/kg²`,
+      `c = 2.9979 × 10⁸ m/s`,
+      `Formula: R_s = 2 × G × M / c²`,
+      `R_s = ${radius.toFixed(4)} m (${(radius / 1000).toFixed(6)} km)`
+    ]
+
+    return {
+      error: null,
+      radius,
+      steps
+    }
+  }, [massStr])
 
   return (
-    <FormCalculatorShell title="Schwarzschild Radius" subtitle="rs = 2GM/c²" badge="ASTRONOMY">
-      <RetroInput label="Mass (M)" value={mass} onChange={setMass} placeholder="1.989e30" id="sr-m" unit="kg" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Event Horizon Radius" value={rs.toExponential(4)} unit="m" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Black Hole</span>
-            <svg width="140" height="120" viewBox="0 0 140 120" className="select-none">
-              <defs>
-                <pattern id="srGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="140" height="120" fill="url(#srGrid)" rx="8" />
-              {/* Accretion disk */}
-              <ellipse cx="70" cy="55" rx="45" ry="12" fill="none" stroke="#f97316" strokeWidth="1.5" strokeDasharray="3 2" />
-              <ellipse cx="70" cy="55" rx="35" ry="9" fill="none" stroke="#fbbf24" strokeWidth="1" strokeDasharray="2 2" />
-              {/* Event horizon */}
-              <path d={wobblyCircle(70, 55, 18)} fill="#1e1b4b" stroke="#7c3aed" strokeWidth="2.5" />
-              <text x="70" y="115" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">rs = {rs.toExponential(2)} m</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Schwarzschild Radius Calculator" subtitle="Solve event horizon radius (black hole radius) of a mass" badge="ASTRONOMY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Object Mass M (kg)" value={massStr} onChange={setMassStr} id="sch-m" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Radius (meters)" value={results.radius.toFixed(2)} large />
+                <ResultDisplay label="Radius (km)" value={(results.radius / 1000).toFixed(4)} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,65 +1,112 @@
 'use client'
-import React, { useState, useMemo } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-// Wobbly arrow generator (force vector)
-function wobblyArrow(x1: number, y1: number, x2: number, y2: number, scale = 1) {
-  const dx = x2 - x1, dy = y2 - y1
-  const len = Math.sqrt(dx * dx + dy * dy)
-  if (len < 5) return `M ${x1} ${y1} L ${x2} ${y2}`
-  const steps = Math.max(4, Math.floor(len / 12))
-  let path = `M ${x1} ${y1}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jx = (Math.sin(i * 2.3) * 1.2) * scale
-    const jy = (Math.cos(i * 1.7) * 1.2) * scale
-    path += ` L ${x1 + dx * t + jx} ${y1 + dy * t + jy}`
-  }
-  return path
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'force' | 'mass' | 'acceleration'
 
 export default function NewtonForceCalculator() {
-  const [mass, setMass] = useState('10')
-  const [accel, setAccel] = useState('2')
+  const [mode, setMode] = useState<Mode>('force')
+  const [forceStr, setForceStr] = useState('50')
+  const [massStr, setMassStr] = useState('10')
+  const [accelStr, setAccelStr] = useState('5')
 
-  const m = parseFloat(mass), a = parseFloat(accel)
-  const valid = !isNaN(m) && !isNaN(a) && m >= 0
-  const force = valid ? m * a : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      force: 0,
+      mass: 0,
+      acceleration: 0,
+      steps: [] as string[]
+    }
 
-  // Visualizer: arrow length scales with force
-  const maxLen = 140
-  const arrowLen = Math.min(maxLen, (force / 100) * maxLen + 20)
+    const f = parseFloat(forceStr)
+    const m = parseFloat(massStr)
+    const a = parseFloat(accelStr)
+
+    let ansF = f, ansM = m, ansA = a
+    let steps: string[] = []
+
+    if (mode === 'force') {
+      if (isNaN(m) || isNaN(a) || m <= 0) {
+        return { ...defaultObj, error: 'Please enter a valid positive mass and acceleration.' }
+      }
+      ansF = m * a
+      steps = [
+        `Formula: Force (F) = Mass (m) × Acceleration (a)`,
+        `F = dots = ${ansF.toFixed(2)} N`
+      ]
+    } else if (mode === 'mass') {
+      if (isNaN(f) || isNaN(a) || a === 0) {
+        return { ...defaultObj, error: 'Please enter valid force and non-zero acceleration.' }
+      }
+      ansM = f / a
+      steps = [
+        `Formula: Mass (m) = Force (F) / Acceleration (a)`,
+        `m = dots = ${ansM.toFixed(4)} kg`
+      ]
+    } else {
+      if (isNaN(f) || isNaN(m) || m <= 0) {
+        return { ...defaultObj, error: 'Please enter valid force and positive mass.' }
+      }
+      ansA = f / m
+      steps = [
+        `Formula: Acceleration (a) = Force (F) / Mass (m)`,
+        `a = dots = ${ansA.toFixed(4)} m/s²`
+      ]
+    }
+
+    return {
+      error: null,
+      force: ansF,
+      mass: ansM,
+      acceleration: ansA,
+      steps
+    }
+  }, [mode, forceStr, massStr, accelStr])
 
   return (
-    <FormCalculatorShell title="Newton's Second Law" subtitle="F = m × a" badge="PHYSICS">
-      <RetroInput label="Mass (m)" value={mass} onChange={setMass} placeholder="e.g. 10" id="nf-mass" unit="kg" />
-      <RetroInput label="Acceleration (a)" value={accel} onChange={setAccel} placeholder="e.g. 2" id="nf-accel" unit="m/s²" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Force (F)" value={force.toFixed(2)} unit="N" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Force Vector</span>
-            <svg width="200" height="80" viewBox="0 0 200 80" className="select-none">
-              <defs>
-                <pattern id="nfGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="80" fill="url(#nfGrid)" rx="8" />
-              {/* Object box */}
-              <path d={`M 25 30 L 55 30 L 55 50 L 25 50 Z`} fill="#fde68a" stroke="#a16207" strokeWidth="2" />
-              <text x="40" y="44" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#78350f">m</text>
-              {/* Force arrow */}
-              <path d={wobblyArrow(60, 40, 60 + arrowLen, 40)} fill="none" stroke="#dc2626" strokeWidth="3" strokeLinecap="round" />
-              {/* Arrowhead */}
-              <path d={`M ${60 + arrowLen} 40 L ${60 + arrowLen - 8} 34 L ${60 + arrowLen - 8} 46 Z`} fill="#dc2626" />
-              <text x={60 + arrowLen / 2} y="28" textAnchor="middle" fontSize="10" fontFamily="monospace" fill="#dc2626" fontWeight="bold">F={force.toFixed(1)}N</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Newton's Second Law Force Calculator" subtitle="Solve Force = Mass × Acceleration relations" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="newt-mode"
+            options={[
+              { value: 'force', label: 'Force (F)' },
+              { value: 'mass', label: 'Mass (m)' },
+              { value: 'acceleration', label: 'Acceleration (a)' }
+            ]}
+          />
+          {mode !== 'force' && <RetroInput label="Force (N)" value={forceStr} onChange={setForceStr} id="newt-f" />}
+          {mode !== 'mass' && <RetroInput label="Mass (kg)" value={massStr} onChange={setMassStr} id="newt-m" />}
+          {mode !== 'acceleration' && <RetroInput label="Acceleration (m/s²)" value={accelStr} onChange={setAccelStr} id="newt-a" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Force" value={`${results.force.toFixed(2)} N`} large={mode === 'force'} />
+                <ResultDisplay label="Mass" value={`${results.mass.toFixed(2)} kg`} large={mode === 'mass'} />
+                <ResultDisplay label="Acceleration" value={`${results.acceleration.toFixed(4)} m/s²`} large={mode === 'acceleration'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

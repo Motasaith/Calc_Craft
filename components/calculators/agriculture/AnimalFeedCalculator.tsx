@@ -1,48 +1,52 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function AnimalFeedCalculator() {
-  const [weight, setWeight] = useState('500')
-  const [pctBody, setPctBody] = useState('2.5')
+  const [headCountStr, setHeadCountStr] = useState('20')
+  const [dailyFeedStr, setDailyFeedStr] = useState('15') // lbs per animal
+  const [daysStr, setDaysStr] = useState('30')
 
-  const w = parseFloat(weight), p = parseFloat(pctBody)
-  const valid = !isNaN(w) && !isNaN(p) && w > 0 && p >= 0
-  const feedPerDay = valid ? (w * p) / 100 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, total: 0, steps: [] as string[] }
+    const hc = parseInt(headCountStr)
+    const df = parseFloat(dailyFeedStr)
+    const d = parseInt(daysStr)
+    if (isNaN(hc) || isNaN(df) || isNaN(d) || hc <= 0 || df <= 0 || d <= 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    const total = hc * df * d
+    return {
+      error: null,
+      total,
+      steps: [
+        `Daily Feed per Herd = Headcount × Daily Feed per Animal`,
+        `Daily Feed = ${hc} × ${df} = ${hc * df} lbs/day`,
+        `Total Feed = Daily Feed × Days = ${hc * df} × ${d} = ${total} lbs`
+      ]
+    }
+  }, [headCountStr, dailyFeedStr, daysStr])
 
   return (
-    <FormCalculatorShell title="Animal Feed Calculator" subtitle="Feed = Weight × %Body" badge="AGRICULTURE">
-      <RetroInput label="Animal Weight" value={weight} onChange={setWeight} placeholder="500" id="af-w" unit="kg" />
-      <RetroInput label="% Body Weight" value={pctBody} onChange={setPctBody} placeholder="2.5" id="af-p" unit="%" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Daily Feed" value={feedPerDay.toFixed(2)} unit="kg/day" large />
-            <ResultDisplay label="Monthly Feed" value={(feedPerDay * 30).toFixed(1)} unit="kg/mo" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Feed Ratio</span>
-            <svg width="160" height="80" viewBox="0 0 160 80" className="select-none">
-              <defs>
-                <pattern id="afGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="80" fill="url(#afGrid)" rx="8" />
-              {/* Animal weight bar */}
-              <path d={wobblyBar(20, 20, 60, 40)} fill="#a78bfa" fillOpacity="0.2" stroke="#7c3aed" strokeWidth="2" />
-              <text x="50" y="72" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#7c3aed">{w}kg</text>
-              {/* Feed bar */}
-              <path d={wobblyBar(90, 20 + 40 - (p / 5) * 40, 50, (p / 5) * 40)} fill="#fbbf24" fillOpacity="0.3" stroke="#d97706" strokeWidth="2" />
-              <text x="115" y="72" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#d97706">{feedPerDay.toFixed(1)}kg</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Animal Feed Solver" subtitle="Calculate total feed required for livestock herds" badge="AGRICULTURE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Animals count (head)" value={headCountStr} onChange={setHeadCountStr} id="af-hc" />
+          <RetroInput label="Daily Feed per Animal (lbs)" value={dailyFeedStr} onChange={setDailyFeedStr} id="af-df" />
+          <RetroInput label="Feed Duration (days)" value={daysStr} onChange={setDaysStr} id="af-d" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Total Feed Needed (lbs)" value={results.total.toLocaleString()} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

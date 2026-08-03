@@ -1,50 +1,77 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function AspectRatioCalculator() {
-  const [width, setWidth] = useState('1920')
-  const [height, setHeight] = useState('1080')
+  const [widthStr, setWidthStr] = useState('1920')
+  const [heightStr, setHeightStr] = useState('1080')
 
-  const w = parseFloat(width), h = parseFloat(height)
-  const valid = !isNaN(w) && !isNaN(h) && w > 0 && h > 0
-  const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b)
-  const g = valid ? gcd(Math.round(w), Math.round(h)) : 1
-  const ratioW = valid ? Math.round(w) / g : 0
-  const ratioH = valid ? Math.round(h) / g : 0
-  const decimal = valid ? w / h : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      ratio: '',
+      decimal: 0,
+      steps: [] as string[]
+    }
+
+    const w = parseInt(widthStr)
+    const h = parseInt(heightStr)
+
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    }
+
+    // Find greatest common divisor
+    const gcd = (x: number, y: number): number => (!y ? x : gcd(y, x % y))
+    const d = gcd(w, h)
+    const ratio = `${w / d} : ${h / d}`
+    const decimal = w / h
+
+    const steps = [
+      `Width = ${w} px | Height = ${h} px`,
+      `GCD(${w}, ${h}) = ${d}`,
+      `Aspect Ratio = ${w / d} : ${h / d}`,
+      `Decimal aspect ratio = ${decimal.toFixed(3)}`
+    ]
+
+    return {
+      error: null,
+      ratio,
+      decimal,
+      steps
+    }
+  }, [widthStr, heightStr])
 
   return (
-    <FormCalculatorShell title="Aspect Ratio" subtitle="Simplify W:H ratio" badge="PHOTOGRAPHY">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Width" value={width} onChange={setWidth} placeholder="1920" id="ar-w" unit="px" />
-        <RetroInput label="Height" value={height} onChange={setHeight} placeholder="1080" id="ar-h" unit="px" />
+    <FormCalculatorShell title="Aspect Ratio Calculator" subtitle="Solve aspect ratios and scaling from pixel counts" badge="PHOTOGRAPHY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Width (px)" value={widthStr} onChange={setWidthStr} id="ar-w" />
+          <RetroInput label="Height (px)" value={heightStr} onChange={setHeightStr} id="ar-h" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Aspect Ratio" value={results.ratio} large />
+                <ResultDisplay label="Decimal Ratio" value={results.decimal.toFixed(3)} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Ratio" value={`${ratioW}:${ratioH}`} large />
-            <ResultDisplay label="Decimal" value={decimal.toFixed(4)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Aspect Visual</span>
-            <svg width="160" height="80" viewBox="0 0 160 80" className="select-none">
-              <defs>
-                <pattern id="arGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="80" fill="url(#arGrid)" rx="8" />
-              <path d={wobblyRect(20, 10, Math.min(120, (w / Math.max(w, h)) * 120), Math.min(55, (h / Math.max(w, h)) * 55))} fill="#78716c" fillOpacity="0.15" stroke="#57534e" strokeWidth="2" />
-              <text x="80" y="75" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#57534e" fontWeight="bold">{ratioW}:{ratioH}</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

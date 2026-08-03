@@ -1,65 +1,70 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(x1: number, y1: number, x2: number, y2: number) {
-  const dx = x2 - x1, dy = y2 - y1
-  const dist = Math.sqrt(dx * dx + dy * dy)
-  if (dist < 5) return `M ${x1} ${y1} L ${x2} ${y2}`
-  const steps = Math.max(3, Math.floor(dist / 10))
-  let path = `M ${x1} ${y1}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jx = (Math.sin(i * 2.7) - 0.5) * 1.2
-    path += ` L ${x1 + dx * t + jx} ${y1 + dy * t}`
-  }
-  return path
-}
-
 export default function PotentialEnergyCalculator() {
-  const [mass, setMass] = useState('2')
-  const [height, setHeight] = useState('10')
-  const g = 9.81
+  const [massStr, setMassStr] = useState('10') // kg
+  const [heightStr, setHeightStr] = useState('5') // meters
+  const [gStr, setGStr] = useState('9.80665') // m/s²
 
-  const m = parseFloat(mass), h = parseFloat(height)
-  const valid = !isNaN(m) && !isNaN(h) && m >= 0 && h >= 0
-  const pe = valid ? m * g * h : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      pe: 0,
+      steps: [] as string[]
+    }
 
-  // Object height in SVG
-  const objY = Math.max(15, 110 - (h / 50) * 80)
+    const m = parseFloat(massStr)
+    const h = parseFloat(heightStr)
+    const g = parseFloat(gStr)
+
+    if (isNaN(m) || isNaN(h) || isNaN(g) || m <= 0 || h < 0 || g <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive parameters.' }
+    }
+
+    const pe = m * g * h
+    const steps = [
+      `Formula: PE = m × g × h`,
+      `PE = ${m} kg × ${g} m/s² × ${h} m = ${pe.toFixed(2)} J`
+    ]
+
+    return {
+      error: null,
+      pe,
+      steps
+    }
+  }, [massStr, heightStr, gStr])
 
   return (
-    <FormCalculatorShell title="Gravitational PE" subtitle="PE = m × g × h" badge="PHYSICS">
-      <RetroInput label="Mass (m)" value={mass} onChange={setMass} placeholder="e.g. 2" id="pe-mass" unit="kg" />
-      <RetroInput label="Height (h)" value={height} onChange={setHeight} placeholder="e.g. 10" id="pe-height" unit="m" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Potential Energy" value={pe.toFixed(2)} unit="J" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Height Diagram</span>
-            <svg width="160" height="130" viewBox="0 0 160 130" className="select-none">
-              <defs>
-                <pattern id="peGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="130" fill="url(#peGrid)" rx="8" />
-              {/* Ground */}
-              <path d={wobblyLine(15, 115, 145, 115)} stroke="#4c5c4a" strokeWidth="2.5" />
-              {/* Height line */}
-              <path d={wobblyLine(80, 115, 80, objY)} stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="4 3" />
-              {/* Object */}
-              <rect x="65" y={objY - 12} width="30" height="12" fill="#fbbf24" stroke="#d97706" strokeWidth="2" rx="2" />
-              <text x="80" y={objY - 16} textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#78350f">m</text>
-              {/* Height label */}
-              <text x="95" y={(115 + objY) / 2} fontSize="9" fontFamily="monospace" fill="#4c5c4a">h={h}m</text>
-              <text x="80" y="128" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#78350f" fontWeight="bold">PE = {pe.toFixed(1)} J</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Potential Energy Calculator" subtitle="Solve gravitational potential energy of an elevated mass" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Mass (kg)" value={massStr} onChange={setMassStr} id="pe-m" />
+          <RetroInput label="Height (m)" value={heightStr} onChange={setHeightStr} id="pe-h" />
+          <RetroInput label="Gravity g (m/s²)" value={gStr} onChange={setGStr} id="pe-g" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-1">
+                <ResultDisplay label="Potential Energy (PE)" value={`${results.pe.toFixed(2)} J`} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

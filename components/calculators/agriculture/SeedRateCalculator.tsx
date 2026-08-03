@@ -1,56 +1,57 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function SeedRateCalculator() {
-  const [area, setArea] = useState('1')
-  const [spacing, setSpacing] = useState('30')
-  const [rowSpace, setRowSpace] = useState('60')
+  const [areaStr, setAreaStr] = useState('1') // acre
+  const [targetPlantsStr, setTargetPlantsStr] = useState('30000') // plants/acre
+  const [germinationStr, setGerminationStr] = useState('90') // %
+  const [purityStr, setPurityStr] = useState('95') // %
 
-  const a = parseFloat(area), sp = parseFloat(spacing), rs = parseFloat(rowSpace)
-  const valid = !isNaN(a) && !isNaN(sp) && !isNaN(rs) && a > 0 && sp > 0 && rs > 0
-  // area in m², spacing in cm → convert to m
-  const plantsPerM2 = valid ? 10000 / (sp * rs) : 0 // 10000 cm² per m²
-  const totalPlants = valid ? plantsPerM2 * a * 10000 : 0 // area in ha → m²
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, seedsNeeded: 0, steps: [] as string[] }
+    const a = parseFloat(areaStr)
+    const t = parseFloat(targetPlantsStr)
+    const g = parseFloat(germinationStr)
+    const p = parseFloat(purityStr)
+    if (isNaN(a) || isNaN(t) || isNaN(g) || isNaN(p) || a <= 0 || t <= 0 || g <= 0 || p <= 0 || g > 100 || p > 100) {
+      return { ...defaultObj, error: 'Please enter valid positive percentages and counts.' }
+    }
+    const seedsNeeded = (t * a) / ((g / 100) * (p / 100))
+    return {
+      error: null,
+      seedsNeeded,
+      steps: [
+        `Pure Live Seed (PLS) factor = (${g} / 100) × (${p} / 100) = ${((g * p) / 10000).toFixed(4)}`,
+        `Total Seeds = (Target Plants × Area) / PLS factor`,
+        `Total Seeds = ${Math.round(seedsNeeded).toLocaleString()} seeds`
+      ]
+    }
+  }, [areaStr, targetPlantsStr, germinationStr, purityStr])
 
   return (
-    <FormCalculatorShell title="Seed Rate Calculator" subtitle="Plants = (Area × 10000) / (spacing × row)" badge="AGRICULTURE">
-      <RetroInput label="Area" value={area} onChange={setArea} placeholder="1" id="sd-a" unit="ha" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Plant Spacing" value={spacing} onChange={setSpacing} placeholder="30" id="sd-sp" unit="cm" />
-        <RetroInput label="Row Spacing" value={rowSpace} onChange={setRowSpace} placeholder="60" id="sd-rs" unit="cm" />
+    <FormCalculatorShell title="Seed Rate Solver" subtitle="Calculate seeds needed based on field target and germination success" badge="AGRICULTURE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Field Area (acres)" value={areaStr} onChange={setAreaStr} id="sr-a" />
+          <RetroInput label="Target Plant Population per Acre" value={targetPlantsStr} onChange={setTargetPlantsStr} id="sr-t" />
+          <RetroInput label="Germination Rate (%)" value={germinationStr} onChange={setGerminationStr} id="sr-g" />
+          <RetroInput label="Seed Purity (%)" value={purityStr} onChange={setPurityStr} id="sr-p" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Total Seeds Needed" value={Math.round(results.seedsNeeded).toLocaleString()} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Plants/m²" value={plantsPerM2.toFixed(1)} large />
-            <ResultDisplay label="Total Plants" value={totalPlants.toFixed(0)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Plant Grid</span>
-            <svg width="160" height="90" viewBox="0 0 160 90" className="select-none">
-              <defs>
-                <pattern id="sdGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="90" fill="url(#sdGrid)" rx="8" />
-              <path d={wobblyRect(20, 15, 120, 60)} fill="#84cc16" fillOpacity="0.1" stroke="#65a30d" strokeWidth="2" />
-              {/* Plant dots in grid */}
-              {Array.from({ length: 4 }).map((_, row) => (
-                Array.from({ length: 6 }).map((_, col) => (
-                  <circle key={`${row}-${col}`} cx={30 + col * 20} cy={25 + row * 15} r="3" fill="#65a30d" />
-                ))
-              ))}
-              <text x="80" y="85" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#65a30d" fontWeight="bold">{totalPlants.toFixed(0)} plants</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

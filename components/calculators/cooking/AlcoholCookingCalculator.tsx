@@ -1,47 +1,46 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
 
 export default function AlcoholCookingCalculator() {
-  const [alcohol, setAlcohol] = useState('40')
-  const [time, setTime] = useState('60')
+  const [method, setMethod] = useState<'stir-in' | 'simmer-15' | 'simmer-60' | 'baked-25'>('stir-in')
+  const [volStr, setVolStr] = useState('100') // mL
 
-  const a = parseFloat(alcohol), t = parseFloat(time)
-  const valid = !isNaN(a) && !isNaN(t) && a > 0 && t >= 0
-  // Remaining alcohol after cooking: ~85% at 0min, 75% at 15min, 45% at 60min, 25% at 120min, 5% at 180min
-  const remaining = valid ? t === 0 ? 100 : t < 15 ? 95 - (t / 15) * 20 : t < 60 ? 75 - ((t - 15) / 45) * 30 : t < 120 ? 45 - ((t - 60) / 60) * 20 : t < 180 ? 25 - ((t - 120) / 60) * 20 : 5 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, retained: 0 }
+    const v = parseFloat(volStr)
+    if (isNaN(v) || v <= 0) return { ...defaultObj, error: 'Please enter a valid volume.' }
+    let rate = 0.85 // stir in
+    if (method === 'simmer-15') rate = 0.40
+    else if (method === 'simmer-60') rate = 0.25
+    else if (method === 'baked-25') rate = 0.45
+    return { error: null, retained: v * rate }
+  }, [method, volStr])
 
   return (
-    <FormCalculatorShell title="Alcohol Retention" subtitle="% alcohol after cooking" badge="COOKING">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="ABV %" value={alcohol} onChange={setAlcohol} placeholder="40" id="al-a" unit="%" />
-        <RetroInput label="Cooking Time" value={time} onChange={setTime} placeholder="60" id="al-t" unit="min" />
+    <FormCalculatorShell title="Alcohol Retained in Cooking Solver" subtitle="Calculate remaining alcohol content after boiling or baking" badge="COOKING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Cooking Method"
+            value={method}
+            onChange={(val) => setMethod(val as any)}
+            id="alc-m"
+            options={[
+              { value: 'stir-in', label: 'Stirred in / boiled briefly (85% retained)' },
+              { value: 'simmer-15', label: 'Simmered 15 mins (40% retained)' },
+              { value: 'simmer-60', label: 'Simmered 1 hour (25% retained)' },
+              { value: 'baked-25', label: 'Baked 25 mins (45% retained)' }
+            ]}
+          />
+          <RetroInput label="Initial Alcohol Volume (mL)" value={volStr} onChange={setVolStr} id="alc-v" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Retained Alcohol Volume" value={`${results.retained.toFixed(1)} mL`} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Alcohol Remaining" value={remaining.toFixed(1)} unit="%" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Retention Curve</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="alGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#alGrid)" rx="8" />
-              <path d={wobblyBar(15, 25, 150, 25)} fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" rx="3" />
-              <path d={wobblyBar(15, 25, Math.min(150, (remaining / 100) * 150), 25)} fill="#7c3aed" fillOpacity="0.4" stroke="#7c3aed" strokeWidth="1.5" rx="3" />
-              <text x="90" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">{remaining.toFixed(0)}% alcohol remains</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

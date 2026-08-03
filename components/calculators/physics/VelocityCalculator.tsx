@@ -1,63 +1,112 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(x1: number, y1: number, x2: number, y2: number) {
-  const dx = x2 - x1, dy = y2 - y1
-  const dist = Math.sqrt(dx * dx + dy * dy)
-  if (dist < 5) return `M ${x1} ${y1} L ${x2} ${y2}`
-  const steps = Math.max(3, Math.floor(dist / 10))
-  let path = `M ${x1} ${y1}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jy = (Math.sin(i * 2.1) - 0.5) * 1.0
-    path += ` L ${x1 + dx * t} ${y1 + dy * t + jy}`
-  }
-  return path
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'velocity' | 'distance' | 'time'
 
 export default function VelocityCalculator() {
-  const [dist, setDist] = useState('100')
-  const [time, setTime] = useState('10')
+  const [mode, setMode] = useState<Mode>('velocity')
+  const [velStr, setVelStr] = useState('20')
+  const [distStr, setDistStr] = useState('100')
+  const [timeStr, setTimeStr] = useState('5')
 
-  const d = parseFloat(dist), t = parseFloat(time)
-  const valid = !isNaN(d) && !isNaN(t) && d >= 0 && t > 0
-  const vel = valid ? d / t : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      velocity: 0,
+      distance: 0,
+      time: 0,
+      steps: [] as string[]
+    }
 
-  // Arrow length scales with velocity
-  const arrowLen = Math.min(120, (vel / 50) * 120 + 15)
+    const v = parseFloat(velStr)
+    const d = parseFloat(distStr)
+    const t = parseFloat(timeStr)
+
+    let ansV = v, ansD = d, ansT = t
+    let steps: string[] = []
+
+    if (mode === 'velocity') {
+      if (isNaN(d) || isNaN(t) || t <= 0) {
+        return { ...defaultObj, error: 'Please enter valid distance and positive time values.' }
+      }
+      ansV = d / t
+      steps = [
+        `Formula: Velocity (v) = Distance (d) / Time (t)`,
+        `v = ${d} m / ${t} s = ${ansV.toFixed(2)} m/s`
+      ]
+    } else if (mode === 'distance') {
+      if (isNaN(v) || isNaN(t) || t <= 0) {
+        return { ...defaultObj, error: 'Please enter valid velocity and positive time values.' }
+      }
+      ansD = v * t
+      steps = [
+        `Formula: Distance (d) = Velocity (v) × Time (t)`,
+        `d = ${v} m/s × ${t} s = ${ansD.toFixed(2)} m`
+      ]
+    } else {
+      if (isNaN(d) || isNaN(v) || v === 0) {
+        return { ...defaultObj, error: 'Please enter valid distance and non-zero velocity.' }
+      }
+      ansT = d / v
+      steps = [
+        `Formula: Time (t) = Distance (d) / Velocity (v)`,
+        `t = ${d} m / ${v} m/s = ${ansT.toFixed(4)} s`
+      ]
+    }
+
+    return {
+      error: null,
+      velocity: ansV,
+      distance: ansD,
+      time: ansT,
+      steps
+    }
+  }, [mode, velStr, distStr, timeStr])
 
   return (
-    <FormCalculatorShell title="Velocity Calculator" subtitle="v = d / t" badge="PHYSICS">
-      <RetroInput label="Distance (d)" value={dist} onChange={setDist} placeholder="e.g. 100" id="vel-dist" unit="m" />
-      <RetroInput label="Time (t)" value={time} onChange={setTime} placeholder="e.g. 10" id="vel-time" unit="s" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Velocity" value={vel.toFixed(2)} unit="m/s" large />
-            <ResultDisplay label="Speed (km/h)" value={(vel * 3.6).toFixed(2)} unit="km/h" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Motion Diagram</span>
-            <svg width="200" height="70" viewBox="0 0 200 70" className="select-none">
-              <defs>
-                <pattern id="vGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="70" fill="url(#vGrid)" rx="8" />
-              {/* Track */}
-              <path d={wobblyLine(15, 45, 185, 45)} stroke="#9ca3af" strokeWidth="2" />
-              {/* Object */}
-              <circle cx="30" cy="35" r="8" fill="#fbbf24" stroke="#d97706" strokeWidth="2" />
-              {/* Velocity arrow */}
-              <path d={wobblyLine(42, 35, 42 + arrowLen, 35)} stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" />
-              <path d={`M ${42 + arrowLen} 35 L ${42 + arrowLen - 7} 30 L ${42 + arrowLen - 7} 40 Z`} fill="#2563eb" />
-              <text x="100" y="20" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#2563eb" fontWeight="bold">v = {vel.toFixed(1)} m/s</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Velocity Calculator" subtitle="Solve Velocity = Distance / Time relations" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="vel-mode"
+            options={[
+              { value: 'velocity', label: 'Velocity (v)' },
+              { value: 'distance', label: 'Distance (d)' },
+              { value: 'time', label: 'Time (t)' }
+            ]}
+          />
+          {mode !== 'velocity' && <RetroInput label="Velocity (m/s)" value={velStr} onChange={setVelStr} id="vel-v" />}
+          {mode !== 'distance' && <RetroInput label="Distance (meters)" value={distStr} onChange={setDistStr} id="vel-d" />}
+          {mode !== 'time' && <RetroInput label="Time (seconds)" value={timeStr} onChange={setTimeStr} id="vel-t" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Velocity" value={`${results.velocity.toFixed(2)} m/s`} large={mode === 'velocity'} />
+                <ResultDisplay label="Distance" value={`${results.distance.toFixed(2)} m`} large={mode === 'distance'} />
+                <ResultDisplay label="Time" value={`${results.time.toFixed(4)} s`} large={mode === 'time'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

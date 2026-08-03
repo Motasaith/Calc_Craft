@@ -1,58 +1,112 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyArrow(x1: number, y1: number, x2: number, y2: number) {
-  const dx = x2 - x1, dy = y2 - y1
-  const len = Math.sqrt(dx * dx + dy * dy)
-  if (len < 5) return `M ${x1} ${y1} L ${x2} ${y2}`
-  const steps = Math.max(4, Math.floor(len / 12))
-  let path = `M ${x1} ${y1}`
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jy = (Math.sin(i * 2.7) - 0.5) * 1.0
-    path += ` L ${x1 + dx * t} ${y1 + dy * t + jy}`
-  }
-  return path
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'momentum' | 'mass' | 'velocity'
 
 export default function MomentumCalculator() {
-  const [mass, setMass] = useState('10')
-  const [vel, setVel] = useState('5')
+  const [mode, setMode] = useState<Mode>('momentum')
+  const [momStr, setMomStr] = useState('50')
+  const [massStr, setMassStr] = useState('10')
+  const [velStr, setVelStr] = useState('5')
 
-  const m = parseFloat(mass), v = parseFloat(vel)
-  const valid = !isNaN(m) && !isNaN(v) && m >= 0
-  const p = valid ? m * v : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      momentum: 0,
+      mass: 0,
+      velocity: 0,
+      steps: [] as string[]
+    }
 
-  const arrowLen = Math.min(120, (p / 200) * 120 + 15)
+    const p = parseFloat(momStr)
+    const m = parseFloat(massStr)
+    const v = parseFloat(velStr)
+
+    let ansP = p, ansM = m, ansV = v
+    let steps: string[] = []
+
+    if (mode === 'momentum') {
+      if (isNaN(m) || isNaN(v) || m <= 0) {
+        return { ...defaultObj, error: 'Please enter valid positive mass and velocity values.' }
+      }
+      ansP = m * v
+      steps = [
+        `Formula: Momentum (p) = Mass (m) × Velocity (v)`,
+        `p = dots = dots kg·m/s`
+      ]
+    } else if (mode === 'mass') {
+      if (isNaN(p) || isNaN(v) || v === 0) {
+        return { ...defaultObj, error: 'Please enter valid momentum and non-zero velocity.' }
+      }
+      ansM = p / v
+      steps = [
+        `Formula: Mass (m) = Momentum (p) / Velocity (v)`,
+        `m = dots = dots kg`
+      ]
+    } else {
+      if (isNaN(p) || isNaN(m) || m <= 0) {
+        return { ...defaultObj, error: 'Please enter valid momentum and positive mass.' }
+      }
+      ansV = p / m
+      steps = [
+        `Formula: Velocity (v) = Momentum (p) / Mass (m)`,
+        `v = dots = dots m/s`
+      ]
+    }
+
+    return {
+      error: null,
+      momentum: ansP,
+      mass: ansM,
+      velocity: ansV,
+      steps
+    }
+  }, [mode, momStr, massStr, velStr])
 
   return (
-    <FormCalculatorShell title="Momentum Calculator" subtitle="p = m × v" badge="PHYSICS">
-      <RetroInput label="Mass (m)" value={mass} onChange={setMass} placeholder="e.g. 10" id="mom-m" unit="kg" />
-      <RetroInput label="Velocity (v)" value={vel} onChange={setVel} placeholder="e.g. 5" id="mom-v" unit="m/s" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Momentum" value={p.toFixed(2)} unit="kg·m/s" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Momentum Vector</span>
-            <svg width="200" height="70" viewBox="0 0 200 70" className="select-none">
-              <defs>
-                <pattern id="pGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="70" fill="url(#pGrid)" rx="8" />
-              <rect x="20" y="25" width="25" height="20" fill="#fbbf24" stroke="#d97706" strokeWidth="2" rx="3" />
-              <text x="32" y="38" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#78350f">m</text>
-              <path d={wobblyArrow(50, 35, 50 + arrowLen, 35)} stroke="#7c3aed" strokeWidth="3" strokeLinecap="round" />
-              <path d={`M ${50 + arrowLen} 35 L ${50 + arrowLen - 8} 29 L ${50 + arrowLen - 8} 41 Z`} fill="#7c3aed" />
-              <text x={50 + arrowLen / 2} y="20" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">p = {p.toFixed(1)} kg·m/s</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Momentum Calculator" subtitle="Solve linear momentum p = m × v parameter relations" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="mom-mode"
+            options={[
+              { value: 'momentum', label: 'Momentum (p)' },
+              { value: 'mass', label: 'Mass (m)' },
+              { value: 'velocity', label: 'Velocity (v)' }
+            ]}
+          />
+          {mode !== 'momentum' && <RetroInput label="Momentum (kg·m/s)" value={momStr} onChange={setMomStr} id="mom-p" />}
+          {mode !== 'mass' && <RetroInput label="Mass (kg)" value={massStr} onChange={setMassStr} id="mom-m" />}
+          {mode !== 'velocity' && <RetroInput label="Velocity (m/s)" value={velStr} onChange={setVelStr} id="mom-v" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Momentum (p)" value={`sm${results.momentum.toFixed(2)} kg·m/s`} large={mode === 'momentum'} />
+                <ResultDisplay label="Mass (m)" value={`sm${results.mass.toFixed(2)} kg`} large={mode === 'mass'} />
+                <ResultDisplay label="Velocity (v)" value={`sm${results.velocity.toFixed(4)} m/s`} large={mode === 'velocity'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

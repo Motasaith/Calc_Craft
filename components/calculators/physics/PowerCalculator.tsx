@@ -1,57 +1,112 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  const steps = 8
-  let top = `M ${x} ${y}`, right = ` L ${x + w} ${y}`, bottom = ` L ${x + w} ${y + h}`, left = ` L ${x} ${y + h}`
-  let path = top
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps
-    const jy = (Math.sin(i * 2.3) - 0.5) * 0.6
-    path += ` L ${x + w * t} ${y + jy}`
-  }
-  path += ` L ${x + w} ${y + h} L ${x} ${y + h} Z`
-  return path
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'power' | 'work' | 'time'
 
 export default function PowerCalculator() {
-  const [work, setWork] = useState('500')
-  const [time, setTime] = useState('10')
+  const [mode, setMode] = useState<Mode>('power')
+  const [powerStr, setPowerStr] = useState('100') // Watts
+  const [workStr, setWorkStr] = useState('500') // Joules
+  const [timeStr, setTimeStr] = useState('5') // Seconds
 
-  const w = parseFloat(work), t = parseFloat(time)
-  const valid = !isNaN(w) && !isNaN(t) && t > 0
-  const power = valid ? w / t : 0
-  const hp = valid ? power / 745.7 : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      power: 0,
+      work: 0,
+      time: 0,
+      steps: [] as string[]
+    }
 
-  const barH = Math.min(90, (power / 200) * 90 + 8)
+    const p = parseFloat(powerStr)
+    const w = parseFloat(workStr)
+    const t = parseFloat(timeStr)
+
+    let ansP = p, ansW = w, ansT = t
+    let steps: string[] = []
+
+    if (mode === 'power') {
+      if (isNaN(w) || isNaN(t) || t <= 0) {
+        return { ...defaultObj, error: 'Please enter valid work and positive time values.' }
+      }
+      ansP = w / t
+      steps = [
+        `Formula: Power (P) = Work (W) / Time (t)`,
+        `P = ${w} J / ${t} s = ${ansP.toFixed(2)} W`
+      ]
+    } else if (mode === 'work') {
+      if (isNaN(p) || isNaN(t) || p < 0 || t <= 0) {
+        return { ...defaultObj, error: 'Please enter valid positive power and time values.' }
+      }
+      ansW = p * t
+      steps = [
+        `Formula: Work (W) = Power (P) × Time (t)`,
+        `W = ${p} W × ${t} s = ${ansW.toFixed(2)} J`
+      ]
+    } else {
+      if (isNaN(w) || isNaN(p) || p <= 0) {
+        return { ...defaultObj, error: 'Please enter valid work and positive power.' }
+      }
+      ansT = w / p
+      steps = [
+        `Formula: Time (t) = Work (W) / Power (P)`,
+        `t = ${w} J / ${p} W = ${ansT.toFixed(4)} s`
+      ]
+    }
+
+    return {
+      error: null,
+      power: ansP,
+      work: ansW,
+      time: ansT,
+      steps
+    }
+  }, [mode, powerStr, workStr, timeStr])
 
   return (
-    <FormCalculatorShell title="Power Calculator" subtitle="P = W / t" badge="PHYSICS">
-      <RetroInput label="Work (W)" value={work} onChange={setWork} placeholder="e.g. 500" id="pw-w" unit="J" />
-      <RetroInput label="Time (t)" value={time} onChange={setTime} placeholder="e.g. 10" id="pw-t" unit="s" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Power" value={power.toFixed(2)} unit="W" large />
-            <ResultDisplay label="Horsepower" value={hp.toFixed(4)} unit="hp" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Power Gauge</span>
-            <svg width="160" height="120" viewBox="0 0 160 120" className="select-none">
-              <defs>
-                <pattern id="pwGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="120" fill="url(#pwGrid)" rx="8" />
-              <path d={wobblyBar(60, 110 - barH, 40, barH)} fill="#fbbf24" fillOpacity="0.4" stroke="#d97706" strokeWidth="2" />
-              <path d="M 55 110 L 105 110" stroke="#4c5c4a" strokeWidth="2" />
-              <text x="80" y="118" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#78350f" fontWeight="bold">P = {power.toFixed(1)} W</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Power Calculator (Physics)" subtitle="Solve Power = Work / Time parameter relations" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="pow-mode"
+            options={[
+              { value: 'power', label: 'Power (P)' },
+              { value: 'work', label: 'Work (W)' },
+              { value: 'time', label: 'Time (t)' }
+            ]}
+          />
+          {mode !== 'power' && <RetroInput label="Power (Watts)" value={powerStr} onChange={setPowerStr} id="pow-p" />}
+          {mode !== 'work' && <RetroInput label="Work (Joules)" value={workStr} onChange={setWorkStr} id="pow-w" />}
+          {mode !== 'time' && <RetroInput label="Time (Seconds)" value={timeStr} onChange={setTimeStr} id="pow-t" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Power" value={`${results.power.toFixed(2)} W`} large={mode === 'power'} />
+                <ResultDisplay label="Work" value={`${results.work.toFixed(2)} J`} large={mode === 'work'} />
+                <ResultDisplay label="Time" value={`${results.time.toFixed(4)} s`} large={mode === 'time'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

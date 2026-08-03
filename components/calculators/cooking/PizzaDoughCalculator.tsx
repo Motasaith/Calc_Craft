@@ -1,58 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function PizzaDoughCalculator() {
-  const [pizzas, setPizzas] = useState('2')
-  const [size, setSize] = useState('300')
+  const [flourStr, setFlourStr] = useState('500') // grams
+  const [hydrationStr, setHydrationStr] = useState('65') // %
+  const [saltStr, setSaltStr] = useState('2') // %
 
-  const p = parseFloat(pizzas), s = parseFloat(size)
-  const valid = !isNaN(p) && !isNaN(s) && p > 0 && s > 0
-  // Dough ball weight ~ size in mm × 0.5 per pizza
-  const doughPerPizza = valid ? s * 0.5 : 0
-  const totalDough = valid ? doughPerPizza * p : 0
-  // Baker's percentages: flour 100%, water 65%, salt 2%, yeast 1%
-  const flour = valid ? totalDough * 0.613 : 0
-  const water = valid ? totalDough * 0.398 : 0
-  const salt = valid ? totalDough * 0.012 : 0
-  const yeast = valid ? totalDough * 0.006 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, water: 0, salt: 0 }
+    const f = parseFloat(flourStr)
+    const h = parseFloat(hydrationStr)
+    const s = parseFloat(saltStr)
+    if (isNaN(f) || isNaN(h) || isNaN(s) || f <= 0 || h <= 0 || s < 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+    const water = f * (h / 100)
+    const salt = f * (s / 100)
+    return { error: null, water, salt }
+  }, [flourStr, hydrationStr, saltStr])
 
   return (
-    <FormCalculatorShell title="Pizza Dough" subtitle="Baker's percentages" badge="COOKING">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Number of Pizzas" value={pizzas} onChange={setPizzas} placeholder="2" id="pd-p" unit="" />
-        <RetroInput label="Pizza Size" value={size} onChange={setSize} placeholder="300" id="pd-s" unit="mm" />
+    <FormCalculatorShell title="Baker's Percentage Pizza Dough Solver" subtitle="Calculate hydration and salt weights for dough" badge="COOKING">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Flour weight (grams)" value={flourStr} onChange={setFlourStr} id="pd-f" />
+          <RetroInput label="Hydration (%)" value={hydrationStr} onChange={setHydrationStr} id="pd-h" />
+          <RetroInput label="Salt (%)" value={saltStr} onChange={setSaltStr} id="pd-s" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Water weight (grams)" value={`${results.water.toFixed(1)} g`} large />
+              <ResultDisplay label="Salt weight (grams)" value={`${results.salt.toFixed(1)} g`} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Flour" value={flour.toFixed(0)} unit="g" large />
-            <ResultDisplay label="Water" value={water.toFixed(0)} unit="g" large />
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Salt" value={salt.toFixed(1)} unit="g" />
-            <ResultDisplay label="Yeast" value={yeast.toFixed(1)} unit="g" />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Dough Ball</span>
-            <svg width="160" height="70" viewBox="0 0 160 70" className="select-none">
-              <defs>
-                <pattern id="pdGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="70" fill="url(#pdGrid)" rx="8" />
-              <path d={wobblyBar(30, 15, 100, 40)} fill="none" stroke="#78716c" strokeWidth="2" />
-              <path d={wobblyBar(30, 15 + 40 - Math.min(40, totalDough / 20), 100, Math.min(40, totalDough / 20))} fill="#fef3c7" stroke="#d97706" strokeWidth="1.5" />
-              <text x="80" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#d97706" fontWeight="bold">{totalDough.toFixed(0)}g total dough</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

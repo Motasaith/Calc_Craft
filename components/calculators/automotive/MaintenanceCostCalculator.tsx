@@ -1,48 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function MaintenanceCostCalculator() {
-  const [yearly, setYearly] = useState('1200')
-  const [years, setYears] = useState('5')
+  const [milesStr, setMilesStr] = useState('12000')
 
-  const y = parseFloat(yearly), yr = parseFloat(years)
-  const valid = !isNaN(y) && !isNaN(yr) && y >= 0 && yr > 0
-  const total = valid ? y * yr : 0
-  const monthly = valid ? y / 12 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, cost: 0 }
+    const m = parseFloat(milesStr)
+    if (isNaN(m) || m < 0) return { ...defaultObj, error: 'Please enter a valid mileage.' }
+    // Assume average maintenance of $0.09 per mile
+    const cost = m * 0.09
+    return { error: null, cost }
+  }, [milesStr])
 
   return (
-    <FormCalculatorShell title="Car Maintenance Cost" subtitle="Total = Yearly × Years" badge="AUTOMOTIVE">
-      <RetroInput label="Yearly Maintenance" value={yearly} onChange={setYearly} placeholder="1200" id="mc-y" unit="$" />
-      <RetroInput label="Years Owned" value={years} onChange={setYears} placeholder="5" id="mc-yr" unit="yr" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Total Cost" value={`$${total.toFixed(0)}`} large />
-            <ResultDisplay label="Monthly Avg" value={`$${monthly.toFixed(0)}`} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Cost Over Time</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="mcGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#mcGrid)" rx="8" />
-              {/* Stacked bars per year */}
-              {Array.from({ length: Math.min(8, yr) }).map((_, i) => (
-                <path key={i} d={wobblyBar(20 + i * 18, 55 - Math.min(35, y / 50), 14, Math.min(35, y / 50))} fill="#f97316" fillOpacity="0.3" stroke="#ea580c" strokeWidth="1.5" />
-              ))}
-              <text x="90" y="68" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#ea580c" fontWeight="bold">${total.toFixed(0)} over {yr}yr</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Car Maintenance Cost Solver" subtitle="Estimate yearly maintenance costs based on miles driven" badge="AUTOMOTIVE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Annual Miles Driven" value={milesStr} onChange={setMilesStr} id="mc-m" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Estimated Yearly Cost" value={results.cost.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,53 +1,72 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function MegapixelCalculator() {
-  const [width, setWidth] = useState('4000')
-  const [height, setHeight] = useState('3000')
+  const [widthStr, setWidthStr] = useState('6000')
+  const [heightStr, setHeightStr] = useState('4000')
 
-  const w = parseFloat(width), h = parseFloat(height)
-  const valid = !isNaN(w) && !isNaN(h) && w > 0 && h > 0
-  const totalPixels = valid ? w * h : 0
-  const megapixels = valid ? totalPixels / 1e6 : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      mp: 0,
+      totalPixels: 0,
+      steps: [] as string[]
+    }
+
+    const w = parseInt(widthStr)
+    const h = parseInt(heightStr)
+
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive dimensions.' }
+    }
+
+    const totalPixels = w * h
+    const mp = totalPixels / 1000000
+
+    const steps = [
+      `Total Pixels = Width × Height = ${w} × ${h} = ${totalPixels.toLocaleString()}`,
+      `Megapixels = Total Pixels / 1,000,000 = ${mp.toFixed(2)} MP`
+    ]
+
+    return {
+      error: null,
+      mp,
+      totalPixels,
+      steps
+    }
+  }, [widthStr, heightStr])
 
   return (
-    <FormCalculatorShell title="Megapixel Calculator" subtitle="MP = (W × H) / 1,000,000" badge="PHOTOGRAPHY">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Width" value={width} onChange={setWidth} placeholder="4000" id="mp-w" unit="px" />
-        <RetroInput label="Height" value={height} onChange={setHeight} placeholder="3000" id="mp-h" unit="px" />
+    <FormCalculatorShell title="Megapixel Calculator" subtitle="Solve megapixel counts from resolution dimensions" badge="PHOTOGRAPHY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Width (pixels)" value={widthStr} onChange={setWidthStr} id="mp-w" />
+          <RetroInput label="Height (pixels)" value={heightStr} onChange={setHeightStr} id="mp-h" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Megapixels" value={`${results.mp.toFixed(2)} MP`} large />
+                <ResultDisplay label="Total Pixels" value={results.totalPixels.toLocaleString()} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Megapixels" value={megapixels.toFixed(2)} unit="MP" large />
-            <ResultDisplay label="Total Pixels" value={totalPixels.toFixed(0)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Resolution Grid</span>
-            <svg width="160" height="80" viewBox="0 0 160 80" className="select-none">
-              <defs>
-                <pattern id="mpGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="80" fill="url(#mpGrid)" rx="8" />
-              <path d={wobblyRect(20, 10, 120, 55)} fill="#78716c" fillOpacity="0.1" stroke="#57534e" strokeWidth="2" />
-              {/* Pixel grid pattern */}
-              {Array.from({ length: 5 }).map((_, row) => (
-                Array.from({ length: 8 }).map((_, col) => (
-                  <rect key={`${row}-${col}`} x={22 + col * 14.5} y={12 + row * 10} width="3" height="3" fill="#57534e" fillOpacity="0.3" />
-                ))
-              ))}
-              <text x="80" y="75" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#57534e" fontWeight="bold">{megapixels.toFixed(1)} MP</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

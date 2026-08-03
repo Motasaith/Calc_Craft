@@ -1,62 +1,75 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  const steps = 28
-  let path = ''
-  for (let i = 0; i <= steps; i++) {
-    const theta = (i / steps) * Math.PI * 2
-    const jitter = (Math.sin(i * 3.1) - 0.5) * 1.0
-    const x = cx + (r + jitter) * Math.cos(theta)
-    const y = cy + (r + jitter) * Math.sin(theta)
-    path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`
-  }
-  return path + ' Z'
-}
-
 export default function CoulombsLawCalculator() {
-  const [q1, setQ1] = useState('1e-6')
-  const [q2, setQ2] = useState('2e-6')
-  const [r, setR] = useState('0.05')
-  const k = 8.99e9
+  const [q1Str, setQ1Str] = useState('1e-6') // Charge 1 (C)
+  const [q2Str, setQ2Str] = useState('-2e-6') // Charge 2 (C)
+  const [rStr, setRStr] = useState('0.05') // distance (m)
 
-  const qa = parseFloat(q1), qb = parseFloat(q2), dist = parseFloat(r)
-  const valid = !isNaN(qa) && !isNaN(qb) && !isNaN(dist) && dist > 0
-  const force = valid ? (k * qa * qb) / (dist * dist) : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      force: 0,
+      steps: [] as string[]
+    }
+
+    const q1 = parseFloat(q1Str)
+    const q2 = parseFloat(q2Str)
+    const r = parseFloat(rStr)
+
+    if (isNaN(q1) || isNaN(q2) || isNaN(r) || r <= 0) {
+      return { ...defaultObj, error: 'Please enter valid charges and positive distance.' }
+    }
+
+    const k = 8.9875517923e9
+    const force = (k * Math.abs(q1 * q2)) / (r * r)
+    const direction = q1 * q2 < 0 ? 'Attractive (opposite charges)' : 'Repulsive (like charges)'
+
+    const steps = [
+      `k = 8.9876 × 10⁹ N·m²/C²`,
+      `Force = (k × |q₁ × q₂|) / r²`,
+      `Force = ${force.toFixed(4)} N`,
+      `Force direction is: ${direction}`
+    ]
+
+    return {
+      error: null,
+      force,
+      steps
+    }
+  }, [q1Str, q2Str, rStr])
 
   return (
-    <FormCalculatorShell title="Coulomb's Law" subtitle="F = k × q₁q₂ / r²" badge="PHYSICS">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Charge 1 (q₁)" value={q1} onChange={setQ1} placeholder="1e-6" id="cl-q1" unit="C" />
-        <RetroInput label="Charge 2 (q₂)" value={q2} onChange={setQ2} placeholder="2e-6" id="cl-q2" unit="C" />
+    <FormCalculatorShell title="Coulomb's Law Calculator" subtitle="Solve electrostatic force between two point charges" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Charge 1 (q₁ in Coulombs)" value={q1Str} onChange={setQ1Str} id="coul-q1" />
+          <RetroInput label="Charge 2 (q₂ in Coulombs)" value={q2Str} onChange={setQ2Str} id="coul-q2" />
+          <RetroInput label="Distance r (meters)" value={rStr} onChange={setRStr} id="coul-r" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-1">
+                <ResultDisplay label="Electrostatic Force (F)" value={`${results.force.toFixed(4)} N`} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-      <RetroInput label="Distance (r)" value={r} onChange={setR} placeholder="0.05" id="cl-r" unit="m" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Electric Force" value={force.toExponential(4)} unit="N" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Two Charges</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="clGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#clGrid)" rx="8" />
-              <path d={wobblyCircle(40, 35, 12)} fill="#dc2626" fillOpacity="0.2" stroke="#dc2626" strokeWidth="2" />
-              <text x="40" y="38" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#dc2626">q₁</text>
-              <path d={wobblyCircle(140, 35, 12)} fill="#2563eb" fillOpacity="0.2" stroke="#2563eb" strokeWidth="2" />
-              <text x="140" y="38" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#2563eb">q₂</text>
-              <path d="M 55 35 L 125 35" stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="3 3" />
-              <text x="90" y="28" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#6b7280">r</text>
-              <text x="90" y="62" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">F = {force.toExponential(2)} N</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

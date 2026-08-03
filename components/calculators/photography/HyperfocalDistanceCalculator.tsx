@@ -1,52 +1,38 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function HyperfocalDistanceCalculator() {
-  const [focal, setFocal] = useState('50')
-  const [aperture, setAperture] = useState('8')
-  const [coc, setCoc] = useState('0.03')
+  const [focalLengthStr, setFocalLengthStr] = useState('50') // mm
+  const [apertureStr, setApertureStr] = useState('8')
+  const [cocStr, setCocStr] = useState('0.03') // mm
 
-  const f = parseFloat(focal), ap = parseFloat(aperture), c = parseFloat(coc)
-  const valid = !isNaN(f) && !isNaN(ap) && !isNaN(c) && f > 0 && ap > 0 && c > 0
-  const H = valid ? (f * f) / (ap * c) / 1000 : 0 // mm → m
-  const nearLimit = valid ? H / 2 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, hyperfocal: 0 }
+    const f = parseFloat(focalLengthStr)
+    const n = parseFloat(apertureStr)
+    const coc = parseFloat(cocStr)
+    if (isNaN(f) || isNaN(n) || isNaN(coc) || f <= 0 || n <= 0 || coc <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+    const h = (f * f) / (n * coc) + f // mm
+    return { error: null, hyperfocal: h / 1000 } // meters
+  }, [focalLengthStr, apertureStr, cocStr])
 
   return (
-    <FormCalculatorShell title="Hyperfocal Distance" subtitle="H = f² / (N × c)" badge="PHOTOGRAPHY">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Focal Length" value={focal} onChange={setFocal} placeholder="50" id="hf-f" unit="mm" />
-        <RetroInput label="Aperture" value={aperture} onChange={setAperture} placeholder="8" id="hf-ap" unit="f/" />
+    <FormCalculatorShell title="Hyperfocal Distance Calculator" subtitle="Solve focal limit boundary for infinite focus depth" badge="PHOTOGRAPHY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Focal Length (mm)" value={focalLengthStr} onChange={setFocalLengthStr} id="hyp-f" />
+          <RetroInput label="Aperture (f/N)" value={apertureStr} onChange={setApertureStr} id="hyp-n" />
+          <RetroInput label="Circle of Confusion (mm)" value={cocStr} onChange={setCocStr} id="hyp-coc" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Hyperfocal Distance (m)" value={results.hyperfocal.toFixed(2)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-      <RetroInput label="Circle of Confusion" value={coc} onChange={setCoc} placeholder="0.03" id="hf-c" unit="mm" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="Hyperfocal" value={H.toFixed(2)} unit="m" large />
-            <ResultDisplay label="Near Limit" value={nearLimit.toFixed(2)} unit="m" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Focus Zone</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="hfGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#hfGrid)" rx="8" />
-              {/* Camera */}
-              <path d={wobblyRect(15, 25, 25, 20)} fill="#78716c" fillOpacity="0.3" stroke="#57534e" strokeWidth="2" />
-              {/* In-focus zone from H/2 to infinity */}
-              <path d={wobblyRect(45 + Math.min(100, nearLimit * 10), 25, 120 - Math.min(100, nearLimit * 10), 20)} fill="#22c55e" fillOpacity="0.15" stroke="#16a34a" strokeWidth="1.5" />
-              <text x="90" y="60" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#16a34a" fontWeight="bold">H = {H.toFixed(1)}m, ∞ focus from {nearLimit.toFixed(1)}m</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

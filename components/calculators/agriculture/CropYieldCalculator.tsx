@@ -1,47 +1,48 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CropYieldCalculator() {
-  const [area, setArea] = useState('10')
-  const [yieldPerHa, setYieldPerHa] = useState('5000')
+  const [areaStr, setAreaStr] = useState('10') // acres
+  const [yieldPerAcreStr, setYieldPerAcreStr] = useState('150') // bushels
 
-  const a = parseFloat(area), y = parseFloat(yieldPerHa)
-  const valid = !isNaN(a) && !isNaN(y) && a > 0 && y >= 0
-  const totalYield = valid ? a * y : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, total: 0, steps: [] as string[] }
+    const a = parseFloat(areaStr)
+    const y = parseFloat(yieldPerAcreStr)
+    if (isNaN(a) || isNaN(y) || a <= 0 || y < 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    const total = a * y
+    return {
+      error: null,
+      total,
+      steps: [
+        `Formula: Total Yield = Area × Yield per Unit Area`,
+        `Total = ${a} acres × ${y} bushels/acre = ${total.toLocaleString()} bushels`
+      ]
+    }
+  }, [areaStr, yieldPerAcreStr])
 
   return (
-    <FormCalculatorShell title="Crop Yield Calculator" subtitle="Yield = Area × Rate" badge="AGRICULTURE">
-      <RetroInput label="Planted Area" value={area} onChange={setArea} placeholder="10" id="cy-a" unit="ha" />
-      <RetroInput label="Yield per ha" value={yieldPerHa} onChange={setYieldPerHa} placeholder="5000" id="cy-y" unit="kg/ha" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Total Yield" value={totalYield.toFixed(0)} unit="kg" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Crop Field</span>
-            <svg width="160" height="90" viewBox="0 0 160 90" className="select-none">
-              <defs>
-                <pattern id="cyGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="90" fill="url(#cyGrid)" rx="8" />
-              <path d={wobblyRect(20, 15, 120, 60)} fill="#84cc16" fillOpacity="0.2" stroke="#65a30d" strokeWidth="2" />
-              {/* Crop rows */}
-              {[25, 40, 55, 70].map((y2) => (
-                <path key={y2} d={`M 25 ${y2} L 135 ${y2}`} stroke="#65a30d" strokeWidth="1" strokeDasharray="4 3" />
-              ))}
-              <text x="80" y="85" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#65a30d" fontWeight="bold">{totalYield.toLocaleString()} kg</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Crop Yield Solver" subtitle="Estimate harvest yields based on field size and yields" badge="AGRICULTURE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Area (acres)" value={areaStr} onChange={setAreaStr} id="cy-a" />
+          <RetroInput label="Yield per Acre (bushels)" value={yieldPerAcreStr} onChange={setYieldPerAcreStr} id="cy-y" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Total Yield (bushels)" value={results.total.toLocaleString()} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,59 +1,112 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyRect(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'work' | 'force' | 'distance'
 
 export default function WorkCalculator() {
-  const [force, setForce] = useState('50')
-  const [dist, setDist] = useState('10')
-  const [angle, setAngle] = useState('0')
+  const [mode, setMode] = useState<Mode>('work')
+  const [workStr, setWorkStr] = useState('100')
+  const [forceStr, setForceStr] = useState('20')
+  const [distStr, setDistStr] = useState('5')
 
-  const f = parseFloat(force), d = parseFloat(dist), ang = parseFloat(angle)
-  const valid = !isNaN(f) && !isNaN(d) && !isNaN(ang) && f >= 0 && d >= 0
-  const rad = (ang * Math.PI) / 180
-  const work = valid ? f * d * Math.cos(rad) : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      work: 0,
+      force: 0,
+      distance: 0,
+      steps: [] as string[]
+    }
 
-  const fLen = Math.min(80, f / 2)
-  const fx = 45 + fLen * Math.cos(rad)
-  const fy = 65 - fLen * Math.sin(rad)
+    const w = parseFloat(workStr)
+    const f = parseFloat(forceStr)
+    const d = parseFloat(distStr)
+
+    let ansW = w, ansF = f, ansD = d
+    let steps: string[] = []
+
+    if (mode === 'work') {
+      if (isNaN(f) || isNaN(d) || d < 0) {
+        return { ...defaultObj, error: 'Please enter valid force and positive distance values.' }
+      }
+      ansW = f * d
+      steps = [
+        `Formula: Work (W) = Force (F) × Distance (d)`,
+        `W = ${f} N × ${d} m = ${ansW.toFixed(2)} J`
+      ]
+    } else if (mode === 'force') {
+      if (isNaN(w) || isNaN(d) || d <= 0) {
+        return { ...defaultObj, error: 'Please enter valid work and positive distance.' }
+      }
+      ansF = w / d
+      steps = [
+        `Formula: Force (F) = Work (W) / Distance (d)`,
+        `F = ${w} J / ${d} m = ${ansF.toFixed(4)} N`
+      ]
+    } else {
+      if (isNaN(w) || isNaN(f) || f === 0) {
+        return { ...defaultObj, error: 'Please enter valid work and non-zero force.' }
+      }
+      ansD = w / f
+      steps = [
+        `Formula: Distance (d) = Work (W) / Force (F)`,
+        `d = ${w} J / ${f} N = ${ansD.toFixed(4)} m`
+      ]
+    }
+
+    return {
+      error: null,
+      work: ansW,
+      force: ansF,
+      distance: ansD,
+      steps
+    }
+  }, [mode, workStr, forceStr, distStr])
 
   return (
-    <FormCalculatorShell title="Work Calculator" subtitle="W = F × d × cos(θ)" badge="PHYSICS">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Force (F)" value={force} onChange={setForce} placeholder="50" id="wk-f" unit="N" />
-        <RetroInput label="Distance (d)" value={dist} onChange={setDist} placeholder="10" id="wk-d" unit="m" />
+    <FormCalculatorShell title="Work Calculator (Physics)" subtitle="Solve Work = Force × Distance parameters" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="work-mode"
+            options={[
+              { value: 'work', label: 'Work (W)' },
+              { value: 'force', label: 'Force (F)' },
+              { value: 'distance', label: 'Distance (d)' }
+            ]}
+          />
+          {mode !== 'work' && <RetroInput label="Work (J)" value={workStr} onChange={setWorkStr} id="work-w" />}
+          {mode !== 'force' && <RetroInput label="Force (N)" value={forceStr} onChange={setForceStr} id="work-f" />}
+          {mode !== 'distance' && <RetroInput label="Distance (m)" value={distStr} onChange={setDistStr} id="work-d" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Work (W)" value={`${results.work.toFixed(2)} J`} large={mode === 'work'} />
+                <ResultDisplay label="Force (F)" value={`${results.force.toFixed(2)} N`} large={mode === 'force'} />
+                <ResultDisplay label="Distance (d)" value={`${results.distance.toFixed(4)} m`} large={mode === 'distance'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-      <RetroInput label="Angle (θ)" value={angle} onChange={setAngle} placeholder="0" id="wk-ang" unit="degrees" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Work Done" value={work.toFixed(2)} unit="J" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Force-Angle Diagram</span>
-            <svg width="180" height="100" viewBox="0 0 180 100" className="select-none">
-              <defs>
-                <pattern id="wGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="100" fill="url(#wGrid)" rx="8" />
-              {/* Object */}
-              <path d={wobblyRect(30, 55, 30, 20)} fill="#fde68a" stroke="#a16207" strokeWidth="2" />
-              {/* Surface */}
-              <path d="M 15 78 L 165 78" stroke="#4c5c4a" strokeWidth="2" />
-              {/* Force vector at angle */}
-              <path d={`M 45 65 L ${fx} ${fy}`} stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" />
-              <path d={`M ${fx} ${fy} L ${fx - 7 * Math.cos(rad - 0.4)} ${fy + 7 * Math.sin(rad - 0.4)} L ${fx - 7 * Math.cos(rad + 0.4)} ${fy + 7 * Math.sin(rad + 0.4)} Z`} fill="#dc2626" />
-              <text x="90" y="20" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#dc2626" fontWeight="bold">W = {work.toFixed(1)} J</text>
-              <text x="55" y="50" fontSize="8" fontFamily="monospace" fill="#6b7280">θ = {ang}°</text>
-            </svg>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

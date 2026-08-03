@@ -1,55 +1,112 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  const steps = 28
-  let path = ''
-  for (let i = 0; i <= steps; i++) {
-    const theta = (i / steps) * Math.PI * 2
-    const jitter = (Math.sin(i * 3.1) - 0.5) * 1.2
-    const x = cx + (r + jitter) * Math.cos(theta)
-    const y = cy + (r + jitter) * Math.sin(theta)
-    path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`
-  }
-  return path + ' Z'
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'density' | 'mass' | 'volume'
 
 export default function DensityPhysicsCalculator() {
-  const [mass, setMass] = useState('100')
-  const [vol, setVol] = useState('50')
+  const [mode, setMode] = useState<Mode>('density')
+  const [densityStr, setDensityStr] = useState('1000') // kg/m³
+  const [massStr, setMassStr] = useState('5000') // kg
+  const [volumeStr, setVolumeStr] = useState('5') // m³
 
-  const m = parseFloat(mass), v = parseFloat(vol)
-  const valid = !isNaN(m) && !isNaN(v) && m >= 0 && v > 0
-  const density = valid ? m / v : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      density: 0,
+      mass: 0,
+      volume: 0,
+      steps: [] as string[]
+    }
 
-  // Circle size scales with density
-  const r = Math.min(40, Math.max(8, (density / 20) * 40))
+    const d = parseFloat(densityStr)
+    const m = parseFloat(massStr)
+    const v = parseFloat(volumeStr)
+
+    let ansD = d, ansM = m, ansV = v
+    let steps: string[] = []
+
+    if (mode === 'density') {
+      if (isNaN(m) || isNaN(v) || m <= 0 || v <= 0) {
+        return { ...defaultObj, error: 'Please enter valid positive mass and volume values.' }
+      }
+      ansD = m / v
+      steps = [
+        `Formula: Density (ρ) = Mass (m) / Volume (V)`,
+        `ρ = ${m} kg / ${v} m³ = ${ansD.toFixed(2)} kg/m³`
+      ]
+    } else if (mode === 'mass') {
+      if (isNaN(d) || isNaN(v) || d <= 0 || v <= 0) {
+        return { ...defaultObj, error: 'Please enter valid positive density and volume values.' }
+      }
+      ansM = d * v
+      steps = [
+        `Formula: Mass (m) = Density (ρ) × Volume (V)`,
+        `m = ${d} kg/m³ × ${v} m³ = ${ansM.toFixed(2)} kg`
+      ]
+    } else {
+      if (isNaN(m) || isNaN(d) || m <= 0 || d <= 0) {
+        return { ...defaultObj, error: 'Please enter valid positive mass and density values.' }
+      }
+      ansV = m / d
+      steps = [
+        `Formula: Volume (V) = Mass (m) / Density (ρ)`,
+        `V = ${m} kg / ${d} kg/m³ = ${ansV.toFixed(4)} m³`
+      ]
+    }
+
+    return {
+      error: null,
+      density: ansD,
+      mass: ansM,
+      volume: ansV,
+      steps
+    }
+  }, [mode, densityStr, massStr, volumeStr])
 
   return (
-    <FormCalculatorShell title="Density Calculator" subtitle="ρ = m / V" badge="PHYSICS">
-      <RetroInput label="Mass (m)" value={mass} onChange={setMass} placeholder="e.g. 100" id="dn-m" unit="kg" />
-      <RetroInput label="Volume (V)" value={vol} onChange={setVol} placeholder="e.g. 50" id="dn-v" unit="m³" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Density" value={density.toFixed(2)} unit="kg/m³" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Density Sphere</span>
-            <svg width="140" height="120" viewBox="0 0 140 120" className="select-none">
-              <defs>
-                <pattern id="dnGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="140" height="120" fill="url(#dnGrid)" rx="8" />
-              <path d={wobblyCircle(70, 55, r)} fill="#a78bfa" fillOpacity="0.3" stroke="#7c3aed" strokeWidth="2" />
-              <text x="70" y="105" textAnchor="middle" fontSize="9" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">ρ = {density.toFixed(1)} kg/m³</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Density Calculator (Physics)" subtitle="Solve mass, volume, and density relations" badge="PHYSICS">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Solve For"
+            value={mode}
+            onChange={(val) => setMode(val as Mode)}
+            id="dens-mode"
+            options={[
+              { value: 'density', label: 'Density (ρ)' },
+              { value: 'mass', label: 'Mass (m)' },
+              { value: 'volume', label: 'Volume (V)' }
+            ]}
+          />
+          {mode !== 'density' && <RetroInput label="Density (kg/m³)" value={densityStr} onChange={setDensityStr} id="dens-d" />}
+          {mode !== 'mass' && <RetroInput label="Mass (kg)" value={massStr} onChange={setMassStr} id="dens-m" />}
+          {mode !== 'volume' && <RetroInput label="Volume (m³)" value={volumeStr} onChange={setVolumeStr} id="dens-v" />}
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Density (ρ)" value={`${results.density.toFixed(2)} kg/m³`} large={mode === 'density'} />
+                <ResultDisplay label="Mass (m)" value={`${results.mass.toFixed(2)} kg`} large={mode === 'mass'} />
+                <ResultDisplay label="Volume (V)" value={`${results.volume.toFixed(4)} m³`} large={mode === 'volume'} />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }
