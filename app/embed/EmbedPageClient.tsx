@@ -38,13 +38,32 @@ export default function EmbedPageClient() {
         return
       }
 
-      const decoded = deserializeConfig(configStr)
-      if (decoded) {
-        setConfig(decoded)
-        setError(null)
-      } else {
+      const decoded: any = deserializeConfig(configStr)
+
+      if (!decoded) {
         setError('Embed Error: Invalid/corrupt calculator configuration string.')
+        setLoading(false)
+        return
       }
+
+      // Same guard as /calculators/custom. This runs inside an iframe on other
+      // people's websites, so a malformed config must render a small notice
+      // rather than throw — an uncaught error here would blank the widget on a
+      // customer's page. Also unwraps a whole database row if one is passed,
+      // since a dashboard link was producing exactly that.
+      const candidate =
+        decoded.config && typeof decoded.config === 'object' && Array.isArray(decoded.config.components)
+          ? decoded.config
+          : decoded
+
+      if (!Array.isArray(candidate.components) || !Array.isArray(candidate.formulas)) {
+        setError('Embed Error: This configuration is missing its fields. Re-copy the embed code.')
+        setLoading(false)
+        return
+      }
+
+      setConfig(candidate)
+      setError(null)
       setLoading(false)
     }
 

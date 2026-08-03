@@ -74,13 +74,37 @@ export default function CustomCalculatorPageClient() {
         return
       }
 
-      const decoded = deserializeConfig(configStr)
-      if (decoded) {
-        setConfig(decoded)
-        setError(null)
-      } else {
+      const decoded: any = deserializeConfig(configStr)
+
+      if (!decoded) {
         setError('Failed to parse calculator configuration. The link might be corrupt or incomplete.')
+        setLoading(false)
+        return
       }
+
+      // A shared link is untrusted input: anyone can edit the hash, and the app
+      // itself has produced bad ones — a dashboard link was serialising the whole
+      // database ROW ({id, publicId, name, config}) instead of the config inside
+      // it, so `components` and `formulas` were undefined and the renderer threw
+      // on `config.components.forEach`, taking the entire page down with the
+      // error boundary.
+      //
+      // Unwrap that shape if we see it, then insist on the fields the renderer
+      // actually needs, so a malformed link degrades to a message instead of a
+      // crash.
+      const candidate =
+        decoded.config && typeof decoded.config === 'object' && Array.isArray(decoded.config.components)
+          ? decoded.config
+          : decoded
+
+      if (!Array.isArray(candidate.components) || !Array.isArray(candidate.formulas)) {
+        setError('This calculator link is not valid. Ask whoever shared it for an up-to-date link.')
+        setLoading(false)
+        return
+      }
+
+      setConfig(candidate)
+      setError(null)
       setLoading(false)
     }
 

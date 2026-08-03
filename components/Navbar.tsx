@@ -35,36 +35,38 @@ const navLinks = [
  *   • Restyled via clerkAppearance so the popover matches the rest of the site.
  */
 function AccountMenu({ isAdmin }: { isAdmin: boolean }) {
+  // Clerk inspects the children of <UserButton.MenuItems> and only accepts its
+  // own menu components. A conditional that can evaluate to a fragment or to
+  // boolean false is enough to make it throw during render — and because the navbar
+  // is on every page, that takes the whole site down for the affected user.
+  //
+  // So the two cases are rendered as separate, fully valid trees. The links are
+  // written out in both rather than hoisted into a shared variable, because a
+  // Fragment is not a menu component either and hoisting would reintroduce the
+  // same fault in a less obvious form.
+  const common = {
+    appearance: clerkAppearance as any,
+    userProfileMode: 'navigation' as const,
+    userProfileUrl: '/account',
+  }
+
+  if (isAdmin) {
+    return (
+      <UserButton {...common}>
+        <UserButton.MenuItems>
+          <UserButton.Link label="My Dashboard" labelIcon={<LayoutDashboard className="w-4 h-4" />} href="/dashboard" />
+          <UserButton.Link label="Build with AI" labelIcon={<Sparkles className="w-4 h-4" />} href="/build-ai" />
+          <UserButton.Link label="Admin Dashboard" labelIcon={<Shield className="w-4 h-4" />} href="/admin" />
+        </UserButton.MenuItems>
+      </UserButton>
+    )
+  }
+
   return (
-    <UserButton
-      appearance={clerkAppearance as any}
-      userProfileMode="navigation"
-      userProfileUrl="/account"
-    >
+    <UserButton {...common}>
       <UserButton.MenuItems>
-        <UserButton.Link
-          label="My Dashboard"
-          labelIcon={<LayoutDashboard className="w-4 h-4" />}
-          href="/dashboard"
-        />
-        <UserButton.Link
-          label="Build with AI"
-          labelIcon={<Sparkles className="w-4 h-4" />}
-          href="/build-ai"
-        />
-        {/* Admin entry. The navbar previously destructured `isAdmin` and never
-            used it, so an administrator had to know to type /admin by hand.
-            Hiding it is a convenience only — /admin re-checks server-side and
-            every admin API verifies the token signature and the allowlist. */}
-        {isAdmin ? (
-          <UserButton.Link
-            label="Admin Dashboard"
-            labelIcon={<Shield className="w-4 h-4" />}
-            href="/admin"
-          />
-        ) : (
-          <></>
-        )}
+        <UserButton.Link label="My Dashboard" labelIcon={<LayoutDashboard className="w-4 h-4" />} href="/dashboard" />
+        <UserButton.Link label="Build with AI" labelIcon={<Sparkles className="w-4 h-4" />} href="/build-ai" />
       </UserButton.MenuItems>
     </UserButton>
   )
