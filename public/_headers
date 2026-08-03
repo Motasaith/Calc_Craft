@@ -1,9 +1,50 @@
+# Cloudflare Pages response headers.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  THE CSP MUST LIST EVERY THIRD PARTY THE PAGE LOADS
+# ─────────────────────────────────────────────────────────────────────────────
+#  The previous policy allowed scripts from 'self' and https://va.vercel-scripts.com
+#  only — a leftover from Vercel that this project no longer uses. That silently
+#  blocked Clerk:
+#
+#      Loading the script violates the following Content Security Policy
+#      directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' ..."
+#      Failed to load Clerk JS (code="failed_to_load_clerk_js")
+#
+#  Clerk never initialised, so sign-in and sign-up could not work at all, and the
+#  browser reported it only in the console. Verifying the domain in Clerk and
+#  fixing DNS cannot help while the browser refuses to fetch the script.
+#
+#  Anything third-party added later — a script, an image host, an API — has to be
+#  listed here too, or it fails the same silent way.
+#
+#  What each Clerk-related origin is for:
+#    clerk.homeofcalculators.com  Clerk's JS bundle and Frontend API
+#    *.clerk.accounts.dev         the development instance, for local/preview work
+#    challenges.cloudflare.com    Turnstile, Clerk's bot protection on sign-up
+#    worker-src blob:             Clerk spawns a web worker from a blob URL
+#    frame-src                    Turnstile widget and Clerk-hosted flows
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  WHY THIS IS ONE RULE AND NOT PER-PATH
+# ─────────────────────────────────────────────────────────────────────────────
+#  Cloudflare Pages APPENDS the headers of every matching rule rather than
+#  letting a more specific one win. Two matching rules means the browser gets two
+#  Content-Security-Policy headers, and it then enforces the INTERSECTION — the
+#  strictest value of each directive across both.
+#
+#  So a `/*` rule with `frame-ancestors 'self'` plus an `/embed/*` rule with
+#  `frame-ancestors *` does NOT make embeds framable. The intersection is 'self',
+#  and every calculator embedded on a customer's site silently stops rendering.
+#
+#  `frame-ancestors *` therefore has to be global. Embedding calculators into
+#  other people's websites is the product, so it cannot be restricted here. The
+#  cost is that the rest of the site is also framable; anything genuinely
+#  sensitive should not rely on framing protection alone.
+
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-ancestors *;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.homeofcalculators.com https://*.clerk.accounts.dev https://challenges.cloudflare.com; script-src-elem 'self' 'unsafe-inline' https://clerk.homeofcalculators.com https://*.clerk.accounts.dev https://challenges.cloudflare.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://challenges.cloudflare.com https://clerk.homeofcalculators.com; form-action 'self' https://clerk.homeofcalculators.com; frame-ancestors *;
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-
-/embed/*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-ancestors *;
