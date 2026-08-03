@@ -1,47 +1,41 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function DepreciationCalculator() {
-  const [method, setMethod] = useState<'straight' | 'declining'>('straight')
-  const [cost, setCost] = useState('10000')
-  const [salvage, setSalvage] = useState('1000')
-  const [life, setLife] = useState('5')
-  const [year, setYear] = useState('1')
-  const [result, setResult] = useState<{depreciation:number,bookValue:number}|null>(null)
+  const [costStr, setCostStr] = useState('20000')
+  const [salvageStr, setSalvageStr] = useState('5000')
+  const [lifeStr, setLifeStr] = useState('5') // years
 
-  const calculate = () => {
-    const c = parseFloat(cost), s = parseFloat(salvage), l = parseInt(life), y = parseInt(year)
-    if (isNaN(c)||isNaN(s)||isNaN(l)||isNaN(y) || l <= 0 || y <= 0 || y > l) { setResult(null); return }
-    if (method === 'straight') {
-      const dep = (c - s) / l
-      setResult({ depreciation: dep, bookValue: c - dep * y })
-    } else {
-      const rate = 2 / l
-      let bv = c
-      for (let i = 1; i <= y; i++) {
-        const dep = bv * rate
-        bv = Math.max(s, bv - dep)
-      }
-      setResult({ depreciation: c - bv - (c - s) * (y > l ? 1 : 0), bookValue: bv })
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, annualDepreciation: 0 }
+    const c = parseFloat(costStr)
+    const s = parseFloat(salvageStr)
+    const l = parseFloat(lifeStr)
+
+    if (isNaN(c) || isNaN(s) || isNaN(l) || c <= 0 || s < 0 || l <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
     }
-  }
+
+    if (c <= s) return { ...defaultObj, error: 'Cost must exceed salvage value.' }
+    const annualDepreciation = (c - s) / l
+    return { error: null, annualDepreciation }
+  }, [costStr, salvageStr, lifeStr])
 
   return (
-    <FormCalculatorShell title="Depreciation Calculator" badge="FINANCE">
-      <RetroSelect label="Method" value={method} onChange={(v) => setMethod(v as any)} options={[{value:'straight',label:'Straight-Line'},{value:'declining',label:'Double Declining'}]} id="dep-mode" />
-      <RetroInput label="Asset Cost" value={cost} onChange={setCost} placeholder="10000" id="dep-cost" unit="$" />
-      <RetroInput label="Salvage Value" value={salvage} onChange={setSalvage} placeholder="1000" id="dep-salv" unit="$" />
-      <RetroInput label="Useful Life (years)" value={life} onChange={setLife} placeholder="5" id="dep-life" unit="yr" />
-      <RetroInput label="Year" value={year} onChange={setYear} placeholder="1" id="dep-yr" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Depreciation" value={formatCurrency(result.depreciation)} />
-          <ResultDisplay label="Book Value" value={formatCurrency(result.bookValue)} />
+    <FormCalculatorShell title="Straight-Line Depreciation Solver" subtitle="Calculate asset depreciation expense per year" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Asset Purchase Cost ($)" value={costStr} onChange={setCostStr} id="depr-c" />
+          <RetroInput label="Asset Salvage Value ($)" value={salvageStr} onChange={setSalvageStr} id="depr-s" />
+          <RetroInput label="Useful Life (Years)" value={lifeStr} onChange={setLifeStr} id="depr-l" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Annual Depreciation" value={results.annualDepreciation.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

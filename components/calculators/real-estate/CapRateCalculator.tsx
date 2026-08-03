@@ -1,45 +1,48 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CapRateCalculator() {
-  const [noi, setNoi] = useState('24000')
-  const [value, setValue] = useState('300000')
+  const [noiStr, setNoiStr] = useState('24000') // net operating income
+  const [valueStr, setValueStr] = useState('300000') // property value
 
-  const n = parseFloat(noi), v = parseFloat(value)
-  const valid = !isNaN(n) && !isNaN(v) && v > 0
-  const capRate = valid ? (n / v) * 100 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, capRate: 0, steps: [] as string[] }
+    const noi = parseFloat(noiStr)
+    const val = parseFloat(valueStr)
+    if (isNaN(noi) || isNaN(val) || noi < 0 || val <= 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    const capRate = (noi / val) * 100
+    return {
+      error: null,
+      capRate,
+      steps: [
+        `Formula: Capitalization Rate = (Net Operating Income / Property Value) × 100`,
+        `Cap Rate = (${noi.toLocaleString()} / ${val.toLocaleString()}) × 100 = ${capRate.toFixed(2)}%`
+      ]
+    }
+  }, [noiStr, valueStr])
 
   return (
-    <FormCalculatorShell title="Cap Rate Calculator" subtitle="Cap Rate = NOI / Value" badge="REAL ESTATE">
-      <RetroInput label="Net Operating Income" value={noi} onChange={setNoi} placeholder="24000" id="cr-n" unit="$" />
-      <RetroInput label="Property Value" value={value} onChange={setValue} placeholder="300000" id="cr-v" unit="$" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Cap Rate" value={capRate.toFixed(2)} unit="%" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">NOI vs Value</span>
-            <svg width="180" height="70" viewBox="0 0 180 70" className="select-none">
-              <defs>
-                <pattern id="crGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="70" fill="url(#crGrid)" rx="8" />
-              <path d={wobblyBar(25, 15, 50, Math.min(40, n / 1000))} fill="#fbbf24" fillOpacity="0.3" stroke="#d97706" strokeWidth="2" />
-              <text x="50" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#d97706">NOI</text>
-              <path d={wobblyBar(105, 15 + 40 - Math.min(40, v / 10000), 50, Math.min(40, v / 10000))} fill="#a78bfa" fillOpacity="0.3" stroke="#7c3aed" strokeWidth="2" />
-              <text x="130" y="65" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#7c3aed">Value</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Capitalization Rate Solver" subtitle="Calculate cap rates from Net Operating Income and property value" badge="REAL ESTATE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Net Operating Income (NOI - yearly, $)" value={noiStr} onChange={setNoiStr} id="cr-noi" />
+          <RetroInput label="Property Value / Purchase Price ($)" value={valueStr} onChange={setValueStr} id="cr-val" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Capitalization Rate" value={`${results.capRate.toFixed(2)}%`} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

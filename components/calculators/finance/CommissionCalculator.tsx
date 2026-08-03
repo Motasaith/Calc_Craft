@@ -1,33 +1,33 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CommissionCalculator() {
-  const [sales, setSales] = useState('10000')
-  const [rate, setRate] = useState('10')
-  const [bonus, setBonus] = useState('0')
-  const [result, setResult] = useState<{commission:number,total:number}|null>(null)
+  const [salesStr, setSalesStr] = useState('10000')
+  const [rateStr, setRateStr] = useState('5.0') // %
 
-  const calculate = () => {
-    const s = parseFloat(sales), r = parseFloat(rate), b = parseFloat(bonus)
-    if (isNaN(s)||isNaN(r)) { setResult(null); return }
-    const comm = s * (r / 100)
-    setResult({ commission: comm, total: comm + (isNaN(b) ? 0 : b) })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, commission: 0 }
+    const s = parseFloat(salesStr)
+    const r = parseFloat(rateStr)
+    if (isNaN(s) || isNaN(r) || s < 0 || r < 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    const commission = s * (r / 100)
+    return { error: null, commission }
+  }, [salesStr, rateStr])
 
   return (
-    <FormCalculatorShell title="Commission Calculator" badge="FINANCE">
-      <RetroInput label="Sales Amount" value={sales} onChange={setSales} placeholder="10000" id="comm-sales" unit="$" />
-      <RetroInput label="Commission Rate" value={rate} onChange={setRate} placeholder="10" id="comm-rate" unit="%" />
-      <RetroInput label="Bonus" value={bonus} onChange={setBonus} placeholder="0" id="comm-bonus" unit="$" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Commission" value={formatCurrency(result.commission)} />
-          <ResultDisplay label="Total Earnings" value={formatCurrency(result.total)} large />
+    <FormCalculatorShell title="Sales Commission Solver" subtitle="Calculate commission earnings from total sales values" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Total Sales Value ($)" value={salesStr} onChange={setSalesStr} id="comm-s" />
+          <RetroInput label="Commission Rate (%)" value={rateStr} onChange={setRateStr} id="comm-r" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Commission Earned" value={results.commission.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,31 +1,37 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function SalesTaxCalculator() {
-  const [price, setPrice] = useState('100')
-  const [taxRate, setTaxRate] = useState('8.25')
-  const [result, setResult] = useState<{tax:number,total:number}|null>(null)
+  const [netStr, setNetStr] = useState('100')
+  const [rateStr, setRateStr] = useState('8.25') // %
 
-  const calculate = () => {
-    const p = parseFloat(price), t = parseFloat(taxRate)
-    if (isNaN(p)||isNaN(t)) { setResult(null); return }
-    const tax = p * (t / 100)
-    setResult({ tax, total: p + tax })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, tax: 0, gross: 0 }
+    const net = parseFloat(netStr)
+    const rate = parseFloat(rateStr)
+    if (isNaN(net) || isNaN(rate) || net < 0 || rate < 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    const tax = net * (rate / 100)
+    const gross = net + tax
+    return { error: null, tax, gross }
+  }, [netStr, rateStr])
 
   return (
-    <FormCalculatorShell title="Sales Tax Calculator" badge="FINANCE">
-      <RetroInput label="Price" value={price} onChange={setPrice} placeholder="100" id="st-price" unit="$" />
-      <RetroInput label="Tax Rate" value={taxRate} onChange={setTaxRate} placeholder="8.25" id="st-rate" unit="%" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          <ResultDisplay label="Tax Amount" value={formatCurrency(result.tax)} />
-          <ResultDisplay label="Total" value={formatCurrency(result.total)} large />
+    <FormCalculatorShell title="Sales Tax Solver" subtitle="Calculate sales tax margins and gross transaction prices" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Net Price (Before Tax, $)" value={netStr} onChange={setNetStr} id="st-n" />
+          <RetroInput label="Sales Tax Rate (%)" value={rateStr} onChange={setRateStr} id="st-r" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <div className="grid grid-cols-2 gap-3">
+              <ResultDisplay label="Sales Tax Amount" value={results.tax.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+              <ResultDisplay label="Gross Total (with tax)" value={results.gross.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+            </div>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

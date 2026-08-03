@@ -1,41 +1,36 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
-import { calculateInflation, formatCurrency } from '@/lib/calc-engine'
 
 export default function InflationCalculator() {
-  const [amount, setAmount] = useState(''); const [rate, setRate] = useState(''); const [years, setYears] = useState('')
+  const [valueStr, setValueStr] = useState('100')
+  const [yearsStr, setYearsStr] = useState('10')
+  const [rateStr, setRateStr] = useState('2.5') // annual rate
 
-  const av = parseFloat(amount), rv = parseFloat(rate), yv = parseFloat(years)
-  const valid = !isNaN(av) && !isNaN(rv) && !isNaN(yv) && av > 0 && rv > 0 && yv > 0
-
-  const [future, setFuture] = useState(0)
-  const [purchasing, setPurchasing] = useState(0)
-
-  useEffect(() => {
-    let cancelled = false
-    if (!valid) { setFuture(0); setPurchasing(0); return }
-    calculateInflation(av, rv, yv).then((r) => {
-      if (cancelled) return
-      setFuture(r.futureValue)
-      setPurchasing(av - r.purchasingPowerLoss) // current value of future purchasing power
-    })
-    return () => { cancelled = true }
-  }, [av, rv, yv, valid])
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, futureValue: 0 }
+    const v = parseFloat(valueStr)
+    const y = parseFloat(yearsStr)
+    const r = parseFloat(rateStr)
+    if (isNaN(v) || isNaN(y) || isNaN(r) || v < 0 || y < 0) return { ...defaultObj, error: 'Please enter valid parameters.' }
+    const futureValue = v * Math.pow(1 + r / 100, y)
+    return { error: null, futureValue }
+  }, [valueStr, yearsStr, rateStr])
 
   return (
-    <FormCalculatorShell title="Inflation Calculator" badge="FINANCE">
-      <RetroInput label="Current Amount" value={amount} onChange={setAmount} placeholder="e.g. 10000" id="inf-a" unit="$" />
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Inflation Rate" value={rate} onChange={setRate} placeholder="e.g. 3" id="inf-r" unit="% / yr" />
-        <RetroInput label="Years" value={years} onChange={setYears} placeholder="e.g. 10" id="inf-y" />
-      </div>
-      {valid && (
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <ResultDisplay label="Future Cost" value={formatCurrency(future)} large />
-          <ResultDisplay label="Purchasing Power" value={formatCurrency(purchasing)} large />
+    <FormCalculatorShell title="Inflation Solver" subtitle="Estimate buying power decay over years at specific inflation rates" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Starting Value ($)" value={valueStr} onChange={setValueStr} id="inf-v" />
+          <RetroInput label="Duration (Years)" value={yearsStr} onChange={setYearsStr} id="inf-y" />
+          <RetroInput label="Average Inflation Rate (%)" value={rateStr} onChange={setRateStr} id="inf-r" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Adjusted Future Value" value={results.futureValue.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

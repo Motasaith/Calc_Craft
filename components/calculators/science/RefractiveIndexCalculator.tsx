@@ -1,51 +1,40 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return 'M ' + points.map(([x, y]) => `${x} ${y}`).join(' L ')
-}
-
 export default function RefractiveIndexCalculator() {
-  const [incAngle, setIncAngle] = useState('45')
-  const [refAngle, setRefAngle] = useState('30')
+  const [speedStr, setSpeedStr] = useState('200000') // km/s in medium
 
-  const i = parseFloat(incAngle)
-  const r = parseFloat(refAngle)
-  const valid = !isNaN(i) && !isNaN(r) && i > 0 && r > 0 && i < 90 && r < 90
-
-  // Snell: n1 sin(i) = n2 sin(r); assume n1 = 1 (vacuum/air)
-  const n = valid ? Math.sin((i * Math.PI) / 180) / Math.sin((r * Math.PI) / 180) : 0
-
-  // Visualizer: incident ray and refracted ray
-  const ix = 100 - Math.sin((i * Math.PI) / 180) * 30
-  const iy = 10
-  const rx = 100 + Math.sin((r * Math.PI) / 180) * 30
-  const ry = 70
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, n: 0, steps: [] as string[] }
+    const v = parseFloat(speedStr)
+    if (isNaN(v) || v <= 0) return { ...defaultObj, error: 'Please enter a valid positive velocity.' }
+    const c = 299792.458 // km/s
+    if (v > c) return { ...defaultObj, error: 'Velocity cannot exceed light speed in vacuum (c = 299,792 km/s).' }
+    const n = c / v
+    return {
+      error: null,
+      n,
+      steps: [
+        `c = 299,792.458 km/s (light speed in vacuum)`,
+        `Formula: n = c / v`,
+        `Index of Refraction = ${n.toFixed(4)}`
+      ]
+    }
+  }, [speedStr])
 
   return (
-    <FormCalculatorShell
-      title="Refractive Index"
-      subtitle="Snell's law: n = sin(i) / sin(r)"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Angle of Incidence" value={incAngle} onChange={setIncAngle} unit="°" placeholder="e.g. 45" />
-        <RetroInput label="Angle of Refraction" value={refAngle} onChange={setRefAngle} unit="°" placeholder="e.g. 30" />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-1 gap-2 mb-3">
-          <ResultDisplay label="Refractive Index (n)" value={n.toFixed(4)} large />
+    <FormCalculatorShell title="Index of Refraction Solver" subtitle="Calculate refractive index based on light speed in medium" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Light Speed in Medium (km/s)" value={speedStr} onChange={setSpeedStr} id="ri-v" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <line x1="0" y1="40" x2="200" y2="40" stroke="#bbb" strokeDasharray="3 3" />
-        <path d={wobblyLine([[ix, iy], [100, 40]])} fill="none" stroke="#dfaa44" strokeWidth="2" />
-        <path d={wobblyLine([[100, 40], [rx, ry]])} fill="none" stroke="#4a6fa5" strokeWidth="2" />
-        <text x="100" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">boundary</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Refractive Index (n)" value={results.n.toFixed(4)} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

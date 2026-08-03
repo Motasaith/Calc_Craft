@@ -1,44 +1,49 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import FormCalculatorShell, { ResultDisplay, RetroSlider } from '../shared/FormCalculatorShell'
-import { calculateEMI, formatCurrency } from '@/lib/calc-engine'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function MortgageCalculator() {
-  const [home, setHome] = useState(300000)
-  const [down, setDown] = useState(20)
-  const [rate, setRate] = useState(6.5)
-  const [years, setYears] = useState(30)
+  const [priceStr, setPriceStr] = useState('300000')
+  const [downStr, setDownStr] = useState('60000')
+  const [rateStr, setRateStr] = useState('6.0')
+  const [termStr, setTermStr] = useState('30') // years
 
-  const [payment, setPayment] = useState(0)
-  const [total, setTotal] = useState(0)
-  const [interest, setInterest] = useState(0)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, payment: 0 }
+    const p = parseFloat(priceStr)
+    const d = parseFloat(downStr)
+    const r = parseFloat(rateStr)
+    const y = parseFloat(termStr)
 
-  useEffect(() => {
-    let cancelled = false
-    const loanAmt = home * (1 - down / 100)
-    calculateEMI(loanAmt, rate, years * 12).then((r) => {
-      if (cancelled) return
-      setPayment(r.emi)
-      setTotal(r.totalPayment)
-      setInterest(r.totalInterest)
-    })
-    return () => { cancelled = true }
-  }, [home, down, rate, years])
+    if (isNaN(p) || isNaN(d) || isNaN(r) || isNaN(y) || p <= 0 || d < 0 || r < 0 || y <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const loanAmt = home * (1 - down / 100)
+    const principal = p - d
+    if (principal <= 0) return { ...defaultObj, error: 'Down payment cannot match or exceed purchase price.' }
+    const monthlyRate = (r / 100) / 12
+    const months = y * 12
+    const payment = monthlyRate > 0
+      ? (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1)
+      : principal / months
+
+    return { error: null, payment }
+  }, [priceStr, downStr, rateStr, termStr])
 
   return (
-    <FormCalculatorShell title="Mortgage Calculator" badge="FINANCE">
-      <RetroSlider label="Home Price" value={home} onChange={setHome} min={50000} max={2000000} step={5000} displayValue={`$${home.toLocaleString()}`} id="mort-h" />
-      <RetroSlider label="Down Payment" value={down} onChange={setDown} min={0} max={50} step={1} displayValue={`${down}% ($${Math.round(home * down / 100).toLocaleString()})`} id="mort-d" />
-      <RetroSlider label="Interest Rate" value={rate} onChange={setRate} min={1} max={15} step={0.1} displayValue={`${rate}%`} id="mort-r" />
-      <RetroSlider label="Loan Term" value={years} onChange={setYears} min={5} max={30} step={5} displayValue={`${years} Years`} id="mort-y" />
-
-      <div className="grid grid-cols-2 gap-3 mt-4">
-        <ResultDisplay label="Monthly Payment" value={formatCurrency(payment)} large />
-        <ResultDisplay label="Total Interest" value={formatCurrency(interest)} large />
-        <ResultDisplay label="Loan Amount" value={formatCurrency(loanAmt)} />
-        <ResultDisplay label="Total Cost" value={formatCurrency(total)} />
+    <FormCalculatorShell title="Mortgage Payment Solver" subtitle="Calculate monthly mortgage amortized payments" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Home Price ($)" value={priceStr} onChange={setPriceStr} id="mort-p" />
+          <RetroInput label="Down Payment ($)" value={downStr} onChange={setDownStr} id="mort-d" />
+          <RetroInput label="Interest Rate (%)" value={rateStr} onChange={setRateStr} id="mort-r" />
+          <RetroInput label="Term (Years)" value={termStr} onChange={setTermStr} id="mort-y" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Monthly Payment" value={results.payment.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
     </FormCalculatorShell>
   )

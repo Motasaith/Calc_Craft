@@ -1,45 +1,66 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ZakatCalculator() {
-  const [cash, setCash] = useState('5000')
-  const [gold, setGold] = useState('50')
-  const [silver, setSilver] = useState('200')
-  const [investments, setInvestments] = useState('10000')
-  const [debts, setDebts] = useState('2000')
-  const [goldPrice, setGoldPrice] = useState('75')
-  const [result, setResult] = useState<{totalAssets:number,nisab:number,zakat:number}|null>(null)
+  const [cashStr, setCashStr] = useState('10000') // cash
+  const [goldStr, setGoldStr] = useState('2000') // gold/silver value
+  const [nisabStr, setNisabStr] = useState('6000') // Nisab threshold in cash
 
-  const calculate = () => {
-    const c = parseFloat(cash), g = parseFloat(gold), s = parseFloat(silver)
-    const inv = parseFloat(investments), d = parseFloat(debts), gp = parseFloat(goldPrice)
-    if (isNaN(c)||isNaN(g)||isNaN(s)||isNaN(inv)||isNaN(d)||isNaN(gp)) { setResult(null); return }
-    const goldValue = g * gp
-    const silverValue = s * gp * 0.015
-    const totalAssets = c + goldValue + silverValue + inv - d
-    const nisab = 85 * gp
-    const zakat = totalAssets >= nisab ? totalAssets * 0.025 : 0
-    setResult({ totalAssets, nisab, zakat })
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, zakat: 0, steps: [] as string[] }
+    const cash = parseFloat(cashStr)
+    const gold = parseFloat(goldStr)
+    const nisab = parseFloat(nisabStr)
+
+    if (isNaN(cash) || isNaN(gold) || isNaN(nisab) || cash < 0 || gold < 0 || nisab <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
+
+    const totalAssets = cash + gold
+    let zakat = 0
+    let eligible = false
+
+    if (totalAssets >= nisab) {
+      zakat = totalAssets * 0.025 // 2.5% Zakat rate
+      eligible = true
+    }
+
+    return {
+      error: null,
+      zakat,
+      steps: [
+        `Total Zakat-eligible Assets = Cash (${cash}) + Gold/Silver (${gold}) = ${totalAssets} USD`,
+        `Nisab Threshold = ${nisab} USD`,
+        eligible 
+          ? `Assets exceed Nisab! Zakat Due = Total Assets × 2.5% = ${zakat.toFixed(2)} USD`
+          : `Assets do not meet Nisab threshold. Zakat Due = 0 USD`
+      ]
+    }
+  }, [cashStr, goldStr, nisabStr])
 
   return (
-    <FormCalculatorShell title="Zakat Calculator" badge="ISLAMIC">
-      <RetroInput label="Cash & Bank" value={cash} onChange={setCash} placeholder="5000" id="zak-cash" unit="$" />
-      <RetroInput label="Gold (grams)" value={gold} onChange={setGold} placeholder="50" id="zak-gold" unit="g" />
-      <RetroInput label="Silver (grams)" value={silver} onChange={setSilver} placeholder="200" id="zak-sil" unit="g" />
-      <RetroInput label="Investments" value={investments} onChange={setInvestments} placeholder="10000" id="zak-inv" unit="$" />
-      <RetroInput label="Debts" value={debts} onChange={setDebts} placeholder="2000" id="zak-debt" unit="$" />
-      <RetroInput label="Gold Price/g" value={goldPrice} onChange={setGoldPrice} placeholder="75" id="zak-gp" unit="$" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate Zakat</RetroActionButton></div>
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="Total Assets" value={formatCurrency(result.totalAssets)} />
-          <ResultDisplay label="Nisab Threshold" value={formatCurrency(result.nisab)} />
-          <ResultDisplay label="Zakat Due (2.5%)" value={formatCurrency(result.zakat)} large />
+    <FormCalculatorShell title="Zakat Obligations Solver" subtitle="Calculate yearly Zakat due (2.5% rate) on net wealth" badge="ISLAMIC">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Cash & Savings ($)" value={cashStr} onChange={setCashStr} id="zk-cash" />
+          <RetroInput label="Gold & Silver Market Value ($)" value={goldStr} onChange={setGoldStr} id="zk-gold" />
+          <RetroInput label="Nisab Limit Threshold ($)" value={nisabStr} onChange={setNisabStr} id="zk-nisab" />
         </div>
-      )}
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Zakat Due" value={results.zakat.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

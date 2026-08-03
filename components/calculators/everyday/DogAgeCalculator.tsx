@@ -1,53 +1,75 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroSelect, RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Size = 'small' | 'medium' | 'large'
 
 export default function DogAgeCalculator() {
-  const [dogAge, setDogAge] = useState('3')
-  const [size, setSize] = useState('medium')
-  const [result, setResult] = useState<number | null>(null)
+  const [ageStr, setAgeStr] = useState('5')
+  const [size, setSize] = useState<Size>('medium')
 
-  const calculate = () => {
-    const age = parseFloat(dogAge)
-    if (isNaN(age) || age < 0) return
-    // AVMA guideline approximation
-    let human: number
-    if (age <= 1) {
-      human = age * 15
-    } else if (age <= 2) {
-      human = 15 + (age - 1) * 9
-    } else {
-      const base = 24
-      const extra = age - 2
-      if (size === 'small') human = base + extra * 4
-      else if (size === 'medium') human = base + extra * 5
-      else human = base + extra * 6
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, humanAge: 0, steps: [] as string[] }
+    const dogAge = parseFloat(ageStr)
+    if (isNaN(dogAge) || dogAge < 0) {
+      return { ...defaultObj, error: 'Please enter a valid positive dog age.' }
     }
-    setResult(Math.round(human * 10) / 10)
-  }
+
+    let humanAge = 0
+    let factor = size === 'small' ? 4 : size === 'medium' ? 5 : 6
+
+    if (dogAge === 0) humanAge = 0
+    else if (dogAge <= 1) humanAge = 15
+    else if (dogAge <= 2) humanAge = 24
+    else humanAge = 24 + (dogAge - 2) * factor
+
+    return {
+      error: null,
+      humanAge,
+      steps: [
+        `Dog age: ${dogAge} years | Size: ${size}`,
+        `1st year = 15 human years | 2nd year = 24 human years`,
+        `Subsequent years add ${factor} human years each`,
+        `Estimated human equivalent = ${humanAge.toFixed(1)} years`
+      ]
+    }
+  }, [ageStr, size])
 
   return (
-    <FormCalculatorShell title="Dog Age Calculator" subtitle="Convert dog years to human years" badge="EVERYDAY">
-      <RetroInput label="Dog Age" value={dogAge} onChange={setDogAge} unit="yrs" id="dog-age" />
-      <RetroSelect label="Dog Size" value={size} onChange={setSize} options={[
-        { value: 'small', label: 'Small (0-20 lbs)' },
-        { value: 'medium', label: 'Medium (21-50 lbs)' },
-        { value: 'large', label: 'Large (50+ lbs)' },
-      ]} id="dog-size" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate Human Age</RetroActionButton></div>
-      {result !== null && (
-        <div className="mt-4 space-y-2">
-          <ResultDisplay label="Human Equivalent" value={result} unit="years" large />
-          <svg viewBox="0 0 200 50" className="w-full h-12 mt-2">
-            <path d={wobblyBar(10, 40 - Math.min(result, 40), 40, Math.min(result, 40))} fill="#dfaa44" stroke="#be8b32" strokeWidth="2" />
-            <text x="30" y="48" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#4c5c4a">Dog→Human</text>
-          </svg>
+    <FormCalculatorShell title="Dog Age Calculator" subtitle="Convert dog years to human age equivalent based on breed size" badge="EVERYDAY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Dog Size"
+            value={size}
+            onChange={(val) => setSize(val as Size)}
+            id="dog-size"
+            options={[
+              { value: 'small', label: 'Small (< 20 lbs)' },
+              { value: 'medium', label: 'Medium (20-50 lbs)' },
+              { value: 'large', label: 'Large (> 50 lbs)' }
+            ]}
+          />
+          <RetroInput label="Dog Age (years)" value={ageStr} onChange={setAgeStr} id="dog-age" />
         </div>
-      )}
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Human Age Equivalent" value={`${results.humanAge.toFixed(1)} years`} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

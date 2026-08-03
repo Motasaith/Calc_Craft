@@ -1,28 +1,40 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function PresentValueCalculator() {
-  const [fv, setFv] = useState('10000')
-  const [rate, setRate] = useState('5')
-  const [years, setYears] = useState('10')
-  const [result, setResult] = useState('')
+  const [futureStr, setFutureStr] = useState('15000')
+  const [rateStr, setRateStr] = useState('5.0')
+  const [periodsStr, setPeriodsStr] = useState('5') // years
 
-  const calculate = () => {
-    const future = parseFloat(fv), r = parseFloat(rate) / 100, n = parseFloat(years)
-    if (isNaN(future)||isNaN(r)||isNaN(n)) { setResult('Invalid'); return }
-    const pv = future / Math.pow(1 + r, n)
-    setResult(formatCurrency(pv))
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, pv: 0 }
+    const f = parseFloat(futureStr)
+    const r = parseFloat(rateStr)
+    const n = parseFloat(periodsStr)
+
+    if (isNaN(f) || isNaN(r) || isNaN(n) || f < 0 || r < 0 || n < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const pv = f / Math.pow(1 + r / 100, n)
+    return { error: null, pv }
+  }, [futureStr, rateStr, periodsStr])
 
   return (
-    <FormCalculatorShell title="Present Value" badge="FINANCE">
-      <RetroInput label="Future Value" value={fv} onChange={setFv} placeholder="10000" id="pv-fv" unit="$" />
-      <RetroInput label="Annual Rate" value={rate} onChange={setRate} placeholder="5" id="pv-rate" unit="%" />
-      <RetroInput label="Years" value={years} onChange={setYears} placeholder="10" id="pv-yr" unit="yr" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate PV</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Present Value" value={result} large /></div>}
+    <FormCalculatorShell title="Present Value Solver" subtitle="Calculate present value of future capital sums" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Future Sum ($)" value={futureStr} onChange={setFutureStr} id="pv-f" />
+          <RetroInput label="Discount Rate (%)" value={rateStr} onChange={setRateStr} id="pv-r" />
+          <RetroInput label="Duration (Years)" value={periodsStr} onChange={setPeriodsStr} id="pv-n" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Present Value" value={results.pv.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

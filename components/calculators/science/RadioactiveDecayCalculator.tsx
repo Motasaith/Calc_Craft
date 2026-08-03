@@ -1,58 +1,57 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyLine(points: [number, number][]) {
-  return 'M ' + points.map(([x, y]) => `${x} ${y}`).join(' L ')
-}
-
 export default function RadioactiveDecayCalculator() {
-  const [initial, setInitial] = useState('100')
-  const [halfLife, setHalfLife] = useState('5')
-  const [time, setTime] = useState('10')
+  const [initialStr, setInitialStr] = useState('100') // quantity N0
+  const [halfLifeStr, setHalfLifeStr] = useState('8') // days T
+  const [timeStr, setTimeStr] = useState('24') // days t
 
-  const N0 = parseFloat(initial)
-  const tHalf = parseFloat(halfLife)
-  const t = parseFloat(time)
-  const valid = !isNaN(N0) && !isNaN(tHalf) && !isNaN(t) && tHalf > 0 && N0 > 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, remaining: 0, steps: [] as string[] }
+    const n0 = parseFloat(initialStr)
+    const T = parseFloat(halfLifeStr)
+    const t = parseFloat(timeStr)
 
-  // N = N0 * (1/2)^(t / tHalf)
-  const remaining = valid ? N0 * Math.pow(0.5, t / tHalf) : 0
-  const decayed = valid ? N0 - remaining : 0
+    if (isNaN(n0) || isNaN(T) || isNaN(t) || n0 <= 0 || T <= 0 || t < 0) {
+      return { ...defaultObj, error: 'Please enter valid positive values.' }
+    }
 
-  // Visualizer: exponential decay curve
-  const pts: [number, number][] = []
-  for (let i = 0; i <= 40; i++) {
-    const tt = (i / 40) * t
-    const val = N0 * Math.pow(0.5, tt / tHalf)
-    const x = 5 + (i / 40) * 190
-    const y = 70 - (val / N0) * 60
-    pts.push([x, y])
-  }
+    const remaining = n0 * Math.pow(0.5, t / T)
+
+    return {
+      error: null,
+      remaining,
+      steps: [
+        `Formula: N(t) = N₀ × (1/2)^(t / T)`,
+        `Elapsed half-lives = ${t} / ${T} = ${(t / T).toFixed(4)}`,
+        `N(${t}) = ${n0} × 0.5^(${(t / T).toFixed(2)}) = dots = ${remaining.toFixed(4)}`
+      ]
+    }
+  }, [initialStr, halfLifeStr, timeStr])
 
   return (
-    <FormCalculatorShell
-      title="Radioactive Decay"
-      subtitle="N = N₀ · (1/2)^(t / t½)"
-      badge="SCIENCE"
-    >
-      <div>
-        <RetroInput label="Initial Amount" value={initial} onChange={setInitial} unit="g" placeholder="e.g. 100" />
-        <RetroInput label="Half-Life" value={halfLife} onChange={setHalfLife} unit="yr" placeholder="e.g. 5" />
-        <RetroInput label="Time Elapsed" value={time} onChange={setTime} unit="yr" placeholder="e.g. 10" />
-      </div>
-
-      {valid && (
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <ResultDisplay label="Remaining" value={remaining.toFixed(4)} unit="g" large />
-          <ResultDisplay label="Decayed" value={decayed.toFixed(4)} unit="g" />
+    <FormCalculatorShell title="Radioactive Decay Solver" subtitle="Calculate remaining quantity of radioactive isotopes" badge="SCIENCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Initial Quantity (N₀)" value={initialStr} onChange={setInitialStr} id="rd-n0" />
+          <RetroInput label="Isotope Half-Life (T)" value={halfLifeStr} onChange={setHalfLifeStr} id="rd-hl" />
+          <RetroInput label="Elapsed Time (t)" value={timeStr} onChange={setTimeStr} id="rd-t" />
         </div>
-      )}
-
-      <svg viewBox="0 0 200 80" className="w-full h-20 bg-[#f4f1ea] rounded-lg border border-neutral-300">
-        <path d={wobblyLine(pts)} fill="none" stroke="#5b8c5a" strokeWidth="2" />
-        <text x="100" y="78" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#555">decay curve</text>
-      </svg>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Remaining Quantity" value={results.remaining.toFixed(4)} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

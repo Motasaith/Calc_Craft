@@ -1,55 +1,55 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function CarbonFootprintCalculator() {
-  const [electricity, setElectricity] = useState('300')
-  const [gas, setGas] = useState('50')
-  const [mileage, setMileage] = useState('12000')
+  const [milesStr, setMilesStr] = useState('10000') // miles driven yearly
+  const [electricStr, setElectricStr] = useState('100') // $ monthly electric bill
 
-  const e = parseFloat(electricity), g = parseFloat(gas), m = parseFloat(mileage)
-  const valid = !isNaN(e) && !isNaN(g) && !isNaN(m) && e >= 0 && g >= 0 && m >= 0
-  // Electricity: 0.4 kg CO2/kWh/month × 12
-  // Gas: 2.3 kg CO2/therm/month × 12
-  // Car: 0.4 kg CO2/mile
-  const elecCO2 = valid ? e * 0.4 * 12 : 0
-  const gasCO2 = valid ? g * 2.3 * 12 : 0
-  const carCO2 = valid ? m * 0.4 : 0
-  const total = valid ? elecCO2 + gasCO2 + carCO2 : 0
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, co2: 0, steps: [] as string[] }
+    const m = parseFloat(milesStr)
+    const e = parseFloat(electricStr)
+    if (isNaN(m) || isNaN(e) || m < 0 || e < 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    
+    // Simple carbon footprint factor guidelines
+    const transportCO2 = m * 0.404 // kg CO2 per mile driven average car
+    const electricCO2 = e * 12 * 0.39 // kg CO2 per dollar spent approximate electricity
+    const totalCO2Kg = transportCO2 + electricCO2
+    const totalTons = totalCO2Kg / 1000
+
+    return {
+      error: null,
+      co2: totalTons,
+      steps: [
+        `Transportation CO₂ = ${m} miles × 0.404 kg/mile = ${transportCO2.toFixed(1)} kg`,
+        `Electricity CO₂ = $${electricStr} × 12 months × 0.39 kg/$ = ${electricCO2.toFixed(1)} kg`,
+        `Total CO₂ Footprint = ${totalTons.toFixed(2)} metric tons per year`
+      ]
+    }
+  }, [milesStr, electricStr])
 
   return (
-    <FormCalculatorShell title="Carbon Footprint" subtitle="CO₂ from energy + transport" badge="ENVIRONMENT">
-      <RetroInput label="Electricity" value={electricity} onChange={setElectricity} placeholder="300" id="cf-e" unit="kWh/mo" />
-      <RetroInput label="Natural Gas" value={gas} onChange={setGas} placeholder="50" id="cf-g" unit="therms/mo" />
-      <RetroInput label="Car Mileage" value={mileage} onChange={setMileage} placeholder="12000" id="cf-m" unit="mi/yr" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Annual CO₂" value={total.toFixed(0)} unit="kg" large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">CO₂ Breakdown</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
-              <defs>
-                <pattern id="cfGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#cfGrid)" rx="8" />
-              <path d={wobblyBar(20, 50 - (elecCO2 / total) * 40, 40, (elecCO2 / total) * 40)} fill="#fbbf24" fillOpacity="0.4" stroke="#d97706" strokeWidth="1.5" />
-              <text x="40" y="72" textAnchor="middle" fontSize="6" fontFamily="monospace" fill="#d97706">Elec</text>
-              <path d={wobblyBar(70, 50 - (gasCO2 / total) * 40, 40, (gasCO2 / total) * 40)} fill="#60a5fa" fillOpacity="0.4" stroke="#2563eb" strokeWidth="1.5" />
-              <text x="90" y="72" textAnchor="middle" fontSize="6" fontFamily="monospace" fill="#2563eb">Gas</text>
-              <path d={wobblyBar(120, 50 - (carCO2 / total) * 40, 40, (carCO2 / total) * 40)} fill="#84cc16" fillOpacity="0.4" stroke="#65a30d" strokeWidth="1.5" />
-              <text x="140" y="72" textAnchor="middle" fontSize="6" fontFamily="monospace" fill="#65a30d">Car</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Carbon Footprint Solver" subtitle="Estimate annual greenhouse gas CO₂ emissions in metric tons" badge="ENVIRONMENT">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Annual Car Miles Driven" value={milesStr} onChange={setMilesStr} id="cf-m" />
+          <RetroInput label="Monthly Electric Bill ($)" value={electricStr} onChange={setElectricStr} id="cf-e" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Carbon Footprint (Metric Tons CO₂/yr)" value={results.co2.toFixed(2)} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

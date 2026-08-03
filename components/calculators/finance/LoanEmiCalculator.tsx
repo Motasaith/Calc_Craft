@@ -1,59 +1,44 @@
 'use client'
-
-import React, { useEffect, useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSlider } from '../shared/FormCalculatorShell'
-import { calculateEMI, formatCurrency } from '@/lib/calc-engine'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function LoanEmiCalculator() {
-  const [principal, setPrincipal] = useState(100000)
-  const [rate, setRate] = useState(7.5)
-  const [tenure, setTenure] = useState(15)
+  const [loanStr, setLoanStr] = useState('50000')
+  const [rateStr, setRateStr] = useState('7.5')
+  const [termStr, setTermStr] = useState('60') // months
 
-  const [emi, setEmi] = useState(0)
-  const [totalPayment, setTotalPayment] = useState(0)
-  const [totalInterest, setTotalInterest] = useState(0)
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, emi: 0 }
+    const l = parseFloat(loanStr)
+    const r = parseFloat(rateStr)
+    const t = parseInt(termStr)
 
-  useEffect(() => {
-    let cancelled = false
-    calculateEMI(principal, rate, tenure * 12).then((r) => {
-      if (cancelled) return
-      setEmi(r.emi)
-      setTotalPayment(r.totalPayment)
-      setTotalInterest(r.totalInterest)
-    })
-    return () => { cancelled = true }
-  }, [principal, rate, tenure])
+    if (isNaN(l) || isNaN(r) || isNaN(t) || l <= 0 || r < 0 || t <= 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
 
-  const P = principal
+    const monthlyRate = (r / 100) / 12
+    const emi = monthlyRate > 0
+      ? (l * monthlyRate * Math.pow(1 + monthlyRate, t)) / (Math.pow(1 + monthlyRate, t) - 1)
+      : l / t
+
+    return { error: null, emi }
+  }, [loanStr, rateStr, termStr])
 
   return (
-    <FormCalculatorShell title="Loan EMI Calculator" badge="FINANCE">
-      <RetroSlider label="Loan Amount" value={principal} onChange={setPrincipal} min={1000} max={1000000} step={1000} displayValue={`$${principal.toLocaleString()}`} id="emi-p" />
-      <RetroSlider label="Interest Rate" value={rate} onChange={setRate} min={0.5} max={30} step={0.1} displayValue={`${rate}%`} id="emi-r" />
-      <RetroSlider label="Tenure" value={tenure} onChange={setTenure} min={1} max={30} step={1} displayValue={`${tenure} Years`} id="emi-t" />
-
-      <div className="grid grid-cols-2 gap-3 mt-4">
-        <ResultDisplay label="Monthly EMI" value={formatCurrency(emi)} large />
-        <ResultDisplay label="Total Interest" value={formatCurrency(totalInterest)} large />
+    <FormCalculatorShell title="Loan EMI Solver" subtitle="Calculate Equated Monthly Installments for loans" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Loan Amount ($)" value={loanStr} onChange={setLoanStr} id="emi-l" />
+          <RetroInput label="Interest Rate (APR %)" value={rateStr} onChange={setRateStr} id="emi-r" />
+          <RetroInput label="Loan Term (Months)" value={termStr} onChange={setTermStr} id="emi-t" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Monthly Installment (EMI)" value={results.emi.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
       </div>
-
-      <div className="mt-3">
-        <ResultDisplay label="Total Payment" value={formatCurrency(totalPayment)} />
-      </div>
-
-      {/* Visual breakdown bar */}
-      {totalPayment > 0 && (
-        <>
-          <div className="mt-4 h-4 rounded-full overflow-hidden bg-neutral-200 border border-neutral-300 flex">
-            <div className="bg-[#4c5c4a] h-full transition-all" style={{ width: `${(P / totalPayment) * 100}%` }} />
-            <div className="bg-[#dfaa44] h-full transition-all" style={{ width: `${(totalInterest / totalPayment) * 100}%` }} />
-          </div>
-          <div className="flex justify-between mt-1 text-[9px] font-mono font-bold text-neutral-600">
-            <span>■ Principal ({((P / totalPayment) * 100).toFixed(1)}%)</span>
-            <span>■ Interest ({((totalInterest / totalPayment) * 100).toFixed(1)}%)</span>
-          </div>
-        </>
-      )}
     </FormCalculatorShell>
   )
 }

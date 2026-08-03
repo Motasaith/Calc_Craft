@@ -1,52 +1,48 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function LTVCalculator() {
-  const [loan, setLoan] = useState('240000')
-  const [value, setValue] = useState('300000')
+  const [loanStr, setLoanStr] = useState('240000')
+  const [valueStr, setValueStr] = useState('300000')
 
-  const l = parseFloat(loan), v = parseFloat(value)
-  const valid = !isNaN(l) && !isNaN(v) && v > 0
-  const ltv = valid ? (l / v) * 100 : 0
-  const equity = valid ? v - l : 0
-  const healthy = ltv <= 80
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, ltv: 0, steps: [] as string[] }
+    const loan = parseFloat(loanStr)
+    const val = parseFloat(valueStr)
+    if (isNaN(loan) || isNaN(val) || loan < 0 || val <= 0) return { ...defaultObj, error: 'Please enter valid positive values.' }
+    const ltv = (loan / val) * 100
+    return {
+      error: null,
+      ltv,
+      steps: [
+        `Formula: Loan-to-Value (LTV) = (Loan Amount / Appraised Value) × 100`,
+        `LTV = (${loan.toLocaleString()} / ${val.toLocaleString()}) × 100 = ${ltv.toFixed(2)}%`
+      ]
+    }
+  }, [loanStr, valueStr])
 
   return (
-    <FormCalculatorShell title="Loan-to-Value Ratio" subtitle="LTV = Loan / Value × 100" badge="REAL ESTATE">
-      <RetroInput label="Loan Amount" value={loan} onChange={setLoan} placeholder="240000" id="ltv-l" unit="$" />
-      <RetroInput label="Property Value" value={value} onChange={setValue} placeholder="300000" id="ltv-v" unit="$" />
-      {valid && (
-        <>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <ResultDisplay label="LTV Ratio" value={ltv.toFixed(2)} unit="%" large />
-            <ResultDisplay label="Equity" value={`$${equity.toFixed(0)}`} large />
-          </div>
-          <div className="mt-2 text-center">
-            <span className={`text-[10px] font-bold font-mono uppercase ${healthy ? 'text-green-600' : 'text-red-600'}`}>
-              {healthy ? '✓ Good (≤80%)' : '⚠ High LTV (>80%) — PMI may be required'}
-            </span>
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Loan vs Value</span>
-            <svg width="160" height="70" viewBox="0 0 160 70" className="select-none">
-              <defs>
-                <pattern id="ltvGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="160" height="70" fill="url(#ltvGrid)" rx="8" />
-              <path d={wobblyBar(20, 15, 120, 35)} fill="#a78bfa" fillOpacity="0.15" stroke="#7c3aed" strokeWidth="2" />
-              <path d={wobblyBar(20, 15, (ltv / 100) * 120, 35)} fill={healthy ? '#22c55e' : '#ef4444'} fillOpacity="0.4" stroke={healthy ? '#16a34a' : '#dc2626'} strokeWidth="2" />
-              <text x="80" y="65" textAnchor="middle" fontSize="8" fontFamily="monospace" fill={healthy ? '#16a34a' : '#dc2626'} fontWeight="bold">LTV: {ltv.toFixed(1)}%</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Loan-to-Value LTV Solver" subtitle="Calculate LTV ratio percentages for mortgages" badge="REAL ESTATE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Loan Amount ($)" value={loanStr} onChange={setLoanStr} id="ltv-l" />
+          <RetroInput label="Property Appraised Value ($)" value={valueStr} onChange={setValueStr} id="ltv-v" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Loan-to-Value Ratio" value={`${results.ltv.toFixed(2)}%`} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

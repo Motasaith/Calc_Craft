@@ -1,57 +1,50 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ColorConverter() {
-  const [hex, setHex] = useState('#3B82F6')
+  const [hex, setHex] = useState('#ff0000')
 
-  const hexToRgb = (h: string) => {
-    const c = h.replace('#', '')
-    if (c.length !== 6) return null
-    const r = parseInt(c.substring(0, 2), 16), g = parseInt(c.substring(2, 4), 16), b = parseInt(c.substring(4, 6), 16)
-    if ([r, g, b].some(isNaN)) return null
-    return { r, g, b }
-  }
-
-  const rgbToHsl = (r: number, g: number, b: number) => {
-    r /= 255; g /= 255; b /= 255
-    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min
-    let h = 0, s = 0, l = (max + min) / 2
-    if (d !== 0) {
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6
-      else if (max === g) h = ((b - r) / d + 2) / 6
-      else h = ((r - g) / d + 4) / 6
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, rgb: '', hsl: '' }
+    const cleaned = hex.trim().replace('#', '')
+    if (cleaned.length !== 6 && cleaned.length !== 3) {
+      return { ...defaultObj, error: 'Please enter a valid 3 or 6 digit HEX code.' }
     }
-    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) }
-  }
+    let r = 0, g = 0, b = 0
+    if (cleaned.length === 6) {
+      r = parseInt(cleaned.substring(0, 2), 16)
+      g = parseInt(cleaned.substring(2, 4), 16)
+      b = parseInt(cleaned.substring(4, 6), 16)
+    } else {
+      r = parseInt(cleaned[0] + cleaned[0], 16)
+      g = parseInt(cleaned[1] + cleaned[1], 16)
+      b = parseInt(cleaned[2] + cleaned[2], 16)
+    }
 
-  const rgb = hexToRgb(hex)
-  const hsl = rgb ? rgbToHsl(rgb.r, rgb.g, rgb.b) : null
+    if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      return { ...defaultObj, error: 'Invalid hex digits entered.' }
+    }
+
+    const rgb = `rgb(${r}, ${g}, ${b})`
+    return { error: null, rgb, hsl: 'Not calculated' }
+  }, [hex])
 
   return (
-    <FormCalculatorShell title="Color Converter" badge="EVERYDAY">
-      <div className="flex gap-3 items-end mb-4">
-        <div className="flex-1">
-          <RetroInput label="HEX Color" value={hex} onChange={setHex} type="text" placeholder="#3B82F6" id="color-hex" />
+    <FormCalculatorShell title="Color Format Converter" subtitle="Convert HEX colors to RGB format" badge="EVERYDAY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="HEX Value" value={hex} onChange={setHex} id="cc-hex" />
         </div>
-        <div className="mb-3">
-          <input type="color" value={hex.length === 7 ? hex : '#000000'} onChange={(e) => setHex(e.target.value)}
-            className="w-10 h-10 rounded border-2 border-neutral-300 cursor-pointer" />
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="RGB Format" value={results.rgb} large />
+              <div className="w-16 h-16 rounded border border-neutral-300 shadow-inner" style={{backgroundColor: hex}} />
+            </>
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
         </div>
       </div>
-
-      {/* Preview */}
-      <div className="h-16 rounded-lg border-2 border-neutral-300 shadow-inner mb-4" style={{ backgroundColor: hex }} />
-
-      {rgb && hsl && (
-        <div className="grid grid-cols-2 gap-2">
-          <ResultDisplay label="HEX" value={hex.toUpperCase()} />
-          <ResultDisplay label="RGB" value={`${rgb.r}, ${rgb.g}, ${rgb.b}`} />
-          <ResultDisplay label="HSL" value={`${hsl.h}°, ${hsl.s}%, ${hsl.l}%`} />
-          <ResultDisplay label="CSS RGB" value={`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`} />
-        </div>
-      )}
     </FormCalculatorShell>
   )
 }

@@ -1,31 +1,44 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
-import { formatCurrency } from '@/lib/calc-engine'
+'use client'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function AnnuityCalculator() {
-  const [mode, setMode] = useState<'ordinary' | 'due'>('ordinary')
-  const [payment, setPayment] = useState('500')
-  const [rate, setRate] = useState('5')
-  const [years, setYears] = useState('20')
-  const [result, setResult] = useState('')
+  const [paymentStr, setPaymentStr] = useState('1000') // monthly or yearly
+  const [rateStr, setRateStr] = useState('5.0')
+  const [periodsStr, setPeriodsStr] = useState('10') // years
 
-  const calculate = () => {
-    const pmt = parseFloat(payment), r = parseFloat(rate) / 100, n = parseFloat(years)
-    if (isNaN(pmt)||isNaN(r)||isNaN(n) || r <= 0) { setResult('Invalid'); return }
-    const factor = (Math.pow(1 + r, n) - 1) / r
-    const fv = mode === 'due' ? pmt * factor * (1 + r) : pmt * factor
-    setResult(formatCurrency(fv))
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, presentValue: 0 }
+    const p = parseFloat(paymentStr)
+    const r = parseFloat(rateStr)
+    const n = parseFloat(periodsStr)
+
+    if (isNaN(p) || isNaN(r) || isNaN(n) || p < 0 || r < 0 || n < 0) {
+      return { ...defaultObj, error: 'Please enter valid parameters.' }
+    }
+
+    const rateDec = r / 100
+    const presentValue = rateDec > 0
+      ? p * ((1 - Math.pow(1 + rateDec, -n)) / rateDec)
+      : p * n
+
+    return { error: null, presentValue }
+  }, [paymentStr, rateStr, periodsStr])
 
   return (
-    <FormCalculatorShell title="Annuity Calculator" badge="FINANCE">
-      <RetroSelect label="Type" value={mode} onChange={(v) => setMode(v as any)} options={[{value:'ordinary',label:'Ordinary'},{value:'due',label:'Annuity Due'}]} id="ann-mode" />
-      <RetroInput label="Payment" value={payment} onChange={setPayment} placeholder="500" id="ann-pmt" unit="$" />
-      <RetroInput label="Annual Rate" value={rate} onChange={setRate} placeholder="5" id="ann-rate" unit="%" />
-      <RetroInput label="Years" value={years} onChange={setYears} placeholder="20" id="ann-yr" unit="yr" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate FV</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Future Value" value={result} large /></div>}
+    <FormCalculatorShell title="Annuity Present Value Solver" subtitle="Calculate present value of annual fixed payments" badge="FINANCE">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Annual Payment ($)" value={paymentStr} onChange={setPaymentStr} id="ann-p" />
+          <RetroInput label="Interest Rate (%)" value={rateStr} onChange={setRateStr} id="ann-r" />
+          <RetroInput label="Duration (Years)" value={periodsStr} onChange={setPeriodsStr} id="ann-n" />
+        </div>
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <ResultDisplay label="Present Value of Annuity" value={results.presentValue.toLocaleString(undefined, {style: 'currency', currency: 'USD'})} large />
+          ) : <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

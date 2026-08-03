@@ -1,39 +1,60 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CatAgeCalculator() {
-  const [catAge, setCatAge] = useState('4')
-  const [result, setResult] = useState<number | null>(null)
+  const [ageStr, setAgeStr] = useState('3') // cat years
 
-  const calculate = () => {
-    const age = parseFloat(catAge)
-    if (isNaN(age) || age < 0) return
-    // First year = 15, second year = +9, each subsequent = +4
-    let human: number
-    if (age <= 1) human = age * 15
-    else if (age <= 2) human = 15 + (age - 1) * 9
-    else human = 24 + (age - 2) * 4
-    setResult(Math.round(human * 10) / 10)
-  }
+  const results = useMemo(() => {
+    const defaultObj = { error: null as string | null, humanAge: 0, steps: [] as string[] }
+    const catAge = parseFloat(ageStr)
+    if (isNaN(catAge) || catAge < 0) {
+      return { ...defaultObj, error: 'Please enter a valid positive cat age.' }
+    }
+
+    let humanAge = 0
+    if (catAge === 0) humanAge = 0
+    else if (catAge <= 1) humanAge = catAge * 15
+    else if (catAge <= 2) humanAge = 15 + (catAge - 1) * 9
+    else humanAge = 24 + (catAge - 2) * 4
+
+    return {
+      error: null,
+      humanAge,
+      steps: [
+        `Cat age: ${catAge} years`,
+        `1st year equals 15 human years`,
+        `2nd year adds 9 human years (Total 24)`,
+        `Subsequent years add 4 human years each`,
+        `Estimated human equivalent = ${humanAge.toFixed(1)} years`
+      ]
+    }
+  }, [ageStr])
 
   return (
-    <FormCalculatorShell title="Cat Age Calculator" subtitle="Convert cat years to human years" badge="EVERYDAY">
-      <RetroInput label="Cat Age" value={catAge} onChange={setCatAge} unit="yrs" id="cat-age" />
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate Human Age</RetroActionButton></div>
-      {result !== null && (
-        <div className="mt-4 space-y-2">
-          <ResultDisplay label="Human Equivalent" value={result} unit="years" large />
-          <svg viewBox="0 0 200 50" className="w-full h-12 mt-2">
-            <path d={wobblyBar(10, 40 - Math.min(result, 40), 40, Math.min(result, 40))} fill="#cbd8ca" stroke="#b0bdae" strokeWidth="2" />
-            <text x="30" y="48" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#4c5c4a">Cat→Human</text>
-          </svg>
+    <FormCalculatorShell title="Cat Age Calculator" subtitle="Convert cat years to human age equivalent" badge="EVERYDAY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Cat Age (years)" value={ageStr} onChange={setAgeStr} id="cat-age" />
         </div>
-      )}
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <ResultDisplay label="Human Age Equivalent" value={`${results.humanAge.toFixed(1)} years`} large />
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Calculations</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-neutral-500 font-mono p-6 text-center">{results.error}</div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }
