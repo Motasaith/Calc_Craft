@@ -26,70 +26,75 @@ on its own.
 ## Current state
 
 - **Registered calculators:** 488
-- **NOT REVIEWED:** 458
+- **NOT REVIEWED:** 450
+- **READY-FOR-REVIEW:** 22
 - **IN PROGRESS:** 16
-- **READY-FOR-REVIEW:** 14
 - **Dedicated SEO content:** 37 of 488
 - **Data-driven visualisation:** 220 of 488
-- **Unit switching:** 20 of 488
+- **Unit switching:** 51 present, 244 missing, 193 not applicable
+
+The `n/a` unit value marks calculators that take no physical quantity — integers,
+dates, counts or ratios — where a metric/imperial toggle would be a control that
+does nothing. It is derived from a heuristic and is printed per row precisely so it
+can be challenged; it is never a silent pass.
 
 ## Audit table
 
 | Category | Slug | Component | Status | Viz | SVG a11y | Units | Content | Bytes | Gap |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| math | basic | `components/calculators/math/BasicCalculator` | NOT REVIEWED | — | — | — | — | 7164 | missing visualisation, svg a11y, units, content |
+| math | basic | `components/calculators/math/BasicCalculator` | NOT REVIEWED | — | — | n/a | — | 7164 | missing visualisation, svg a11y, content |
 | math | scientific | `components/calculators/math/ScientificCalculator` | NOT REVIEWED | — | — | — | — | 13542 | missing visualisation, svg a11y, units, content |
-| math | percentage | `components/calculators/math/PercentageCalculator` | NOT REVIEWED | — | — | — | — | 2694 | missing visualisation, svg a11y, units, content, depth |
-| math | fraction | `components/calculators/math/FractionCalculator` | NOT REVIEWED | — | — | — | — | 3033 | missing visualisation, svg a11y, units, content, depth |
+| math | percentage | `components/calculators/math/PercentageCalculator` | NOT REVIEWED | — | — | n/a | — | 2694 | missing visualisation, svg a11y, content, depth |
+| math | fraction | `components/calculators/math/FractionCalculator` | NOT REVIEWED | — | — | n/a | — | 3033 | missing visualisation, svg a11y, content, depth |
 | math | area | `components/calculators/math/AreaCalculator` | NOT REVIEWED | — | — | — | — | 5281 | missing visualisation, svg a11y, units, content |
 | math | volume | `components/calculators/math/VolumeCalculator` | NOT REVIEWED | — | — | — | — | 2583 | missing visualisation, svg a11y, units, content, depth |
-| math | quadratic | `components/calculators/math/QuadraticCalculator` | NOT REVIEWED | — | — | — | — | 3522 | missing visualisation, svg a11y, units, content, depth |
-| math | statistics | `components/calculators/math/StatisticsCalculator` | NOT REVIEWED | — | — | — | — | 4690 | missing visualisation, svg a11y, units, content |
-| math | gcd-lcm | `components/calculators/math/GcdLcmCalculator` | IN PROGRESS | yes | yes | — | yes | 12840 | missing units |
-| math | number-base | `components/calculators/math/NumberBaseConverter` | NOT REVIEWED | — | — | — | — | 1863 | missing visualisation, svg a11y, units, content, depth |
+| math | quadratic | `components/calculators/math/QuadraticCalculator` | NOT REVIEWED | — | — | n/a | — | 3522 | missing visualisation, svg a11y, content, depth |
+| math | statistics | `components/calculators/math/StatisticsCalculator` | NOT REVIEWED | — | — | n/a | — | 4690 | missing visualisation, svg a11y, content |
+| math | gcd-lcm | `components/calculators/math/GcdLcmCalculator` | READY-FOR-REVIEW | yes | yes | n/a | yes | 12840 | all measurable signals present; needs Calculator.net verification |
+| math | number-base | `components/calculators/math/NumberBaseConverter` | NOT REVIEWED | — | — | n/a | — | 1863 | missing visualisation, svg a11y, content, depth |
 | math | exponent | `components/calculators/math/ExponentCalculator` | NOT REVIEWED | — | — | — | — | 2740 | missing visualisation, svg a11y, units, content, depth |
-| math | permutation-combination | `components/calculators/math/PermutationCombinationCalculator` | NOT REVIEWED | — | — | — | — | 2969 | missing visualisation, svg a11y, units, content, depth |
-| math | ratio | `components/calculators/math/RatioCalculator` | NOT REVIEWED | — | — | — | — | 2781 | missing visualisation, svg a11y, units, content, depth |
-| math | logarithm | `components/calculators/math/LogarithmCalculator` | NOT REVIEWED | — | — | — | — | 2627 | missing visualisation, svg a11y, units, content, depth |
+| math | permutation-combination | `components/calculators/math/PermutationCombinationCalculator` | NOT REVIEWED | — | — | n/a | — | 2969 | missing visualisation, svg a11y, content, depth |
+| math | ratio | `components/calculators/math/RatioCalculator` | NOT REVIEWED | — | — | n/a | — | 2781 | missing visualisation, svg a11y, content, depth |
+| math | logarithm | `components/calculators/math/LogarithmCalculator` | NOT REVIEWED | — | — | n/a | — | 2627 | missing visualisation, svg a11y, content, depth |
 | math | pythagorean | `components/calculators/math/PythagoreanCalculator` | IN PROGRESS | yes | yes | — | yes | 10096 | missing units |
 | math | circle | `components/calculators/math/CircleCalculator` | IN PROGRESS | yes | yes | — | yes | 7468 | missing units |
 | math | triangle | `components/calculators/math/TriangleCalculator` | NOT REVIEWED | — | — | — | — | 3185 | missing visualisation, svg a11y, units, content, depth |
-| math | prime-factorization | `components/calculators/math/PrimeFactorizationCalculator` | NOT REVIEWED | — | — | — | — | 1521 | missing visualisation, svg a11y, units, content, depth |
-| math | rounding | `components/calculators/math/RoundingCalculator` | NOT REVIEWED | — | — | — | — | 2586 | missing visualisation, svg a11y, units, content, depth |
-| math | scientific-notation | `components/calculators/math/ScientificNotationCalculator` | NOT REVIEWED | — | — | — | — | 2831 | missing visualisation, svg a11y, units, content, depth |
-| math | standard-deviation | `components/calculators/math/StandardDeviationCalculator` | NOT REVIEWED | — | — | — | — | 3013 | missing visualisation, svg a11y, units, content, depth |
+| math | prime-factorization | `components/calculators/math/PrimeFactorizationCalculator` | NOT REVIEWED | — | — | n/a | — | 1521 | missing visualisation, svg a11y, content, depth |
+| math | rounding | `components/calculators/math/RoundingCalculator` | NOT REVIEWED | — | — | n/a | — | 2586 | missing visualisation, svg a11y, content, depth |
+| math | scientific-notation | `components/calculators/math/ScientificNotationCalculator` | NOT REVIEWED | — | — | n/a | — | 2831 | missing visualisation, svg a11y, content, depth |
+| math | standard-deviation | `components/calculators/math/StandardDeviationCalculator` | NOT REVIEWED | — | — | n/a | — | 3013 | missing visualisation, svg a11y, content, depth |
 | math | mean-median-mode | `components/calculators/math/MeanMedianModeCalculator` | NOT REVIEWED | — | — | — | — | 3456 | missing visualisation, svg a11y, units, content, depth |
-| math | z-score | `components/calculators/math/ZScoreCalculator` | NOT REVIEWED | — | — | — | — | 3219 | missing visualisation, svg a11y, units, content, depth |
-| math | confidence-interval | `components/calculators/math/ConfidenceIntervalCalculator` | NOT REVIEWED | — | — | — | — | 3771 | missing visualisation, svg a11y, units, content, depth |
-| math | probability | `components/calculators/math/ProbabilityCalculator` | NOT REVIEWED | — | — | — | — | 3021 | missing visualisation, svg a11y, units, content, depth |
-| finance | loan-emi | `components/calculators/finance/LoanEmiCalculator` | NOT REVIEWED | — | — | — | — | 1932 | missing visualisation, svg a11y, units, content, depth |
+| math | z-score | `components/calculators/math/ZScoreCalculator` | NOT REVIEWED | — | — | n/a | — | 3219 | missing visualisation, svg a11y, content, depth |
+| math | confidence-interval | `components/calculators/math/ConfidenceIntervalCalculator` | NOT REVIEWED | — | — | n/a | — | 3771 | missing visualisation, svg a11y, content, depth |
+| math | probability | `components/calculators/math/ProbabilityCalculator` | NOT REVIEWED | — | — | n/a | — | 3021 | missing visualisation, svg a11y, content, depth |
+| finance | loan-emi | `components/calculators/finance/LoanEmiCalculator` | NOT REVIEWED | — | — | n/a | — | 1932 | missing visualisation, svg a11y, content, depth |
 | finance | compound-interest | `components/calculators/finance/CompoundInterestCalculator` | NOT REVIEWED | yes | — | — | — | 7241 | missing svg a11y, units, content |
-| finance | simple-interest | `components/calculators/finance/SimpleInterestCalculator` | IN PROGRESS | yes | yes | — | yes | 14721 | missing units |
-| finance | sip | `components/calculators/finance/SipCalculator` | NOT REVIEWED | — | — | — | — | 1719 | missing visualisation, svg a11y, units, content, depth |
-| finance | tip | `components/calculators/finance/TipCalculator` | NOT REVIEWED | — | — | — | yes | 21123 | missing visualisation, svg a11y, units |
-| finance | discount | `components/calculators/finance/DiscountCalculator` | NOT REVIEWED | — | — | — | — | 2945 | missing visualisation, svg a11y, units, content, depth |
-| finance | profit-margin | `components/calculators/finance/ProfitMarginCalculator` | NOT REVIEWED | — | — | — | — | 2657 | missing visualisation, svg a11y, units, content, depth |
-| finance | roi | `components/calculators/finance/RoiCalculator` | NOT REVIEWED | — | — | — | — | 2643 | missing visualisation, svg a11y, units, content, depth |
-| finance | salary | `components/calculators/finance/SalaryCalculator` | NOT REVIEWED | — | — | — | — | 1787 | missing visualisation, svg a11y, units, content, depth |
-| finance | mortgage | `components/calculators/finance/MortgageCalculator` | NOT REVIEWED | — | — | — | — | 2354 | missing visualisation, svg a11y, units, content, depth |
+| finance | simple-interest | `components/calculators/finance/SimpleInterestCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 14721 | all measurable signals present; needs Calculator.net verification |
+| finance | sip | `components/calculators/finance/SipCalculator` | NOT REVIEWED | — | — | n/a | — | 1719 | missing visualisation, svg a11y, content, depth |
+| finance | tip | `components/calculators/finance/TipCalculator` | IN PROGRESS | — | — | n/a | yes | 21123 | missing visualisation, svg a11y |
+| finance | discount | `components/calculators/finance/DiscountCalculator` | NOT REVIEWED | — | — | n/a | — | 2945 | missing visualisation, svg a11y, content, depth |
+| finance | profit-margin | `components/calculators/finance/ProfitMarginCalculator` | NOT REVIEWED | — | — | n/a | — | 2657 | missing visualisation, svg a11y, content, depth |
+| finance | roi | `components/calculators/finance/RoiCalculator` | NOT REVIEWED | — | — | n/a | — | 2643 | missing visualisation, svg a11y, content, depth |
+| finance | salary | `components/calculators/finance/SalaryCalculator` | NOT REVIEWED | — | — | n/a | — | 1787 | missing visualisation, svg a11y, content, depth |
+| finance | mortgage | `components/calculators/finance/MortgageCalculator` | NOT REVIEWED | — | — | n/a | — | 2354 | missing visualisation, svg a11y, content, depth |
 | finance | inflation | `components/calculators/finance/InflationCalculator` | NOT REVIEWED | — | — | — | — | 1842 | missing visualisation, svg a11y, units, content, depth |
-| finance | break-even | `components/calculators/finance/BreakEvenCalculator` | NOT REVIEWED | — | — | — | — | 1880 | missing visualisation, svg a11y, units, content, depth |
-| finance | savings-goal | `components/calculators/finance/SavingsGoalCalculator` | NOT REVIEWED | — | — | — | — | 1974 | missing visualisation, svg a11y, units, content, depth |
-| finance | currency | `components/calculators/finance/CurrencyConverter` | NOT REVIEWED | — | — | — | — | 1926 | missing visualisation, svg a11y, units, content, depth |
-| finance | auto-loan | `components/calculators/finance/AutoLoanCalculator` | NOT REVIEWED | — | — | — | — | 2112 | missing visualisation, svg a11y, units, content, depth |
-| finance | credit-card-payoff | `components/calculators/finance/CreditCardPayoffCalculator` | NOT REVIEWED | — | — | — | — | 2775 | missing visualisation, svg a11y, units, content, depth |
-| finance | debt-to-income | `components/calculators/finance/DebtToIncomeCalculator` | NOT REVIEWED | — | — | — | — | 2174 | missing visualisation, svg a11y, units, content, depth |
-| finance | refinance | `components/calculators/finance/RefinanceCalculator` | NOT REVIEWED | — | — | — | — | 3281 | missing visualisation, svg a11y, units, content, depth |
-| finance | rent-vs-buy | `components/calculators/finance/RentVsBuyCalculator` | NOT REVIEWED | — | — | — | — | 2947 | missing visualisation, svg a11y, units, content, depth |
-| finance | present-value | `components/calculators/finance/PresentValueCalculator` | NOT REVIEWED | — | — | — | — | 1807 | missing visualisation, svg a11y, units, content, depth |
-| finance | future-value | `components/calculators/finance/FutureValueCalculator` | NOT REVIEWED | — | — | — | — | 1813 | missing visualisation, svg a11y, units, content, depth |
-| finance | annuity | `components/calculators/finance/AnnuityCalculator` | NOT REVIEWED | — | — | — | — | 1979 | missing visualisation, svg a11y, units, content, depth |
-| finance | retirement | `components/calculators/finance/RetirementCalculator` | NOT REVIEWED | — | — | — | — | 2544 | missing visualisation, svg a11y, units, content, depth |
-| finance | 401k | `components/calculators/finance/FourOhOneKCalculator` | NOT REVIEWED | — | — | — | — | 2303 | missing visualisation, svg a11y, units, content, depth |
-| finance | sales-tax | `components/calculators/finance/SalesTaxCalculator` | NOT REVIEWED | — | — | — | — | 1842 | missing visualisation, svg a11y, units, content, depth |
-| finance | commission | `components/calculators/finance/CommissionCalculator` | NOT REVIEWED | — | — | — | — | 1597 | missing visualisation, svg a11y, units, content, depth |
-| finance | apr | `components/calculators/finance/AprCalculator` | NOT REVIEWED | — | — | — | — | 1597 | missing visualisation, svg a11y, units, content, depth |
-| finance | depreciation | `components/calculators/finance/DepreciationCalculator` | NOT REVIEWED | — | — | — | — | 1970 | missing visualisation, svg a11y, units, content, depth |
+| finance | break-even | `components/calculators/finance/BreakEvenCalculator` | NOT REVIEWED | — | — | n/a | — | 1880 | missing visualisation, svg a11y, content, depth |
+| finance | savings-goal | `components/calculators/finance/SavingsGoalCalculator` | NOT REVIEWED | — | — | n/a | — | 1974 | missing visualisation, svg a11y, content, depth |
+| finance | currency | `components/calculators/finance/CurrencyConverter` | NOT REVIEWED | — | — | n/a | — | 1926 | missing visualisation, svg a11y, content, depth |
+| finance | auto-loan | `components/calculators/finance/AutoLoanCalculator` | NOT REVIEWED | — | — | n/a | — | 2112 | missing visualisation, svg a11y, content, depth |
+| finance | credit-card-payoff | `components/calculators/finance/CreditCardPayoffCalculator` | NOT REVIEWED | — | — | n/a | — | 2775 | missing visualisation, svg a11y, content, depth |
+| finance | debt-to-income | `components/calculators/finance/DebtToIncomeCalculator` | NOT REVIEWED | — | — | n/a | — | 2174 | missing visualisation, svg a11y, content, depth |
+| finance | refinance | `components/calculators/finance/RefinanceCalculator` | NOT REVIEWED | — | — | n/a | — | 3281 | missing visualisation, svg a11y, content, depth |
+| finance | rent-vs-buy | `components/calculators/finance/RentVsBuyCalculator` | NOT REVIEWED | — | — | n/a | — | 2947 | missing visualisation, svg a11y, content, depth |
+| finance | present-value | `components/calculators/finance/PresentValueCalculator` | NOT REVIEWED | — | — | n/a | — | 1807 | missing visualisation, svg a11y, content, depth |
+| finance | future-value | `components/calculators/finance/FutureValueCalculator` | NOT REVIEWED | — | — | n/a | — | 1813 | missing visualisation, svg a11y, content, depth |
+| finance | annuity | `components/calculators/finance/AnnuityCalculator` | NOT REVIEWED | — | — | n/a | — | 1979 | missing visualisation, svg a11y, content, depth |
+| finance | retirement | `components/calculators/finance/RetirementCalculator` | NOT REVIEWED | — | — | n/a | — | 2544 | missing visualisation, svg a11y, content, depth |
+| finance | 401k | `components/calculators/finance/FourOhOneKCalculator` | NOT REVIEWED | — | — | n/a | — | 2303 | missing visualisation, svg a11y, content, depth |
+| finance | sales-tax | `components/calculators/finance/SalesTaxCalculator` | NOT REVIEWED | — | — | n/a | — | 1842 | missing visualisation, svg a11y, content, depth |
+| finance | commission | `components/calculators/finance/CommissionCalculator` | NOT REVIEWED | — | — | n/a | — | 1597 | missing visualisation, svg a11y, content, depth |
+| finance | apr | `components/calculators/finance/AprCalculator` | NOT REVIEWED | — | — | n/a | — | 1597 | missing visualisation, svg a11y, content, depth |
+| finance | depreciation | `components/calculators/finance/DepreciationCalculator` | NOT REVIEWED | — | — | n/a | — | 1970 | missing visualisation, svg a11y, content, depth |
 | finance | gold-price | `components/calculators/finance/GoldPriceCalculator` | NOT REVIEWED | — | — | yes | — | 2416 | missing visualisation, svg a11y, content, depth |
 | finance | crypto-converter | `components/calculators/finance/CryptoConverter` | NOT REVIEWED | — | — | — | — | 2395 | missing visualisation, svg a11y, units, content, depth |
 | health | bmi | `components/calculators/health/BmiCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 28966 | all measurable signals present; needs Calculator.net verification |
@@ -102,62 +107,62 @@ on its own.
 | health | pregnancy | `components/calculators/health/PregnancyCalculator` | IN PROGRESS | yes | yes | — | yes | 6907 | missing units |
 | health | bmr | `components/calculators/health/BmrCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 27333 | all measurable signals present; needs Calculator.net verification |
 | health | tdee | `components/calculators/health/TdeeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 14653 | all measurable signals present; needs Calculator.net verification |
-| health | one-rep-max | `components/calculators/health/OneRepMaxCalculator` | IN PROGRESS | yes | yes | — | yes | 24860 | missing units |
+| health | one-rep-max | `components/calculators/health/OneRepMaxCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 24860 | all measurable signals present; needs Calculator.net verification |
 | health | ovulation | `components/calculators/health/OvulationCalculator` | IN PROGRESS | yes | yes | — | yes | 4867 | missing units |
-| health | bac | `components/calculators/health/BacCalculator` | IN PROGRESS | yes | yes | — | yes | 40686 | missing units |
-| health | pace | `components/calculators/health/PaceCalculator` | IN PROGRESS | yes | yes | — | yes | 12109 | missing units |
+| health | bac | `components/calculators/health/BacCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 40686 | all measurable signals present; needs Calculator.net verification |
+| health | pace | `components/calculators/health/PaceCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 12109 | all measurable signals present; needs Calculator.net verification |
 | health | protein | `components/calculators/health/ProteinCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 28371 | all measurable signals present; needs Calculator.net verification |
-| health | carbohydrate | `components/calculators/health/CarbohydrateCalculator` | NOT REVIEWED | — | — | — | yes | 183 | missing visualisation, svg a11y, units, depth |
+| health | carbohydrate | `components/calculators/health/CarbohydrateCalculator` | NOT REVIEWED | — | — | n/a | yes | 183 | missing visualisation, svg a11y, depth |
 | health | lean-body-mass | `components/calculators/health/LeanBodyMassCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 23885 | all measurable signals present; needs Calculator.net verification |
 | health | body-surface-area | `components/calculators/health/BodySurfaceAreaCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 17508 | all measurable signals present; needs Calculator.net verification |
 | health | gfr | `components/calculators/health/GfrCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 26827 | all measurable signals present; needs Calculator.net verification |
 | health | pregnancy-weight-gain | `components/calculators/health/PregnancyWeightGainCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 9175 | all measurable signals present; needs Calculator.net verification |
 | health | conception | `components/calculators/health/ConceptionCalculator` | IN PROGRESS | yes | yes | — | yes | 20412 | missing units |
 | health | period | `components/calculators/health/PeriodCalculator` | IN PROGRESS | yes | yes | — | yes | 4572 | missing units |
-| date-time | age | `components/calculators/datetime/AgeCalculator` | NOT REVIEWED | — | — | — | — | 9736 | missing visualisation, svg a11y, units, content |
-| date-time | date-difference | `components/calculators/datetime/DateDifferenceCalculator` | NOT REVIEWED | — | — | — | yes | 17153 | missing visualisation, svg a11y, units |
-| date-time | time | `components/calculators/datetime/TimeCalculator` | IN PROGRESS | yes | yes | — | yes | 15356 | missing units |
-| date-time | countdown | `components/calculators/datetime/CountdownCalculator` | NOT REVIEWED | — | — | — | — | 3203 | missing visualisation, svg a11y, units, content, depth |
-| date-time | day-of-week | `components/calculators/datetime/DayOfWeekCalculator` | NOT REVIEWED | — | — | — | — | 1035 | missing visualisation, svg a11y, units, content, depth |
-| date-time | time-zone | `components/calculators/datetime/TimeZoneCalculator` | NOT REVIEWED | — | — | — | — | 2486 | missing visualisation, svg a11y, units, content, depth |
-| date-time | time-duration | `components/calculators/datetime/TimeDurationCalculator` | IN PROGRESS | yes | yes | — | yes | 12667 | missing units |
-| date-time | hours | `components/calculators/datetime/HoursCalculator` | NOT REVIEWED | — | — | — | — | 1979 | missing visualisation, svg a11y, units, content, depth |
+| date-time | age | `components/calculators/datetime/AgeCalculator` | NOT REVIEWED | — | — | n/a | — | 9736 | missing visualisation, svg a11y, content |
+| date-time | date-difference | `components/calculators/datetime/DateDifferenceCalculator` | IN PROGRESS | — | — | n/a | yes | 17153 | missing visualisation, svg a11y |
+| date-time | time | `components/calculators/datetime/TimeCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 15356 | all measurable signals present; needs Calculator.net verification |
+| date-time | countdown | `components/calculators/datetime/CountdownCalculator` | NOT REVIEWED | — | — | n/a | — | 3203 | missing visualisation, svg a11y, content, depth |
+| date-time | day-of-week | `components/calculators/datetime/DayOfWeekCalculator` | NOT REVIEWED | — | — | n/a | — | 1035 | missing visualisation, svg a11y, content, depth |
+| date-time | time-zone | `components/calculators/datetime/TimeZoneCalculator` | NOT REVIEWED | — | — | n/a | — | 2486 | missing visualisation, svg a11y, content, depth |
+| date-time | time-duration | `components/calculators/datetime/TimeDurationCalculator` | READY-FOR-REVIEW | yes | yes | n/a | yes | 12667 | all measurable signals present; needs Calculator.net verification |
+| date-time | hours | `components/calculators/datetime/HoursCalculator` | NOT REVIEWED | — | — | n/a | — | 1979 | missing visualisation, svg a11y, content, depth |
 | date-time | date-calculator | `components/calculators/datetime/DateCalculator` | NOT REVIEWED | — | — | yes | — | 2176 | missing visualisation, svg a11y, content, depth |
-| date-time | day-counter | `components/calculators/datetime/DayCounter` | NOT REVIEWED | — | — | — | — | 2168 | missing visualisation, svg a11y, units, content, depth |
-| date-time | sleep | `components/calculators/datetime/SleepCalculator` | NOT REVIEWED | — | — | — | — | 1873 | missing visualisation, svg a11y, units, content, depth |
-| date-time | time-card | `components/calculators/datetime/TimeCardCalculator` | NOT REVIEWED | — | — | — | — | 3607 | missing visualisation, svg a11y, units, content, depth |
-| conversion | length | `components/calculators/conversion/LengthConverter` | NOT REVIEWED | — | — | — | — | 6959 | missing visualisation, svg a11y, units, content |
-| conversion | weight | `components/calculators/conversion/WeightConverter` | NOT REVIEWED | — | — | — | — | 6920 | missing visualisation, svg a11y, units, content |
-| conversion | temperature | `components/calculators/conversion/TemperatureConverter` | IN PROGRESS | yes | yes | — | — | 7220 | missing units, content |
-| conversion | speed | `components/calculators/conversion/SpeedConverter` | NOT REVIEWED | — | — | — | — | 6958 | missing visualisation, svg a11y, units, content |
-| conversion | data-storage | `components/calculators/conversion/DataStorageConverter` | NOT REVIEWED | — | — | — | — | 6858 | missing visualisation, svg a11y, units, content |
-| conversion | energy | `components/calculators/conversion/EnergyConverter` | NOT REVIEWED | — | — | — | — | 6949 | missing visualisation, svg a11y, units, content |
+| date-time | day-counter | `components/calculators/datetime/DayCounter` | NOT REVIEWED | — | — | n/a | — | 2168 | missing visualisation, svg a11y, content, depth |
+| date-time | sleep | `components/calculators/datetime/SleepCalculator` | NOT REVIEWED | — | — | n/a | — | 1873 | missing visualisation, svg a11y, content, depth |
+| date-time | time-card | `components/calculators/datetime/TimeCardCalculator` | NOT REVIEWED | — | — | n/a | — | 3607 | missing visualisation, svg a11y, content, depth |
+| conversion | length | `components/calculators/conversion/LengthConverter` | NOT REVIEWED | — | — | yes | — | 6959 | missing visualisation, svg a11y, content |
+| conversion | weight | `components/calculators/conversion/WeightConverter` | NOT REVIEWED | — | — | yes | — | 6920 | missing visualisation, svg a11y, content |
+| conversion | temperature | `components/calculators/conversion/TemperatureConverter` | IN PROGRESS | yes | yes | yes | — | 7220 | missing content |
+| conversion | speed | `components/calculators/conversion/SpeedConverter` | NOT REVIEWED | — | — | yes | — | 6958 | missing visualisation, svg a11y, content |
+| conversion | data-storage | `components/calculators/conversion/DataStorageConverter` | NOT REVIEWED | — | — | yes | — | 6858 | missing visualisation, svg a11y, content |
+| conversion | energy | `components/calculators/conversion/EnergyConverter` | NOT REVIEWED | — | — | yes | — | 6949 | missing visualisation, svg a11y, content |
 | conversion | cooking | `components/calculators/conversion/CookingConverter` | NOT REVIEWED | — | — | — | — | 1984 | missing visualisation, svg a11y, units, content, depth |
-| conversion | pressure | `components/calculators/conversion/PressureConverter` | NOT REVIEWED | — | — | — | — | 6850 | missing visualisation, svg a11y, units, content |
-| conversion | angle | `components/calculators/conversion/AngleConverter` | NOT REVIEWED | — | — | — | — | 6858 | missing visualisation, svg a11y, units, content |
-| conversion | power | `components/calculators/conversion/PowerConverter` | NOT REVIEWED | — | — | — | — | 6818 | missing visualisation, svg a11y, units, content |
-| conversion | fuel | `components/calculators/conversion/FuelConverter` | NOT REVIEWED | — | — | — | — | 6835 | missing visualisation, svg a11y, units, content |
+| conversion | pressure | `components/calculators/conversion/PressureConverter` | NOT REVIEWED | — | — | yes | — | 6850 | missing visualisation, svg a11y, content |
+| conversion | angle | `components/calculators/conversion/AngleConverter` | NOT REVIEWED | — | — | yes | — | 6858 | missing visualisation, svg a11y, content |
+| conversion | power | `components/calculators/conversion/PowerConverter` | NOT REVIEWED | — | — | yes | — | 6818 | missing visualisation, svg a11y, content |
+| conversion | fuel | `components/calculators/conversion/FuelConverter` | NOT REVIEWED | — | — | yes | — | 6835 | missing visualisation, svg a11y, content |
 | conversion | roman-numeral | `components/calculators/conversion/RomanNumeralConverter` | NOT REVIEWED | — | — | — | — | 2123 | missing visualisation, svg a11y, units, content, depth |
-| everyday | gpa | `components/calculators/everyday/GpaCalculator` | NOT REVIEWED | — | — | — | — | 3185 | missing visualisation, svg a11y, units, content, depth |
-| everyday | random-number | `components/calculators/everyday/RandomNumberGenerator` | NOT REVIEWED | — | — | — | — | 3775 | missing visualisation, svg a11y, units, content, depth |
+| everyday | gpa | `components/calculators/everyday/GpaCalculator` | NOT REVIEWED | — | — | n/a | — | 3185 | missing visualisation, svg a11y, content, depth |
+| everyday | random-number | `components/calculators/everyday/RandomNumberGenerator` | NOT REVIEWED | — | — | n/a | — | 3775 | missing visualisation, svg a11y, content, depth |
 | everyday | password | `components/calculators/everyday/PasswordGenerator` | NOT REVIEWED | — | — | — | — | 3617 | missing visualisation, svg a11y, units, content, depth |
-| everyday | word-counter | `components/calculators/everyday/WordCounter` | NOT REVIEWED | — | — | — | — | 1368 | missing visualisation, svg a11y, units, content, depth |
-| everyday | color | `components/calculators/everyday/ColorConverter` | NOT REVIEWED | — | — | — | — | 1969 | missing visualisation, svg a11y, units, content, depth |
-| everyday | grade | `components/calculators/everyday/GradeCalculator` | NOT REVIEWED | — | — | — | — | 1973 | missing visualisation, svg a11y, units, content, depth |
-| everyday | url-encode | `components/calculators/everyday/UrlEncodeCalculator` | NOT REVIEWED | — | — | — | — | 1798 | missing visualisation, svg a11y, units, content, depth |
-| everyday | base64 | `components/calculators/everyday/Base64Calculator` | NOT REVIEWED | — | — | — | — | 2864 | missing visualisation, svg a11y, units, content, depth |
-| everyday | ip-subnet | `components/calculators/everyday/IpSubnetCalculator` | NOT REVIEWED | — | — | — | — | 2106 | missing visualisation, svg a11y, units, content, depth |
+| everyday | word-counter | `components/calculators/everyday/WordCounter` | NOT REVIEWED | — | — | n/a | — | 1368 | missing visualisation, svg a11y, content, depth |
+| everyday | color | `components/calculators/everyday/ColorConverter` | NOT REVIEWED | — | — | n/a | — | 1969 | missing visualisation, svg a11y, content, depth |
+| everyday | grade | `components/calculators/everyday/GradeCalculator` | NOT REVIEWED | — | — | n/a | — | 1973 | missing visualisation, svg a11y, content, depth |
+| everyday | url-encode | `components/calculators/everyday/UrlEncodeCalculator` | NOT REVIEWED | — | — | n/a | — | 1798 | missing visualisation, svg a11y, content, depth |
+| everyday | base64 | `components/calculators/everyday/Base64Calculator` | NOT REVIEWED | — | — | n/a | — | 2864 | missing visualisation, svg a11y, content, depth |
+| everyday | ip-subnet | `components/calculators/everyday/IpSubnetCalculator` | NOT REVIEWED | — | — | n/a | — | 2106 | missing visualisation, svg a11y, content, depth |
 | everyday | height | `components/calculators/everyday/HeightConverter` | NOT REVIEWED | — | — | — | — | 1926 | missing visualisation, svg a11y, units, content, depth |
-| everyday | shoe-size | `components/calculators/everyday/ShoeSizeConverter` | NOT REVIEWED | — | — | — | — | 2092 | missing visualisation, svg a11y, units, content, depth |
-| everyday | love | `components/calculators/everyday/LoveCalculator` | NOT REVIEWED | — | — | — | — | 1503 | missing visualisation, svg a11y, units, content, depth |
-| islamic | zakat | `components/calculators/islamic/ZakatCalculator` | NOT REVIEWED | — | — | — | — | 2967 | missing visualisation, svg a11y, units, content, depth |
-| islamic | prayer-times | `components/calculators/islamic/PrayerTimesCalculator` | NOT REVIEWED | — | — | — | — | 1557 | missing visualisation, svg a11y, units, content, depth |
-| islamic | hijri-date | `components/calculators/islamic/HijriDateCalculator` | NOT REVIEWED | — | — | — | — | 2055 | missing visualisation, svg a11y, units, content, depth |
-| islamic | inheritance | `components/calculators/islamic/InheritanceCalculator` | NOT REVIEWED | — | — | — | — | 2840 | missing visualisation, svg a11y, units, content, depth |
-| islamic | qibla | `components/calculators/islamic/QiblaCalculator` | NOT REVIEWED | — | — | — | — | 1629 | missing visualisation, svg a11y, units, content, depth |
-| islamic | ramadan | `components/calculators/islamic/RamadanCalculator` | NOT REVIEWED | — | — | — | — | 1583 | missing visualisation, svg a11y, units, content, depth |
-| islamic | tahajjud | `components/calculators/islamic/TahajjudCalculator` | NOT REVIEWED | — | — | — | — | 1698 | missing visualisation, svg a11y, units, content, depth |
-| islamic | hajj-dates | `components/calculators/islamic/HajjDatesCalculator` | NOT REVIEWED | — | — | — | — | 1655 | missing visualisation, svg a11y, units, content, depth |
+| everyday | shoe-size | `components/calculators/everyday/ShoeSizeConverter` | NOT REVIEWED | — | — | n/a | — | 2092 | missing visualisation, svg a11y, content, depth |
+| everyday | love | `components/calculators/everyday/LoveCalculator` | NOT REVIEWED | — | — | n/a | — | 1503 | missing visualisation, svg a11y, content, depth |
+| islamic | zakat | `components/calculators/islamic/ZakatCalculator` | NOT REVIEWED | — | — | n/a | — | 2967 | missing visualisation, svg a11y, content, depth |
+| islamic | prayer-times | `components/calculators/islamic/PrayerTimesCalculator` | NOT REVIEWED | — | — | n/a | — | 1557 | missing visualisation, svg a11y, content, depth |
+| islamic | hijri-date | `components/calculators/islamic/HijriDateCalculator` | NOT REVIEWED | — | — | n/a | — | 2055 | missing visualisation, svg a11y, content, depth |
+| islamic | inheritance | `components/calculators/islamic/InheritanceCalculator` | NOT REVIEWED | — | — | n/a | — | 2840 | missing visualisation, svg a11y, content, depth |
+| islamic | qibla | `components/calculators/islamic/QiblaCalculator` | NOT REVIEWED | — | — | n/a | — | 1629 | missing visualisation, svg a11y, content, depth |
+| islamic | ramadan | `components/calculators/islamic/RamadanCalculator` | NOT REVIEWED | — | — | n/a | — | 1583 | missing visualisation, svg a11y, content, depth |
+| islamic | tahajjud | `components/calculators/islamic/TahajjudCalculator` | NOT REVIEWED | — | — | n/a | — | 1698 | missing visualisation, svg a11y, content, depth |
+| islamic | hajj-dates | `components/calculators/islamic/HajjDatesCalculator` | NOT REVIEWED | — | — | n/a | — | 1655 | missing visualisation, svg a11y, content, depth |
 | construction | concrete | `components/calculators/construction/ConcreteCalculator` | NOT REVIEWED | — | — | — | — | 2435 | missing visualisation, svg a11y, units, content, depth |
 | construction | tile | `components/calculators/construction/TileCalculator` | NOT REVIEWED | — | — | — | — | 1834 | missing visualisation, svg a11y, units, content, depth |
 | construction | gravel | `components/calculators/construction/GravelCalculator` | NOT REVIEWED | — | — | — | — | 2636 | missing visualisation, svg a11y, units, content, depth |
@@ -169,23 +174,23 @@ on its own.
 | construction | drywall | `components/calculators/construction/DrywallCalculator` | NOT REVIEWED | — | — | — | — | 1551 | missing visualisation, svg a11y, units, content, depth |
 | construction | flooring | `components/calculators/construction/FlooringCalculator` | NOT REVIEWED | — | — | — | — | 1523 | missing visualisation, svg a11y, units, content, depth |
 | engineering | ohms-law | `components/calculators/engineering/OhmsLawCalculator` | NOT REVIEWED | — | — | — | — | 4088 | missing visualisation, svg a11y, units, content |
-| engineering | resistor | `components/calculators/engineering/ResistorCalculator` | NOT REVIEWED | — | — | — | — | 2268 | missing visualisation, svg a11y, units, content, depth |
+| engineering | resistor | `components/calculators/engineering/ResistorCalculator` | NOT REVIEWED | — | — | n/a | — | 2268 | missing visualisation, svg a11y, content, depth |
 | engineering | bandwidth | `components/calculators/engineering/BandwidthCalculator` | NOT REVIEWED | — | — | yes | — | 1953 | missing visualisation, svg a11y, content, depth |
 | engineering | voltage-drop | `components/calculators/engineering/VoltageDropCalculator` | NOT REVIEWED | — | — | — | — | 2233 | missing visualisation, svg a11y, units, content, depth |
 | engineering | horsepower | `components/calculators/engineering/HorsepowerCalculator` | NOT REVIEWED | — | — | — | — | 1928 | missing visualisation, svg a11y, units, content, depth |
 | engineering | density | `components/calculators/engineering/DensityCalculator` | NOT REVIEWED | — | — | — | — | 2053 | missing visualisation, svg a11y, units, content, depth |
 | engineering | molarity | `components/calculators/engineering/MolarityCalculator` | NOT REVIEWED | — | — | — | — | 2061 | missing visualisation, svg a11y, units, content, depth |
 | engineering | tip-speed | `components/calculators/engineering/TipSpeedCalculator` | NOT REVIEWED | — | — | — | — | 1380 | missing visualisation, svg a11y, units, content, depth |
-| misc | dice-roller | `components/calculators/misc/DiceRoller` | NOT REVIEWED | — | — | — | — | 357 | missing visualisation, svg a11y, units, content, depth |
+| misc | dice-roller | `components/calculators/misc/DiceRoller` | NOT REVIEWED | — | — | n/a | — | 357 | missing visualisation, svg a11y, content, depth |
 | misc | fuel-cost | `components/calculators/misc/FuelCostCalculator` | NOT REVIEWED | — | — | — | — | 1622 | missing visualisation, svg a11y, units, content, depth |
 | misc | btu | `components/calculators/misc/BtuCalculator` | NOT REVIEWED | — | — | — | — | 2635 | missing visualisation, svg a11y, units, content, depth |
 | misc | wind-chill | `components/calculators/misc/WindChillCalculator` | NOT REVIEWED | — | — | — | — | 1999 | missing visualisation, svg a11y, units, content, depth |
 | misc | dew-point | `components/calculators/misc/DewPointCalculator` | NOT REVIEWED | — | — | — | — | 2100 | missing visualisation, svg a11y, units, content, depth |
 | misc | heat-index | `components/calculators/misc/HeatIndexCalculator` | NOT REVIEWED | — | — | yes | — | 1681 | missing visualisation, svg a11y, content, depth |
-| misc | golf-handicap | `components/calculators/misc/GolfHandicapCalculator` | NOT REVIEWED | — | — | — | — | 1660 | missing visualisation, svg a11y, units, content, depth |
-| misc | tire-size | `components/calculators/misc/TireSizeCalculator` | NOT REVIEWED | — | — | — | — | 1772 | missing visualisation, svg a11y, units, content, depth |
+| misc | golf-handicap | `components/calculators/misc/GolfHandicapCalculator` | NOT REVIEWED | — | — | n/a | — | 1660 | missing visualisation, svg a11y, content, depth |
+| misc | tire-size | `components/calculators/misc/TireSizeCalculator` | NOT REVIEWED | — | — | n/a | — | 1772 | missing visualisation, svg a11y, content, depth |
 | misc | mileage | `components/calculators/misc/MileageCalculator` | NOT REVIEWED | — | — | — | — | 1641 | missing visualisation, svg a11y, units, content, depth |
-| misc | tip-splitter | `components/calculators/misc/BillSplitter` | NOT REVIEWED | — | — | — | — | 361 | missing visualisation, svg a11y, units, content, depth |
+| misc | tip-splitter | `components/calculators/misc/BillSplitter` | NOT REVIEWED | — | — | n/a | — | 361 | missing visualisation, svg a11y, content, depth |
 | misc | molecular-weight | `components/calculators/misc/MolecularWeightCalculator` | NOT REVIEWED | — | — | — | — | 1729 | missing visualisation, svg a11y, units, content, depth |
 | misc | weather | `components/calculators/misc/WeatherCalculator` | NOT REVIEWED | — | — | — | — | 2336 | missing visualisation, svg a11y, units, content, depth |
 | geometry | polygon-area | `components/calculators/geometry/PolygonAreaCalculator` | NOT REVIEWED | — | — | — | — | 3135 | missing visualisation, svg a11y, units, content, depth |
@@ -200,33 +205,33 @@ on its own.
 | geometry | segment | `components/calculators/geometry/SegmentCalculator` | NOT REVIEWED | yes | — | — | — | 3944 | missing svg a11y, units, content, depth |
 | geometry | distance-2d | `components/calculators/geometry/Distance2dCalculator` | NOT REVIEWED | yes | — | — | — | 5736 | missing svg a11y, units, content |
 | geometry | distance-3d | `components/calculators/geometry/Distance3dCalculator` | NOT REVIEWED | — | — | — | — | 4264 | missing visualisation, svg a11y, units, content |
-| geometry | midpoint | `components/calculators/geometry/MidpointCalculator` | NOT REVIEWED | yes | — | — | — | 5284 | missing svg a11y, units, content |
-| statistics | correlation | `components/calculators/statistics/CorrelationCalculator` | NOT REVIEWED | — | — | — | — | 1925 | missing visualisation, svg a11y, units, content, depth |
-| statistics | regression | `components/calculators/statistics/RegressionCalculator` | NOT REVIEWED | — | — | — | — | 1956 | missing visualisation, svg a11y, units, content, depth |
-| statistics | binomial | `components/calculators/statistics/BinomialCalculator` | NOT REVIEWED | — | — | — | — | 2393 | missing visualisation, svg a11y, units, content, depth |
-| statistics | normal-distribution | `components/calculators/statistics/NormalDistributionCalculator` | NOT REVIEWED | — | — | — | — | 2270 | missing visualisation, svg a11y, units, content, depth |
-| statistics | poisson | `components/calculators/statistics/PoissonCalculator` | NOT REVIEWED | — | — | — | — | 1556 | missing visualisation, svg a11y, units, content, depth |
-| statistics | chi-square | `components/calculators/statistics/ChiSquareCalculator` | NOT REVIEWED | — | — | — | — | 1580 | missing visualisation, svg a11y, units, content, depth |
-| statistics | t-test | `components/calculators/statistics/TTestCalculator` | NOT REVIEWED | — | — | — | — | 2620 | missing visualisation, svg a11y, units, content, depth |
-| statistics | anova | `components/calculators/statistics/AnovaCalculator` | NOT REVIEWED | — | — | — | — | 1772 | missing visualisation, svg a11y, units, content, depth |
-| statistics | outlier | `components/calculators/statistics/OutlierCalculator` | NOT REVIEWED | — | — | — | — | 2603 | missing visualisation, svg a11y, units, content, depth |
-| statistics | percentile | `components/calculators/statistics/PercentileCalculator` | NOT REVIEWED | — | — | — | — | 1872 | missing visualisation, svg a11y, units, content, depth |
-| statistics | effect-size | `components/calculators/statistics/EffectSizeCalculator` | NOT REVIEWED | — | — | — | — | 2171 | missing visualisation, svg a11y, units, content, depth |
-| statistics | sampling | `components/calculators/statistics/SamplingCalculator` | NOT REVIEWED | — | — | — | — | 1825 | missing visualisation, svg a11y, units, content, depth |
-| statistics | histogram | `components/calculators/statistics/HistogramCalculator` | NOT REVIEWED | — | — | — | — | 2053 | missing visualisation, svg a11y, units, content, depth |
+| geometry | midpoint | `components/calculators/geometry/MidpointCalculator` | IN PROGRESS | yes | — | n/a | — | 5284 | missing svg a11y, content |
+| statistics | correlation | `components/calculators/statistics/CorrelationCalculator` | NOT REVIEWED | — | — | n/a | — | 1925 | missing visualisation, svg a11y, content, depth |
+| statistics | regression | `components/calculators/statistics/RegressionCalculator` | NOT REVIEWED | — | — | n/a | — | 1956 | missing visualisation, svg a11y, content, depth |
+| statistics | binomial | `components/calculators/statistics/BinomialCalculator` | NOT REVIEWED | — | — | n/a | — | 2393 | missing visualisation, svg a11y, content, depth |
+| statistics | normal-distribution | `components/calculators/statistics/NormalDistributionCalculator` | NOT REVIEWED | — | — | n/a | — | 2270 | missing visualisation, svg a11y, content, depth |
+| statistics | poisson | `components/calculators/statistics/PoissonCalculator` | NOT REVIEWED | — | — | n/a | — | 1556 | missing visualisation, svg a11y, content, depth |
+| statistics | chi-square | `components/calculators/statistics/ChiSquareCalculator` | NOT REVIEWED | — | — | n/a | — | 1580 | missing visualisation, svg a11y, content, depth |
+| statistics | t-test | `components/calculators/statistics/TTestCalculator` | NOT REVIEWED | — | — | n/a | — | 2620 | missing visualisation, svg a11y, content, depth |
+| statistics | anova | `components/calculators/statistics/AnovaCalculator` | NOT REVIEWED | — | — | n/a | — | 1772 | missing visualisation, svg a11y, content, depth |
+| statistics | outlier | `components/calculators/statistics/OutlierCalculator` | NOT REVIEWED | — | — | n/a | — | 2603 | missing visualisation, svg a11y, content, depth |
+| statistics | percentile | `components/calculators/statistics/PercentileCalculator` | NOT REVIEWED | — | — | n/a | — | 1872 | missing visualisation, svg a11y, content, depth |
+| statistics | effect-size | `components/calculators/statistics/EffectSizeCalculator` | NOT REVIEWED | — | — | n/a | — | 2171 | missing visualisation, svg a11y, content, depth |
+| statistics | sampling | `components/calculators/statistics/SamplingCalculator` | NOT REVIEWED | — | — | n/a | — | 1825 | missing visualisation, svg a11y, content, depth |
+| statistics | histogram | `components/calculators/statistics/HistogramCalculator` | NOT REVIEWED | — | — | n/a | — | 2053 | missing visualisation, svg a11y, content, depth |
 | trigonometry | sin-cos-tan | `components/calculators/trigonometry/SinCosTanCalculator` | NOT REVIEWED | — | — | yes | — | 3166 | missing visualisation, svg a11y, content, depth |
 | trigonometry | inverse-trig | `components/calculators/trigonometry/InverseTrigCalculator` | NOT REVIEWED | — | — | — | — | 3267 | missing visualisation, svg a11y, units, content, depth |
 | trigonometry | unit-circle | `components/calculators/trigonometry/UnitCircleCalculator` | NOT REVIEWED | — | — | yes | — | 1626 | missing visualisation, svg a11y, content, depth |
 | trigonometry | law-of-sines | `components/calculators/trigonometry/LawOfSinesCalculator` | NOT REVIEWED | — | — | — | — | 2025 | missing visualisation, svg a11y, units, content, depth |
 | trigonometry | law-of-cosines | `components/calculators/trigonometry/LawOfCosinesCalculator` | NOT REVIEWED | — | — | — | — | 2153 | missing visualisation, svg a11y, units, content, depth |
 | trigonometry | trig-identities | `components/calculators/trigonometry/TrigIdentitiesCalculator` | NOT REVIEWED | — | — | — | — | 1923 | missing visualisation, svg a11y, units, content, depth |
-| trigonometry | polar-rectangular | `components/calculators/trigonometry/PolarRectangularCalculator` | NOT REVIEWED | — | — | — | — | 2124 | missing visualisation, svg a11y, units, content, depth |
+| trigonometry | polar-rectangular | `components/calculators/trigonometry/PolarRectangularCalculator` | NOT REVIEWED | — | — | n/a | — | 2124 | missing visualisation, svg a11y, content, depth |
 | trigonometry | deg-rad | `components/calculators/trigonometry/DegRadCalculator` | NOT REVIEWED | yes | — | — | — | 5625 | missing svg a11y, units, content |
 | trigonometry | trig-graph | `components/calculators/trigonometry/TrigGraphCalculator` | NOT REVIEWED | — | — | — | — | 1652 | missing visualisation, svg a11y, units, content, depth |
 | trigonometry | reference-angle | `components/calculators/trigonometry/ReferenceAngleCalculator` | NOT REVIEWED | — | — | — | — | 3128 | missing visualisation, svg a11y, units, content, depth |
 | trigonometry | coterminal | `components/calculators/trigonometry/CoterminalCalculator` | NOT REVIEWED | — | — | — | — | 2649 | missing visualisation, svg a11y, units, content, depth |
-| trigonometry | trig-equation | `components/calculators/trigonometry/TrigEquationCalculator` | NOT REVIEWED | — | — | — | — | 1764 | missing visualisation, svg a11y, units, content, depth |
-| trigonometry | hyperbolic | `components/calculators/trigonometry/HyperbolicCalculator` | NOT REVIEWED | — | — | — | — | 1787 | missing visualisation, svg a11y, units, content, depth |
+| trigonometry | trig-equation | `components/calculators/trigonometry/TrigEquationCalculator` | NOT REVIEWED | — | — | n/a | — | 1764 | missing visualisation, svg a11y, content, depth |
+| trigonometry | hyperbolic | `components/calculators/trigonometry/HyperbolicCalculator` | NOT REVIEWED | — | — | n/a | — | 1787 | missing visualisation, svg a11y, content, depth |
 | physics | newton-force | `components/calculators/physics/NewtonForceCalculator` | NOT REVIEWED | — | — | — | — | 4331 | missing visualisation, svg a11y, units, content |
 | physics | kinetic-energy | `components/calculators/physics/KineticEnergyCalculator` | NOT REVIEWED | — | — | — | — | 2504 | missing visualisation, svg a11y, units, content, depth |
 | physics | potential-energy | `components/calculators/physics/PotentialEnergyCalculator` | NOT REVIEWED | — | — | — | — | 2706 | missing visualisation, svg a11y, units, content, depth |
@@ -247,7 +252,7 @@ on its own.
 | physics | pendulum-period | `components/calculators/physics/PendulumPeriodCalculator` | NOT REVIEWED | yes | — | — | — | 2967 | missing svg a11y, units, content, depth |
 | physics | friction-force | `components/calculators/physics/FrictionForceCalculator` | NOT REVIEWED | yes | — | — | — | 3128 | missing svg a11y, units, content, depth |
 | physics | electric-field | `components/calculators/physics/ElectricFieldCalculator` | NOT REVIEWED | yes | — | — | — | 3007 | missing svg a11y, units, content, depth |
-| physics | capacitance | `components/calculators/physics/CapacitanceCalculator` | NOT REVIEWED | yes | — | — | — | 3142 | missing svg a11y, units, content, depth |
+| physics | capacitance | `components/calculators/physics/CapacitanceCalculator` | NOT REVIEWED | yes | — | n/a | — | 3142 | missing svg a11y, content, depth |
 | physics | sound-frequency | `components/calculators/physics/SoundFrequencyCalculator` | NOT REVIEWED | yes | — | — | — | 2409 | missing svg a11y, units, content, depth |
 | physics | lens-magnification | `components/calculators/physics/LensMagnificationCalculator` | NOT REVIEWED | yes | — | — | — | 3170 | missing svg a11y, units, content, depth |
 | physics | thermal-expansion | `components/calculators/physics/ThermalExpansionCalculator` | NOT REVIEWED | yes | — | — | — | 2758 | missing svg a11y, units, content, depth |
@@ -257,27 +262,27 @@ on its own.
 | physics | orbital-velocity | `components/calculators/physics/OrbitalVelocityCalculator` | NOT REVIEWED | yes | — | — | — | 3098 | missing svg a11y, units, content, depth |
 | physics | torque | `components/calculators/physics/TorqueCalculator` | NOT REVIEWED | yes | — | — | — | 3335 | missing svg a11y, units, content, depth |
 | chemistry | molar-mass | `components/calculators/chemistry/MolarMassCalculator` | NOT REVIEWED | yes | — | — | — | 2813 | missing svg a11y, units, content, depth |
-| chemistry | ph | `components/calculators/chemistry/PHCalculator` | NOT REVIEWED | yes | — | — | — | 4219 | missing svg a11y, units, content |
+| chemistry | ph | `components/calculators/chemistry/PHCalculator` | IN PROGRESS | yes | — | n/a | — | 4219 | missing svg a11y, content |
 | chemistry | moles | `components/calculators/chemistry/MolesCalculator` | NOT REVIEWED | — | — | — | — | 4723 | missing visualisation, svg a11y, units, content |
 | chemistry | dilution | `components/calculators/chemistry/DilutionCalculator` | NOT REVIEWED | — | — | — | — | 5399 | missing visualisation, svg a11y, units, content |
 | chemistry | gas-pressure | `components/calculators/chemistry/GasPressureCalculator` | NOT REVIEWED | yes | — | — | — | 3004 | missing svg a11y, units, content, depth |
 | chemistry | mass-percent | `components/calculators/chemistry/MassPercentCalculator` | NOT REVIEWED | yes | — | — | — | 2570 | missing svg a11y, units, content, depth |
-| chemistry | limiting-reagent | `components/calculators/chemistry/LimitingReagentCalculator` | NOT REVIEWED | yes | — | — | — | 3853 | missing svg a11y, units, content, depth |
-| chemistry | yield | `components/calculators/chemistry/YieldCalculator` | NOT REVIEWED | yes | — | — | — | 2648 | missing svg a11y, units, content, depth |
-| chemistry | atom-count | `components/calculators/chemistry/AtomCountCalculator` | NOT REVIEWED | yes | — | — | — | 2894 | missing svg a11y, units, content, depth |
+| chemistry | limiting-reagent | `components/calculators/chemistry/LimitingReagentCalculator` | NOT REVIEWED | yes | — | n/a | — | 3853 | missing svg a11y, content, depth |
+| chemistry | yield | `components/calculators/chemistry/YieldCalculator` | NOT REVIEWED | yes | — | n/a | — | 2648 | missing svg a11y, content, depth |
+| chemistry | atom-count | `components/calculators/chemistry/AtomCountCalculator` | NOT REVIEWED | yes | — | n/a | — | 2894 | missing svg a11y, content, depth |
 | chemistry | neutralization | `components/calculators/chemistry/NeutralizationCalculator` | NOT REVIEWED | yes | — | — | — | 3301 | missing svg a11y, units, content, depth |
 | chemistry | bohr-radius | `components/calculators/chemistry/BohrRadiusCalculator` | NOT REVIEWED | yes | — | — | — | 2715 | missing svg a11y, units, content, depth |
 | chemistry | molarity-chem | `components/calculators/chemistry/MolarityChemCalculator` | NOT REVIEWED | — | — | — | — | 4848 | missing visualisation, svg a11y, units, content |
-| chemistry | half-life | `components/calculators/chemistry/HalfLifeCalculator` | NOT REVIEWED | yes | — | — | — | 3740 | missing svg a11y, units, content, depth |
+| chemistry | half-life | `components/calculators/chemistry/HalfLifeCalculator` | NOT REVIEWED | yes | — | n/a | — | 3740 | missing svg a11y, content, depth |
 | chemistry | empirical-formula | `components/calculators/chemistry/EmpiricalFormulaCalculator` | NOT REVIEWED | yes | — | — | — | 2203 | missing svg a11y, units, content, depth |
-| chemistry | avogadros-number | `components/calculators/chemistry/AvogadrosNumberCalculator` | NOT REVIEWED | — | — | — | — | 3353 | missing visualisation, svg a11y, units, content, depth |
+| chemistry | avogadros-number | `components/calculators/chemistry/AvogadrosNumberCalculator` | NOT REVIEWED | — | — | n/a | — | 3353 | missing visualisation, svg a11y, content, depth |
 | chemistry | molality | `components/calculators/chemistry/MolalityCalculator` | NOT REVIEWED | yes | — | — | — | 2219 | missing svg a11y, units, content, depth |
 | chemistry | heat-of-reaction | `components/calculators/chemistry/HeatOfReactionCalculator` | NOT REVIEWED | yes | — | — | — | 3385 | missing svg a11y, units, content, depth |
-| chemistry | electron-config | `components/calculators/chemistry/ElectronConfigCalculator` | NOT REVIEWED | yes | — | — | — | 3128 | missing svg a11y, units, content, depth |
-| chemistry | solution-mix | `components/calculators/chemistry/SolutionMixCalculator` | NOT REVIEWED | yes | — | — | — | 3484 | missing svg a11y, units, content, depth |
-| chemistry | poh | `components/calculators/chemistry/PohCalculator` | NOT REVIEWED | — | — | — | — | 2838 | missing visualisation, svg a11y, units, content, depth |
+| chemistry | electron-config | `components/calculators/chemistry/ElectronConfigCalculator` | NOT REVIEWED | yes | — | n/a | — | 3128 | missing svg a11y, content, depth |
+| chemistry | solution-mix | `components/calculators/chemistry/SolutionMixCalculator` | NOT REVIEWED | yes | — | n/a | — | 3484 | missing svg a11y, content, depth |
+| chemistry | poh | `components/calculators/chemistry/PohCalculator` | NOT REVIEWED | — | — | n/a | — | 2838 | missing visualisation, svg a11y, content, depth |
 | chemistry | bond-energy | `components/calculators/chemistry/BondEnergyCalculator` | NOT REVIEWED | yes | — | — | — | 3271 | missing svg a11y, units, content, depth |
-| astronomy | light-year | `components/calculators/astronomy/LightYearCalculator` | NOT REVIEWED | — | — | — | — | 1844 | missing visualisation, svg a11y, units, content, depth |
+| astronomy | light-year | `components/calculators/astronomy/LightYearCalculator` | NOT REVIEWED | — | — | n/a | — | 1844 | missing visualisation, svg a11y, content, depth |
 | astronomy | escape-velocity | `components/calculators/astronomy/EscapeVelocityCalculator` | NOT REVIEWED | — | — | — | — | 2878 | missing visualisation, svg a11y, units, content, depth |
 | astronomy | schwarzschild-radius | `components/calculators/astronomy/SchwarzschildRadiusCalculator` | NOT REVIEWED | — | — | — | — | 2572 | missing visualisation, svg a11y, units, content, depth |
 | astronomy | hubble-law | `components/calculators/astronomy/HubbleLawCalculator` | NOT REVIEWED | — | — | — | — | 2198 | missing visualisation, svg a11y, units, content, depth |
@@ -296,7 +301,7 @@ on its own.
 | agriculture | soil-area | `components/calculators/agriculture/SoilAreaCalculator` | NOT REVIEWED | — | — | — | — | 2600 | missing visualisation, svg a11y, units, content, depth |
 | agriculture | compost | `components/calculators/agriculture/CompostCalculator` | NOT REVIEWED | — | — | — | — | 2492 | missing visualisation, svg a11y, units, content, depth |
 | agriculture | hay-yield | `components/calculators/agriculture/HayYieldCalculator` | NOT REVIEWED | — | — | — | — | 1842 | missing visualisation, svg a11y, units, content, depth |
-| agriculture | animal-feed | `components/calculators/agriculture/AnimalFeedCalculator` | NOT REVIEWED | — | — | — | — | 2606 | missing visualisation, svg a11y, units, content, depth |
+| agriculture | animal-feed | `components/calculators/agriculture/AnimalFeedCalculator` | NOT REVIEWED | — | — | n/a | — | 2606 | missing visualisation, svg a11y, content, depth |
 | agriculture | greenhouse-area | `components/calculators/agriculture/GreenhouseAreaCalculator` | NOT REVIEWED | — | — | — | — | 1641 | missing visualisation, svg a11y, units, content, depth |
 | agriculture | rainfall-volume | `components/calculators/agriculture/RainfallVolumeCalculator` | NOT REVIEWED | — | — | — | — | 1796 | missing visualisation, svg a11y, units, content, depth |
 | agriculture | pesticide | `components/calculators/agriculture/PesticideCalculator` | NOT REVIEWED | — | — | — | — | 2230 | missing visualisation, svg a11y, units, content, depth |
@@ -304,67 +309,67 @@ on its own.
 | photography | exposure | `components/calculators/photography/ExposureCalculator` | NOT REVIEWED | — | — | — | — | 1848 | missing visualisation, svg a11y, units, content, depth |
 | photography | hyperfocal | `components/calculators/photography/HyperfocalDistanceCalculator` | NOT REVIEWED | — | — | — | — | 1889 | missing visualisation, svg a11y, units, content, depth |
 | photography | crop-factor | `components/calculators/photography/CropFactorCalculator` | NOT REVIEWED | — | — | — | — | 1624 | missing visualisation, svg a11y, units, content, depth |
-| photography | print-size | `components/calculators/photography/PrintSizeCalculator` | NOT REVIEWED | — | — | — | — | 1714 | missing visualisation, svg a11y, units, content, depth |
+| photography | print-size | `components/calculators/photography/PrintSizeCalculator` | NOT REVIEWED | — | — | n/a | — | 1714 | missing visualisation, svg a11y, content, depth |
 | photography | aspect-ratio | `components/calculators/photography/AspectRatioCalculator` | NOT REVIEWED | — | — | — | — | 2855 | missing visualisation, svg a11y, units, content, depth |
 | photography | megapixel | `components/calculators/photography/MegapixelCalculator` | NOT REVIEWED | — | — | — | — | 2727 | missing visualisation, svg a11y, units, content, depth |
 | photography | nd-filter | `components/calculators/photography/NDFilterCalculator` | NOT REVIEWED | — | — | — | — | 1614 | missing visualisation, svg a11y, units, content, depth |
-| photography | time-lapse | `components/calculators/photography/TimeLapseCalculator` | NOT REVIEWED | — | — | — | — | 2118 | missing visualisation, svg a11y, units, content, depth |
+| photography | time-lapse | `components/calculators/photography/TimeLapseCalculator` | NOT REVIEWED | — | — | n/a | — | 2118 | missing visualisation, svg a11y, content, depth |
 | photography | field-of-view | `components/calculators/photography/FieldOfViewCalculator` | NOT REVIEWED | — | — | — | — | 1637 | missing visualisation, svg a11y, units, content, depth |
 | environment | carbon-footprint | `components/calculators/environment/CarbonFootprintCalculator` | NOT REVIEWED | — | — | — | — | 2778 | missing visualisation, svg a11y, units, content, depth |
-| environment | solar-panel | `components/calculators/environment/SolarPanelCalculator` | NOT REVIEWED | — | — | — | — | 2121 | missing visualisation, svg a11y, units, content, depth |
-| environment | water-usage | `components/calculators/environment/WaterUsageCalculator` | NOT REVIEWED | yes | — | — | — | 3631 | missing svg a11y, units, content, depth |
+| environment | solar-panel | `components/calculators/environment/SolarPanelCalculator` | NOT REVIEWED | — | — | n/a | — | 2121 | missing visualisation, svg a11y, content, depth |
+| environment | water-usage | `components/calculators/environment/WaterUsageCalculator` | NOT REVIEWED | yes | — | n/a | — | 3631 | missing svg a11y, content, depth |
 | environment | tree-planting | `components/calculators/environment/TreePlantingCalculator` | NOT REVIEWED | yes | — | — | — | 2603 | missing svg a11y, units, content, depth |
 | environment | wind-energy | `components/calculators/environment/WindEnergyCalculator` | NOT REVIEWED | yes | — | — | — | 3060 | missing svg a11y, units, content, depth |
 | environment | energy-savings | `components/calculators/environment/EnergySavingsCalculator` | NOT REVIEWED | yes | — | — | — | 3187 | missing svg a11y, units, content, depth |
-| environment | recycling | `components/calculators/environment/RecyclingCalculator` | NOT REVIEWED | yes | — | — | — | 3349 | missing svg a11y, units, content, depth |
+| environment | recycling | `components/calculators/environment/RecyclingCalculator` | NOT REVIEWED | yes | — | n/a | — | 3349 | missing svg a11y, content, depth |
 | environment | ev-savings | `components/calculators/environment/EVSavingsCalculator` | NOT REVIEWED | yes | — | — | — | 3458 | missing svg a11y, units, content, depth |
-| environment | air-quality | `components/calculators/environment/AirQualityCalculator` | NOT REVIEWED | yes | — | — | — | 2915 | missing svg a11y, units, content, depth |
-| environment | ecological-footprint | `components/calculators/environment/EcologicalFootprintCalculator` | NOT REVIEWED | yes | — | — | — | 3289 | missing svg a11y, units, content, depth |
-| real-estate | rental-yield | `components/calculators/real-estate/RentalYieldCalculator` | NOT REVIEWED | yes | — | — | — | 3057 | missing svg a11y, units, content, depth |
-| real-estate | cap-rate | `components/calculators/real-estate/CapRateCalculator` | NOT REVIEWED | — | — | — | — | 2418 | missing visualisation, svg a11y, units, content, depth |
-| real-estate | closing-cost | `components/calculators/real-estate/ClosingCostCalculator` | NOT REVIEWED | yes | — | — | — | 2445 | missing svg a11y, units, content, depth |
-| real-estate | property-tax-re | `components/calculators/real-estate/PropertyTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2423 | missing svg a11y, units, content, depth |
-| real-estate | cash-on-cash | `components/calculators/real-estate/CashOnCashCalculator` | NOT REVIEWED | yes | — | — | — | 2432 | missing svg a11y, units, content, depth |
-| real-estate | dscr | `components/calculators/real-estate/DSCRCalculator` | NOT REVIEWED | yes | — | — | — | 2768 | missing svg a11y, units, content, depth |
-| real-estate | stamp-duty | `components/calculators/real-estate/StampDutyCalculator` | NOT REVIEWED | yes | — | — | — | 2393 | missing svg a11y, units, content, depth |
-| real-estate | ltv | `components/calculators/real-estate/LTVCalculator` | NOT REVIEWED | — | — | — | — | 2298 | missing visualisation, svg a11y, units, content, depth |
-| real-estate | home-appreciation | `components/calculators/real-estate/HomeAppreciationCalculator` | NOT REVIEWED | yes | — | — | — | 3203 | missing svg a11y, units, content, depth |
-| real-estate | flip-roi | `components/calculators/real-estate/FlipROIReCalculator` | NOT REVIEWED | yes | — | — | — | 3109 | missing svg a11y, units, content, depth |
-| tax | income-tax | `components/calculators/tax/IncomeTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2400 | missing svg a11y, units, content, depth |
-| tax | capital-gains-tax | `components/calculators/tax/CapitalGainsTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2748 | missing svg a11y, units, content, depth |
-| tax | vat | `components/calculators/tax/VATCalculator` | NOT REVIEWED | — | — | — | — | 2207 | missing visualisation, svg a11y, units, content, depth |
-| tax | tax-refund | `components/calculators/tax/TaxRefundCalculator` | NOT REVIEWED | yes | — | — | — | 2547 | missing svg a11y, units, content, depth |
-| tax | self-employed-tax | `components/calculators/tax/SelfEmployedTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2410 | missing svg a11y, units, content, depth |
-| tax | marginal-tax | `components/calculators/tax/MarginalTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2779 | missing svg a11y, units, content, depth |
-| tax | estate-tax | `components/calculators/tax/EstateTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2670 | missing svg a11y, units, content, depth |
-| tax | payroll-tax | `components/calculators/tax/PayrollTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2937 | missing svg a11y, units, content, depth |
-| tax | dividend-tax | `components/calculators/tax/DividendTaxCalculator` | NOT REVIEWED | yes | — | — | — | 2391 | missing svg a11y, units, content, depth |
-| tax | property-tax-deduction | `components/calculators/tax/PropertyTaxDeductionCalculator` | NOT REVIEWED | yes | — | — | — | 2860 | missing svg a11y, units, content, depth |
+| environment | air-quality | `components/calculators/environment/AirQualityCalculator` | NOT REVIEWED | yes | — | n/a | — | 2915 | missing svg a11y, content, depth |
+| environment | ecological-footprint | `components/calculators/environment/EcologicalFootprintCalculator` | NOT REVIEWED | yes | — | n/a | — | 3289 | missing svg a11y, content, depth |
+| real-estate | rental-yield | `components/calculators/real-estate/RentalYieldCalculator` | NOT REVIEWED | yes | — | n/a | — | 3057 | missing svg a11y, content, depth |
+| real-estate | cap-rate | `components/calculators/real-estate/CapRateCalculator` | NOT REVIEWED | — | — | n/a | — | 2418 | missing visualisation, svg a11y, content, depth |
+| real-estate | closing-cost | `components/calculators/real-estate/ClosingCostCalculator` | NOT REVIEWED | yes | — | n/a | — | 2445 | missing svg a11y, content, depth |
+| real-estate | property-tax-re | `components/calculators/real-estate/PropertyTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2423 | missing svg a11y, content, depth |
+| real-estate | cash-on-cash | `components/calculators/real-estate/CashOnCashCalculator` | NOT REVIEWED | yes | — | n/a | — | 2432 | missing svg a11y, content, depth |
+| real-estate | dscr | `components/calculators/real-estate/DSCRCalculator` | NOT REVIEWED | yes | — | n/a | — | 2768 | missing svg a11y, content, depth |
+| real-estate | stamp-duty | `components/calculators/real-estate/StampDutyCalculator` | NOT REVIEWED | yes | — | n/a | — | 2393 | missing svg a11y, content, depth |
+| real-estate | ltv | `components/calculators/real-estate/LTVCalculator` | NOT REVIEWED | — | — | n/a | — | 2298 | missing visualisation, svg a11y, content, depth |
+| real-estate | home-appreciation | `components/calculators/real-estate/HomeAppreciationCalculator` | NOT REVIEWED | yes | — | n/a | — | 3203 | missing svg a11y, content, depth |
+| real-estate | flip-roi | `components/calculators/real-estate/FlipROIReCalculator` | NOT REVIEWED | yes | — | n/a | — | 3109 | missing svg a11y, content, depth |
+| tax | income-tax | `components/calculators/tax/IncomeTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2400 | missing svg a11y, content, depth |
+| tax | capital-gains-tax | `components/calculators/tax/CapitalGainsTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2748 | missing svg a11y, content, depth |
+| tax | vat | `components/calculators/tax/VATCalculator` | NOT REVIEWED | — | — | n/a | — | 2207 | missing visualisation, svg a11y, content, depth |
+| tax | tax-refund | `components/calculators/tax/TaxRefundCalculator` | NOT REVIEWED | yes | — | n/a | — | 2547 | missing svg a11y, content, depth |
+| tax | self-employed-tax | `components/calculators/tax/SelfEmployedTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2410 | missing svg a11y, content, depth |
+| tax | marginal-tax | `components/calculators/tax/MarginalTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2779 | missing svg a11y, content, depth |
+| tax | estate-tax | `components/calculators/tax/EstateTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2670 | missing svg a11y, content, depth |
+| tax | payroll-tax | `components/calculators/tax/PayrollTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2937 | missing svg a11y, content, depth |
+| tax | dividend-tax | `components/calculators/tax/DividendTaxCalculator` | NOT REVIEWED | yes | — | n/a | — | 2391 | missing svg a11y, content, depth |
+| tax | property-tax-deduction | `components/calculators/tax/PropertyTaxDeductionCalculator` | NOT REVIEWED | yes | — | n/a | — | 2860 | missing svg a11y, content, depth |
 | automotive | fuel-cost-trip | `components/calculators/automotive/FuelCostTripCalculator` | NOT REVIEWED | — | — | — | — | 2160 | missing visualisation, svg a11y, units, content, depth |
-| automotive | car-loan | `components/calculators/automotive/CarLoanCalculator` | NOT REVIEWED | — | — | — | — | 2703 | missing visualisation, svg a11y, units, content, depth |
+| automotive | car-loan | `components/calculators/automotive/CarLoanCalculator` | NOT REVIEWED | — | — | n/a | — | 2703 | missing visualisation, svg a11y, content, depth |
 | automotive | tire-pressure | `components/calculators/automotive/TirePressureCalculator` | NOT REVIEWED | — | — | — | — | 2073 | missing visualisation, svg a11y, units, content, depth |
-| automotive | car-depreciation | `components/calculators/automotive/CarDepreciationCalculator` | NOT REVIEWED | — | — | — | — | 2011 | missing visualisation, svg a11y, units, content, depth |
+| automotive | car-depreciation | `components/calculators/automotive/CarDepreciationCalculator` | NOT REVIEWED | — | — | n/a | — | 2011 | missing visualisation, svg a11y, content, depth |
 | automotive | brake-distance | `components/calculators/automotive/BrakeDistanceCalculator` | NOT REVIEWED | — | — | — | — | 2049 | missing visualisation, svg a11y, units, content, depth |
 | automotive | engine-displacement | `components/calculators/automotive/EngineDisplacementCalculator` | NOT REVIEWED | — | — | — | — | 2553 | missing visualisation, svg a11y, units, content, depth |
 | automotive | ev-range | `components/calculators/automotive/EVRangeCalculator` | NOT REVIEWED | — | — | — | — | 1920 | missing visualisation, svg a11y, units, content, depth |
 | automotive | maintenance-cost | `components/calculators/automotive/MaintenanceCostCalculator` | NOT REVIEWED | — | — | — | — | 1413 | missing visualisation, svg a11y, units, content, depth |
 | automotive | gear-ratio | `components/calculators/automotive/GearRatioCalculator` | NOT REVIEWED | — | — | — | — | 1847 | missing visualisation, svg a11y, units, content, depth |
-| automotive | insurance-premium | `components/calculators/automotive/InsurancePremiumCalculator` | NOT REVIEWED | — | — | — | — | 2163 | missing visualisation, svg a11y, units, content, depth |
+| automotive | insurance-premium | `components/calculators/automotive/InsurancePremiumCalculator` | NOT REVIEWED | — | — | n/a | — | 2163 | missing visualisation, svg a11y, content, depth |
 | automotive | cost-per-mile | `components/calculators/automotive/CostPerMileCalculator` | NOT REVIEWED | — | — | — | — | 2105 | missing visualisation, svg a11y, units, content, depth |
 | sports | calorie-burn | `components/calculators/sports/CalorieBurnCalculator` | NOT REVIEWED | — | — | — | — | 2168 | missing visualisation, svg a11y, units, content, depth |
 | sports | running-pace-sports | `components/calculators/sports/RunningPaceSportsCalculator` | NOT REVIEWED | yes | — | — | — | 3209 | missing svg a11y, units, content, depth |
 | sports | hydration-sports | `components/calculators/sports/WaterIntakeSportsCalculator` | NOT REVIEWED | yes | — | — | — | 2597 | missing svg a11y, units, content, depth |
 | sports | vo2-max | `components/calculators/sports/VO2MaxCalculator` | NOT REVIEWED | yes | — | — | — | 2507 | missing svg a11y, units, content, depth |
-| sports | max-heart-rate | `components/calculators/sports/MaxHeartRateCalculator` | NOT REVIEWED | — | — | — | — | 2361 | missing visualisation, svg a11y, units, content, depth |
+| sports | max-heart-rate | `components/calculators/sports/MaxHeartRateCalculator` | NOT REVIEWED | — | — | n/a | — | 2361 | missing visualisation, svg a11y, content, depth |
 | sports | bench-press-ratio | `components/calculators/sports/BenchPressRatioCalculator` | NOT REVIEWED | yes | — | — | — | 2613 | missing svg a11y, units, content, depth |
 | sports | sprint-speed | `components/calculators/sports/SprintSpeedCalculator` | NOT REVIEWED | yes | — | — | — | 2479 | missing svg a11y, units, content, depth |
 | sports | swimming-pace | `components/calculators/sports/SwimmingPaceCalculator` | NOT REVIEWED | yes | — | — | — | 2793 | missing svg a11y, units, content, depth |
 | sports | cycling-power | `components/calculators/sports/CyclingPowerCalculator` | NOT REVIEWED | yes | — | — | — | 2623 | missing svg a11y, units, content, depth |
 | sports | vertical-jump | `components/calculators/sports/VerticalJumpCalculator` | NOT REVIEWED | yes | — | — | — | 2564 | missing svg a11y, units, content, depth |
 | sports | wilks-score | `components/calculators/sports/WilksScoreCalculator` | NOT REVIEWED | yes | — | — | — | 2910 | missing svg a11y, units, content, depth |
-| sports | training-load | `components/calculators/sports/TrainingLoadCalculator` | NOT REVIEWED | yes | — | — | — | 2709 | missing svg a11y, units, content, depth |
-| cooking | recipe-scaler | `components/calculators/cooking/RecipeScalerCalculator` | NOT REVIEWED | — | — | — | — | 1636 | missing visualisation, svg a11y, units, content, depth |
-| cooking | oven-temp | `components/calculators/cooking/OvenTempCalculator` | NOT REVIEWED | yes | — | — | — | 3123 | missing svg a11y, units, content, depth |
+| sports | training-load | `components/calculators/sports/TrainingLoadCalculator` | NOT REVIEWED | yes | — | n/a | — | 2709 | missing svg a11y, content, depth |
+| cooking | recipe-scaler | `components/calculators/cooking/RecipeScalerCalculator` | NOT REVIEWED | — | — | n/a | — | 1636 | missing visualisation, svg a11y, content, depth |
+| cooking | oven-temp | `components/calculators/cooking/OvenTempCalculator` | NOT REVIEWED | yes | — | yes | — | 3123 | missing svg a11y, content, depth |
 | cooking | meat-thermometer | `components/calculators/cooking/MeatThermometerCalculator` | NOT REVIEWED | yes | — | — | — | 2748 | missing svg a11y, units, content, depth |
 | cooking | flour-weight | `components/calculators/cooking/FlourWeightCalculator` | NOT REVIEWED | yes | — | — | — | 2487 | missing svg a11y, units, content, depth |
 | cooking | sugar-converter-cooking | `components/calculators/cooking/SugarConverterCooking` | NOT REVIEWED | yes | — | — | — | 2450 | missing svg a11y, units, content, depth |
@@ -372,35 +377,35 @@ on its own.
 | cooking | cooking-time | `components/calculators/cooking/CookingTimeCalculator` | NOT REVIEWED | yes | — | — | — | 2379 | missing svg a11y, units, content, depth |
 | cooking | pizza-dough | `components/calculators/cooking/PizzaDoughCalculator` | NOT REVIEWED | — | — | — | — | 2017 | missing visualisation, svg a11y, units, content, depth |
 | cooking | bread-hydration | `components/calculators/cooking/BreadHydrationCalculator` | NOT REVIEWED | — | — | — | — | 1753 | missing visualisation, svg a11y, units, content, depth |
-| cooking | coffee-ratio | `components/calculators/cooking/CoffeeRatioCalculator` | NOT REVIEWED | yes | — | — | — | 2425 | missing svg a11y, units, content, depth |
+| cooking | coffee-ratio | `components/calculators/cooking/CoffeeRatioCalculator` | NOT REVIEWED | yes | — | n/a | — | 2425 | missing svg a11y, content, depth |
 | cooking | brine | `components/calculators/cooking/BrineCalculator` | NOT REVIEWED | yes | — | — | — | 3014 | missing svg a11y, units, content, depth |
 | cooking | alcohol-cooking | `components/calculators/cooking/AlcoholCookingCalculator` | NOT REVIEWED | — | — | — | — | 2153 | missing visualisation, svg a11y, units, content, depth |
-| education | gpa-semester | `components/calculators/education/GpaSemesterCalculator` | NOT REVIEWED | yes | — | — | — | 3561 | missing svg a11y, units, content, depth |
+| education | gpa-semester | `components/calculators/education/GpaSemesterCalculator` | NOT REVIEWED | yes | — | n/a | — | 3561 | missing svg a11y, content, depth |
 | education | study-time | `components/calculators/education/StudyTimeCalculator` | NOT REVIEWED | yes | — | — | — | 2259 | missing svg a11y, units, content, depth |
-| education | grade-curve | `components/calculators/education/GradeCurveCalculator` | NOT REVIEWED | yes | — | — | — | 1918 | missing svg a11y, units, content, depth |
-| education | attendance | `components/calculators/education/AttendanceCalculator` | NOT REVIEWED | yes | — | — | — | 2399 | missing svg a11y, units, content, depth |
-| education | exam-score | `components/calculators/education/ExamScoreCalculator` | NOT REVIEWED | — | — | — | — | 2295 | missing visualisation, svg a11y, units, content, depth |
+| education | grade-curve | `components/calculators/education/GradeCurveCalculator` | NOT REVIEWED | yes | — | n/a | — | 1918 | missing svg a11y, content, depth |
+| education | attendance | `components/calculators/education/AttendanceCalculator` | NOT REVIEWED | yes | — | n/a | — | 2399 | missing svg a11y, content, depth |
+| education | exam-score | `components/calculators/education/ExamScoreCalculator` | NOT REVIEWED | — | — | n/a | — | 2295 | missing visualisation, svg a11y, content, depth |
 | education | reading-speed | `components/calculators/education/ReadingSpeedCalculator` | NOT REVIEWED | yes | — | — | — | 1980 | missing svg a11y, units, content, depth |
-| education | credit-hours | `components/calculators/education/CreditHoursCalculator` | NOT REVIEWED | yes | — | — | — | 3260 | missing svg a11y, units, content, depth |
-| education | scholarship-eligibility | `components/calculators/education/ScholarshipEligibilityCalculator` | NOT REVIEWED | yes | — | — | — | 2084 | missing svg a11y, units, content, depth |
+| education | credit-hours | `components/calculators/education/CreditHoursCalculator` | NOT REVIEWED | yes | — | n/a | — | 3260 | missing svg a11y, content, depth |
+| education | scholarship-eligibility | `components/calculators/education/ScholarshipEligibilityCalculator` | NOT REVIEWED | yes | — | n/a | — | 2084 | missing svg a11y, content, depth |
 | education | weighted-gpa | `components/calculators/education/GradePointAverageCalculator` | NOT REVIEWED | yes | — | — | — | 3475 | missing svg a11y, units, content, depth |
-| education | test-percentile | `components/calculators/education/TestScorePercentileCalculator` | NOT REVIEWED | yes | — | — | — | 2213 | missing svg a11y, units, content, depth |
-| business | markup | `components/calculators/business/MarkupCalculator` | NOT REVIEWED | — | — | — | — | 2199 | missing visualisation, svg a11y, units, content, depth |
-| business | inventory-turnover | `components/calculators/business/InventoryTurnoverCalculator` | NOT REVIEWED | yes | — | — | — | 1857 | missing svg a11y, units, content, depth |
+| education | test-percentile | `components/calculators/education/TestScorePercentileCalculator` | NOT REVIEWED | yes | — | n/a | — | 2213 | missing svg a11y, content, depth |
+| business | markup | `components/calculators/business/MarkupCalculator` | NOT REVIEWED | — | — | n/a | — | 2199 | missing visualisation, svg a11y, content, depth |
+| business | inventory-turnover | `components/calculators/business/InventoryTurnoverCalculator` | NOT REVIEWED | yes | — | n/a | — | 1857 | missing svg a11y, content, depth |
 | business | cash-flow | `components/calculators/business/CashFlowCalculator` | NOT REVIEWED | yes | — | — | — | 1825 | missing svg a11y, units, content, depth |
 | business | npv | `components/calculators/business/NPVCalculator` | NOT REVIEWED | yes | — | — | — | 2317 | missing svg a11y, units, content, depth |
 | business | irr | `components/calculators/business/IRRCalculator` | NOT REVIEWED | yes | — | — | — | 2178 | missing svg a11y, units, content, depth |
-| business | ebitda | `components/calculators/business/EBITDACalculator` | NOT REVIEWED | yes | — | — | — | 1996 | missing svg a11y, units, content, depth |
-| business | cac | `components/calculators/business/CustomerAcquisitionCostCalculator` | NOT REVIEWED | yes | — | — | — | 2089 | missing svg a11y, units, content, depth |
+| business | ebitda | `components/calculators/business/EBITDACalculator` | NOT REVIEWED | yes | — | n/a | — | 1996 | missing svg a11y, content, depth |
+| business | cac | `components/calculators/business/CustomerAcquisitionCostCalculator` | NOT REVIEWED | yes | — | n/a | — | 2089 | missing svg a11y, content, depth |
 | business | ltv-business | `components/calculators/business/LifetimeValueCalculator` | NOT REVIEWED | yes | — | — | — | 2210 | missing svg a11y, units, content, depth |
-| business | churn-rate | `components/calculators/business/ChurnRateCalculator` | NOT REVIEWED | yes | — | — | — | 1866 | missing svg a11y, units, content, depth |
-| business | gross-margin-biz | `components/calculators/business/GrossMarginCalculator` | NOT REVIEWED | — | — | — | — | 2881 | missing visualisation, svg a11y, units, content, depth |
+| business | churn-rate | `components/calculators/business/ChurnRateCalculator` | NOT REVIEWED | yes | — | n/a | — | 1866 | missing svg a11y, content, depth |
+| business | gross-margin-biz | `components/calculators/business/GrossMarginCalculator` | NOT REVIEWED | — | — | n/a | — | 2881 | missing visualisation, svg a11y, content, depth |
 | science | ohms-law-science | `components/calculators/science/OhmsLawScienceCalculator` | NOT REVIEWED | yes | — | — | — | 3445 | missing svg a11y, units, content, depth |
 | science | speed-of-sound | `components/calculators/science/SpeedOfSoundCalculator` | NOT REVIEWED | yes | — | — | — | 1907 | missing svg a11y, units, content, depth |
 | science | refractive-index | `components/calculators/science/RefractiveIndexCalculator` | NOT REVIEWED | — | — | — | — | 1674 | missing visualisation, svg a11y, units, content, depth |
 | science | doppler-effect | `components/calculators/science/DopplerEffectCalculator` | NOT REVIEWED | yes | — | — | — | 2753 | missing svg a11y, units, content, depth |
 | science | heat-transfer | `components/calculators/science/HeatTransferCalculator` | NOT REVIEWED | yes | — | — | — | 2065 | missing svg a11y, units, content, depth |
-| science | radioactive-decay | `components/calculators/science/RadioactiveDecayCalculator` | NOT REVIEWED | — | — | — | — | 2646 | missing visualisation, svg a11y, units, content, depth |
+| science | radioactive-decay | `components/calculators/science/RadioactiveDecayCalculator` | NOT REVIEWED | — | — | n/a | — | 2646 | missing visualisation, svg a11y, content, depth |
 | science | snells-law | `components/calculators/science/SnellsLawCalculator` | NOT REVIEWED | yes | — | — | — | 2835 | missing svg a11y, units, content, depth |
 | science | buoyancy | `components/calculators/science/BuoyancyCalculator` | NOT REVIEWED | yes | — | — | — | 2141 | missing svg a11y, units, content, depth |
 | science | surface-tension | `components/calculators/science/SurfaceTensionCalculator` | NOT REVIEWED | yes | — | — | — | 1855 | missing svg a11y, units, content, depth |
@@ -429,72 +434,72 @@ on its own.
 | electrical | circuit-load | `components/calculators/electrical/CircuitLoadCalculator` | NOT REVIEWED | yes | — | — | — | 1996 | missing svg a11y, units, content, depth |
 | electrical | amp-calc | `components/calculators/electrical/AmpCalculator` | NOT REVIEWED | — | — | — | — | 1659 | missing visualisation, svg a11y, units, content, depth |
 | electrical | kilowatt-hour | `components/calculators/electrical/KilowattHourCalculator` | NOT REVIEWED | — | — | — | — | 1698 | missing visualisation, svg a11y, units, content, depth |
-| electrical | transformer | `components/calculators/electrical/TransformerCalculator` | NOT REVIEWED | yes | — | — | — | 1874 | missing svg a11y, units, content, depth |
+| electrical | transformer | `components/calculators/electrical/TransformerCalculator` | NOT REVIEWED | yes | — | n/a | — | 1874 | missing svg a11y, content, depth |
 | electrical | power-factor | `components/calculators/electrical/PowerFactorCalculator` | NOT REVIEWED | yes | — | — | — | 1930 | missing svg a11y, units, content, depth |
 | electrical | generator-size | `components/calculators/electrical/GeneratorSizeCalculator` | NOT REVIEWED | yes | — | — | — | 1954 | missing svg a11y, units, content, depth |
 | electrical | fuse-size | `components/calculators/electrical/FuseSizeCalculator` | NOT REVIEWED | yes | — | — | — | 2148 | missing svg a11y, units, content, depth |
 | electrical | solar-inverter | `components/calculators/electrical/SolarInverterCalculator` | NOT REVIEWED | yes | — | — | — | 1931 | missing svg a11y, units, content, depth |
 | electrical | battery-capacity | `components/calculators/electrical/BatteryCapacityCalculator` | NOT REVIEWED | — | — | — | — | 1684 | missing visualisation, svg a11y, units, content, depth |
-| math | derivative | `components/calculators/math/DerivativeCalculator` | NOT REVIEWED | yes | — | — | — | 3656 | missing svg a11y, units, content, depth |
+| math | derivative | `components/calculators/math/DerivativeCalculator` | NOT REVIEWED | yes | — | n/a | — | 3656 | missing svg a11y, content, depth |
 | math | integral | `components/calculators/math/IntegralCalculator` | NOT REVIEWED | yes | — | — | — | 3826 | missing svg a11y, units, content, depth |
-| math | limit | `components/calculators/math/LimitCalculator` | NOT REVIEWED | yes | — | — | — | 4069 | missing svg a11y, units, content |
-| math | system-equations | `components/calculators/math/SystemEquationsCalculator` | NOT REVIEWED | yes | — | — | — | 3511 | missing svg a11y, units, content, depth |
-| math | complex-numbers | `components/calculators/math/ComplexNumberCalculator` | NOT REVIEWED | yes | — | — | — | 3705 | missing svg a11y, units, content, depth |
-| math | matrix-determinant | `components/calculators/math/MatrixDeterminantCalculator` | NOT REVIEWED | yes | — | — | — | 3572 | missing svg a11y, units, content, depth |
+| math | limit | `components/calculators/math/LimitCalculator` | IN PROGRESS | yes | — | n/a | — | 4069 | missing svg a11y, content |
+| math | system-equations | `components/calculators/math/SystemEquationsCalculator` | NOT REVIEWED | yes | — | n/a | — | 3511 | missing svg a11y, content, depth |
+| math | complex-numbers | `components/calculators/math/ComplexNumberCalculator` | NOT REVIEWED | yes | — | n/a | — | 3705 | missing svg a11y, content, depth |
+| math | matrix-determinant | `components/calculators/math/MatrixDeterminantCalculator` | NOT REVIEWED | yes | — | n/a | — | 3572 | missing svg a11y, content, depth |
 | math | polynomial-roots | `components/calculators/math/PolynomialRootsCalculator` | NOT REVIEWED | yes | — | — | — | 4217 | missing svg a11y, units, content |
 | math | arithmetic-sequence | `components/calculators/math/ArithmeticSequenceCalculator` | NOT REVIEWED | yes | — | — | — | 2762 | missing svg a11y, units, content, depth |
 | math | geometric-sequence | `components/calculators/math/GeometricSequenceCalculator` | NOT REVIEWED | yes | — | — | — | 2939 | missing svg a11y, units, content, depth |
 | math | combination-repetition | `components/calculators/math/CombinationWithRepetitionCalculator` | NOT REVIEWED | yes | — | — | — | 2803 | missing svg a11y, units, content, depth |
-| math | factorial | `components/calculators/math/FactorialCalculator` | NOT REVIEWED | — | — | — | — | 2460 | missing visualisation, svg a11y, units, content, depth |
-| math | modulo | `components/calculators/math/ModuloCalculator` | NOT REVIEWED | — | — | — | — | 2615 | missing visualisation, svg a11y, units, content, depth |
+| math | factorial | `components/calculators/math/FactorialCalculator` | NOT REVIEWED | — | — | n/a | — | 2460 | missing visualisation, svg a11y, content, depth |
+| math | modulo | `components/calculators/math/ModuloCalculator` | NOT REVIEWED | — | — | n/a | — | 2615 | missing visualisation, svg a11y, content, depth |
 | math | absolute-value | `components/calculators/math/AbsoluteValueCalculator` | NOT REVIEWED | — | — | — | — | 2290 | missing visualisation, svg a11y, units, content, depth |
-| math | cube-root | `components/calculators/math/CubeRootCalculator` | NOT REVIEWED | — | — | — | — | 2212 | missing visualisation, svg a11y, units, content, depth |
+| math | cube-root | `components/calculators/math/CubeRootCalculator` | NOT REVIEWED | — | — | n/a | — | 2212 | missing visualisation, svg a11y, content, depth |
 | math | nth-root | `components/calculators/math/NthRootCalculator` | NOT REVIEWED | — | — | — | — | 2555 | missing visualisation, svg a11y, units, content, depth |
-| finance | bond-price | `components/calculators/finance/BondPriceCalculator` | NOT REVIEWED | yes | — | — | — | 2935 | missing svg a11y, units, content, depth |
-| finance | dividend-yield | `components/calculators/finance/DividendYieldCalculator` | NOT REVIEWED | yes | — | — | — | 1976 | missing svg a11y, units, content, depth |
-| finance | pe-ratio | `components/calculators/finance/PEratioCalculator` | NOT REVIEWED | yes | — | — | — | 1900 | missing svg a11y, units, content, depth |
-| finance | ebitda-finance | `components/calculators/finance/EBITDACalculatorFinance` | NOT REVIEWED | yes | — | — | — | 1987 | missing svg a11y, units, content, depth |
-| finance | amortization-schedule | `components/calculators/finance/AmortizationScheduleCalculator` | NOT REVIEWED | yes | — | — | — | 2816 | missing svg a11y, units, content, depth |
-| finance | net-worth | `components/calculators/finance/NetWorthCalculator` | NOT REVIEWED | yes | — | — | — | 2001 | missing svg a11y, units, content, depth |
-| finance | loan-payoff-early | `components/calculators/finance/LoanPayoffEarlyCalculator` | NOT REVIEWED | yes | — | — | — | 3370 | missing svg a11y, units, content, depth |
-| finance | cagr | `components/calculators/finance/CompoundAnnualGrowthCalculator` | NOT REVIEWED | yes | — | — | — | 2216 | missing svg a11y, units, content, depth |
-| finance | dividend-reinvestment | `components/calculators/finance/DividendReinvestmentCalculator` | NOT REVIEWED | yes | — | — | — | 2904 | missing svg a11y, units, content, depth |
-| finance | credit-utilization | `components/calculators/finance/CreditUtilizationCalculator` | NOT REVIEWED | yes | — | — | — | 2211 | missing svg a11y, units, content, depth |
-| finance | mortgage-affordability | `components/calculators/finance/MortgageAffordabilityCalculator` | NOT REVIEWED | yes | — | — | — | 3302 | missing svg a11y, units, content, depth |
-| finance | heloc | `components/calculators/finance/HELOCCalculator` | NOT REVIEWED | yes | — | — | — | 2457 | missing svg a11y, units, content, depth |
-| finance | fire | `components/calculators/finance/FIRECalculator` | NOT REVIEWED | yes | — | — | — | 3175 | missing svg a11y, units, content, depth |
-| finance | cost-of-living | `components/calculators/finance/CostOfLivingCalculator` | NOT REVIEWED | yes | — | — | — | 2572 | missing svg a11y, units, content, depth |
-| finance | price-elasticity | `components/calculators/finance/PriceElasticityCalculator` | NOT REVIEWED | yes | — | — | — | 2714 | missing svg a11y, units, content, depth |
+| finance | bond-price | `components/calculators/finance/BondPriceCalculator` | NOT REVIEWED | yes | — | n/a | — | 2935 | missing svg a11y, content, depth |
+| finance | dividend-yield | `components/calculators/finance/DividendYieldCalculator` | NOT REVIEWED | yes | — | n/a | — | 1976 | missing svg a11y, content, depth |
+| finance | pe-ratio | `components/calculators/finance/PEratioCalculator` | NOT REVIEWED | yes | — | n/a | — | 1900 | missing svg a11y, content, depth |
+| finance | ebitda-finance | `components/calculators/finance/EBITDACalculatorFinance` | NOT REVIEWED | yes | — | n/a | — | 1987 | missing svg a11y, content, depth |
+| finance | amortization-schedule | `components/calculators/finance/AmortizationScheduleCalculator` | NOT REVIEWED | yes | — | n/a | — | 2816 | missing svg a11y, content, depth |
+| finance | net-worth | `components/calculators/finance/NetWorthCalculator` | NOT REVIEWED | yes | — | n/a | — | 2001 | missing svg a11y, content, depth |
+| finance | loan-payoff-early | `components/calculators/finance/LoanPayoffEarlyCalculator` | NOT REVIEWED | yes | — | n/a | — | 3370 | missing svg a11y, content, depth |
+| finance | cagr | `components/calculators/finance/CompoundAnnualGrowthCalculator` | NOT REVIEWED | yes | — | n/a | — | 2216 | missing svg a11y, content, depth |
+| finance | dividend-reinvestment | `components/calculators/finance/DividendReinvestmentCalculator` | NOT REVIEWED | yes | — | n/a | — | 2904 | missing svg a11y, content, depth |
+| finance | credit-utilization | `components/calculators/finance/CreditUtilizationCalculator` | NOT REVIEWED | yes | — | n/a | — | 2211 | missing svg a11y, content, depth |
+| finance | mortgage-affordability | `components/calculators/finance/MortgageAffordabilityCalculator` | NOT REVIEWED | yes | — | n/a | — | 3302 | missing svg a11y, content, depth |
+| finance | heloc | `components/calculators/finance/HELOCCalculator` | NOT REVIEWED | yes | — | n/a | — | 2457 | missing svg a11y, content, depth |
+| finance | fire | `components/calculators/finance/FIRECalculator` | NOT REVIEWED | yes | — | n/a | — | 3175 | missing svg a11y, content, depth |
+| finance | cost-of-living | `components/calculators/finance/CostOfLivingCalculator` | NOT REVIEWED | yes | — | n/a | — | 2572 | missing svg a11y, content, depth |
+| finance | price-elasticity | `components/calculators/finance/PriceElasticityCalculator` | NOT REVIEWED | yes | — | n/a | — | 2714 | missing svg a11y, content, depth |
 | health | waist-hip-ratio | `components/calculators/health/WaistToHipCalculator` | READY-FOR-REVIEW | yes | yes | yes | yes | 20021 | all measurable signals present; needs Calculator.net verification |
 | health | waist-height-ratio | `components/calculators/health/WaistToHeightCalculator` | NOT REVIEWED | yes | — | — | — | 2195 | missing svg a11y, units, content, depth |
 | health | ibuprofen-dose | `components/calculators/health/IbuprofenDoseCalculator` | NOT REVIEWED | yes | — | — | — | 2370 | missing svg a11y, units, content, depth |
 | health | acetaminophen-dose | `components/calculators/health/AcetaminophenDoseCalculator` | NOT REVIEWED | yes | — | — | — | 2068 | missing svg a11y, units, content, depth |
 | health | creatinine-clearance | `components/calculators/health/CreatinineClearanceCalculator` | NOT REVIEWED | yes | — | — | — | 3352 | missing svg a11y, units, content, depth |
-| health | anion-gap | `components/calculators/health/AnionGapCalculator` | NOT REVIEWED | yes | — | — | — | 2420 | missing svg a11y, units, content, depth |
+| health | anion-gap | `components/calculators/health/AnionGapCalculator` | NOT REVIEWED | yes | — | n/a | — | 2420 | missing svg a11y, content, depth |
 | health | map-calculator | `components/calculators/health/MAPCalculator` | NOT REVIEWED | yes | — | — | — | 2285 | missing svg a11y, units, content, depth |
 | health | pulse-pressure | `components/calculators/health/PulsePressureCalculator` | NOT REVIEWED | yes | — | — | — | 2280 | missing svg a11y, units, content, depth |
 | health | adjusted-body-weight | `components/calculators/health/AdjustedBodyWeightCalculator` | NOT REVIEWED | yes | — | — | — | 1975 | missing svg a11y, units, content, depth |
 | health | rmr | `components/calculators/health/RMRCalculator` | NOT REVIEWED | yes | — | — | — | 2922 | missing svg a11y, units, content, depth |
-| health | fat-intake | `components/calculators/health/FatIntakeCalculator` | NOT REVIEWED | — | — | — | yes | 179 | missing visualisation, svg a11y, units, depth |
-| health | fiber-intake | `components/calculators/health/FiberIntakeCalculator` | NOT REVIEWED | — | — | — | yes | 183 | missing visualisation, svg a11y, units, depth |
+| health | fat-intake | `components/calculators/health/FatIntakeCalculator` | NOT REVIEWED | — | — | n/a | yes | 179 | missing visualisation, svg a11y, depth |
+| health | fiber-intake | `components/calculators/health/FiberIntakeCalculator` | NOT REVIEWED | — | — | n/a | yes | 183 | missing visualisation, svg a11y, depth |
 | health | bp-category | `components/calculators/health/BloodPressureCategoryCalculator` | NOT REVIEWED | yes | — | — | — | 2577 | missing svg a11y, units, content, depth |
 | health | child-bmi | `components/calculators/health/ChildBMICalculator` | NOT REVIEWED | yes | — | — | — | 3935 | missing svg a11y, units, content, depth |
-| health | ideal-resting-hr | `components/calculators/health/IdealHeartRateCalculator` | NOT REVIEWED | yes | — | — | — | 2929 | missing svg a11y, units, content, depth |
-| conversion | volume-converter | `components/calculators/conversion/VolumeConverter` | NOT REVIEWED | — | — | — | yes | 7058 | missing visualisation, svg a11y, units |
-| conversion | area-converter | `components/calculators/conversion/AreaConverter` | NOT REVIEWED | — | — | — | yes | 6888 | missing visualisation, svg a11y, units |
-| conversion | time-converter | `components/calculators/conversion/TimeConverter` | NOT REVIEWED | — | — | — | yes | 6864 | missing visualisation, svg a11y, units |
-| conversion | density-converter | `components/calculators/conversion/DensityConverter` | NOT REVIEWED | — | — | — | — | 6829 | missing visualisation, svg a11y, units, content |
-| conversion | force-converter | `components/calculators/conversion/ForceConverter` | NOT REVIEWED | — | — | — | — | 6785 | missing visualisation, svg a11y, units, content |
-| conversion | frequency-converter | `components/calculators/conversion/FrequencyConverter` | NOT REVIEWED | — | — | — | — | 6800 | missing visualisation, svg a11y, units, content |
-| conversion | illuminance-converter | `components/calculators/conversion/IlluminanceConverter` | NOT REVIEWED | — | — | — | — | 6798 | missing visualisation, svg a11y, units, content |
-| conversion | magnetic-flux-converter | `components/calculators/conversion/MagneticFluxConverter` | NOT REVIEWED | — | — | — | — | 6782 | missing visualisation, svg a11y, units, content |
-| conversion | radiation-converter | `components/calculators/conversion/RadiationConverter` | NOT REVIEWED | — | — | — | — | 6781 | missing visualisation, svg a11y, units, content |
-| conversion | viscosity-converter | `components/calculators/conversion/ViscosityConverter` | NOT REVIEWED | — | — | — | — | 6802 | missing visualisation, svg a11y, units, content |
-| conversion | acceleration-converter | `components/calculators/conversion/AccelerationConverter` | NOT REVIEWED | — | — | — | — | 6818 | missing visualisation, svg a11y, units, content |
-| conversion | flow-rate-converter | `components/calculators/conversion/FlowRateConverter` | NOT REVIEWED | — | — | — | — | 6808 | missing visualisation, svg a11y, units, content |
-| conversion | torque-converter | `components/calculators/conversion/TorqueConverterConverter` | NOT REVIEWED | — | — | — | — | 6819 | missing visualisation, svg a11y, units, content |
-| conversion | specific-energy-converter | `components/calculators/conversion/SpecificEnergyConverter` | NOT REVIEWED | — | — | — | — | 6802 | missing visualisation, svg a11y, units, content |
-| conversion | heat-capacity-converter | `components/calculators/conversion/HeatCapacityConverter` | NOT REVIEWED | — | — | — | — | 6806 | missing visualisation, svg a11y, units, content |
+| health | ideal-resting-hr | `components/calculators/health/IdealHeartRateCalculator` | NOT REVIEWED | yes | — | n/a | — | 2929 | missing svg a11y, content, depth |
+| conversion | volume-converter | `components/calculators/conversion/VolumeConverter` | IN PROGRESS | — | — | yes | yes | 7058 | missing visualisation, svg a11y |
+| conversion | area-converter | `components/calculators/conversion/AreaConverter` | IN PROGRESS | — | — | yes | yes | 6888 | missing visualisation, svg a11y |
+| conversion | time-converter | `components/calculators/conversion/TimeConverter` | IN PROGRESS | — | — | yes | yes | 6864 | missing visualisation, svg a11y |
+| conversion | density-converter | `components/calculators/conversion/DensityConverter` | NOT REVIEWED | — | — | yes | — | 6829 | missing visualisation, svg a11y, content |
+| conversion | force-converter | `components/calculators/conversion/ForceConverter` | NOT REVIEWED | — | — | yes | — | 6785 | missing visualisation, svg a11y, content |
+| conversion | frequency-converter | `components/calculators/conversion/FrequencyConverter` | NOT REVIEWED | — | — | yes | — | 6800 | missing visualisation, svg a11y, content |
+| conversion | illuminance-converter | `components/calculators/conversion/IlluminanceConverter` | NOT REVIEWED | — | — | yes | — | 6798 | missing visualisation, svg a11y, content |
+| conversion | magnetic-flux-converter | `components/calculators/conversion/MagneticFluxConverter` | NOT REVIEWED | — | — | yes | — | 6782 | missing visualisation, svg a11y, content |
+| conversion | radiation-converter | `components/calculators/conversion/RadiationConverter` | NOT REVIEWED | — | — | yes | — | 6781 | missing visualisation, svg a11y, content |
+| conversion | viscosity-converter | `components/calculators/conversion/ViscosityConverter` | NOT REVIEWED | — | — | yes | — | 6802 | missing visualisation, svg a11y, content |
+| conversion | acceleration-converter | `components/calculators/conversion/AccelerationConverter` | NOT REVIEWED | — | — | yes | — | 6818 | missing visualisation, svg a11y, content |
+| conversion | flow-rate-converter | `components/calculators/conversion/FlowRateConverter` | NOT REVIEWED | — | — | yes | — | 6808 | missing visualisation, svg a11y, content |
+| conversion | torque-converter | `components/calculators/conversion/TorqueConverterConverter` | NOT REVIEWED | — | — | yes | — | 6819 | missing visualisation, svg a11y, content |
+| conversion | specific-energy-converter | `components/calculators/conversion/SpecificEnergyConverter` | NOT REVIEWED | — | — | yes | — | 6802 | missing visualisation, svg a11y, content |
+| conversion | heat-capacity-converter | `components/calculators/conversion/HeatCapacityConverter` | NOT REVIEWED | — | — | yes | — | 6806 | missing visualisation, svg a11y, content |
 | construction | brick | `components/calculators/construction/BrickCalculator` | NOT REVIEWED | — | — | — | — | 2463 | missing visualisation, svg a11y, units, content, depth |
 | construction | insulation | `components/calculators/construction/InsulationCalculator` | NOT REVIEWED | yes | — | — | — | 2657 | missing svg a11y, units, content, depth |
 | construction | fence | `components/calculators/construction/FenceCalculator` | NOT REVIEWED | yes | — | — | — | 2656 | missing svg a11y, units, content, depth |
@@ -510,18 +515,18 @@ on its own.
 | construction | door-size | `components/calculators/construction/DoorSizeCalculator` | NOT REVIEWED | yes | — | — | — | 2642 | missing svg a11y, units, content, depth |
 | construction | cement-mortar | `components/calculators/construction/CementMortarCalculator` | NOT REVIEWED | — | — | — | — | 2040 | missing visualisation, svg a11y, units, content, depth |
 | construction | screed | `components/calculators/construction/ScreedCalculator` | NOT REVIEWED | yes | — | — | — | 2318 | missing svg a11y, units, content, depth |
-| everyday | tip-plus | `components/calculators/everyday/TipCalculatorPlus` | NOT REVIEWED | yes | — | — | — | 2869 | missing svg a11y, units, content, depth |
-| everyday | age-difference | `components/calculators/everyday/AgeDifferenceCalculator` | IN PROGRESS | yes | yes | — | yes | 12961 | missing units |
-| everyday | dog-age | `components/calculators/everyday/DogAgeCalculator` | NOT REVIEWED | — | — | — | — | 2919 | missing visualisation, svg a11y, units, content, depth |
-| everyday | cat-age | `components/calculators/everyday/CatAgeCalculator` | NOT REVIEWED | — | — | — | — | 2367 | missing visualisation, svg a11y, units, content, depth |
+| everyday | tip-plus | `components/calculators/everyday/TipCalculatorPlus` | NOT REVIEWED | yes | — | n/a | — | 2869 | missing svg a11y, content, depth |
+| everyday | age-difference | `components/calculators/everyday/AgeDifferenceCalculator` | READY-FOR-REVIEW | yes | yes | n/a | yes | 12961 | all measurable signals present; needs Calculator.net verification |
+| everyday | dog-age | `components/calculators/everyday/DogAgeCalculator` | NOT REVIEWED | — | — | n/a | — | 2919 | missing visualisation, svg a11y, content, depth |
+| everyday | cat-age | `components/calculators/everyday/CatAgeCalculator` | NOT REVIEWED | — | — | n/a | — | 2367 | missing visualisation, svg a11y, content, depth |
 | everyday | fuel-cost-everyday | `components/calculators/everyday/FuelCostCalculatorEveryday` | NOT REVIEWED | yes | — | — | — | 2896 | missing svg a11y, units, content, depth |
-| everyday | electricity-bill | `components/calculators/everyday/ElectricityBillCalculator` | NOT REVIEWED | yes | — | — | — | 2430 | missing svg a11y, units, content, depth |
-| everyday | grocery-budget | `components/calculators/everyday/GroceryBudgetCalculator` | NOT REVIEWED | yes | — | — | — | 2532 | missing svg a11y, units, content, depth |
-| everyday | party-planning | `components/calculators/everyday/PartyPlanningCalculator` | NOT REVIEWED | yes | — | — | — | 2800 | missing svg a11y, units, content, depth |
-| everyday | sleep-debt | `components/calculators/everyday/SleepDebtCalculator` | NOT REVIEWED | yes | — | — | — | 2294 | missing svg a11y, units, content, depth |
-| everyday | screen-time | `components/calculators/everyday/ScreenTimeCalculator` | NOT REVIEWED | yes | — | — | — | 3091 | missing svg a11y, units, content, depth |
+| everyday | electricity-bill | `components/calculators/everyday/ElectricityBillCalculator` | NOT REVIEWED | yes | — | n/a | — | 2430 | missing svg a11y, content, depth |
+| everyday | grocery-budget | `components/calculators/everyday/GroceryBudgetCalculator` | NOT REVIEWED | yes | — | n/a | — | 2532 | missing svg a11y, content, depth |
+| everyday | party-planning | `components/calculators/everyday/PartyPlanningCalculator` | NOT REVIEWED | yes | — | n/a | — | 2800 | missing svg a11y, content, depth |
+| everyday | sleep-debt | `components/calculators/everyday/SleepDebtCalculator` | NOT REVIEWED | yes | — | n/a | — | 2294 | missing svg a11y, content, depth |
+| everyday | screen-time | `components/calculators/everyday/ScreenTimeCalculator` | NOT REVIEWED | yes | — | n/a | — | 3091 | missing svg a11y, content, depth |
 | everyday | commute-cost | `components/calculators/everyday/CommuteCostCalculator` | NOT REVIEWED | yes | — | — | — | 3119 | missing svg a11y, units, content, depth |
 | everyday | pet-food | `components/calculators/everyday/PetFoodCalculator` | NOT REVIEWED | yes | — | — | — | 2609 | missing svg a11y, units, content, depth |
-| everyday | laundry-cost | `components/calculators/everyday/LaundryCostCalculator` | NOT REVIEWED | yes | — | — | — | 2462 | missing svg a11y, units, content, depth |
-| everyday | subscription | `components/calculators/everyday/SubscriptionCalculator` | NOT REVIEWED | yes | — | — | — | 3535 | missing svg a11y, units, content, depth |
-| everyday | retirement-countdown | `components/calculators/everyday/RetirementCountdownCalculator` | NOT REVIEWED | yes | — | — | — | 3628 | missing svg a11y, units, content, depth |
+| everyday | laundry-cost | `components/calculators/everyday/LaundryCostCalculator` | NOT REVIEWED | yes | — | n/a | — | 2462 | missing svg a11y, content, depth |
+| everyday | subscription | `components/calculators/everyday/SubscriptionCalculator` | NOT REVIEWED | yes | — | n/a | — | 3535 | missing svg a11y, content, depth |
+| everyday | retirement-countdown | `components/calculators/everyday/RetirementCountdownCalculator` | NOT REVIEWED | yes | — | n/a | — | 3628 | missing svg a11y, content, depth |
