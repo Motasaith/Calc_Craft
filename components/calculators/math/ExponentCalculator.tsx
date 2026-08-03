@@ -1,38 +1,75 @@
 'use client'
 
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-import { evaluate } from '@/lib/calc-engine'
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function ExponentCalculator() {
-  const [base, setBase] = useState('')
-  const [exp, setExp] = useState('')
-  const [result, setResult] = useState<string | null>(null)
-  const [error, setError] = useState('')
+  const [baseStr, setBaseStr] = useState('2')
+  const [expStr, setExpStr] = useState('10')
 
-  const calculate = () => {
-    ;(async () => {
-      setError(''); setResult(null)
-      const b = parseFloat(base), e = parseFloat(exp)
-      if (isNaN(b) || isNaN(e)) { setError('Enter valid numbers'); return }
-      if (b === 0 && e < 0) { setError('0 raised to negative power is undefined'); return }
-      if (b < 0 && !Number.isInteger(e)) { setError('Negative base with non-integer exponent gives complex result'); return }
-      const expr = `(${b})^(${e})`
-      const r = await evaluate(expr)
-      if (!r.ok) { setError(r.error); return }
-      setResult(r.formatted)
-    })()
-  }
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      result: 0,
+      steps: [] as string[]
+    }
+
+    const base = parseFloat(baseStr)
+    const exp = parseFloat(expStr)
+
+    if (isNaN(base) || isNaN(exp)) {
+      return { ...defaultObj, error: 'Please enter valid base and exponent.' }
+    }
+
+    if (base === 0 && exp < 0) {
+      return { ...defaultObj, error: '0 raised to a negative power is undefined.' }
+    }
+
+    if (base < 0 && !Number.isInteger(exp)) {
+      return { ...defaultObj, error: 'Negative base with fractional exponent is a complex number.' }
+    }
+
+    const resVal = Math.pow(base, exp)
+    const steps = [
+      `Expression: ${base}^${exp}`,
+      `Calculation: ${base} raised to power ${exp} = ${resVal}`
+    ]
+
+    return {
+      error: null,
+      result: resVal,
+      steps
+    }
+  }, [baseStr, expStr])
 
   return (
-    <FormCalculatorShell title="Exponent Calculator" subtitle="Calculate base^exponent" badge="MATH">
-      <div className="grid grid-cols-2 gap-3">
-        <RetroInput label="Base" value={base} onChange={setBase} placeholder="e.g. 2" id="exp-base" />
-        <RetroInput label="Exponent" value={exp} onChange={setExp} placeholder="e.g. 10" id="exp-exp" />
+    <FormCalculatorShell title="Exponent Calculator" subtitle="Calculate base raised to the power of exponent" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Base (x)" value={baseStr} onChange={setBaseStr} id="exp-base" />
+          <RetroInput label="Exponent (y)" value={expStr} onChange={setExpStr} id="exp-exp" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-1">
+                <ResultDisplay label="Result (x^y)" value={results.result.toLocaleString()} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {error && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">{error}</div>}
-      {result && <div className="mt-4"><ResultDisplay label={`${base}^${exp}`} value={result} large /></div>}
     </FormCalculatorShell>
   )
 }

@@ -1,62 +1,76 @@
 'use client'
 
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
-
-function gcd(a: number, b: number): number { a = Math.abs(a); b = Math.abs(b); while (b) { const t = b; b = a % b; a = t }; return a }
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function RatioCalculator() {
-  const [a, setA] = useState(''); const [b, setB] = useState('')
-  const [c, setC] = useState(''); const [d, setD] = useState('')
-  const [mode, setMode] = useState<'simplify' | 'solve'>('simplify')
-  const [result, setResult] = useState<string | null>(null)
-  const [error, setError] = useState('')
+  const [aStr, setAStr] = useState('4')
+  const [bStr, setBStr] = useState('3')
+  const [cStr, setCStr] = useState('8')
+  const [dStr, setDStr] = useState('')
 
-  const calculate = () => {
-    setError(''); setResult(null)
-    if (mode === 'simplify') {
-      const av = parseFloat(a), bv = parseFloat(b)
-      if (isNaN(av) || isNaN(bv) || av <= 0 || bv <= 0) { setError('Enter positive numbers'); return }
-      const g = gcd(Math.round(av), Math.round(bv))
-      setResult(`${Math.round(av) / g} : ${Math.round(bv) / g}`)
-    } else {
-      const av = parseFloat(a), bv = parseFloat(b), cv = parseFloat(c)
-      if (isNaN(av) || isNaN(bv) || isNaN(cv)) { setError('Enter valid numbers'); return }
-      if (av === 0) { setError('First ratio term cannot be 0'); return }
-      const dv = (bv * cv) / av
-      setResult(`${cv} : ${parseFloat(dv.toFixed(6))}`)
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      valD: 0,
+      steps: [] as string[]
     }
-  }
+
+    const a = parseFloat(aStr)
+    const b = parseFloat(bStr)
+    const c = parseFloat(cStr)
+
+    if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+      return { ...defaultObj, error: 'Please enter valid non-zero values for A, B, and C.' }
+    }
+
+    // Solve for D: A/B = C/D => D = (B * C) / A
+    const valD = (b * c) / a
+
+    const steps = [
+      `Ratio proportion: A / B = C / D`,
+      `${a} / ${b} = ${c} / D`,
+      `D = (B × C) / A = (${b} × ${c}) / ${a} = ${valD.toFixed(4)}`
+    ]
+
+    return {
+      error: null,
+      valD,
+      steps
+    }
+  }, [aStr, bStr, cStr])
 
   return (
-    <FormCalculatorShell title="Ratio Calculator" badge="MATH">
-      <div className="flex gap-1 mb-4 bg-neutral-200 p-1 rounded-lg border border-neutral-300">
-        <button onClick={() => { setMode('simplify'); setResult(null) }}
-          className={`flex-1 py-1.5 text-[10px] font-bold font-mono rounded-md transition-all ${mode === 'simplify' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}>
-          Simplify Ratio
-        </button>
-        <button onClick={() => { setMode('solve'); setResult(null) }}
-          className={`flex-1 py-1.5 text-[10px] font-bold font-mono rounded-md transition-all ${mode === 'solve' ? 'bg-[#fcfbfa] shadow text-neutral-800 border border-neutral-300' : 'text-neutral-500'}`}>
-          Solve Proportion
-        </button>
+    <FormCalculatorShell title="Ratio Calculator" subtitle="Solve proportions (A : B = C : D)" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="Value A" value={aStr} onChange={setAStr} id="rat-a" />
+            <RetroInput label="Value B" value={bStr} onChange={setBStr} id="rat-b" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <RetroInput label="Value C" value={cStr} onChange={setCStr} id="rat-c" />
+            <ResultDisplay label="Value D (Solved)" value={results.error ? '—' : results.valD.toFixed(4)} />
+          </div>
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
       </div>
-
-      {mode === 'simplify' ? (
-        <div className="grid grid-cols-2 gap-3">
-          <RetroInput label="First Number" value={a} onChange={setA} placeholder="e.g. 12" id="ratio-a" />
-          <RetroInput label="Second Number" value={b} onChange={setB} placeholder="e.g. 8" id="ratio-b" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-3 items-end">
-          <RetroInput label="A" value={a} onChange={setA} placeholder="3" id="ratio-a2" />
-          <RetroInput label="B" value={b} onChange={setB} placeholder="4" id="ratio-b2" />
-          <RetroInput label="C" value={c} onChange={setC} placeholder="9" id="ratio-c2" />
-        </div>
-      )}
-
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {error && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">{error}</div>}
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
     </FormCalculatorShell>
   )
 }

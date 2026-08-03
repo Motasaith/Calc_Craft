@@ -1,60 +1,96 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function PHCalculator() {
-  const [conc, setConc] = useState('0.001')
+  const [concStr, setConcStr] = useState('0.001')
 
-  const c = parseFloat(conc)
-  const valid = !isNaN(c) && c > 0
-  const ph = valid ? -Math.log10(c) : 0
-  const isAcid = ph < 7
-  const isNeutral = ph >= 6.5 && ph <= 7.5
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      ph: 0,
+      poh: 0,
+      classification: '',
+      color: '#22c55e',
+      steps: [] as string[]
+    }
 
-  // Color based on pH
-  const color = isNeutral ? '#22c55e' : isAcid ? '#ef4444' : '#3b82f6'
+    const c = parseFloat(concStr)
+    if (isNaN(c) || c <= 0) {
+      return { ...defaultObj, error: 'Please enter a valid positive H⁺ concentration.' }
+    }
+
+    const ph = -Math.log10(c)
+    const poh = 14 - ph
+    const isAcid = ph < 6.5
+    const isNeutral = ph >= 6.5 && ph <= 7.5
+    const classification = isNeutral ? 'Neutral' : isAcid ? 'Acidic' : 'Basic (Alkaline)'
+    const color = isNeutral ? '#22c55e' : isAcid ? '#ef4444' : '#3b82f6'
+
+    const steps = [
+      `Formula: pH = -log₁₀[H⁺]`,
+      `pH = -log₁₀(${c}) = ${ph.toFixed(4)}`,
+      `pOH = 14 - pH = 14 - ${ph.toFixed(2)} = ${poh.toFixed(4)}`,
+      `Classification: ${classification}`
+    ]
+
+    return {
+      error: null,
+      ph,
+      poh,
+      classification,
+      color,
+      steps
+    }
+  }, [concStr])
 
   return (
-    <FormCalculatorShell title="pH Calculator" subtitle="pH = -log₁₀[H⁺]" badge="CHEMISTRY">
-      <RetroInput label="H⁺ Concentration" value={conc} onChange={setConc} placeholder="e.g. 0.001" id="ph-c" unit="mol/L" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="pH Value" value={ph.toFixed(2)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">pH Scale</span>
-            <svg width="200" height="80" viewBox="0 0 200 80" className="select-none">
-              <defs>
-                <pattern id="phGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="200" height="80" fill="url(#phGrid)" rx="8" />
-              {/* pH scale bar */}
-              <rect x="15" y="30" width="170" height="15" fill="url(#phGrad)" rx="3" />
-              <defs>
-                <linearGradient id="phGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#dc2626" />
-                  <stop offset="50%" stopColor="#22c55e" />
-                  <stop offset="100%" stopColor="#1d4ed8" />
-                </linearGradient>
-              </defs>
-              {/* Marker */}
-              <path d={`M ${15 + Math.min(170, (ph / 14) * 170)} 25 L ${15 + Math.min(170, (ph / 14) * 170)} 50`} stroke={color} strokeWidth="3" />
-              <circle cx={15 + Math.min(170, (ph / 14) * 170)} cy="22" r="5" fill={color} stroke="#fff" strokeWidth="1.5" />
-              <text x="15" y="60" fontSize="7" fontFamily="monospace" fill="#6b7280">0</text>
-              <text x="100" y="60" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#6b7280">7</text>
-              <text x="180" y="60" fontSize="7" fontFamily="monospace" fill="#6b7280">14</text>
-              <text x="100" y="75" textAnchor="middle" fontSize="9" fontFamily="monospace" fill={color} fontWeight="bold">pH = {ph.toFixed(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="pH Calculator" subtitle="Solve pH, pOH, and acidic/basic properties from H⁺ concentration" badge="CHEMISTRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="H⁺ Concentration (mol/L)" value={concStr} onChange={setConcStr} id="ph-c" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="pH" value={results.ph.toFixed(2)} large />
+                <ResultDisplay label="pOH" value={results.poh.toFixed(2)} />
+                <ResultDisplay label="Nature" value={results.classification} />
+              </div>
+
+              <div className="rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-4 flex flex-col items-center">
+                <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 self-start font-mono">pH Scale Indicator</p>
+                <svg width="200" height="60" viewBox="0 0 200 60" className="bg-white rounded-lg p-2 border border-neutral-300">
+                  <linearGradient id="phGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#dc2626" />
+                    <stop offset="50%" stopColor="#22c55e" />
+                    <stop offset="100%" stopColor="#1d4ed8" />
+                  </linearGradient>
+                  <rect x="15" y="20" width="170" height="15" fill="url(#phGrad)" rx="3" />
+                  <circle cx={15 + Math.min(170, (results.ph / 14) * 170)} cy="27" r="6" fill={results.color} stroke="#fff" strokeWidth="2" />
+                  <text x="15" y="47" fontSize="7" fontFamily="monospace" fill="#6b7280">0 (Acid)</text>
+                  <text x="100" y="47" textAnchor="middle" fontSize="7" fontFamily="monospace" fill="#6b7280">7 (Neutral)</text>
+                  <text x="185" y="47" textAnchor="end" fontSize="7" fontFamily="monospace" fill="#6b7280">14 (Base)</text>
+                </svg>
+              </div>
+
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Chemical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

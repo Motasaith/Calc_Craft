@@ -1,49 +1,74 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function FactorialCalculator() {
-  const [nVal, setN] = useState('5')
+  const [valStr, setValStr] = useState('5')
 
-  const n = parseInt(nVal, 10)
-  const valid = !isNaN(n) && n >= 0 && n <= 170
-  let result = 1
-  if (valid) {
-    for (let i = 2; i <= n; i++) result *= i
-  }
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      result: 0,
+      steps: [] as string[]
+    }
+
+    const n = parseInt(valStr)
+
+    if (isNaN(n) || n < 0 || !Number.isInteger(n)) {
+      return { ...defaultObj, error: 'Please enter a valid non-negative integer.' }
+    }
+
+    if (n > 170) {
+      return { ...defaultObj, error: 'Factorials above 170 exceed JS capacity (Infinity).' }
+    }
+
+    let fact = 1
+    const mults = []
+    for (let i = 1; i <= n; i++) {
+      fact *= i
+      mults.push(i)
+    }
+
+    const steps = [
+      `n! = 1 × 2 × ... × n`,
+      `${n}! = ${mults.join(' × ') || '1'} = ${fact}`
+    ]
+
+    return {
+      error: null,
+      result: fact,
+      steps
+    }
+  }, [valStr])
 
   return (
-    <FormCalculatorShell title="Factorial Calculator" subtitle="n! = n × (n−1) × ... × 1" badge="MATH">
-      <RetroInput label="Number n" value={nVal} onChange={setN} placeholder="e.g. 5" id="fc-n" />
-      {!valid && n > 170 && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">n must be ≤ 170</div>}
-      {!valid && !isNaN(n) && n < 0 && <div className="mt-3 text-xs font-mono text-red-600 text-center font-bold">n must be ≥ 0</div>}
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label={`${n}! =`} value={result.toExponential(4)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Multiplication Chain</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
-              <defs>
-                <pattern id="fcGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#fcGrid)" rx="8" />
-              {Array.from({ length: Math.min(8, n) }).map((_, idx) => {
-                const bh = Math.max(3, Math.min(50, (idx + 1) * 5))
-                return <path key={idx} d={wobblyBar(20 + idx * 18, 60 - bh, 12, bh)} fill="#dfaa44" fillOpacity="0.7" stroke="#be8b32" strokeWidth="1" />
-              })}
-              <text x="90" y="75" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#059669" fontWeight="bold">{n}! = {result.toExponential(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Factorial Calculator" subtitle="Solve n! for a non-negative integer" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Input n" value={valStr} onChange={setValStr} id="fact-val" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-1">
+                <ResultDisplay label="Result (n!)" value={results.result.toLocaleString()} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

@@ -1,57 +1,95 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyCircle(cx: number, cy: number, r: number) {
-  const steps = 28
-  let path = ''
-  for (let i = 0; i <= steps; i++) {
-    const theta = (i / steps) * Math.PI * 2
-    const jitter = (Math.sin(i * 3.1) - 0.5) * 1.0
-    const x = cx + (r + jitter) * Math.cos(theta)
-    const y = cy + (r + jitter) * Math.sin(theta)
-    path += i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`
-  }
-  return path + ' Z'
-}
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay, RetroSelect } from '../shared/FormCalculatorShell'
+
+type Mode = 'moles-to-particles' | 'particles-to-moles'
 
 export default function AvogadrosNumberCalculator() {
-  const [moles, setMoles] = useState('2')
+  const [mode, setMode] = useState<Mode>('moles-to-particles')
+  const [valStr, setValStr] = useState('2')
 
-  const n = parseFloat(moles)
-  const valid = !isNaN(n) && n >= 0
-  const molecules = valid ? n * 6.022e23 : 0
-  const atoms = valid ? n * 6.022e23 : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      moles: 0,
+      particles: '',
+      steps: [] as string[]
+    }
+
+    const v = parseFloat(valStr)
+    if (isNaN(v) || v < 0) {
+      return { ...defaultObj, error: 'Please enter a valid positive value.' }
+    }
+
+    const AVOGADRO = 6.02214076e23
+    let moles = 0
+    let particles = ''
+    let steps: string[] = []
+
+    if (mode === 'moles-to-particles') {
+      moles = v
+      const particleCount = v * AVOGADRO
+      particles = particleCount.toExponential(4)
+      steps = [
+        `Formula: Particles = Moles × 6.02214e23`,
+        `${v} mol × 6.02214e23 = ${particles}`
+      ]
+    } else {
+      moles = v / AVOGADRO
+      particles = v.toExponential(4)
+      steps = [
+        `Formula: Moles = Particles / 6.02214e23`,
+        `${v} / 6.02214e23 = ${moles.toExponential(6)} mol`
+      ]
+    }
+
+    return {
+      error: null,
+      moles,
+      particles,
+      steps
+    }
+  }, [mode, valStr])
 
   return (
-    <FormCalculatorShell title="Avogadro's Number" subtitle="N = n × Nₐ" badge="CHEMISTRY">
-      <RetroInput label="Moles (n)" value={moles} onChange={setMoles} placeholder="e.g. 2" id="av-n" unit="mol" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label="Molecules/Atoms" value={molecules.toExponential(4)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Particle Cloud</span>
-            <svg width="140" height="90" viewBox="0 0 140 90" className="select-none">
-              <defs>
-                <pattern id="avGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="140" height="90" fill="url(#avGrid)" rx="8" />
-              {Array.from({ length: 12 }).map((_, i) => {
-                const angle = (i / 12) * Math.PI * 2
-                const r = 20 + (i % 3) * 8
-                const x = 70 + r * Math.cos(angle)
-                const y = 40 + r * Math.sin(angle)
-                return <path key={i} d={wobblyCircle(x, y, 4)} fill="#a78bfa" fillOpacity="0.3" stroke="#7c3aed" strokeWidth="1.2" />
-              })}
-              <text x="70" y="82" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#7c3aed" fontWeight="bold">N = {molecules.toExponential(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Avogadro's Number Converter" subtitle="Convert between moles and total molecules/atoms" badge="CHEMISTRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroSelect
+            label="Conversion Mode"
+            value={mode}
+            onChange={(v) => setMode(v as Mode)}
+            id="avog-mode"
+            options={[
+              { value: 'moles-to-particles', label: 'Moles → Molecules/Atoms' },
+              { value: 'particles-to-moles', label: 'Molecules/Atoms → Moles' }
+            ]}
+          />
+          <RetroInput label="Input Quantity" value={valStr} onChange={setValStr} id="avog-v" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Moles" value={results.moles.toExponential(4)} large />
+                <ResultDisplay label="Total Particles" value={results.particles} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Avogadro Conversion Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

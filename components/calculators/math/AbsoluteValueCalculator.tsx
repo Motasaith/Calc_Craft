@@ -1,44 +1,64 @@
 'use client'
-import React, { useState } from 'react'
+
+import React, { useMemo, useState } from 'react'
 import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
-function wobblyBar(x: number, y: number, w: number, h: number) {
-  return `M ${x} ${y} L ${x + w} ${y} L ${x + w} ${y + h} L ${x} ${y + h} Z`
-}
-
 export default function AbsoluteValueCalculator() {
-  const [num, setNum] = useState('-7')
+  const [valStr, setValStr] = useState('-5')
 
-  const x = parseFloat(num)
-  const valid = !isNaN(x)
-  const abs = valid ? Math.abs(x) : 0
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      absVal: 0,
+      steps: [] as string[]
+    }
+
+    const val = parseFloat(valStr)
+    if (isNaN(val)) {
+      return { ...defaultObj, error: 'Please enter a valid number.' }
+    }
+
+    const absVal = Math.abs(val)
+    const steps = [
+      `Absolute value represents distance from zero on the number line.`,
+      `|x| = x if x >= 0, else -x`,
+      `|${val}| = ${absVal}`
+    ]
+
+    return {
+      error: null,
+      absVal,
+      steps
+    }
+  }, [valStr])
 
   return (
-    <FormCalculatorShell title="Absolute Value" subtitle="|x| = distance from zero" badge="MATH">
-      <RetroInput label="Number x" value={num} onChange={setNum} placeholder="e.g. -7" id="av-x" />
-      {valid && (
-        <>
-          <div className="mt-4">
-            <ResultDisplay label={`|${x}| =`} value={abs.toFixed(4)} large />
-          </div>
-          <div className="mt-4 flex flex-col items-center">
-            <span className="text-[10px] font-bold text-neutral-500 font-mono mb-2 uppercase tracking-wide">Number Line</span>
-            <svg width="180" height="80" viewBox="0 0 180 80" className="select-none">
-              <defs>
-                <pattern id="avGrid" width="15" height="15" patternUnits="userSpaceOnUse">
-                  <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e5e7eb" strokeWidth="0.8" />
-                </pattern>
-              </defs>
-              <rect width="180" height="80" fill="url(#avGrid)" rx="8" />
-              <line x1="20" y1="40" x2="160" y2="40" stroke="#9ca3af" strokeWidth="1" />
-              <line x1="90" y1="30" x2="90" y2="50" stroke="#6b7280" strokeWidth="1.5" />
-              <line x1="90" y1="40" x2={90 + Math.max(-60, Math.min(60, x * 10))} y2="40" stroke="#dfaa44" strokeWidth="3" />
-              <circle cx={90 + Math.max(-60, Math.min(60, x * 10))} cy="40" r="4" fill="#ab3232" />
-              <text x="90" y="70" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#059669" fontWeight="bold">|{x}|={abs.toFixed(2)}</text>
-            </svg>
-          </div>
-        </>
-      )}
+    <FormCalculatorShell title="Absolute Value Calculator" subtitle="Find the absolute value (magnitude) of a number" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Input Number (x)" value={valStr} onChange={setValStr} id="abs-x" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-1">
+                <ResultDisplay label="Absolute Value |x|" value={results.absVal.toString()} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }

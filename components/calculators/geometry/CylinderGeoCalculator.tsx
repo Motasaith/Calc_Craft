@@ -1,101 +1,91 @@
 'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton } from '../shared/FormCalculatorShell'
+
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function CylinderGeoCalculator() {
-  const [radius, setRadius] = useState('3')
-  const [height, setHeight] = useState('10')
-  const [result, setResult] = useState<{volume:number,lateral:number,total:number}|null>(null)
+  const [rStr, setRStr] = useState('3')
+  const [hStr, setHStr] = useState('8')
 
-  const calculate = () => {
-    const r = parseFloat(radius), h = parseFloat(height)
-    if (isNaN(r)||isNaN(h) || r<=0 || h<=0) { setResult(null); return }
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      volume: 0,
+      surfaceArea: 0,
+      lateralArea: 0,
+      steps: [] as string[]
+    }
+
+    const r = parseFloat(rStr)
+    const h = parseFloat(hStr)
+
+    if (isNaN(r) || isNaN(h) || r <= 0 || h <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive radius and height.' }
+    }
+
     const volume = Math.PI * r * r * h
-    const lateral = 2 * Math.PI * r * h
-    const total = lateral + 2 * Math.PI * r * r
-    setResult({ volume, lateral, total })
-  }
+    const lateralArea = 2 * Math.PI * r * h
+    const surfaceArea = lateralArea + 2 * Math.PI * r * r
 
-  // Visual shape morphing calculations
-  const rVal = parseFloat(radius) || 3
-  const hVal = parseFloat(height) || 10
-  const scaleX = Math.min(1.4, Math.max(0.5, rVal / 3))
-  const scaleY = Math.min(1.4, Math.max(0.5, hVal / 10))
-  const rx = Math.min(65, 45 * scaleX)
-  const ry = 12
-  const cylHeight = Math.min(110, 80 * scaleY)
-  const cx = 100
-  const cy = 100
-  const topY = cy - cylHeight / 2
-  const bottomY = cy + cylHeight / 2
+    const steps = [
+      `Volume = π × r² × h = 3.14159 × ${r}² × ${h} = ${volume.toFixed(4)}`,
+      `Lateral Area = 2 × π × r × h = ${lateralArea.toFixed(4)}`,
+      `Total Surface Area = 2πr(r + h) = ${surfaceArea.toFixed(4)}`
+    ]
+
+    return {
+      error: null,
+      volume,
+      surfaceArea,
+      lateralArea,
+      steps
+    }
+  }, [rStr, hStr])
 
   return (
-    <FormCalculatorShell title="Cylinder Calculator" badge="GEOMETRY">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-        <div className="space-y-3">
-          <RetroInput label="Radius" value={radius} onChange={setRadius} placeholder="3" id="cyl-r" />
-          <RetroInput label="Height" value={height} onChange={setHeight} placeholder="10" id="cyl-h" />
-          <div className="pt-2">
-            <RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton>
-          </div>
+    <FormCalculatorShell title="Cylinder Geometry Calculator" subtitle="Solve volume, lateral area, and total surface area of a cylinder" badge="GEOMETRY">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Radius (r)" value={rStr} onChange={setRStr} id="cyl-r" />
+          <RetroInput label="Height (h)" value={hStr} onChange={setHStr} id="cyl-h" />
         </div>
 
-        {/* Dynamic Morphing Cylinder Diagram */}
-        <div className="flex justify-center items-center bg-[#cbd8ca]/30 border border-neutral-300 rounded-xl p-2 h-[210px]">
-          <svg width="100%" height="200" viewBox="0 0 200 200" className="drop-shadow-sm select-none">
-            <defs>
-              <pattern id="draftGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="1" />
-              </pattern>
-              <linearGradient id="cylinderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#4c5c4a" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#687e66" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#4c5c4a" stopOpacity="0.9" />
-              </linearGradient>
-            </defs>
-            <rect width="200" height="200" fill="url(#draftGrid)" rx="8" />
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <ResultDisplay label="Volume" value={results.volume.toFixed(4)} />
+                <ResultDisplay label="Surface Area" value={results.surfaceArea.toFixed(4)} />
+                <ResultDisplay label="Lateral Area" value={results.lateralArea.toFixed(4)} />
+              </div>
 
-            {/* Cylinder Body (back lines & fills) */}
-            <path d={`M ${cx - rx} ${topY} L ${cx - rx} ${bottomY}`} stroke="#374151" strokeWidth="2.5" />
-            <path d={`M ${cx + rx} ${topY} L ${cx + rx} ${bottomY}`} stroke="#374151" strokeWidth="2.5" />
-            <rect x={cx - rx} y={topY} width={rx * 2} height={cylHeight} fill="url(#cylinderGrad)" />
+              <div className="rounded-xl border border-neutral-300 bg-[#cbd8ca]/30 p-4 flex flex-col items-center">
+                <p className="mb-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 self-start font-mono">Cylinder Wireframe Sketch</p>
+                <svg viewBox="0 0 120 120" className="w-32 h-32">
+                  <path d="M 40 30 A 20 8 0 1 0 80 30 A 20 8 0 1 0 40 30" fill="none" stroke="#4c5c4a" strokeWidth="2" />
+                  <path d="M 40 90 A 20 8 0 1 0 80 90 A 20 8 0 1 0 40 90" fill="#8ab4a0" stroke="#4c5c4a" strokeWidth="2" />
+                  <line x1="40" y1="30" x2="40" y2="90" stroke="#4c5c4a" strokeWidth="2" />
+                  <line x1="80" y1="30" x2="80" y2="90" stroke="#4c5c4a" strokeWidth="2" />
+                  <line x1="60" y1="90" x2="80" y2="90" stroke="#b5655c" strokeWidth="1.5" />
+                  <text x="70" y="87" fontSize="7" fontWeight="bold" fill="#b5655c" fontFamily="monospace">r</text>
+                  <text x="86" y="60" fontSize="7" fontWeight="bold" fill="#1f2937" fontFamily="monospace">h</text>
+                </svg>
+              </div>
 
-            {/* Bottom hidden ellipse (dashed) */}
-            <path d={`M ${cx - rx} ${bottomY} A ${rx} ${ry} 0 0 0 ${cx + rx} ${bottomY}`} stroke="#374151" strokeWidth="2" strokeDasharray="4 3" fill="none" />
-            {/* Bottom front visible ellipse */}
-            <path d={`M ${cx - rx} ${bottomY} A ${rx} ${ry} 0 0 1 ${cx + rx} ${bottomY}`} stroke="#374151" strokeWidth="2.5" fill="none" />
-            
-            {/* Top ellipse */}
-            <ellipse cx={cx} cy={topY} rx={rx} ry={ry} stroke="#374151" strokeWidth="2.5" fill="#cbd8ca" />
-
-            {/* Radius line indicator */}
-            <line x1={cx} y1={topY} x2={cx + rx} y2={topY} stroke="#b91c1c" strokeWidth="2" strokeDasharray="2 2" />
-            <circle cx={cx} cy={topY} r="3" fill="#b91c1c" />
-            <circle cx={cx + rx} cy={topY} r="3" fill="#b91c1c" />
-            <text x={cx + rx / 2} y={topY - 6} fill="#b91c1c" fontSize="10" fontWeight="bold" fontFamily="monospace" textAnchor="middle">
-              r={rVal.toFixed(1)}
-            </text>
-
-            {/* Height line indicator */}
-            <line x1={cx - rx - 12} y1={topY} x2={cx - rx - 12} y2={bottomY} stroke="#1d4ed8" strokeWidth="2" />
-            <line x1={cx - rx} y1={topY} x2={cx - rx - 16} y2={topY} stroke="#9ca3af" strokeWidth="1" strokeDasharray="2 2" />
-            <line x1={cx - rx} y1={bottomY} x2={cx - rx - 16} y2={bottomY} stroke="#9ca3af" strokeWidth="1" strokeDasharray="2 2" />
-            <path d={`M ${cx - rx - 15} ${topY + 5} L ${cx - rx - 12} ${topY} L ${cx - rx - 9} ${topY + 5}`} fill="none" stroke="#1d4ed8" strokeWidth="1.5" />
-            <path d={`M ${cx - rx - 15} ${bottomY - 5} L ${cx - rx - 12} ${bottomY} L ${cx - rx - 9} ${bottomY - 5}`} fill="none" stroke="#1d4ed8" strokeWidth="1.5" />
-            <text x={cx - rx - 20} y={cy} fill="#1d4ed8" fontSize="10" fontWeight="bold" fontFamily="monospace" textAnchor="end" dominantBaseline="middle">
-              h={hVal.toFixed(1)}
-            </text>
-          </svg>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Formula Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
         </div>
       </div>
-
-      {result && (
-        <div className="grid grid-cols-3 gap-2 mt-4">
-          <ResultDisplay label="Volume" value={result.volume.toFixed(2)} />
-          <ResultDisplay label="Lateral Area" value={result.lateral.toFixed(2)} />
-          <ResultDisplay label="Total Area" value={result.total.toFixed(2)} />
-        </div>
-      )}
     </FormCalculatorShell>
   )
 }

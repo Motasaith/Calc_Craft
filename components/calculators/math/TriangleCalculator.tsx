@@ -1,41 +1,83 @@
-﻿'use client'
-import React, { useState } from 'react'
-import FormCalculatorShell, { RetroInput, ResultDisplay, RetroActionButton, RetroSelect } from '../shared/FormCalculatorShell'
+'use client'
+
+import React, { useMemo, useState } from 'react'
+import FormCalculatorShell, { RetroInput, ResultDisplay } from '../shared/FormCalculatorShell'
 
 export default function TriangleCalculator() {
-  const [method, setMethod] = useState<'base-height' | 'three-sides' | 'two-sides-angle'>('base-height')
-  const [a, setA] = useState(''); const [b, setB] = useState(''); const [c, setC] = useState('')
-  const [h, setH] = useState(''); const [angle, setAngle] = useState('')
-  const [result, setResult] = useState('')
+  const [aStr, setAStr] = useState('3')
+  const [bStr, setBStr] = useState('4')
+  const [cStr, setCStr] = useState('5')
 
-  const calculate = () => {
-    let area = 0
-    if (method === 'base-height') {
-      const base = parseFloat(a), height = parseFloat(h)
-      if (isNaN(base) || isNaN(height) || base <= 0 || height <= 0) { setResult('Invalid input'); return }
-      area = 0.5 * base * height
-    } else if (method === 'three-sides') {
-      const av = parseFloat(a), bv = parseFloat(b), cv = parseFloat(c)
-      if (isNaN(av)||isNaN(bv)||isNaN(cv) || av<=0||bv<=0||cv<=0) { setResult('Invalid input'); return }
-      if (av+bv<=cv || av+cv<=bv || bv+cv<=av) { setResult('Invalid triangle sides'); return }
-      const s = (av+bv+cv)/2
-      area = Math.sqrt(s*(s-av)*(s-bv)*(s-cv))
-    } else {
-      const av = parseFloat(a), bv = parseFloat(b), ang = parseFloat(angle)
-      if (isNaN(av)||isNaN(bv)||isNaN(ang) || av<=0||bv<=0) { setResult('Invalid input'); return }
-      area = 0.5 * av * bv * Math.sin(ang * Math.PI / 180)
+  const results = useMemo(() => {
+    const defaultObj = {
+      error: null as string | null,
+      area: 0,
+      perimeter: 0,
+      steps: [] as string[]
     }
-    setResult(`Area = ${area.toFixed(4)}`)
-  }
+
+    const a = parseFloat(aStr)
+    const b = parseFloat(bStr)
+    const c = parseFloat(cStr)
+
+    if (isNaN(a) || isNaN(b) || isNaN(c) || a <= 0 || b <= 0 || c <= 0) {
+      return { ...defaultObj, error: 'Please enter valid positive sides.' }
+    }
+
+    if (a + b <= c || a + c <= b || b + c <= a) {
+      return { ...defaultObj, error: 'Triangle Inequality Violation: The sum of any two sides must be greater than the third.' }
+    }
+
+    const perimeter = a + b + c
+    const s = perimeter / 2
+    // Heron's formula
+    const area = Math.sqrt(s * (s - a) * (s - b) * (s - c))
+
+    const steps = [
+      `Perimeter = a + b + c = ${a} + ${b} + ${c} = ${perimeter}`,
+      `Semi-perimeter (s) = Perimeter / 2 = ${s}`,
+      `Heron's Formula: Area = √(s × (s - a) × (s - b) × (s - c))`,
+      `Area = √(${s} × ${s - a} × ${s - b} × ${s - c}) = ${area.toFixed(4)}`
+    ]
+
+    return {
+      error: null,
+      area,
+      perimeter,
+      steps
+    }
+  }, [aStr, bStr, cStr])
 
   return (
-    <FormCalculatorShell title="Triangle Calculator" badge="MATH">
-      <RetroSelect label="Method" value={method} onChange={(v) => { setMethod(v as any); setResult('') }} options={[{value:'base-height',label:'Base × Height'},{value:'three-sides',label:'3 Sides (Heron)'},{value:'two-sides-angle',label:'2 Sides + Angle'}]} id="tri-method" />
-      {method === 'base-height' && <><RetroInput label="Base" value={a} onChange={setA} placeholder="10" id="tri-base" /><RetroInput label="Height" value={h} onChange={setH} placeholder="5" id="tri-h" /></>}
-      {method === 'three-sides' && <><RetroInput label="Side a" value={a} onChange={setA} placeholder="3" id="tri-a" /><RetroInput label="Side b" value={b} onChange={setB} placeholder="4" id="tri-b" /><RetroInput label="Side c" value={c} onChange={setC} placeholder="5" id="tri-c" /></>}
-      {method === 'two-sides-angle' && <><RetroInput label="Side a" value={a} onChange={setA} placeholder="5" id="tri-a2" /><RetroInput label="Side b" value={b} onChange={setB} placeholder="7" id="tri-b2" /><RetroInput label="Included Angle (°)" value={angle} onChange={setAngle} placeholder="60" id="tri-ang" /></>}
-      <div className="mt-4"><RetroActionButton onClick={calculate} variant="primary" fullWidth>Calculate</RetroActionButton></div>
-      {result && <div className="mt-4"><ResultDisplay label="Result" value={result} large /></div>}
+    <FormCalculatorShell title="Triangle Calculator" subtitle="Solve triangle properties given three side lengths" badge="MATH">
+      <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[5fr_7fr] lg:gap-8">
+        <div className="space-y-4">
+          <RetroInput label="Side a" value={aStr} onChange={setAStr} id="tri-a" />
+          <RetroInput label="Side b" value={bStr} onChange={setBStr} id="tri-b" />
+          <RetroInput label="Side c" value={cStr} onChange={setCStr} id="tri-c" />
+        </div>
+
+        <div className="min-h-[440px] space-y-4">
+          {!results.error ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <ResultDisplay label="Area" value={results.area.toFixed(4)} large />
+                <ResultDisplay label="Perimeter" value={results.perimeter.toFixed(4)} large />
+              </div>
+              <div className="overflow-hidden rounded-xl border border-neutral-300 bg-white/60">
+                <p className="border-b border-neutral-200 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-neutral-600 font-mono">Mathematical Steps</p>
+                <div className="p-3 bg-neutral-50/50 space-y-1.5 font-mono text-xs text-neutral-800">
+                  {results.steps.map((s, i) => <div key={i}>[{i + 1}] {s}</div>)}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex min-h-[400px] items-center justify-center rounded-xl border border-dashed border-neutral-300 text-sm text-neutral-500 font-mono p-6 text-center">
+              {results.error}
+            </div>
+          )}
+        </div>
+      </div>
     </FormCalculatorShell>
   )
 }
