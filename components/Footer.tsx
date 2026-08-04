@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import {
   Calculator,
   Mail,
-  ArrowRight,
   Building,
   Headphones,
   ChevronRight,
@@ -208,13 +207,35 @@ export default function Footer() {
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
                   Questions, feedback, or partnership ideas? We reply within 24-48 hours.
                 </p>
-                <a
-                  href="mailto:support@homeofcalculators.com"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-primary-400 hover:text-primary-300 transition-colors"
-                >
-                  support@homeofcalculators.com
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
+                {/*
+                  Cloudflare's Email Address Obfuscation (Scrape Shield) rewrites
+                  every mailto: in the served HTML into a link to
+                  /cdn-cgi/l/email-protection. That endpoint returns 404 on this
+                  deployment, and because this footer is on every page it made all
+                  533 pages link to a broken URL — the single largest issue in the
+                  site audit, and invisible in our own build output, since the
+                  rewrite happens at the edge after deploy.
+
+                  <!--email_off--> is Cloudflare's documented opt-out. JSX comments
+                  are stripped before render and never reach the HTML, so the
+                  markers have to be injected as real markup. The lucide arrow is
+                  inlined as raw SVG rather than kept as a sibling component so the
+                  link keeps its exact previous appearance.
+                */}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      '<!--email_off-->' +
+                      '<a href="mailto:support@homeofcalculators.com" ' +
+                      'class="inline-flex items-center gap-2 text-xs font-bold text-primary-400 hover:text-primary-300 transition-colors">' +
+                      'support@homeofcalculators.com' +
+                      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" ' +
+                      'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+                      'stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>' +
+                      '</a>' +
+                      '<!--/email_off-->',
+                  }}
+                />
               </div>
 
             </div>
