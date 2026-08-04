@@ -3,6 +3,7 @@ import CategoryPageClient from './CategoryPageClient'
 
 import { CATEGORY_LABELS, CalculatorCategory } from '@/lib/calculators'
 import { notFound } from 'next/navigation'
+import { OG_IMAGES } from '@/lib/seo'
 
 export const revalidate = 60
 
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     keywords: [`${label.toLowerCase()} calculators`, 'free online calculators', label.toLowerCase()],
     alternates: { canonical: `https://homeofcalculators.com/categories/${categorySlug}` },
     openGraph: {
+      images: OG_IMAGES,
       title: `${label} Calculators | Home of Calculators`,
       description: `Browse our complete collection of free online ${label.toLowerCase()} calculators. Fast, accurate, mobile-friendly, and completely free to use.`,
       url: `https://homeofcalculators.com/categories/${categorySlug}`,

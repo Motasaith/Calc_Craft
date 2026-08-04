@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import LegalPage from '@/components/legal/LegalPage'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { OG_IMAGES } from '@/lib/seo'
 
 // Legal pages are fully static — prerendered at build time for SEO.
 export const dynamic = 'force-static'
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
     'Terms of Use for Home of Calculators. Understand your rights and responsibilities when using our free online calculators and visual builder.',
   keywords: ['homeofcalculators terms', 'calculator terms of use', 'user agreement', 'service terms'],
   openGraph: {
+
+    images: OG_IMAGES,
     title: 'Terms of Use | Home of Calculators',
     description: 'Service agreement governing your use of Home of Calculators calculators and tools.',
     type: 'article',

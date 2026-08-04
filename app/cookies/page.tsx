@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import LegalPage from '@/components/legal/LegalPage'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { OG_IMAGES } from '@/lib/seo'
 
 // Legal pages are fully static — prerendered at build time for SEO.
 export const dynamic = 'force-static'
@@ -20,6 +21,8 @@ export const metadata: Metadata = {
     'privacy-respecting analytics',
   ],
   openGraph: {
+
+    images: OG_IMAGES,
     title: 'Cookies Policy | Home of Calculators',
     description: 'Minimal, privacy-respecting cookie usage; no advertising, no third-party tracking.',
     type: 'article',

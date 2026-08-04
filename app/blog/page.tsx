@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { BookOpen, ArrowRight, Calendar } from 'lucide-react'
 import { getPosts, plainExcerpt, postAuthor, postImage } from '@/lib/wp'
+import { OG_IMAGES } from '@/lib/seo'
 
 /**
  * Blog index.
@@ -29,6 +30,7 @@ export const metadata: Metadata = {
     'embed calculator',
   ],
   openGraph: {
+    images: OG_IMAGES,
     title: 'Home of Calculators Blog | Home of Calculators',
     description: 'Tips, tutorials, and industry insights on calculators and custom calculator development.',
     type: 'website',

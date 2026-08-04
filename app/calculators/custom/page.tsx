@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import CustomCalculatorPageClient from './CustomCalculatorPageClient'
 
 export const metadata: Metadata = {
-  title: 'Custom Calculator - Home of Calculators',
+  title: 'Custom Calculator',
   robots: {
     index: false,
     follow: false,

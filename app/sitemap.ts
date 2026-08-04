@@ -81,6 +81,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
+    // Standalone emulator route. It is indexable but is not part of the
+    // calculator registry, so the generated list below does not cover it.
+    {
+      url: `${baseUrl}/calculators/casio`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    // Category hub. Its children were all listed but the hub itself was not,
+    // leaving an indexable page absent from the sitemap.
+    {
+      url: `${baseUrl}/categories`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
     // Categories
     ...categories.map((cat: string) => ({
       url: `${baseUrl}/categories/${cat}`,

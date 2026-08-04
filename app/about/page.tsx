@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { OG_IMAGES } from '@/lib/seo'
 
 // Static marketing page — prerendered at build time for SEO.
 export const dynamic = 'force-static'
@@ -34,6 +35,8 @@ export const metadata: Metadata = {
     'mission statement',
   ],
   openGraph: {
+
+    images: OG_IMAGES,
     title: 'About Home of Calculators | Home of Calculators',
     description: 'Our mission, story, and the team building the world\'s most flexible calculator platform.',
     type: 'website',

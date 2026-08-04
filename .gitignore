@@ -45,6 +45,8 @@ yarn-error.log*
 # docs/calculator-upgrade-audit.md is committed and tells the reader to rerun
 # this script rather than hand-edit the table, so the script has to ship with it.
 !/scripts/audit-calculators.mjs
+# Regenerates the committed og-image.png / twitter-image.png brand cards.
+!/scripts/generate-og-images.mjs
 
 
 /wordpress

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ContactPageClient from './ContactPageClient'
+import { OG_IMAGES } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Contact Us',
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   keywords: ['contact homeofcalculators', 'calculator support', 'suggest a calculator', 'feedback'],
   alternates: { canonical: 'https://homeofcalculators.com/contact' },
   openGraph: {
+    images: OG_IMAGES,
     title: 'Contact Us | Home of Calculators',
     description:
       'Have questions, feedback, or partnership ideas? Contact the Home of Calculators team. We respond to all requests within 24-48 hours.',

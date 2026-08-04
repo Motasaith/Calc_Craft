@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import LegalPage from '@/components/legal/LegalPage'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { OG_IMAGES } from '@/lib/seo'
 
 // Legal pages are fully static — prerendered at build time for SEO.
 export const dynamic = 'force-static'
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
     'browser calculations privacy',
   ],
   openGraph: {
+
+    images: OG_IMAGES,
     title: 'Privacy Policy | Home of Calculators',
     description: 'How Home of Calculators protects your data with browser-only calculations and zero server storage.',
     type: 'article',

@@ -16,11 +16,13 @@ export const revalidate = false
 export const metadata: Metadata = {
   alternates: {
     canonical: BRAND.url,
+    // The four regional variants that used to sit here (en-US, en-GB, en-CA,
+    // en-AU) all pointed at this same URL, so they declared no alternative
+    // anything — while omitting x-default, which is the one annotation a
+    // set of hreflang tags is required to carry. One language, one URL.
     languages: {
-      'en-US': BRAND.url,
-      'en-GB': BRAND.url,
-      'en-CA': BRAND.url,
-      'en-AU': BRAND.url,
+      'x-default': BRAND.url,
+      en: BRAND.url,
     },
   },
 }

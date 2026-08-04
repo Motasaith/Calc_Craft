@@ -4,7 +4,7 @@ import ForgotPasswordClient from './ForgotPasswordClient'
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'Reset Your Password | Home of Calculators',
+  title: 'Reset Your Password',
   description: 'Reset the password for your Home of Calculators account.',
   robots: { index: false, follow: false },
 }

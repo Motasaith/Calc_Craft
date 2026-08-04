@@ -5,6 +5,7 @@ import { Calendar, ArrowLeft, BookOpen, ArrowRight } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { getPosts, getPostBySlug } from '@/lib/wp'
+import { OG_IMAGES, blogDescription } from '@/lib/seo'
 
 // Allow dynamic generation of new blog posts published to WP after build
 export const dynamicParams = false
@@ -33,11 +34,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const excerptText = post.excerpt?.rendered?.replace(/<[^>]*>?/gm, '') || ''
   
   return {
-    title: `${post.title.rendered} | Home of Calculators Blog`,
-    description: excerptText.slice(0, 150),
+    // The layout template already appends "| Home of Calculators", so adding
+    // "| Home of Calculators Blog" here produced the brand name twice.
+    title: post.title.rendered,
+    description: blogDescription(post.title.rendered, excerptText),
     openGraph: {
+      images: OG_IMAGES,
       title: post.title.rendered,
-      description: excerptText.slice(0, 150),
+      description: blogDescription(post.title.rendered, excerptText),
       type: 'article',
       publishedTime: post.date,
     },

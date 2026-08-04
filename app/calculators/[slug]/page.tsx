@@ -1,6 +1,7 @@
 import { getAllSlugs, getCalculatorBySlug as getLocalCalc } from '@/lib/calculators'
 import type { Metadata } from 'next'
 import CalculatorPageClient from './CalculatorPageClient'
+import { OG_IMAGES, TWITTER_IMAGES, calculatorDescription, pageTitle } from '@/lib/seo'
 
 export const dynamicParams = false
 export const revalidate = 60
@@ -16,14 +17,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = localCalc?.name || 'Calculator'
   const baseDescription = localCalc?.description || `Use the ${title} to solve your problems instantly.`
-  const description = `${baseDescription} Free, accurate, and mobile-friendly with no signup required.`
 
   if (!localCalc) return { title: 'Calculator Not Found' }
 
+  // Composed rather than concatenated: the previous form appended a fixed
+  // sentence to registry blurbs that run 29–85 characters, which left 221 of
+  // these pages under the ~120-character minimum. The old title added
+  // "- Free Calculator" on top of the layout's brand template, pushing 294
+  // titles past 60 characters even though no calculator name is that long.
+  const description = calculatorDescription(baseDescription, localCalc.category)
+
   return {
-    title: `${title} - Free Calculator`,
+    title: pageTitle(title),
     description,
     openGraph: {
+      images: OG_IMAGES,
       title: `${title} | Home of Calculators`,
       description,
       type: 'website',
@@ -31,6 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: 'Home of Calculators',
     },
     twitter: {
+      images: TWITTER_IMAGES,
       card: 'summary_large_image',
       title: `${title} | Home of Calculators`,
       description,

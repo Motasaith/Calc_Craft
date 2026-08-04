@@ -1,4 +1,5 @@
 import { getAllSlugs, getCalculatorBySlug as getLocalCalc } from '@/lib/calculators'
+import { pageTitle } from '@/lib/seo'
 import type { Metadata } from 'next'
 import EmbedSlugClient from './EmbedSlugClient'
 
@@ -26,7 +27,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!localCalc) return { title: 'Calculator Not Found' }
 
   return {
-    title: `${localCalc.name} Embed | Home of Calculators`,
+    // `absolute` stops the root layout's "%s | Home of Calculators" template
+    // appending the brand to a string that already ends with it — every embed
+    // page was titled "... | Home of Calculators | Home of Calculators".
+    // The longest calculator names push "Name Embed | Home of Calculators"
+    // past 60 characters, so the brand is dropped rather than the name.
+    title: { absolute: pageTitle(`${localCalc.name} Embed`).absolute },
+    // Iframe widgets are not search results, but they still inherit the root
+    // description, which described the whole site rather than this widget.
+    description: `Embeddable ${localCalc.name.toLowerCase()} widget from Home of Calculators.`,
     robots: {
       index: false, // Do not index embed iframes
       follow: false,

@@ -44,12 +44,15 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
+  // Kept inside the ~60 and ~160 character limits search engines truncate at;
+  // the previous default title ran to 90 and the description to 216, so both
+  // were cut off in results on every page that did not override them.
   title: {
-    default: `${BRAND.name} - 500+ Free Online Calculators for Math, Finance, Health & Everyday Use`,
+    default: `${BRAND.name} — 500+ Free Online Calculators`,
     template: `%s | ${BRAND.name}`,
   },
   description:
-    'Free online calculators for math, finance, health, conversion, and everyday needs. 500+ accurate, privacy-first calculators with no signup. Built-in visual builder to create and embed custom calculators on any website.',
+    'Free online calculators for math, finance, health and conversion. 500+ accurate tools, no signup, plus a builder for your own embeddable calculators.',
   keywords: [
     'calculator', 'online calculator', 'free calculator', 'math calculator', 'finance calculator',
     'BMI calculator', 'loan calculator', 'EMI calculator', 'scientific calculator',
@@ -107,10 +110,11 @@ export const metadata: Metadata = {
       '500+ free online calculators. No signup required. Fast, accurate, and mobile-friendly.',
     images: ['https://homeofcalculators.com/twitter-image.png'],
   },
-  verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-  },
+  // Verification meta tags are deliberately omitted. They previously shipped
+  // the literal strings 'your-google-verification-code' and
+  // 'your-yandex-verification-code' on all 533 pages, which verifies nothing
+  // and advertises an unfinished setup. Add real codes here when Search
+  // Console issues them, or verify by DNS instead.
   category: 'Technology',
   classification: 'Calculator Tools',
   referrer: 'origin-when-cross-origin',
