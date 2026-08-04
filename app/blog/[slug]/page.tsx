@@ -43,6 +43,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: post.title.rendered,
       description: blogDescription(post.title.rendered, excerptText),
       type: 'article',
+      // Without og:url the tag set is incomplete — these three posts were the
+      // only pages left failing the audit's Open Graph check.
+      url: `https://homeofcalculators.com/blog/${slug}`,
+      siteName: 'Home of Calculators',
       publishedTime: post.date,
     },
     alternates: { canonical: `https://homeofcalculators.com/blog/${slug}` },
