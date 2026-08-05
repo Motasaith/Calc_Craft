@@ -26,59 +26,81 @@ export default function ContactPageClient() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // FormSubmit's AJAX endpoint returns JSON and honours CORS, unlike the plain
+  // endpoint which returns an HTML page.
+  //
+  // This is called from the browser rather than relayed through /api/contact on
+  // purpose. FormSubmit rejects datacenter IPs, which is why the server-side
+  // relay returns 502, and it requires a real Origin header — sending from the
+  // visitor's browser satisfies both automatically. The site CSP already allows
+  // it via `connect-src 'self' https:`.
+  //
+  // The previous implementation POSTed a generated <form> into a hidden iframe.
+  // That could never work here: the CSP pins `form-action` and `frame-src` to
+  // 'self', so the browser blocked both the submission and the frame navigation.
+  // Worse, it then called setSubmitted(true) on a 1.5s timer regardless of the
+  // outcome, so the page always claimed success while sending nothing.
+  const FORMSUBMIT_URL = 'https://formsubmit.co/ajax/support@homeofcalculators.com'
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      setError('Please fill in your name, email, and message')
+
+    const name = form.name.trim()
+    const email = form.email.trim().toLowerCase()
+    const message = form.message.trim()
+
+    if (!name || !email || !message) {
+      setError('Please fill in your name, email, and message.')
       return
     }
-    if (!form.email.includes('@') || !form.email.includes('.')) {
-      setError('Please enter a valid email address')
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.')
       return
     }
+    if (message.length < 10) {
+      setError('Please add a little more detail to your message (at least 10 characters).')
+      return
+    }
+
     setSubmitting(true)
 
-    // Submit via hidden iframe to avoid CORS and serverless IP blocking
-    const iframe = document.createElement('iframe')
-    iframe.name = 'formsubmit-iframe'
-    iframe.style.display = 'none'
-    document.body.appendChild(iframe)
+    try {
+      const res = await fetch(FORMSUBMIT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          subject: form.subject,
+          message,
+          _subject: `[Contact] ${form.subject} — from ${name}`,
+          _replyto: email,
+          _captcha: 'false',
+          _template: 'table',
+        }),
+      })
 
-    const submitForm = document.createElement('form')
-    submitForm.action = 'https://formsubmit.co/support@homeofcalculators.com'
-    submitForm.method = 'POST'
-    submitForm.target = 'formsubmit-iframe'
+      const data = await res.json().catch(() => null)
 
-    const fields: Record<string, string> = {
-      name: form.name.trim(),
-      email: form.email.trim().toLowerCase(),
-      subject: `[Contact] ${form.subject} - from ${form.name.trim()}`,
-      message: form.message.trim(),
-      _replyto: form.email.trim().toLowerCase(),
-      _subject: `[Contact] ${form.subject} - from ${form.name.trim()}`,
-      _captcha: 'false',
-      _template: 'table',
-    }
-
-    Object.entries(fields).forEach(([key, value]) => {
-      const input = document.createElement('input')
-      input.type = 'hidden'
-      input.name = key
-      input.value = value
-      submitForm.appendChild(input)
-    })
-
-    document.body.appendChild(submitForm)
-    submitForm.submit()
-
-    // Clean up after a short delay and show success
-    setTimeout(() => {
-      document.body.removeChild(submitForm)
-      document.body.removeChild(iframe)
+      // FormSubmit reports success as the STRING "true", not a boolean, so a
+      // plain truthiness check would treat "false" as a success.
+      if (res.ok && data && String(data.success) === 'true') {
+        setSubmitted(true)
+      } else {
+        setError(
+          data?.message ||
+            'We could not send your message just now. Please email support@homeofcalculators.com directly.'
+        )
+      }
+    } catch {
+      // Network failure, offline, or a blocker stopping the third-party request.
+      setError(
+        'We could not reach the mail service. Please check your connection, or email support@homeofcalculators.com directly.'
+      )
+    } finally {
       setSubmitting(false)
-      setSubmitted(true)
-    }, 1500)
+    }
   }
 
   return (

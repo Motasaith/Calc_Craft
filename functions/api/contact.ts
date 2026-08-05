@@ -70,30 +70,43 @@ export async function onRequestPost(context: { request: Request }) {
     const ip = request.headers.get('cf-connecting-ip') || 'unknown'
     const country = request.headers.get('cf-ipcountry') || 'unknown'
 
-    // Build FormSubmit.co payload
-    const formData = new URLSearchParams()
-    formData.append('name', name)
-    formData.append('email', email)
-    formData.append('subject', `[Contact] ${subject} — from ${name}`)
-    formData.append('message', message)
-    formData.append('_replyto', email)
-    formData.append('_subject', `[Contact] ${subject} — from ${name}`)
-    formData.append('_captcha', 'false')
-
-    const submitRes = await fetch('https://formsubmit.co/support@homeofcalculators.com', {
+    // The AJAX endpoint returns JSON; the plain one returns an HTML page whose
+    // status code says nothing useful — the old code treated any 2xx/3xx as a
+    // success, so it reported "sent" even when FormSubmit had served its own
+    // landing page and delivered nothing.
+    //
+    // Origin is required: without it FormSubmit replies "Make sure you open this
+    // page through a web server". The old request set only Referer, which is not
+    // enough.
+    //
+    // NOTE: this path is a fallback. FormSubmit blocks datacenter IPs, and
+    // Cloudflare Workers egress from exactly those ranges, so it may still be
+    // refused here. The contact page therefore calls FormSubmit directly from
+    // the visitor's browser, which uses their own IP.
+    const submitRes = await fetch('https://formsubmit.co/ajax/support@homeofcalculators.com', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Referer': 'https://homeofcalculators.com/contact',
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Origin: 'https://homeofcalculators.com',
+        Referer: 'https://homeofcalculators.com/contact',
       },
-      body: formData.toString(),
+      body: JSON.stringify({
+        name,
+        email,
+        subject,
+        message,
+        _replyto: email,
+        _subject: `[Contact] ${subject} — from ${name}`,
+        _captcha: 'false',
+        _template: 'table',
+      }),
     })
 
-    // FormSubmit returns 200 or 302 on success
-    if (submitRes.status >= 200 && submitRes.status < 400) {
+    const result = (await submitRes.json().catch(() => null)) as { success?: string; message?: string } | null
+
+    // FormSubmit reports success as the string "true", not a boolean.
+    if (submitRes.ok && result && String(result.success) === 'true') {
       return new Response(
         JSON.stringify({
           success: true,
@@ -103,12 +116,16 @@ export async function onRequestPost(context: { request: Request }) {
       )
     }
 
-    const errorText = await submitRes.text().catch(() => 'Unknown error')
-    console.error('FormSubmit error:', submitRes.status, errorText)
-
-    // Fallback: if FormSubmit blocks serverless IPs, still tell user we got their message
-    // and log it for manual retrieval
-    console.error('FormSubmit blocked. Payload:', { name, email, subject, message, timestamp, ip, country })
+    // Log enough to recover the message by hand if delivery was refused.
+    console.error('FormSubmit rejected submission:', submitRes.status, result?.message ?? 'no message', {
+      name,
+      email,
+      subject,
+      message,
+      timestamp,
+      ip,
+      country,
+    })
 
     return new Response(
       JSON.stringify({ success: false, error: 'Failed to send message. Please try again later.' }),
